@@ -1,0 +1,739 @@
+body {
+    margin: 0;
+    padding-bottom: 60px;
+    padding-top: 60px;
+    background-color: #f5f5f5;
+    font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333;
+}
+
+/* 页面标题 */
+.page-title {
+    margin: 15px 0;
+    color: #333;
+    font-weight: bold;
+}
+
+/* 基本信息显示 */
+.basic-info {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.info-item {
+    width: 48%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px dashed #eee;
+}
+
+.info-item strong {
+    color: #555;
+}
+
+/* 奇门盘样式 */
+.qimen-pan {
+    margin: 0 auto 30px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.pan-outer {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* 九宫格网格 */
+.pan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 1/1;
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+}
+
+/* 宫格样式 */
+.gong {
+    position: relative;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    padding: 0;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+.gong:nth-child(3n) {
+    border-right: none;
+}
+.gong:nth-child(7), .gong:nth-child(8), .gong:nth-child(9) {
+    border-bottom: none;
+}
+
+/* 宫位吉凶颜色 */
+.gong.da_ji {
+    background-color: #e8f5e9;
+    border: 2px solid #4CAF50;
+}
+
+.gong.xiao_ji {
+    background-color: #f1f8e9;
+    border: 1px solid #8BC34A;
+}
+
+.gong.ping {
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+.gong.xiao_xiong {
+    background-color: #fff8e1;
+    border: 1px solid #FFC107;
+}
+
+.gong.da_xiong {
+    background-color: #ffebee;
+    border: 2px solid #F44336;
+}
+
+/* 值符值使高亮 */
+.gong.zhifu {
+    border: 2px solid #4CAF50;
+    position: relative;
+}
+
+.gong.zhishi {
+    border: 2px solid #2196F3;
+    position: relative;
+}
+
+.gong.zhifu.zhishi {
+    border: 2px solid #FFC107;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+.gong.zhifu:after {
+    content: '★';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    color: #4CAF50;
+    font-size: 12px;
+    z-index: 10;
+}
+
+.gong.zhishi:before {
+    content: '☆';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    color: #2196F3;
+    font-size: 12px;
+    z-index: 10;
+}
+
+/* 新的宫位布局 - 根据参考图 */
+.gong-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas: 
+        "gong-dizhi  gong-bashen  gong-tianganfang"
+        "gong-dizhi2 gong-jiuxing gong-tianganfang2"
+        "gong-gongname2 gong-bamen gong-tiangan"
+        "gong-gongname gong-number gong-dipan";
+    height: 100%;
+    width: 100%;
+    position: relative;
+    padding: 8px;
+}
+
+/* 地支 - 左上角灰色 */
+.gong-dizhi {
+    grid-area: gong-dizhi;
+    text-align: left;
+    font-size: 16px;
+    color: #aaa;
+}
+
+/* 地支2 - 左中上灰色 */
+.gong-dizhi2 {
+    grid-area: gong-dizhi2;
+    text-align: left;
+    font-size: 16px;
+    visibility: hidden;
+}
+
+/* 八神 - 中上位置 */
+.gong-bashen {
+    grid-area: gong-bashen;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 2px;
+    padding: 2px;
+    border-radius: 4px;
+    background-color: rgba(200, 200, 200, 0.1);
+}
+
+/* 天干方位 - 右上角灰色 */
+.gong-tianganfang {
+    grid-area: gong-tianganfang;
+    text-align: right;
+    font-size: 16px;
+    color: #aaa;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-top: 2px;
+}
+
+/* 天干方位2 - 右中上灰色 */
+.gong-tianganfang2 {
+    grid-area: gong-tianganfang2;
+    text-align: right;
+    font-size: 16px;
+    visibility: hidden;
+}
+
+/* 八门 - 中间位置 */
+.gong-bamen {
+    grid-area: gong-bamen;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 3px 0;
+    margin-top: 0;
+    border-radius: 4px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.gong-bamen:empty {
+    display: none;
+}
+
+.gong:hover .gong-bamen {
+    transform: scale(1.05);
+}
+
+/* 九星 - 居中显示 */
+.gong-jiuxing {
+    grid-area: gong-jiuxing;
+    text-align: center;
+    font-size: 19px;
+    font-weight: bold;
+    padding: 3px 0;
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.gong:hover .gong-jiuxing {
+    transform: scale(1.05);
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* 宫位名 - 左下角 */
+.gong-gongname {
+    grid-area: gong-gongname;
+    text-align: left;
+    font-size: 16px;
+    align-self: end;
+}
+
+/* 宫位名2 - 左中位置 */
+.gong-gongname2 {
+    grid-area: gong-gongname2;
+    text-align: left;
+    font-size: 14px;
+    visibility: hidden;
+}
+
+/* 宫位数字 - 中下位置 */
+.gong-number {
+    grid-area: gong-number;
+    text-align: center;
+    font-size: 16px;
+    align-self: end;
+    color: #000; /* 改为黑色 */
+}
+
+/* 天干 - 右侧位置 */
+.gong-tiangan {
+    grid-area: gong-tiangan;
+    text-align: right;
+    font-size: 19px;
+    font-weight: bold;
+    padding-right: 5px;
+    margin-top: -2px;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    display: inline-block;
+    justify-self: end;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.gong:hover .gong-tiangan {
+    transform: scale(1.1);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 地盘干 - 右下角 */
+.gong-dipan {
+    grid-area: gong-dipan;
+    text-align: right;
+    font-size: 18px;
+    align-self: end;
+    padding-right: 5px;
+    margin-bottom: 2px;
+}
+
+/* 特殊元素样式 */
+.circle-mark {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: 0;
+}
+
+.yellow-circle {
+    background-color: #FFEB3B; /* 黄色圆形标记 */
+}
+
+.grey-circle {
+    background-color: #E0E0E0; /* 灰色圆形标记 */
+}
+
+/* 图例 */
+.pan-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+.legend-label {
+    margin-right: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.legend-box {
+    padding: 2px 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background-color: #fff;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* 宫位详解 */
+.gong-details {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gong-details .col-md-4 {
+    margin-bottom: 15px;
+}
+
+/* 面板样式 */
+.panel {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.panel-heading {
+    font-weight: bold;
+}
+
+.panel-body {
+    color: #333;
+}
+
+/* 底部样式 */
+.footer {
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #f5f5f5;
+    padding-top: 15px;
+    text-align: center;
+    border-top: 1px solid #e7e7e7;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .info-item {
+        width: 100%;
+    }
+
+    .item {
+        font-size: 14px;
+    }
+
+    .legend-item {
+        width: 48%;
+    }
+}
+
+@media (max-width: 480px) {
+    .item {
+        font-size: 12px;
+    }
+
+    .legend-item {
+        width: 100%;
+    }
+}
+
+/* 标签样式 */
+.label-da_ji, .da_ji {
+    background-color: #4CAF50;
+    color: white !important;
+}
+
+.label-xiao_ji, .xiao_ji {
+    background-color: #8BC34A;
+    color: white !important;
+}
+
+.label-ping, .ping {
+    background-color: #fff;
+    color: #333 !important;
+}
+
+.label-xiao_xiong, .xiao_xiong {
+    background-color: #FF9800;
+    color: white !important;
+}
+
+.label-da_xiong, .da_xiong {
+    background-color: #F44336;
+    color: white !important;
+}
+
+/* 悬停效果 */
+.gong:hover {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    transform: scale(1.02);
+}
+
+/* 五行属性颜色 */
+.wuxing-mu {
+    color: #4CAF50 !important; /* 木-绿色 */
+    position: relative;
+    cursor: help;
+}
+
+.wuxing-huo {
+    color: #F44336 !important; /* 火-红色 */
+    position: relative;
+    cursor: help;
+}
+
+.wuxing-tu {
+    color: #FF9800 !important; /* 土-橙色 */
+    position: relative;
+    cursor: help;
+}
+
+.wuxing-jin {
+    color: #9E9E9E !important; /* 金-灰色 */
+    position: relative;
+    cursor: help;
+}
+
+.wuxing-shui {
+    color: #2196F3 !important; /* 水-蓝色 */
+    position: relative;
+    cursor: help;
+}
+
+.wuxing-purple {
+    color: #9C27B0 !important; /* 特殊-紫色 */
+    position: relative;
+    cursor: help;
+}
+
+.wuxing-mu:hover:after {
+    content: '木属性，东方，生发之气';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+.wuxing-huo:hover:after {
+    content: '火属性，南方，熱烈之气';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+.wuxing-tu:hover:after {
+    content: '土属性，中央，厚重之气';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+.wuxing-jin:hover:after {
+    content: '金属性，西方，坚固之气';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+.wuxing-shui:hover:after {
+    content: '水属性，北方，润下之气';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+/* 奇门专用颜色 */
+.tian-gan {
+    color: #4CAF50; /* 天干颜色 */
+}
+
+.di-zhi {
+    color: #666; /* 地支颜色-灰色 */
+}
+
+.separator-line {
+    height: 1px;
+    width: 100%;
+    background-color: #ddd;
+    margin: 5px 0;
+}
+
+/* 辅助颜色样式 */
+.text-center {
+    text-align: center;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.font-small {
+    font-size: 10px;
+}
+
+/* 界面紧凑化样式 */
+body {
+    padding-top: 50px;
+    padding-bottom: 40px;
+}
+.page-title {
+    margin: 10px 0;
+    font-size: 22px;
+}
+.basic-info {
+    padding: 10px;
+    margin-bottom: 15px;
+}
+.info-item {
+    width: 32%;
+    margin-bottom: 5px;
+    padding: 3px;
+}
+.qimen-pan {
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.pan-grid {
+    gap: 0;
+}
+.panel {
+    margin-bottom: 15px;
+}
+.panel-body {
+    padding: 10px;
+}
+.gong-details .col-md-4 {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 10px;
+}
+.gong-details .panel-body {
+    padding: 8px;
+}
+.gong-details .panel-body p {
+    margin-bottom: 5px;
+}
+.gong-explain {
+    font-size: 12px;
+    margin-top: 3px;
+    line-height: 1.4;
+}
+.suggestion-list li {
+    margin-bottom: 4px;
+}
+.footer {
+    height: 40px;
+    padding-top: 10px;
+}
+
+@media (max-width: 992px) {
+    .info-item {
+        width: 49%;
+    }
+}
+
+/* LLM 解盤相關樣式 */
+.llm-analysis-content {
+    font-size: 15px;
+    line-height: 1.6;
+    background-color: #fafafa;
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 4px solid #337ab7;
+}
+
+.llm-interaction {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.llm-interaction .form-group label {
+    font-weight: bold;
+    color: #555;
+}
+
+/* 載入動畫 */
+.glyphicon-refresh-animate {
+    animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1) rotate(360deg); }
+}
+
+/* LLM 回應樣式 */
+#llmQuestionResponse {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#llmQuestionResponse .response-content {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+#llmQuestionResponse .response-time {
+    text-align: right;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+/* 面板標題改進 */
+.panel-title .label {
+    font-size: 11px;
+    padding: 2px 6px;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .llm-analysis-content {
+        font-size: 14px;
+        padding: 12px;
+    }
+    
+    .llm-interaction {
+        padding: 12px;
+    }
+}

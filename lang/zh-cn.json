@@ -1,0 +1,146 @@
+{
+  "title": "奇门遁甲排盘系统",
+  "navbar": {
+    "title": "奇门遁甲排盘系统"
+  },
+  "main": {
+    "pageTitle": "奇门遁甲排盘",
+    "currentTime": "当前时间",
+    "fourPillars": "四柱",
+    "xunShou": "旬首",
+    "juShu": "局数",
+    "zhiFu": "值符",
+    "zhiShi": "值使",
+    "gong": "宫"
+  },
+  "qimen": {
+    "bagua": {
+      "kan": "坎",
+      "kun": "坤", 
+      "zhen": "震",
+      "xun": "巽",
+      "zhong": "中",
+      "qian": "乾",
+      "dui": "兑",
+      "gen": "艮",
+      "li": "离"
+    },
+    "directions": {
+      "north": "正北",
+      "southwest": "西南",
+      "east": "正东",
+      "southeast": "东南",
+      "center": "中宫",
+      "northwest": "西北",
+      "west": "正西",
+      "northeast": "东北",
+      "south": "正南"
+    },
+    "bamen": {
+      "xiu": "休门",
+      "si": "死门",
+      "shang": "伤门",
+      "du": "杜门",
+      "jing": "景门",
+      "kai": "开门",
+      "jing2": "惊门",
+      "sheng": "生门"
+    },
+    "jiuxing": {
+      "tianpeng": "天蓬",
+      "tianrui": "天芮",
+      "tianchong": "天冲",
+      "tianfu": "天辅",
+      "tianqin": "天禽",
+      "tianxin": "天心",
+      "tianzhu": "天柱",
+      "tianren": "天任",
+      "tianying": "天英"
+    },
+    "jiuxingAlias": {
+      "tianpeng": "贪狼",
+      "tianren": "巨门",
+      "tianchong": "禄存",
+      "tianfu": "文曲",
+      "tianying": "廉贞",
+      "tianrui": "武曲",
+      "tianzhu": "破军",
+      "tianxin": "左辅",
+      "tianqin": "天禽"
+    }
+  },
+  "form": {
+    "customPaipan": "自定义排盘",
+    "type": "类型",
+    "method": "方法",
+    "date": "日期",
+    "time": "时间",
+    "location": "位置",
+    "purpose": "用途",
+    "submit": "排盘",
+    "reset": "重置",
+    "methods": {
+      "shijia": "时家奇门",
+      "rijia": "日家奇门", 
+      "yuejia": "月家奇门",
+      "nianjia": "年家奇门"
+    },
+    "purposes": {
+      "zonghe": "综合",
+      "qiuqian": "求谋",
+      "qingan": "感情",
+      "caiyun": "财运",
+      "jiankang": "健康",
+      "gongzuo": "工作"
+    }
+  },
+  "modal": {
+    "usage": "使用说明",
+    "close": "关闭",
+    "title": "奇门遁甲使用说明",
+    "intro": {
+      "title": "奇门遁甲简介",
+      "content": "奇门遁甲是中国古代预测学的一种，与六壬、太乙合称三式。它通过天地之气的运行规律，推算各种事物的吉凶。"
+    },
+    "elements": {
+      "title": "基本要素",
+      "bamen": "八门：指休、生、伤、杜、景、死、惊、开八门",
+      "jiuxing": "九星：指天蓬、天芮、天冲、天辅、天禽、天心、天柱、天任、天英九星",
+      "zhifuzhishi": "值符值使：值符为九星之首，值使为八门之首"
+    },
+    "methods": {
+      "title": "排盘方法说明", 
+      "sizhu": "四柱：分别取年、月、日、时四柱",
+      "sanyuan": "三元：只取年、月、日三柱",
+      "shijia": "时家奇门：以时辰排盘，适合短期预测",
+      "rijia": "日家奇门：以日子排盘，适合中期预测",
+      "yuejia": "月家奇门：以月份排盘，适合长期预测"
+    }
+  },
+  "legend": {
+    "title": "图例说明",
+    "zhifu": "值符",
+    "zhishi": "值使", 
+    "bamen": "八门",
+    "wuxing": {
+      "jin": "金",
+      "mu": "木", 
+      "shui": "水",
+      "huo": "火",
+      "tu": "土"
+    }
+  },
+  "analysis": {
+    "title": "宫位分析",
+    "jiuxing": "九星",
+    "bamen": "八门",
+    "tianpan": "天盘",
+    "dipan": "地盘",
+    "shen": "神"
+  },
+  "language": {
+    "switch": "语言",
+    "zhTw": "繁体中文",
+    "zhCn": "简体中文"
+  }
+}
