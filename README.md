@@ -2,6 +2,10 @@
 
 一個基於 Node.js 的奇門遁甲排盤系統，遵循茅山派奇門遁甲排盤方法，支援繁簡體中文和 AI 智能解盤功能。
 
+是先想好問題 再開網頁
+https://qi.david888.com
+![alt text](image.png)
+
 **致謝原作者**：本專案基於 [qfdk/qimen](https://github.com/qfdk/qimen) 進行開發和改進。
 
 ## 功能特點
