@@ -26,7 +26,9 @@
 2. 使用 GitHub 帳號登入
 3. 點擊「New Project」
 4. 選擇您的 `qimen` 專案
-5. Vercel 會自動偵測 Node.js 專案
+5. **Framework Preset: 選擇 "Other"** ✅
+6. **Root Directory: 保持預設 "./"** ✅
+7. Vercel 會使用 `vercel.json` 配置自動部署
 
 ### 3. 環境變數設定
 在 Vercel 專案設定中添加環境變數：
@@ -89,3 +91,21 @@ CMD ["npm", "start"]
 4. 優秀的開發者體驗
 
 這個奇門遁甲應用完全適合 Vercel 的架構！
+
+## 疑難排解
+
+### Framework Preset 選擇
+- ✅ **選擇 "Other"** - 適用於純 Node.js/Express 應用
+- ❌ 不要選擇 Next.js、Nuxt.js 等框架
+- 📝 Vercel 會使用 `vercel.json` 配置檔案
+
+### 常見問題
+1. **靜態檔案 404**：確保 `vercel.json` 中的路由配置正確
+2. **環境變數未生效**：在 Vercel Dashboard 中檢查環境變數設定
+3. **LLM API 錯誤**：確認 API Key 格式和提供商設定正確
+
+### 測試部署
+部署完成後，可以測試以下端點：
+- `/` - 主頁面
+- `/api/llm-test` - LLM 連接測試
+- `/api/llm-analysis` - LLM 解盤 API
