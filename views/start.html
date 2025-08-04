@@ -346,8 +346,17 @@
             const timestamp = now.getTime();
             const timezoneOffset = now.getTimezoneOffset();
             
+            // 建立本地時間字串
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const userDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+            
             // 跳轉到主頁面，帶上時間精度參數和本地時間
-            window.location.href = `/?timePrecisionMode=${selectedMode}&fromMeditation=true&timestamp=${timestamp}&timezoneOffset=${timezoneOffset}`;
+            window.location.href = `/?timePrecisionMode=${selectedMode}&fromMeditation=true&userDateTime=${userDateTime}&timestamp=${timestamp}&timezoneOffset=${timezoneOffset}`;
         }
         
         function skipToIndex() {
@@ -359,8 +368,17 @@
             const timestamp = now.getTime();
             const timezoneOffset = now.getTimezoneOffset();
             
+            // 建立本地時間字串
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const userDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+            
             // 直接跳轉到主頁面
-            window.location.href = `/?timePrecisionMode=${selectedMode}&timestamp=${timestamp}&timezoneOffset=${timezoneOffset}`;
+            window.location.href = `/?timePrecisionMode=${selectedMode}&userDateTime=${userDateTime}&timestamp=${timestamp}&timezoneOffset=${timezoneOffset}`;
         }
         
         // 模式切換事件

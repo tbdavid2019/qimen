@@ -61,36 +61,48 @@ app.get('/', async (req, res) => {
     let date;
     const serverTime = new Date();
     
-    if (req.query.timestamp) {
-        // 使用前端傳遞的時間戳（已經是用戶本地時間）
-        date = new Date(parseInt(req.query.timestamp));
+    // 優先順序：userDateTime > timestamp > 伺服器時間 + 時區調整
+    if (req.query.userDateTime) {
+        // 使用前端傳遞的本地時間字串（格式：YYYY-MM-DDTHH:mm:ss）
+        const userDateTime = req.query.userDateTime;
+        date = new Date(userDateTime);
+        
         if (process.env.NODE_ENV !== 'production') {
-            console.log(`使用前端時間: ${date.toISOString()} (timestamp: ${req.query.timestamp})`);
+            console.log(`使用前端本地時間字串: ${userDateTime}`);
+            console.log(`解析後的時間: ${date.toString()}`);
+        }
+    } else if (req.query.timestamp) {
+        // 備用：使用時間戳，但需要考慮時區差異
+        const timestamp = parseInt(req.query.timestamp);
+        const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : 0;
+        
+        // 建立基於時間戳的 Date 物件
+        date = new Date(timestamp);
+        
+        // 在 Vercel (UTC) 環境中，需要調整顯示時間
+        if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+            // 計算時區差異：用戶時區偏移 vs UTC (0)
+            const offsetDiff = -timezoneOffset; // 負號是因為 getTimezoneOffset 返回相反值
+            date = new Date(date.getTime() + offsetDiff * 60000);
+        }
+        
+        if (process.env.NODE_ENV !== 'production') {
+            console.log(`使用時間戳: ${timestamp}, 時區偏移: ${timezoneOffset}`);
+            console.log(`調整後時間: ${date.toString()}`);
         }
     } else {
-        // 預設使用伺服器時間，但需要根據用戶時區調整
+        // 使用伺服器時間，根據用戶時區調整
         date = new Date();
-        
-        // 獲取時區偏移參數
         const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : null;
         
         if (timezoneOffset !== null) {
-            // 計算時區差異並調整時間
-            const serverOffset = date.getTimezoneOffset(); // 服務器時區偏移（分鐘）
-            const userOffset = timezoneOffset; // 用戶時區偏移（分鐘）
-            
-            // 調整到用戶本地時間
+            const serverOffset = date.getTimezoneOffset();
+            const userOffset = timezoneOffset;
             const offsetDiff = serverOffset - userOffset;
             date = new Date(date.getTime() + offsetDiff * 60000);
             
             if (process.env.NODE_ENV !== 'production') {
-                console.log(`時區調整: 伺服器偏移=${serverOffset}, 用戶偏移=${userOffset}, 差異=${offsetDiff}分鐘`);
-                console.log(`調整前伺服器時間: ${serverTime.toISOString()}`);
-                console.log(`調整後用戶時間: ${date.toISOString()}`);
-            }
-        } else {
-            if (process.env.NODE_ENV !== 'production') {
-                console.log(`使用伺服器時間，無時區資訊: ${date.toISOString()}`);
+                console.log(`時區調整: 伺服器=${serverOffset}, 用戶=${userOffset}, 差異=${offsetDiff}分鐘`);
             }
         }
     }
