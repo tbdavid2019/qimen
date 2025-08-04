@@ -54,13 +54,17 @@ app.use((req, res, next) => {
 app.get('/', async (req, res) => {
     // 獲取當前時間
     const date = new Date();
+    
+    // 獲取時間精度模式參數
+    const timePrecisionMode = req.query.timePrecisionMode || 'traditional';
 
     // 計算奇門盤
     const options = {
         type: '四柱',
         method: '時家',
         purpose: '綜合',
-        location: '默認位置'
+        location: '默認位置',
+        timePrecisionMode: timePrecisionMode
     };
 
     try {
@@ -114,6 +118,7 @@ app.get('/custom', async (req, res) => {
     const timeStr = req.query.time;
     const location = req.query.location || '默認位置';
     const purpose = req.query.purpose || '綜合';
+    const timePrecisionMode = req.query.timePrecisionMode || 'traditional';
 
     // 解析日期時間
     let date;
@@ -134,7 +139,8 @@ app.get('/custom', async (req, res) => {
             type,
             method,
             purpose,
-            location
+            location,
+            timePrecisionMode
         };
 
         const qimenPan = qimen.calculate(date, options);
@@ -187,6 +193,7 @@ app.get('/api/qimen', (req, res) => {
     const timeStr = req.query.time;
     const location = req.query.location || '默認位置';
     const purpose = req.query.purpose || '綜合';
+    const timePrecisionMode = req.query.timePrecisionMode || 'traditional';
 
     // 解析日期時間
     let date;
@@ -207,7 +214,8 @@ app.get('/api/qimen', (req, res) => {
             type,
             method,
             purpose,
-            location
+            location,
+            timePrecisionMode
         };
 
         const qimenPan = qimen.calculate(date, options);

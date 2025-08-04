@@ -1,10 +1,99 @@
 $(document).ready(function() {
+    // 頁面載入時檢查URL參數並設置正確的模式
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentMode = urlParams.get('timePrecisionMode') || 'traditional';
+    
+    // 初始化模式顯示
+    initializeTimePrecisionMode(currentMode);
+    
+    // 初始化函數
+    function initializeTimePrecisionMode(mode) {
+        if (mode === 'advanced') {
+            $('#traditionalModeBtn').removeClass('active');
+            $('#advancedModeBtn').addClass('active');
+            $('input[name="timeMode"][value="advanced"]').prop('checked', true);
+            $('#advancedModeInfo').show();
+            $('#timePrecision').text('進階模式');
+            updateTimePrecisionDisplay(mode);
+        } else {
+            $('#traditionalModeBtn').addClass('active');
+            $('#advancedModeBtn').removeClass('active');
+            $('input[name="timeMode"][value="traditional"]').prop('checked', true);
+            $('#advancedModeInfo').hide();
+            $('#timePrecision').text('傳統模式');
+            $('#timeSegmentInfo').hide();
+        }
+    }
+
     // 自定义排盘表单提交
     $('#submitCustomPan').click(function() {
         $('#customPanForm').submit();
     });
 
-    // 确保九宫格始终保持正方形比例
+    // 統一的模式切換處理函數
+    function switchTimePrecisionMode(mode) {
+        if (mode === 'advanced') {
+            $('#traditionalModeBtn').removeClass('active');
+            $('#advancedModeBtn').addClass('active');
+            $('#advancedModeInfo').show();
+            $('#timePrecision').text('進階模式');
+            updateTimePrecisionDisplay(mode);
+        } else {
+            $('#traditionalModeBtn').addClass('active');
+            $('#advancedModeBtn').removeClass('active');
+            $('#advancedModeInfo').hide();
+            $('#timePrecision').text('傳統模式');
+            $('#timeSegmentInfo').hide();
+        }
+        
+        // 重新計算排盤
+        reloadWithTimePrecision(mode);
+    }
+
+    // 時間精度模式切換 - radio button change事件
+    $('input[name="timeMode"]').change(function() {
+        var selectedMode = $(this).val();
+        switchTimePrecisionMode(selectedMode);
+    });
+
+    // 模式按鈕點擊事件 - 直接處理按鈕點擊
+    $('#traditionalModeBtn').click(function() {
+        $('input[name="timeMode"][value="traditional"]').prop('checked', true);
+        switchTimePrecisionMode('traditional');
+    });
+    
+    $('#advancedModeBtn').click(function() {
+        $('input[name="timeMode"][value="advanced"]').prop('checked', true);
+        switchTimePrecisionMode('advanced');
+    });
+
+    // 根據時間精度模式重新載入頁面
+    function reloadWithTimePrecision(mode) {
+        var currentUrl = new URL(window.location.href);
+        
+        if (mode === 'traditional') {
+            // 傳統模式時移除參數（因為預設就是傳統模式）
+            currentUrl.searchParams.delete('timePrecisionMode');
+        } else {
+            // 進階模式時設置參數
+            currentUrl.searchParams.set('timePrecisionMode', mode);
+        }
+        
+        window.location.href = currentUrl.toString();
+    }
+
+    // 更新時間精度顯示
+    function updateTimePrecisionDisplay(mode) {
+        if (mode === 'advanced' && window.qimenData && window.qimenData.timePrecision) {
+            var timeInfo = window.qimenData.timePrecision;
+            $('#timeSegmentInfo').html(
+                ' - 第 ' + timeInfo.segment + ' 段 (' + 
+                timeInfo.segmentTime + ')'
+            ).show();
+        }
+    }
+
+    // 確保九宮格始終保持正方形比例
     function maintainAspectRatio() {
         var gridWidth = $('.pan-grid').width();
         $('.gong').css('height', gridWidth / 3 + 'px');

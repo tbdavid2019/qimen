@@ -7,6 +7,40 @@ body {
     color: #333;
 }
 
+/* 时间精度模式选择器 */
+.time-mode-selector {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.time-mode-selector .btn-group label {
+    min-width: 180px;
+    padding: 12px 15px;
+    margin: 0 5px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 2px solid #ddd;
+}
+
+.time-mode-selector .btn-group label.active {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+    color: #fff;
+}
+
+.time-mode-selector .btn-group label:not(.active):hover {
+    background-color: #f8f8f8;
+    border-color: #bbb;
+}
+
+.time-mode-selector small {
+    margin-top: 3px;
+    opacity: 0.8;
+}
+
 /* 页面标题 */
 .page-title {
     margin: 15px 0;
