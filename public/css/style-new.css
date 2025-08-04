@@ -684,6 +684,20 @@ body {
     color: #555;
 }
 
+/* AI 解盤按鈕樣式 */
+#startLLMAnalysis {
+    padding: 12px 30px;
+    font-size: 16px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#startLLMAnalysis:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
 /* 載入動畫 */
 .glyphicon-refresh-animate {
     animation: spin .7s infinite linear;
@@ -698,6 +712,26 @@ body {
 @keyframes spin {
     from { transform: scale(1) rotate(0deg); }
     to { transform: scale(1) rotate(360deg); }
+}
+
+/* 進度條動畫 */
+.progress-striped .progress-bar {
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+    background-size: 40px 40px;
+}
+
+.progress.active .progress-bar {
+    animation: progress-bar-stripes 2s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    from { background-position: 40px 0; }
+    to { background-position: 0 0; }
+}
+
+/* LLM 面板過渡效果 */
+#llmInitialPanel, #llmLoadingPanel, #llmResultPanel, #llmErrorPanel {
+    transition: all 0.3s ease-in-out;
 }
 
 /* LLM 回應樣式 */
@@ -726,6 +760,15 @@ body {
     padding: 2px 6px;
 }
 
+/* 按鈕組樣式 */
+#reAnalyzeButton, #retryLLMAnalysis {
+    transition: all 0.2s ease;
+}
+
+#reAnalyzeButton:hover, #retryLLMAnalysis:hover {
+    transform: translateY(-1px);
+}
+
 /* 響應式設計 */
 @media (max-width: 768px) {
     .llm-analysis-content {
@@ -735,5 +778,10 @@ body {
     
     .llm-interaction {
         padding: 12px;
+    }
+    
+    #startLLMAnalysis {
+        font-size: 14px;
+        padding: 10px 25px;
     }
 }

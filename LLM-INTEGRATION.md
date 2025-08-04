@@ -5,7 +5,7 @@
 1. **智能解盤**：使用 AI 大語言模型對奇門遁甲排盤結果進行深度解讀
 2. **互動問答**：用戶可以針對排盤結果提出具體問題
 3. **多種用途**：支援事業、財運、感情、健康等不同用途的專門分析
-4. **多模型支援**：支援 OpenAI、Claude、通義千問、本地 Ollama 等多種 LLM 服務
+4. **多模型支援**：支援 OpenAI、Claude、Groq、通義千問、本地 Ollama 等多種 LLM 服務
 
 ## 設計架構
 
@@ -56,6 +56,13 @@ LLM_PROVIDER=ollama
 LLM_API_KEY=not_required
 LLM_MODEL=llama3.1:latest
 LLM_BASE_URL=http://localhost:11434/v1
+```
+
+#### Groq (高速推理)
+```env
+LLM_PROVIDER=groq
+LLM_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+LLM_MODEL=mixtral-8x7b-32768
 ```
 
 #### 阿里通義千問

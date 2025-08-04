@@ -1,17 +1,17 @@
-<!-- 宫位内容标准模板 -->
+<!-- 宮位內容標準模板 -->
 <div class="gong-content">
     <!-- 地支 - 左上角灰色 -->
     <% var displayDiZhi = typeof diZhi !== 'undefined' ? diZhi : ''; %>
     <div class="gong-dizhi di-zhi"><%= displayDiZhi %></div>
     
-    <!-- 地支2 - 隐藏元素 -->
+    <!-- 地支2 - 隱藏元素 -->
     <div class="gong-dizhi2"></div>
     
     <!-- 八神 - 中上位置 -->
     <% 
     var displayBaShen = typeof baShen !== 'undefined' ? baShen : '';
     var shenColor = "";
-    if (displayBaShen === '太阴') {
+    if (displayBaShen === '太陰') {
         shenColor = "wuxing-shui";
     } else if (displayBaShen === '六合') {
         shenColor = "wuxing-mu";
@@ -23,7 +23,7 @@
         shenColor = "wuxing-tu";
     } else if (displayBaShen === '九天') {
         shenColor = "wuxing-tu";
-    } else if (displayBaShen === '腾蛇') {
+    } else if (displayBaShen === '騰蛇') {
         shenColor = "wuxing-huo";
     } else if (displayBaShen === '值符') {
         shenColor = "wuxing-mu";
@@ -31,9 +31,9 @@
     %>
     <div class="gong-bashen <%= shenColor %>"><%= displayBaShen %></div>
     
-    <!-- 天干方位 - 右上角灰色（只显示空标记） -->
+    <!-- 天幹方位 - 右上角灰色（只顯示空標記） -->
     <% 
-    // 空标记 - 用于显示圆形标记
+    // 空標記 - 用於顯示圓形標記
     var circleType = typeof emptyType !== 'undefined' ? emptyType : '';
     var circleContent = typeof emptyContent !== 'undefined' ? emptyContent : '空';
     var showCircle = typeof showEmptyCircle !== 'undefined' ? showEmptyCircle : false;
@@ -44,45 +44,45 @@
         <% } %>
     </div>
     
-    <!-- 天干方位2 - 隐藏元素 -->
+    <!-- 天幹方位2 - 隱藏元素 -->
     <div class="gong-tianganfang2"></div>
     
-    <!-- 八门 - 中间位置 -->
+    <!-- 八門 - 中間位置 -->
     <% 
     var displayBaMen = typeof baMen !== 'undefined' ? baMen : '';
     var menColor = "";
-    if (displayBaMen === '休门') {
+    if (displayBaMen === '休門') {
         menColor = "wuxing-shui";
-    } else if (displayBaMen === '生门') {
+    } else if (displayBaMen === '生門') {
         menColor = "wuxing-mu";
-    } else if (displayBaMen === '伤门') {
+    } else if (displayBaMen === '傷門') {
         menColor = "wuxing-mu";
-    } else if (displayBaMen === '杜门') {
+    } else if (displayBaMen === '杜門') {
         menColor = "wuxing-tu";
-    } else if (displayBaMen === '景门') {
+    } else if (displayBaMen === '景門') {
         menColor = "wuxing-huo";
-    } else if (displayBaMen === '死门') {
+    } else if (displayBaMen === '死門') {
         menColor = "wuxing-tu";
-    } else if (displayBaMen === '惊门') {
+    } else if (displayBaMen === '驚門') {
         menColor = "wuxing-jin";
-    } else if (displayBaMen === '开门') {
+    } else if (displayBaMen === '開門') {
         menColor = "wuxing-jin";
     }
     %>
     <div class="gong-bamen <%= menColor %>"><%= displayBaMen %></div>
     
-    <!-- 宫位名2 - 隐藏元素 -->
+    <!-- 宮位名2 - 隱藏元素 -->
     <div class="gong-gongname2"></div>
     
-    <!-- 九星 - 居中显示 -->
+    <!-- 九星 - 居中顯示 -->
     <% 
     var displayJiuXing = typeof jiuXing !== 'undefined' ? jiuXing : '';
     var xingColor = "";
     if (displayJiuXing === '天蓬') {
         xingColor = "wuxing-shui";
-    } else if (displayJiuXing === '天冲') {
+    } else if (displayJiuXing === '天沖') {
         xingColor = "wuxing-mu";
-    } else if (displayJiuXing === '天辅') {
+    } else if (displayJiuXing === '天輔') {
         xingColor = "wuxing-mu";
     } else if (displayJiuXing === '天英') {
         xingColor = "wuxing-huo";
@@ -98,7 +98,7 @@
         <%= displayJiuXing %>
     </div>
     
-    <!-- 天干 - 右侧显示 -->
+    <!-- 天幹 - 右側顯示 -->
     <% 
     var displayTianPan = typeof tianPan !== 'undefined' ? tianPan : '';
     var tianpanColor = "";
@@ -114,22 +114,22 @@
         tianpanColor = "wuxing-mu";
     }
     
-    // 在某些特殊情况下，天盘干可能不存在
+    // 在某些特殊情況下，天盤幹可能不存在
     var isEmpty = !displayTianPan || displayTianPan === '';
     %>
     <div class="gong-tiangan <%= tianpanColor %>"><%= !isEmpty ? displayTianPan : '' %></div>
     
-    <!-- 宫位名 - 左下角 -->
+    <!-- 宮位名 - 左下角 -->
     <% 
     var displayGongName = typeof gongName !== 'undefined' ? gongName : '';
     var gongColor = "";
     if (displayGongName === '震' || displayGongName === '巽') {
         gongColor = "wuxing-mu";
-    } else if (displayGongName === '离') {
+    } else if (displayGongName === '離') {
         gongColor = "wuxing-huo";
     } else if (displayGongName === '坤' || displayGongName === '艮' || displayGongName === '中') {
         gongColor = "wuxing-tu";
-    } else if (displayGongName === '乾' || displayGongName === '兑') {
+    } else if (displayGongName === '乾' || displayGongName === '兌') {
         gongColor = "wuxing-jin";
     } else if (displayGongName === '坎') {
         gongColor = "wuxing-shui";
@@ -137,11 +137,11 @@
     %>
     <div class="gong-gongname <%= gongColor %>"><%= displayGongName %></div>
     
-    <!-- 宫位数字 - 中下位置 -->
+    <!-- 宮位數字 - 中下位置 -->
     <% var displayGongNumber = typeof gongNumber !== 'undefined' ? gongNumber : ''; %>
     <div class="gong-number"><%= displayGongNumber %></div>
     
-    <!-- 地盘干 - 右下角 -->
+    <!-- 地盤幹 - 右下角 -->
     <% 
     var displayDiPan = typeof diPan !== 'undefined' ? diPan : '';
     var dipanColor = "";
@@ -157,7 +157,7 @@
         dipanColor = "wuxing-mu";
     }
     
-    // 地盘干应该总是存在的，但做一个空值检查
+    // 地盤幹應該總是存在的，但做一個空值檢查
     var isEmptyDiPan = !displayDiPan || displayDiPan === '';
     %>
     <div class="gong-dipan <%= dipanColor %>"><%= !isEmptyDiPan ? displayDiPan : '' %></div>

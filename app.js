@@ -6,7 +6,7 @@ const {Lunar, Solar} = require('lunar-javascript');
 // 載入環境變數
 require('dotenv').config();
 
-// 导入奇门遁甲计算模块
+// 導入奇門遁甲計算模塊
 const qimen = require('./lib/qimen');
 const i18n = require('./lib/i18n');
 const LLMAnalysisService = require('./lib/llm-analysis');
@@ -50,28 +50,28 @@ app.use((req, res, next) => {
     next();
 });
 
-// 首页 - 实时排盘
+// 首頁 - 實時排盤
 app.get('/', async (req, res) => {
-    // 获取当前时间
+    // 獲取當前時間
     const date = new Date();
 
-    // 计算奇门盘
+    // 計算奇門盤
     const options = {
         type: '四柱',
-        method: '时家',
-        purpose: '综合',
-        location: '默认位置'
+        method: '時家',
+        purpose: '綜合',
+        location: '默認位置'
     };
 
     try {
         const qimenPan = qimen.calculate(date, options);
 
-        // 初始化缺失的属性，确保模板不会报错
+        // 初始化缺失的屬性，確保模板不會報錯
         if (!qimenPan.jiuGongAnalysis) {
             qimenPan.jiuGongAnalysis = {};
         }
 
-        // 确保每个宫位都有基本属性
+        // 確保每個宮位都有基本屬性
         for (let i = 1; i <= 9; i++) {
             if (!qimenPan.jiuGongAnalysis[i]) {
                 qimenPan.jiuGongAnalysis[i] = {
@@ -82,40 +82,8 @@ app.get('/', async (req, res) => {
             }
         }
 
-        // LLM 解盤分析
-        let llmAnalysis = null;
-        const enableLLM = req.query.llm !== 'false'; // 預設開啟，可通過 ?llm=false 關閉
-        
-        if (enableLLM && process.env.LLM_API_KEY) {
-            try {
-                const analysisResult = await llmService.analyzeQimen(qimenPan, {
-                    purpose: options.purpose,
-                    language: i18n.getCurrentLanguage()
-                });
-                
-                if (analysisResult.success) {
-                    llmAnalysis = {
-                        content: analysisResult.analysis,
-                        timestamp: analysisResult.timestamp,
-                        provider: analysisResult.provider,
-                        model: analysisResult.model
-                    };
-                } else {
-                    llmAnalysis = {
-                        content: analysisResult.fallback,
-                        error: analysisResult.error,
-                        isFallback: true
-                    };
-                }
-            } catch (error) {
-                console.error('LLM 分析失敗:', error);
-                llmAnalysis = {
-                    content: llmService.getFallbackAnalysis(qimenPan),
-                    error: error.message,
-                    isFallback: true
-                };
-            }
-        }
+        // LLM 功能狀態（不自動調用，改為按需調用）
+        const enableLLM = process.env.LLM_API_KEY ? true : false;
 
         // 傳遞常量給視圖（使用當前語言）
         const currentLang = i18n.getCurrentLanguage();
@@ -124,30 +92,30 @@ app.get('/', async (req, res) => {
         res.locals.BA_MEN = qimen.getBaMenForLang(currentLang);
         res.locals.BA_SHEN = qimen.BA_SHEN;
 
-        // 渲染页面
+        // 渲染頁面
         res.render('index', {
             qimen: qimenPan,
-            llmAnalysis: llmAnalysis,
+            llmAnalysis: null,  // 初始不提供 LLM 分析
             enableLLM: enableLLM
         });
     } catch (error) {
-        console.error('排盘错误:', error);
-        // 返回错误页面
-        res.status(500).send('排盘错误: ' + error.message);
+        console.error('排盤錯誤:', error);
+        // 返回錯誤頁面
+        res.status(500).send('排盤錯誤: ' + error.message);
     }
 });
 
-// 自定义排盘
+// 自定義排盤
 app.get('/custom', async (req, res) => {
-    // 获取请求参数
+    // 獲取請求參數
     const type = req.query.type || '四柱';
-    const method = req.query.method || '时家';
+    const method = req.query.method || '時家';
     const dateStr = req.query.date;
     const timeStr = req.query.time;
-    const location = req.query.location || '默认位置';
-    const purpose = req.query.purpose || '综合';
+    const location = req.query.location || '默認位置';
+    const purpose = req.query.purpose || '綜合';
 
-    // 解析日期时间
+    // 解析日期時間
     let date;
     if (dateStr && timeStr) {
         date = new Date(`${dateStr}T${timeStr}`);
@@ -155,13 +123,13 @@ app.get('/custom', async (req, res) => {
         date = new Date();
     }
 
-    // 检查日期是否有效
+    // 檢查日期是否有效
     if (isNaN(date.getTime())) {
-        return res.status(400).send('无效的日期时间');
+        return res.status(400).send('無效的日期時間');
     }
 
     try {
-        // 计算奇门盘
+        // 計算奇門盤
         const options = {
             type,
             method,
@@ -171,41 +139,15 @@ app.get('/custom', async (req, res) => {
 
         const qimenPan = qimen.calculate(date, options);
 
-        // LLM 解盤分析
-        let llmAnalysis = null;
-        const enableLLM = req.query.llm !== 'false';
-        
-        if (enableLLM && process.env.LLM_API_KEY) {
-            try {
-                const analysisResult = await llmService.analyzeQimen(qimenPan, {
-                    purpose: purpose,
-                    language: i18n.getCurrentLanguage()
-                });
-                
-                if (analysisResult.success) {
-                    llmAnalysis = {
-                        content: analysisResult.analysis,
-                        timestamp: analysisResult.timestamp,
-                        provider: analysisResult.provider,
-                        model: analysisResult.model
-                    };
-                }
-            } catch (error) {
-                console.error('LLM 分析失敗:', error);
-                llmAnalysis = {
-                    content: llmService.getFallbackAnalysis(qimenPan),
-                    error: error.message,
-                    isFallback: true
-                };
-            }
-        }
+        // LLM 功能狀態（不自動調用）
+        const enableLLM = process.env.LLM_API_KEY ? true : false;
 
-        // 初始化缺失的属性，确保模板不会报错
+        // 初始化缺失的屬性，確保模板不會報錯
         if (!qimenPan.jiuGongAnalysis) {
             qimenPan.jiuGongAnalysis = {};
         }
 
-        // 确保每个宫位都有基本属性
+        // 確保每個宮位都有基本屬性
         for (let i = 1; i <= 9; i++) {
             if (!qimenPan.jiuGongAnalysis[i]) {
                 qimenPan.jiuGongAnalysis[i] = {
@@ -223,30 +165,30 @@ app.get('/custom', async (req, res) => {
         res.locals.BA_MEN = qimen.getBaMenForLang(currentLang);
         res.locals.BA_SHEN = qimen.BA_SHEN;
 
-        // 渲染页面
+        // 渲染頁面
         res.render('index', {
             qimen: qimenPan,
-            llmAnalysis: llmAnalysis,
+            llmAnalysis: null,  // 初始不提供 LLM 分析
             enableLLM: enableLLM
         });
     } catch (error) {
-        console.error('自定义排盘错误:', error);
-        // 返回错误页面
-        res.status(500).send('排盘错误: ' + error.message);
+        console.error('自定義排盤錯誤:', error);
+        // 返回錯誤頁面
+        res.status(500).send('排盤錯誤: ' + error.message);
     }
 });
 
-// API接口 - 获取奇门排盘数据
+// API接口 - 獲取奇門排盤數據
 app.get('/api/qimen', (req, res) => {
-    // 获取请求参数
+    // 獲取請求參數
     const type = req.query.type || '四柱';
-    const method = req.query.method || '时家';
+    const method = req.query.method || '時家';
     const dateStr = req.query.date;
     const timeStr = req.query.time;
-    const location = req.query.location || '默认位置';
-    const purpose = req.query.purpose || '综合';
+    const location = req.query.location || '默認位置';
+    const purpose = req.query.purpose || '綜合';
 
-    // 解析日期时间
+    // 解析日期時間
     let date;
     if (dateStr && timeStr) {
         date = new Date(`${dateStr}T${timeStr}`);
@@ -254,13 +196,13 @@ app.get('/api/qimen', (req, res) => {
         date = new Date();
     }
 
-    // 检查日期是否有效
+    // 檢查日期是否有效
     if (isNaN(date.getTime())) {
-        return res.status(400).json({error: '无效的日期时间'});
+        return res.status(400).json({error: '無效的日期時間'});
     }
 
     try {
-        // 计算奇门盘
+        // 計算奇門盤
         const options = {
             type,
             method,
@@ -270,12 +212,12 @@ app.get('/api/qimen', (req, res) => {
 
         const qimenPan = qimen.calculate(date, options);
 
-        // 初始化缺失的属性，确保模板不会报错
+        // 初始化缺失的屬性，確保模板不會報錯
         if (!qimenPan.jiuGongAnalysis) {
             qimenPan.jiuGongAnalysis = {};
         }
 
-        // 确保每个宫位都有基本属性
+        // 確保每個宮位都有基本屬性
         for (let i = 1; i <= 9; i++) {
             if (!qimenPan.jiuGongAnalysis[i]) {
                 qimenPan.jiuGongAnalysis[i] = {
@@ -286,7 +228,7 @@ app.get('/api/qimen', (req, res) => {
             }
         }
 
-        // 返回JSON数据（包含多語言資訊）
+        // 返回JSON數據（包含多語言資訊）
         const result = {
             ...qimenPan,
             translations: i18n.getAllTranslations(),
@@ -294,8 +236,8 @@ app.get('/api/qimen', (req, res) => {
         };
         res.json(result);
     } catch (error) {
-        console.error('API排盘错误:', error);
-        res.status(500).json({error: '排盘错误', message: error.message});
+        console.error('API排盤錯誤:', error);
+        res.status(500).json({error: '排盤錯誤', message: error.message});
     }
 });
 
@@ -335,7 +277,7 @@ app.get('/api/llm-config', (req, res) => {
     });
 });
 
-// 测试 LLM 连接
+// 測試 LLM 連接
 app.get('/api/llm-test', async (req, res) => {
     try {
         if (!process.env.LLM_API_KEY) {
@@ -345,7 +287,7 @@ app.get('/api/llm-test', async (req, res) => {
             });
         }
 
-        // 使用简单的测试提示词
+        // 使用簡單的測試提示詞
         const testPrompt = '請回答：你好，請簡單介紹奇門遁甲';
         const response = await llmService.callLLM(testPrompt);
         
@@ -364,7 +306,7 @@ app.get('/api/llm-test', async (req, res) => {
     }
 });
 
-// 启动服务器
+// 啟動服務器
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`奇門遁甲在運行中 http://localhost:${port}`);

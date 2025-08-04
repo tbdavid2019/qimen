@@ -13,6 +13,77 @@ $(document).ready(function() {
     maintainAspectRatio();
     $(window).resize(maintainAspectRatio);
 
+    // AI 解盤主要功能
+    $('#startLLMAnalysis').click(function() {
+        performLLMAnalysis();
+    });
+
+    // 重新解盤
+    $('#reAnalyzeButton').click(function() {
+        performLLMAnalysis();
+    });
+
+    // 重試解盤
+    $('#retryLLMAnalysis').click(function() {
+        performLLMAnalysis();
+    });
+
+    // 執行 LLM 解盤的核心函數
+    function performLLMAnalysis() {
+        // 隱藏所有面板
+        $('#llmInitialPanel, #llmResultPanel, #llmErrorPanel').hide();
+        
+        // 顯示載入狀態
+        $('#llmLoadingPanel').show();
+
+        // 準備奇門數據
+        var qimenData = window.qimenData || {};
+
+        // 發送請求到 LLM API
+        $.ajax({
+            url: '/api/llm-analysis',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                qimenData: qimenData,
+                userQuestion: '',
+                purpose: '綜合',
+                lang: $('html').attr('lang') || 'zh-tw'
+            }),
+            success: function(response) {
+                $('#llmLoadingPanel').hide();
+                
+                if (response.success) {
+                    // 顯示成功結果
+                    var cleanContent = response.analysis
+                        .replace(/<[^>]*>/g, '')  // 移除 HTML 標籤
+                        .replace(/\n/g, '<br>');  // 轉換換行為 <br>
+                    
+                    $('#llmAnalysisContent').html(cleanContent);
+                    $('#llmTimestamp').text('解盤時間：' + new Date().toLocaleString('zh-TW'));
+                    
+                    if (response.provider && response.model) {
+                        $('#llmProviderInfo').text(response.provider + ' / ' + response.model);
+                    }
+                    
+                    $('#llmResultPanel').show();
+                } else {
+                    // 顯示錯誤狀態
+                    var fallbackContent = (response.fallback || '請稍後再試。')
+                        .replace(/<[^>]*>/g, '')
+                        .replace(/\n/g, '<br>');
+                    $('#llmErrorContent').html(fallbackContent);
+                    $('#llmErrorPanel').show();
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#llmLoadingPanel').hide();
+                $('#llmErrorContent').html('網路錯誤：' + error);
+                $('#llmErrorPanel').show();
+            }
+        });
+    }
+
     // LLM 問答功能
     $('#askLLMQuestion').click(function() {
         var question = $('#userQuestion').val().trim();
@@ -32,7 +103,7 @@ $(document).ready(function() {
         $responseContent.html('<i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> AI 大師正在思考您的問題...');
 
         // 準備奇門數據（從頁面獲取）
-        var qimenData = extractQimenDataFromPage();
+        var qimenData = window.qimenData || {};
 
         // 發送請求到 LLM API
         $.ajax({
@@ -76,13 +147,6 @@ $(document).ready(function() {
             $('#askLLMQuestion').click();
         }
     });
-
-    // 從頁面提取奇門數據的函數
-    function extractQimenDataFromPage() {
-        // 這裡需要從頁面的各個元素中提取奇門數據
-        // 為了簡化，我們可以通過服務器端直接傳遞數據
-        return window.qimenData || {};
-    }
 });
 
 // CSS 動畫樣式（需要添加到 CSS 文件中）

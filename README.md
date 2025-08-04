@@ -15,7 +15,7 @@
 ### 🤖 AI 智能解盤
 - **AI 大師解盤**：使用大語言模型進行智能解讀
 - **互動問答**：針對排盤結果提出具體問題
-- **多模型支援**：支援 OpenAI、Claude、通義千問、本地 Ollama 等
+- **多模型支援**：支援 OpenAI、Claude、Groq、通義千問、本地 Ollama 等 [更詳細說明](LLM-INTEGRATION.md)
 - **個性化分析**：根據不同用途提供專門建議
 
 ### 🌏 多語言支援
@@ -81,6 +81,14 @@ LLM_MODEL=llama3.1:latest
 LLM_BASE_URL=http://localhost:11434/v1
 ```
 
+#### Groq 配置（高速推理）
+
+```env
+LLM_PROVIDER=groq
+LLM_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+LLM_MODEL=mixtral-8x7b-32768
+```
+
 ## 技術架構
 
 ### 後端技術
@@ -142,7 +150,7 @@ A Node.js-based Qimen Dunjia divination system following the Maoshan school meth
 ### 🤖 AI-Powered Analysis
 - **AI Master Reading**: Intelligent interpretation using Large Language Models
 - **Interactive Q&A**: Ask specific questions about divination results
-- **Multiple AI Models**: Support for OpenAI, Claude, Qwen, local Ollama
+- **Multiple AI Models**: Support for OpenAI, Claude, Groq, Qwen, local Ollama
 - **Personalized Analysis**: Tailored advice for different purposes
 
 ### 🌏 Multi-language Support
@@ -206,6 +214,14 @@ LLM_PROVIDER=ollama
 LLM_API_KEY=not_required
 LLM_MODEL=llama3.1:latest
 LLM_BASE_URL=http://localhost:11434/v1
+```
+
+#### Groq Setup (High-speed Inference)
+
+```env
+LLM_PROVIDER=groq
+LLM_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+LLM_MODEL=mixtral-8x7b-32768
 ```
 
 ## Technical Stack

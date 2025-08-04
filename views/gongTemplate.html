@@ -1,6 +1,6 @@
-<!-- 宫位内容通用模板 -->
+<!-- 宮位內容通用模板 -->
 <div class="gong-content">
-    <!-- 天干 -->
+    <!-- 天幹 -->
     <% if (sanQiLiuYi === '戊' || sanQiLiuYi === '己') { %>
         <div class="item dipan wuxing-tu"><%= sanQiLiuYi %></div>
     <% } else if (sanQiLiuYi === '庚' || sanQiLiuYi === '辛') { %>
@@ -16,7 +16,7 @@
     <% } %>
 
     <!-- 八神 -->
-    <% if (baShen === '太阴') { %>
+    <% if (baShen === '太陰') { %>
         <div class="item shen wuxing-shui"><%= baShen %></div>
     <% } else if (baShen === '六合') { %>
         <div class="item shen wuxing-mu"><%= baShen %></div>
@@ -28,7 +28,7 @@
         <div class="item shen wuxing-tu"><%= baShen %></div>
     <% } else if (baShen === '九天') { %>
         <div class="item shen wuxing-yang"><%= baShen %></div>
-    <% } else if (baShen === '腾蛇') { %>
+    <% } else if (baShen === '騰蛇') { %>
         <div class="item shen wuxing-huo"><%= baShen %></div>
     <% } else if (baShen === '值符') { %>
         <div class="item shen wuxing-mu"><%= baShen %></div>
@@ -36,16 +36,16 @@
         <div class="item shen"><%= baShen %></div>
     <% } %>
 
-    <!-- 八门 -->
-    <% if (baMen === '休门') { %>
+    <!-- 八門 -->
+    <% if (baMen === '休門') { %>
         <div class="item men wuxing-shui"><%= baMen %></div>
-    <% } else if (baMen === '生门' || baMen === '伤门') { %>
+    <% } else if (baMen === '生門' || baMen === '傷門') { %>
         <div class="item men wuxing-mu"><%= baMen %></div>
-    <% } else if (baMen === '杜门' || baMen === '死门') { %>
+    <% } else if (baMen === '杜門' || baMen === '死門') { %>
         <div class="item men wuxing-tu"><%= baMen %></div>
-    <% } else if (baMen === '景门') { %>
+    <% } else if (baMen === '景門') { %>
         <div class="item men wuxing-huo"><%= baMen %></div>
-    <% } else if (baMen === '惊门' || baMen === '开门') { %>
+    <% } else if (baMen === '驚門' || baMen === '開門') { %>
         <div class="item men wuxing-jin"><%= baMen %></div>
     <% } else { %>
         <div class="item men"><%= baMen %></div>
@@ -54,7 +54,7 @@
     <!-- 九星 -->
     <% if (jiuXing === '天蓬') { %>
         <div class="item xing wuxing-shui"><%= jiuXing %></div>
-    <% } else if (jiuXing === '天冲' || jiuXing === '天辅') { %>
+    <% } else if (jiuXing === '天沖' || jiuXing === '天輔') { %>
         <div class="item xing wuxing-mu"><%= jiuXing %></div>
     <% } else if (jiuXing === '天英') { %>
         <div class="item xing wuxing-huo"><%= jiuXing %></div>
@@ -66,7 +66,7 @@
         <div class="item xing wuxing-shui"><%= jiuXing %></div>
     <% } %>
 
-    <!-- 天盘干 -->
+    <!-- 天盤幹 -->
     <% if (tianPan === '戊' || tianPan === '己') { %>
         <div class="item tianpan wuxing-tu"><%= tianPan %></div>
     <% } else if (tianPan === '庚' || tianPan === '辛') { %>

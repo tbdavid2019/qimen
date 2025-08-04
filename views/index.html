@@ -61,39 +61,72 @@
     </nav>
 
     <div class="container">
-        <!-- LLM 解盤結果區塊 -->
-        <% if (enableLLM && llmAnalysis) { %>
+        <!-- AI 解盤區域（按需載入） -->
+        <% if (enableLLM) { %>
         <div class="row" style="margin-bottom: 30px;">
             <div class="col-md-12">
-                <div class="panel panel-<%= llmAnalysis.isFallback ? 'warning' : 'info' %>">
+                <!-- 初始狀態：顯示 AI 解盤按鈕 -->
+                <div id="llmInitialPanel" class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <i class="glyphicon glyphicon-star"></i> AI 大師解盤
-                            <% if (llmAnalysis.provider && llmAnalysis.model) { %>
-                                <small class="pull-right">
-                                    <span class="label label-info"><%= llmAnalysis.provider %> / <%= llmAnalysis.model %></span>
-                                </small>
-                            <% } %>
+                            <small class="pull-right">
+                                <span class="label label-info">智能分析</span>
+                            </small>
+                        </h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <p class="text-muted">點擊下方按鈕，讓 AI 大師為您深度解讀這個奇門盤</p>
+                        <button id="startLLMAnalysis" class="btn btn-primary btn-lg">
+                            <i class="glyphicon glyphicon-star"></i> 開始 AI 解盤
+                        </button>
+                        <div class="text-muted" style="margin-top: 10px; font-size: 12px;">
+                            <i class="glyphicon glyphicon-info-sign"></i> 
+                            AI 將根據當前排盤提供個性化的運勢分析和建議
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 載入狀態 -->
+                <div id="llmLoadingPanel" class="panel panel-info" style="display: none;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> AI 大師解盤中...
                         </h3>
                     </div>
                     <div class="panel-body">
-                        <% if (llmAnalysis.error && llmAnalysis.isFallback) { %>
-                            <div class="alert alert-warning" role="alert">
-                                <strong>注意：</strong> AI 解盤服務暫時不可用，以下為基本分析結果。
+                        <div class="progress progress-striped active">
+                            <div class="progress-bar progress-bar-info" style="width: 100%">
+                                <span class="sr-only">解盤中...</span>
                             </div>
-                        <% } %>
-                        
-                        <div class="llm-analysis-content">
-                            <%- llmAnalysis.content.replace(/\n/g, '<br>') %>
+                        </div>
+                        <div class="text-center">
+                            <p><i class="glyphicon glyphicon-hourglass"></i> AI 大師正在仔細分析您的奇門盤...</p>
+                            <p class="text-muted">這可能需要幾秒鐘時間，請稍候</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 解盤結果 -->
+                <div id="llmResultPanel" class="panel panel-success" style="display: none;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <i class="glyphicon glyphicon-star"></i> AI 大師解盤結果
+                            <small class="pull-right">
+                                <span id="llmProviderInfo" class="label label-info"></span>
+                            </small>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="llmAnalysisContent" class="llm-analysis-content">
+                            <!-- AI 解盤結果將顯示在這裡 -->
                         </div>
                         
-                        <% if (llmAnalysis.timestamp) { %>
-                            <div class="text-muted" style="margin-top: 15px; font-size: 12px;">
-                                解盤時間：<%= new Date(llmAnalysis.timestamp).toLocaleString('zh-TW') %>
-                            </div>
-                        <% } %>
+                        <div id="llmTimestamp" class="text-muted" style="margin-top: 15px; font-size: 12px;">
+                            <!-- 解盤時間將顯示在這裡 -->
+                        </div>
                         
-                        <!-- LLM 互動區域 -->
+                        <!-- 互動問答區域 -->
                         <div class="llm-interaction" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
                             <div class="form-group">
                                 <label for="userQuestion">有特定問題想問？</label>
@@ -113,11 +146,40 @@
                                 <div class="text-muted response-time" style="font-size: 12px;"></div>
                             </div>
                         </div>
+
+                        <!-- 重新解盤按鈕 -->
+                        <div class="text-center" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                            <button id="reAnalyzeButton" class="btn btn-default">
+                                <i class="glyphicon glyphicon-refresh"></i> 重新解盤
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 錯誤狀態 -->
+                <div id="llmErrorPanel" class="panel panel-warning" style="display: none;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <i class="glyphicon glyphicon-exclamation-sign"></i> AI 解盤暫時不可用
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="alert alert-warning">
+                            <strong>抱歉！</strong> AI 解盤服務暫時不可用，請稍後再試。
+                        </div>
+                        <div id="llmErrorContent" class="text-muted">
+                            <!-- 錯誤信息將顯示在這裡 -->
+                        </div>
+                        <div class="text-center" style="margin-top: 15px;">
+                            <button id="retryLLMAnalysis" class="btn btn-warning">
+                                <i class="glyphicon glyphicon-repeat"></i> 重試
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <% } else if (enableLLM) { %>
+        <% } else { %>
         <div class="row" style="margin-bottom: 30px;">
             <div class="col-md-12">
                 <div class="alert alert-info" role="alert">
