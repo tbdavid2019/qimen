@@ -68,35 +68,32 @@ app.get('/', async (req, res) => {
             console.log(`使用前端時間: ${date.toISOString()} (timestamp: ${req.query.timestamp})`);
         }
     } else {
-        // 預設使用伺服器時間（可能會有時區問題）
+        // 預設使用伺服器時間，但需要根據用戶時區調整
         date = new Date();
-        if (process.env.NODE_ENV !== 'production') {
-            console.log(`使用伺服器時間: ${date.toISOString()}`);
-        }
-    }
-    
-    // 獲取時區偏移參數
-    const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : null;
-    
-    // 如果有時區偏移但沒有時間戳，調整服務器時間到用戶本地時間
-    if (timezoneOffset !== null && !req.query.timestamp) {
-        const serverOffset = date.getTimezoneOffset(); // 服務器時區偏移（分鐘）
-        const userOffset = timezoneOffset; // 用戶時區偏移（分鐘）
         
-        // 只有當伺服器和用戶時區不同時才調整
-        if (serverOffset !== userOffset) {
+        // 獲取時區偏移參數
+        const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : null;
+        
+        if (timezoneOffset !== null) {
+            // 計算時區差異並調整時間
+            const serverOffset = date.getTimezoneOffset(); // 服務器時區偏移（分鐘）
+            const userOffset = timezoneOffset; // 用戶時區偏移（分鐘）
+            
+            // 調整到用戶本地時間
             const offsetDiff = serverOffset - userOffset;
             date = new Date(date.getTime() + offsetDiff * 60000);
+            
             if (process.env.NODE_ENV !== 'production') {
-                console.log(`調整時區: 伺服器偏移=${serverOffset}, 用戶偏移=${userOffset}, 差異=${offsetDiff}, 調整後時間=${date.toISOString()}`);
+                console.log(`時區調整: 伺服器偏移=${serverOffset}, 用戶偏移=${userOffset}, 差異=${offsetDiff}分鐘`);
+                console.log(`調整前伺服器時間: ${serverTime.toISOString()}`);
+                console.log(`調整後用戶時間: ${date.toISOString()}`);
             }
         } else {
             if (process.env.NODE_ENV !== 'production') {
-                console.log(`時區相同，無需調整: 伺服器偏移=${serverOffset}, 用戶偏移=${userOffset}`);
+                console.log(`使用伺服器時間，無時區資訊: ${date.toISOString()}`);
             }
         }
     }
-    
     if (process.env.NODE_ENV !== 'production') {
         console.log(`最終使用時間: ${date.toISOString()}, 本地表示: ${date.toString()}`);
     }
@@ -358,6 +355,38 @@ app.get('/api/llm-test', async (req, res) => {
             error: error.message 
         });
     }
+});
+
+// 時區調試 API
+app.get('/api/timezone-debug', (req, res) => {
+    const serverTime = new Date();
+    const userTimestamp = req.query.timestamp ? new Date(parseInt(req.query.timestamp)) : null;
+    const userTimezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : null;
+    
+    const debugInfo = {
+        server: {
+            time: serverTime.toString(),
+            utc: serverTime.toUTCString(),
+            iso: serverTime.toISOString(),
+            timestamp: serverTime.getTime(),
+            timezoneOffset: serverTime.getTimezoneOffset(),
+            timezone: process.env.TZ || 'system default'
+        },
+        user: {
+            timestamp: req.query.timestamp,
+            timezoneOffset: req.query.timezoneOffset,
+            calculatedTime: userTimestamp ? userTimestamp.toString() : null,
+            calculatedUTC: userTimestamp ? userTimestamp.toUTCString() : null
+        },
+        environment: {
+            nodeEnv: process.env.NODE_ENV,
+            platform: process.platform,
+            isVercel: !!process.env.VERCEL,
+            timezone: process.env.TZ
+        }
+    };
+    
+    res.json(debugInfo);
 });
 
 // 啟動服務器

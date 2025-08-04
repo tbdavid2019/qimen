@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "env": {
+    "TZ": "UTC"
+  },
   "builds": [
     {
       "src": "app.js",
