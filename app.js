@@ -57,8 +57,49 @@ app.get('/start', (req, res) => {
 
 // 首頁 - 實時排盤
 app.get('/', async (req, res) => {
-    // 獲取當前時間
-    const date = new Date();
+    // 獲取時間參數（來自前端或使用伺服器時間）
+    let date;
+    const serverTime = new Date();
+    
+    if (req.query.timestamp) {
+        // 使用前端傳遞的時間戳（已經是用戶本地時間）
+        date = new Date(parseInt(req.query.timestamp));
+        if (process.env.NODE_ENV !== 'production') {
+            console.log(`使用前端時間: ${date.toISOString()} (timestamp: ${req.query.timestamp})`);
+        }
+    } else {
+        // 預設使用伺服器時間（可能會有時區問題）
+        date = new Date();
+        if (process.env.NODE_ENV !== 'production') {
+            console.log(`使用伺服器時間: ${date.toISOString()}`);
+        }
+    }
+    
+    // 獲取時區偏移參數
+    const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : null;
+    
+    // 如果有時區偏移但沒有時間戳，調整服務器時間到用戶本地時間
+    if (timezoneOffset !== null && !req.query.timestamp) {
+        const serverOffset = date.getTimezoneOffset(); // 服務器時區偏移（分鐘）
+        const userOffset = timezoneOffset; // 用戶時區偏移（分鐘）
+        
+        // 只有當伺服器和用戶時區不同時才調整
+        if (serverOffset !== userOffset) {
+            const offsetDiff = serverOffset - userOffset;
+            date = new Date(date.getTime() + offsetDiff * 60000);
+            if (process.env.NODE_ENV !== 'production') {
+                console.log(`調整時區: 伺服器偏移=${serverOffset}, 用戶偏移=${userOffset}, 差異=${offsetDiff}, 調整後時間=${date.toISOString()}`);
+            }
+        } else {
+            if (process.env.NODE_ENV !== 'production') {
+                console.log(`時區相同，無需調整: 伺服器偏移=${serverOffset}, 用戶偏移=${userOffset}`);
+            }
+        }
+    }
+    
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`最終使用時間: ${date.toISOString()}, 本地表示: ${date.toString()}`);
+    }
     
     // 獲取時間精度模式參數
     const timePrecisionMode = req.query.timePrecisionMode || 'traditional';

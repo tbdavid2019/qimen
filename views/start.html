@@ -341,16 +341,26 @@
             // 獲取當前選擇的時間精度模式
             const selectedMode = document.querySelector('input[name="timeMode"]:checked').value;
             
-            // 跳轉到主頁面，帶上時間精度參數
-            window.location.href = `/?timePrecisionMode=${selectedMode}&fromMeditation=true`;
+            // 獲取本地時間參數
+            const now = new Date();
+            const timestamp = now.getTime();
+            const timezoneOffset = now.getTimezoneOffset();
+            
+            // 跳轉到主頁面，帶上時間精度參數和本地時間
+            window.location.href = `/?timePrecisionMode=${selectedMode}&fromMeditation=true&timestamp=${timestamp}&timezoneOffset=${timezoneOffset}`;
         }
         
         function skipToIndex() {
             // 獲取當前選擇的時間精度模式
             const selectedMode = document.querySelector('input[name="timeMode"]:checked').value;
             
+            // 獲取本地時間參數
+            const now = new Date();
+            const timestamp = now.getTime();
+            const timezoneOffset = now.getTimezoneOffset();
+            
             // 直接跳轉到主頁面
-            window.location.href = `/?timePrecisionMode=${selectedMode}`;
+            window.location.href = `/?timePrecisionMode=${selectedMode}&timestamp=${timestamp}&timezoneOffset=${timezoneOffset}`;
         }
         
         // 模式切換事件

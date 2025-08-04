@@ -1,4 +1,10 @@
 $(document).ready(function() {
+    // 檢查是否需要用本地時間重新載入頁面
+    checkAndAdjustTimezone();
+    
+    // 顯示時區調試信息
+    displayTimezoneDebugInfo();
+    
     // 頁面載入時檢查URL參數並設置正確的模式
     const urlParams = new URLSearchParams(window.location.search);
     const currentMode = urlParams.get('timePrecisionMode') || 'traditional';
@@ -77,6 +83,13 @@ $(document).ready(function() {
         } else {
             // 進階模式時設置參數
             currentUrl.searchParams.set('timePrecisionMode', mode);
+        }
+        
+        // 確保保持本地時間參數
+        if (!currentUrl.searchParams.has('timestamp')) {
+            const now = new Date();
+            currentUrl.searchParams.set('timestamp', now.getTime().toString());
+            currentUrl.searchParams.set('timezoneOffset', now.getTimezoneOffset().toString());
         }
         
         window.location.href = currentUrl.toString();
@@ -237,6 +250,51 @@ $(document).ready(function() {
         }
     });
 });
+
+// 檢查並調整時區
+function checkAndAdjustTimezone() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // 如果URL中已經有timestamp參數，說明已經用本地時間載入了，不需要重複調整
+    if (urlParams.has('timestamp')) {
+        return;
+    }
+    
+    // 獲取用戶本地時間和時區
+    const now = new Date();
+    const timestamp = now.getTime();
+    const timezoneOffset = now.getTimezoneOffset(); // 分鐘為單位，UTC偏移
+    
+    // 添加時間和時區參數到URL
+    urlParams.set('timestamp', timestamp.toString());
+    urlParams.set('timezoneOffset', timezoneOffset.toString());
+    
+    // 保持其他參數不變，重新載入頁面
+    const newUrl = window.location.pathname + '?' + urlParams.toString();
+    
+    // 避免無限重新載入：檢查URL是否真的需要改變
+    if (window.location.search !== '?' + urlParams.toString()) {
+        console.log('調整時區，使用本地時間重新載入頁面...');
+        window.location.href = newUrl;
+    }
+}
+
+// 顯示時區調試信息
+function displayTimezoneDebugInfo() {
+    const localTimeElement = document.getElementById('localTime');
+    if (localTimeElement) {
+        const now = new Date();
+        const timeString = now.toLocaleString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short'
+        });
+        localTimeElement.textContent = timeString;
+    }
+}
 
 // CSS 動畫樣式（需要添加到 CSS 文件中）
 // .glyphicon-refresh-animate {

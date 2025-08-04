@@ -231,6 +231,13 @@
                         <strong>時間精度:</strong> <span id="timePrecision">傳統模式</span>
                         <span id="timeSegmentInfo" style="display: none;"></span>
                     </div>
+                    <% if (process.env.NODE_ENV !== 'production') { %>
+                    <div class="info-item" style="font-size: 0.9em; color: #666;">
+                        <strong>時區調試:</strong> 
+                        <span title="用戶本地時間">本地: <span id="localTime"></span></span> |
+                        <span title="伺服器使用時間">計算: <span id="calculationTime"><%= qimen.basicInfo && qimen.basicInfo.date || '' %></span></span>
+                    </div>
+                    <% } %>
                     <div class="info-item">
                         <strong>公曆:</strong> <span id="solarDate"><%= qimen.basicInfo && qimen.basicInfo.date || '' %></span>
                     </div>
