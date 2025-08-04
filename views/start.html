@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>奇門遁甲 - 靜心起盤</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-new.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .meditation-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .main-title {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .meditation-steps {
+            margin: 40px 0;
+            text-align: left;
+        }
+        
+        .step {
+            margin: 20px 0;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .step:nth-child(1) { animation-delay: 0.2s; }
+        .step:nth-child(2) { animation-delay: 0.4s; }
+        .step:nth-child(3) { animation-delay: 0.6s; }
+        .step:nth-child(4) { animation-delay: 0.8s; }
+        
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #ffd700;
+            color: #1e3c72;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .meditation-timer {
+            margin: 30px 0;
+            display: none;
+        }
+        
+        .timer-display {
+            font-size: 4em;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 20px 0;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .breathing-guide {
+            font-size: 1.5em;
+            margin: 20px 0;
+            opacity: 0.8;
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border: none;
+            color: #1e3c72;
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 15px 40px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            margin: 20px 10px;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+        }
+        
+        .start-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .skip-btn {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            font-size: 1em;
+            padding: 10px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .skip-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+        
+        .time-mode-selection .btn {
+            transition: all 0.3s ease;
+        }
+        
+        .time-mode-selection .btn.active {
+            background: rgba(255, 215, 0, 0.3) !important;
+            border-color: #ffd700 !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .time-mode-selection .btn:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            transform: translateY(-1px);
+        }
+        
+        .floating-symbols {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .symbol {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-10px) rotate(-5deg); }
+            75% { transform: translateY(-30px) rotate(3deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .breathing-circle {
+            width: 100px;
+            height: 100px;
+            border: 3px solid #ffd700;
+            border-radius: 50%;
+            margin: 20px auto;
+            animation: breathe 4s infinite ease-in-out;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 浮動符號背景 -->
+    <div class="floating-symbols">
+        <div class="symbol" style="top: 10%; left: 10%; font-size: 3em;">☯</div>
+        <div class="symbol" style="top: 20%; right: 15%; font-size: 2em;">卦</div>
+        <div class="symbol" style="bottom: 30%; left: 20%; font-size: 2.5em;">易</div>
+        <div class="symbol" style="top: 60%; right: 25%; font-size: 2em;">陰</div>
+        <div class="symbol" style="bottom: 20%; right: 10%; font-size: 3em;">陽</div>
+        <div class="symbol" style="top: 40%; left: 5%; font-size: 2em;">遁</div>
+        <div class="symbol" style="bottom: 50%; left: 80%; font-size: 2.5em;">甲</div>
+    </div>
+
+    <div class="meditation-container">
+        <!-- 主標題 -->
+        <h1 class="main-title">奇門遁甲</h1>
+        <p class="subtitle">靜心問事，感應天機</p>
+
+        <!-- 冥想步驟 -->
+        <div class="meditation-steps" id="stepsContainer">
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>靜心凝神</strong><br>
+                請選擇一個安靜的環境，讓心境平和下來
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>專注問題</strong><br>
+                在心中清晰地想著您要問的問題，越具體越好
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>深呼吸調息</strong><br>
+                緩慢深呼吸三次，讓思緒更加清明
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>專注當下</strong><br>
+                感受此時此刻的時間能量，準備接收天機指引
+            </div>
+        </div>
+
+        <!-- 冥想計時器 -->
+        <div class="meditation-timer" id="timerContainer">
+            <div class="breathing-circle"></div>
+            <div class="timer-display" id="timerDisplay">60</div>
+            <div class="breathing-guide" id="breathingGuide">深呼吸...</div>
+            <p>請專注於您的問題，當您準備好時點擊開始排盤</p>
+        </div>
+
+        <!-- 操作按鈕 -->
+        <div class="action-buttons">
+            <button class="start-btn" id="startMeditationBtn" onclick="startMeditation()">
+                <i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>
+                開始冥想
+            </button>
+            <button class="start-btn" id="startDivinationBtn" onclick="startDivination()" style="display: none;">
+                <i class="glyphicon glyphicon-star" style="margin-right: 5px;"></i>
+                開始排盤
+            </button>
+            <br>
+            <button class="skip-btn" onclick="skipToIndex()">跳過冥想，直接排盤</button>
+        </div>
+
+        <!-- 時間精度選擇 -->
+        <div class="time-mode-selection" style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+            <h4 style="margin-bottom: 15px; color: #ffd700;">⚙️ 時間精度模式</h4>
+            <div class="btn-group" data-toggle="buttons" style="width: 100%;">
+                <label class="btn btn-default active" id="traditionalModeBtn" style="width: 50%; background: rgba(255,255,255,0.2); border: 1px solid #ffd700; color: white; margin-right: 5px;">
+                    <input type="radio" name="timeMode" value="traditional" checked> 
+                    傳統模式 (2小時)
+                </label>
+                <label class="btn btn-default" id="advancedModeBtn" style="width: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.5); color: white;">
+                    <input type="radio" name="timeMode" value="advanced"> 
+                    進階模式 (13分鐘)
+                </label>
+            </div>
+            <p style="font-size: 0.9em; margin-top: 10px; opacity: 0.8;">
+                傳統模式每2小時變化一次，進階模式每13分鐘微調一次
+            </p>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JavaScript -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script>
+        let meditationTimer;
+        let timeLeft = 60;
+        let breathing = true;
+        
+        function startMeditation() {
+            // 隱藏步驟和開始按鈕
+            document.getElementById('stepsContainer').style.display = 'none';
+            document.getElementById('startMeditationBtn').style.display = 'none';
+            
+            // 顯示計時器
+            document.getElementById('timerContainer').style.display = 'block';
+            
+            // 開始計時
+            startTimer();
+        }
+        
+        function startTimer() {
+            document.getElementById('startDivinationBtn').style.display = 'inline-block';
+            
+            meditationTimer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerDisplay').textContent = timeLeft;
+                
+                // 呼吸指導
+                if (timeLeft % 8 === 0) {
+                    document.getElementById('breathingGuide').textContent = '深吸氣...';
+                } else if (timeLeft % 4 === 0) {
+                    document.getElementById('breathingGuide').textContent = '慢呼氣...';
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(meditationTimer);
+                    document.getElementById('timerDisplay').textContent = '準備就緒';
+                    document.getElementById('breathingGuide').textContent = '您已準備好接收天機指引';
+                    
+                    // 自動高亮開始排盤按鈕
+                    const btn = document.getElementById('startDivinationBtn');
+                    btn.style.animation = 'pulse 2s infinite';
+                }
+            }, 1000);
+        }
+        
+        function startDivination() {
+            // 獲取當前選擇的時間精度模式
+            const selectedMode = document.querySelector('input[name="timeMode"]:checked').value;
+            
+            // 跳轉到主頁面，帶上時間精度參數
+            window.location.href = `/?timePrecisionMode=${selectedMode}&fromMeditation=true`;
+        }
+        
+        function skipToIndex() {
+            // 獲取當前選擇的時間精度模式
+            const selectedMode = document.querySelector('input[name="timeMode"]:checked').value;
+            
+            // 直接跳轉到主頁面
+            window.location.href = `/?timePrecisionMode=${selectedMode}`;
+        }
+        
+        // 模式切換事件
+        document.getElementById('traditionalModeBtn').addEventListener('click', function() {
+            const advancedBtn = document.getElementById('advancedModeBtn');
+            advancedBtn.classList.remove('active');
+            advancedBtn.style.background = 'rgba(255,255,255,0.1)';
+            advancedBtn.style.borderColor = 'rgba(255,255,255,0.5)';
+            
+            this.classList.add('active');
+            this.style.background = 'rgba(255,215,0,0.3)';
+            this.style.borderColor = '#ffd700';
+        });
+        
+        document.getElementById('advancedModeBtn').addEventListener('click', function() {
+            const traditionalBtn = document.getElementById('traditionalModeBtn');
+            traditionalBtn.classList.remove('active');
+            traditionalBtn.style.background = 'rgba(255,255,255,0.1)';
+            traditionalBtn.style.borderColor = 'rgba(255,255,255,0.5)';
+            
+            this.classList.add('active');
+            this.style.background = 'rgba(255,215,0,0.3)';
+            this.style.borderColor = '#ffd700';
+        });
+        
+        // 鍵盤事件
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                const meditationBtn = document.getElementById('startMeditationBtn');
+                const divinationBtn = document.getElementById('startDivinationBtn');
+                
+                if (meditationBtn.style.display !== 'none') {
+                    startMeditation();
+                } else if (divinationBtn.style.display !== 'none') {
+                    startDivination();
+                }
+            }
+        });
+        
+        // 頁面載入動畫
+        window.addEventListener('load', function() {
+            document.querySelector('.meditation-container').style.opacity = '0';
+            document.querySelector('.meditation-container').style.transform = 'translateY(50px)';
+            
+            setTimeout(() => {
+                document.querySelector('.meditation-container').style.transition = 'all 1s ease';
+                document.querySelector('.meditation-container').style.opacity = '1';
+                document.querySelector('.meditation-container').style.transform = 'translateY(0)';
+            }, 100);
+            
+            // 檢查是否來自 index 頁面
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('fromIndex') === 'true') {
+                setTimeout(() => {
+                    const welcomeMessage = document.createElement('div');
+                    welcomeMessage.innerHTML = '<p style="color: #ffd700; font-size: 1.1em; margin: 20px 0;">✨ 歡迎進入靜心模式，讓我們一起感應天機 ✨</p>';
+                    document.querySelector('.subtitle').after(welcomeMessage);
+                }, 1500);
+            }
+        });
+    </script>
+</body>
+
+</html>

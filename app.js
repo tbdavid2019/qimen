@@ -50,6 +50,11 @@ app.use((req, res, next) => {
     next();
 });
 
+// 靜心起盤頁面
+app.get('/start', (req, res) => {
+    res.render('start');
+});
+
 // 首頁 - 實時排盤
 app.get('/', async (req, res) => {
     // 獲取當前時間
