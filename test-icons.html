@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>圖示測試頁面</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/css/style-new.css">
+</head>
+<body>
+    <div class="container" style="margin-top: 50px;">
+        <h2>圖示相容性測試</h2>
+        <p>這個頁面用來測試 Android 設備上的圖示顯示情況</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>原始 Glyphicons</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <i class="glyphicon glyphicon-star"></i> 星號圖示
+                    </li>
+                    <li class="list-group-item">
+                        <i class="glyphicon glyphicon-heart"></i> 愛心圖示
+                    </li>
+                    <li class="list-group-item">
+                        <i class="glyphicon glyphicon-refresh"></i> 重新整理圖示
+                    </li>
+                    <li class="list-group-item">
+                        <i class="glyphicon glyphicon-comment"></i> 留言圖示
+                    </li>
+                    <li class="list-group-item">
+                        <i class="glyphicon glyphicon-info-sign"></i> 資訊圖示
+                    </li>
+                    <li class="list-group-item">
+                        <i class="glyphicon glyphicon-time"></i> 時間圖示
+                    </li>
+                    <li class="list-group-item">
+                        <i class="glyphicon glyphicon-dashboard"></i> 儀表板圖示
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>純 Unicode 符號</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">⭐ 星號符號</li>
+                    <li class="list-group-item">❤️ 愛心符號</li>
+                    <li class="list-group-item">🔄 重新整理符號</li>
+                    <li class="list-group-item">💬 留言符號</li>
+                    <li class="list-group-item">ℹ️ 資訊符號</li>
+                    <li class="list-group-item">🕐 時間符號</li>
+                    <li class="list-group-item">📊 儀表板符號</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="alert alert-info" style="margin-top: 30px;">
+            <strong>測試說明：</strong>
+            <ul>
+                <li>如果左側圖示顯示正常，表示 Glyphicons 字體載入成功</li>
+                <li>如果左側圖示無法顯示但右側 Unicode 符號可以顯示，表示需要後備方案</li>
+                <li>Android 設備通常對 Unicode emoji 有很好的支援</li>
+            </ul>
+        </div>
+        
+        <div class="panel panel-default" style="margin-top: 20px;">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="glyphicon glyphicon-star"></i> AI 大師解盤範例
+                </h3>
+            </div>
+            <div class="panel-body">
+                這是修復後的 AI 大師解盤標題，應該在所有設備上都能正常顯示圖示。
+            </div>
+        </div>
+    </div>
+</body>
+</html>

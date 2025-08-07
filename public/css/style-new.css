@@ -738,6 +738,62 @@ body {
     -webkit-animation: spin2 .7s infinite linear;
 }
 
+/* 為 Android 設備提供 glyphicon 的後備方案 */
+.glyphicon-star::before {
+    content: "⭐";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-heart::before {
+    content: "❤️";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-refresh::before {
+    content: "🔄";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-comment::before {
+    content: "💬";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-exclamation-sign::before {
+    content: "⚠️";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-repeat::before {
+    content: "🔄";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-info-sign::before {
+    content: "ℹ️";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-hourglass::before {
+    content: "⏳";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-time::before {
+    content: "🕐";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-dashboard::before {
+    content: "📊";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+/* 確保在 Glyphicons 字體不可用時使用後備方案 */
+.glyphicon {
+    font-family: 'Glyphicons Halflings', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
 @-webkit-keyframes spin2 {
     from { -webkit-transform: rotate(0deg); }
     to { -webkit-transform: rotate(360deg); }
