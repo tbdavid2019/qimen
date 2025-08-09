@@ -8,8 +8,8 @@ $(document).ready(function() {
         
         // 頁面載入時檢查URL參數並設置正確的模式
         const urlParams = new URLSearchParams(window.location.search);
-        const currentMode = urlParams.get('timePrecisionMode') || 'traditional';
-        
+        // 預設直接進入進階模式
+        const currentMode = urlParams.get('timePrecisionMode') || 'advanced';
         // 初始化模式顯示
         initializeTimePrecisionMode(currentMode);
     }
