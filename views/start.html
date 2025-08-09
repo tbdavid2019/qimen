@@ -29,6 +29,10 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            /* 預設隱藏狀態，避免閃爍 */
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease;
         }
         
         .main-title {
@@ -421,11 +425,8 @@
         
         // 頁面載入動畫
         window.addEventListener('load', function() {
-            document.querySelector('.meditation-container').style.opacity = '0';
-            document.querySelector('.meditation-container').style.transform = 'translateY(50px)';
-            
+            // 直接觸發顯示動畫，不需要先隱藏
             setTimeout(() => {
-                document.querySelector('.meditation-container').style.transition = 'all 1s ease';
                 document.querySelector('.meditation-container').style.opacity = '1';
                 document.querySelector('.meditation-container').style.transform = 'translateY(0)';
             }, 100);
