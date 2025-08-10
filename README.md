@@ -96,6 +96,11 @@ LLM_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 LLM_MODEL=mixtral-8x7b-32768
 ```
 
+#### Discord Webhook 配置（可選）
+```env
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
+```
+
 ## 技術架構
 
 ### 後端技術
@@ -116,26 +121,165 @@ LLM_MODEL=mixtral-8x7b-32768
 
 ## API 接口
 
+### Web 界面
 - `GET /`：主頁面（實時排盤）
 - `GET /custom`：自定義排盤
+- `GET /start`：靜心起盤頁面
+
+### LLM AI 分析
 - `POST /api/llm-analysis`：AI 解盤分析
 - `GET /api/llm-config`：LLM 配置狀態
 - `GET /api/llm-test`：測試 LLM 連接
 
+### 外部 API 調用
+- `POST /api/qimen-question`：**奇門問答 API**（供外部系統調用）
+
+### Discord 整合
+- `GET /api/discord-test`：Discord webhook 測試
+
+### 其他
+- `GET /api/qimen`：奇門排盤數據查詢
+- `GET /api/timezone-debug`：時區調試信息
+
+---
+
+## 🚀 外部 API 調用 (v2.0 新功能)
+
+現在您可以通過 API 直接調用奇門問答功能，無需打開網頁界面！
+
+### API 端點
+```
+POST /api/qimen-question
+```
+
+### 請求格式
+```json
+{
+  "question": "今天適合投資嗎？",
+  "datetime": "2024-01-01T10:30:00",  // 可選，預設當前時間
+  "timezone": "+08:00",               // 可選，預設系統時區
+  "mode": "advanced",                 // 可選：traditional/advanced
+  "purpose": "事業"                   // 可選：綜合/事業/感情/財運等
+}
+```
+
+### 回應格式
+```json
+{
+  "success": true,
+  "answer": "根據當前奇門盤分析，今日庚金臨震宮...",
+  "qimenInfo": {
+    "datetime": "2024-01-01T10:30:00.000Z",
+    "localDate": "2024/1/1",
+    "localTime": "上午10:30:00",
+    "mode": "advanced",
+    "purpose": "事業"
+  },
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "timestamp": "2024-01-01T10:30:15.123Z",
+  "discordSent": true
+}
+```
+
+### 使用範例
+
+#### cURL 調用
+```bash
+curl -X POST http://localhost:3000/api/qimen-question \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "今天適合投資嗎？",
+    "mode": "advanced",
+    "purpose": "財運"
+  }'
+```
+
+#### JavaScript 調用
+```javascript
+const response = await fetch('http://localhost:3000/api/qimen-question', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    question: '今天適合投資嗎？',
+    mode: 'advanced',
+    purpose: '財運'
+  })
+});
+
+const result = await response.json();
+console.log(result.answer);
+```
+
+#### Python 調用
+```python
+import requests
+
+response = requests.post('http://localhost:3000/api/qimen-question', 
+  json={
+    'question': '今天適合投資嗎？',
+    'mode': 'advanced', 
+    'purpose': '財運'
+  }
+)
+
+result = response.json()
+print(result['answer'])
+```
+
+### 應用場景
+- **聊天機器人**：Line Bot、Discord Bot、Telegram Bot
+- **第三方整合**：其他占卜網站、應用程式
+- **自動化查詢**：定時獲取每日運勢
+- **批量分析**：研究不同時間點的運勢變化
+
+---
+
+## 🔔 Discord Webhook 整合
+
+系統支援 Discord Webhook 整合，可將用戶問題和 AI 解答自動發送到 Discord 頻道。
+
+### 配置 Discord Webhook
+
+1. 在 Discord 伺服器中創建 Webhook：
+   - 進入頻道設定 → 整合 → Webhook
+   - 點擊「新增 Webhook」
+   - 複製 Webhook URL
+
+2. 在 `.env` 文件中配置：
+```env
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
+```
+
+### Discord 功能
+- **用戶問題通知**：當有人在網頁或 API 提問時，自動發送到 Discord
+- **AI 解答記錄**：LLM 的解盤結果也會發送到 Discord
+- **來源標記**：區分來自網頁界面或外部 API 的請求
+- **格式化顯示**：使用 Discord Embed 格式，美觀易讀
+
+### 測試 Discord 連接
+```bash
+curl http://localhost:3000/api/discord-test
+```
+
 ## 專案結構
 
-```
+```text
 qimen/
-├── app.js                 # 主應用程序
-├── lib/                   # 核心庫
-│   ├── qimen.js          # 奇門遁甲計算引擎
-│   ├── llm-analysis.js   # AI 解盤服務
-│   ├── i18n.js           # 多語言系統
-│   └── constants.js      # 常量定義
-├── views/                 # 模板文件
-├── public/               # 靜態資源
-├── lang/                 # 語言文件
-└── docs/                 # 文檔
+├── app.js                    # 主應用程序
+├── lib/                      # 核心庫
+│   ├── qimen.js             # 奇門遁甲計算引擎
+│   ├── llm-analysis.js      # AI 解盤服務
+│   ├── discord-webhook.js   # Discord Webhook 整合
+│   ├── api-time-handler.js  # API 時間處理工具
+│   ├── i18n.js              # 多語言系統
+│   └── constants.js         # 常量定義
+├── views/                    # 模板文件
+├── public/                   # 靜態資源
+├── lang/                     # 語言文件
+└── .env.example             # 環境變數範例（含 Discord 配置）
 ```
 
 ---
@@ -259,17 +403,19 @@ LLM_MODEL=mixtral-8x7b-32768
 
 ## Project Structure
 
-```
+```text
 qimen/
-├── app.js                 # Main application
-├── lib/                   # Core libraries
-│   ├── qimen.js          # Qimen calculation engine
-│   ├── llm-analysis.js   # AI analysis service
-│   ├── i18n.js           # Multilingual system
-│   └── constants.js      # Constants definition
-├── views/                 # Template files
-├── public/               # Static assets
-├── lang/                 # Language files
-└── docs/                 # Documentation
+├── app.js                    # Main application
+├── lib/                      # Core libraries
+│   ├── qimen.js             # Qimen calculation engine
+│   ├── llm-analysis.js      # AI analysis service
+│   ├── discord-webhook.js   # Discord Webhook integration
+│   ├── api-time-handler.js  # API time handling utility
+│   ├── i18n.js              # Multilingual system
+│   └── constants.js         # Constants definition
+├── views/                    # Template files
+├── public/                   # Static assets
+├── lang/                     # Language files
+└── .env.example             # Environment variables example (with Discord config)
 ```
 

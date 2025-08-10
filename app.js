@@ -11,6 +11,7 @@ const qimen = require('./lib/qimen');
 const i18n = require('./lib/i18n');
 const LLMAnalysisService = require('./lib/llm-analysis');
 const DiscordWebhook = require('./lib/discord-webhook');
+const APITimeHandler = require('./lib/api-time-handler');
 
 // 初始化 LLM 服務
 const llmService = new LLMAnalysisService({
@@ -358,6 +359,167 @@ app.post('/api/llm-analysis', async (req, res) => {
     }
 });
 
+// 奇門問答 API - 遠端 POST 請求接口
+app.post('/api/qimen-question', async (req, res) => {
+    try {
+        const {
+            question,
+            datetime = null,
+            mode = 'advanced',
+            purpose = '綜合',
+            timezone = '+08:00',
+            lang = 'zh-tw'
+        } = req.body;
+
+        // 驗證必需參數
+        if (!question || typeof question !== 'string' || !question.trim()) {
+            return res.status(400).json({
+                success: false,
+                error: '缺少必需參數',
+                message: 'question 參數是必需的且不能為空'
+            });
+        }
+
+        // 驗證時間參數
+        const timeValidation = APITimeHandler.validateTimeParams({ datetime, timezone });
+        if (!timeValidation.valid) {
+            return res.status(400).json({
+                success: false,
+                error: '參數驗證失敗',
+                message: timeValidation.errors.join(', ')
+            });
+        }
+
+        // 生成排盤時間
+        const qimenDate = APITimeHandler.generateQimenDateTime({ datetime, timezone });
+        
+        // 設定語言
+        const supportedLangs = ['zh-tw', 'zh-cn'];
+        if (supportedLangs.includes(lang)) {
+            i18n.setLanguage(lang);
+        } else {
+            i18n.setLanguage('zh-tw');
+        }
+
+        // 排盤計算
+        const options = {
+            type: '四柱',
+            method: '時家',
+            purpose: purpose,
+            location: 'API調用',
+            timePrecisionMode: mode
+        };
+
+        let qimenPan;
+        try {
+            qimenPan = qimen.calculate(qimenDate, options);
+        } catch (qimenError) {
+            console.error('排盤計算錯誤:', qimenError);
+            return res.status(500).json({
+                success: false,
+                error: '排盤計算失敗',
+                message: qimenError.message,
+                fallback: '抱歉，排盤計算出現問題，無法提供基於奇門盤的分析'
+            });
+        }
+
+        // 初始化缺失的屬性
+        if (!qimenPan.jiuGongAnalysis) {
+            qimenPan.jiuGongAnalysis = {};
+        }
+        for (let i = 1; i <= 9; i++) {
+            if (!qimenPan.jiuGongAnalysis[i]) {
+                qimenPan.jiuGongAnalysis[i] = {
+                    direction: '',
+                    gongName: '',
+                    jiXiong: 'ping'
+                };
+            }
+        }
+
+        // 發送問題到 Discord
+        const questionResult = await discordWebhook.sendUserQuestion(question.trim(), qimenPan);
+        let discordQuestionSent = false;
+        if (questionResult.success) {
+            discordQuestionSent = true;
+            console.log('API question sent to Discord successfully');
+        } else if (questionResult.reason !== 'Discord webhook not configured') {
+            console.warn('Failed to send API question to Discord:', questionResult.reason);
+        }
+
+        // LLM 分析
+        let analysisResult;
+        try {
+            analysisResult = await llmService.analyzeQimen(qimenPan, {
+                purpose,
+                userQuestion: question.trim(),
+                language: lang
+            });
+        } catch (llmError) {
+            console.error('LLM 分析錯誤:', llmError);
+            return res.status(500).json({
+                success: false,
+                error: 'LLM 分析失敗',
+                message: llmError.message,
+                qimenInfo: APITimeHandler.formatTimeInfo(qimenDate, timezone),
+                discordSent: discordQuestionSent
+            });
+        }
+
+        // 發送 LLM 結果到 Discord
+        let discordAnalysisSent = false;
+        if (analysisResult.success && analysisResult.analysis) {
+            const analysisDiscordResult = await discordWebhook.sendLLMAnalysis(
+                analysisResult.analysis,
+                qimenPan,
+                question.trim()
+            );
+            if (analysisDiscordResult.success) {
+                discordAnalysisSent = true;
+                console.log('API LLM analysis sent to Discord successfully');
+            } else if (analysisDiscordResult.reason !== 'Discord webhook not configured') {
+                console.warn('Failed to send API LLM analysis to Discord:', analysisDiscordResult.reason);
+            }
+        }
+
+        // 構建返回結果
+        const response = {
+            success: analysisResult.success,
+            question: question.trim(),
+            answer: analysisResult.analysis || analysisResult.fallback || '抱歉，暫時無法提供分析',
+            qimenInfo: {
+                ...APITimeHandler.formatTimeInfo(qimenDate, timezone),
+                mode: mode,
+                purpose: purpose,
+                location: options.location
+            },
+            metadata: {
+                provider: analysisResult.provider || null,
+                model: analysisResult.model || null,
+                language: lang,
+                apiVersion: '1.0'
+            },
+            discord: {
+                questionSent: discordQuestionSent,
+                analysisSent: discordAnalysisSent,
+                enabled: discordWebhook.isEnabled()
+            },
+            timestamp: new Date().toISOString()
+        };
+
+        res.json(response);
+
+    } catch (error) {
+        console.error('奇門問答 API 錯誤:', error);
+        res.status(500).json({
+            success: false,
+            error: '服務器內部錯誤',
+            message: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
 // 獲取 LLM 配置 API
 app.get('/api/llm-config', (req, res) => {
     res.json({
@@ -420,6 +582,130 @@ app.get('/api/llm-test', async (req, res) => {
             error: error.message 
         });
     }
+});
+
+// API 文檔端點
+app.get('/api/docs', (req, res) => {
+    const apiDocs = {
+        title: "奇門遁甲問答 API 文檔",
+        version: "1.0",
+        description: "提供遠端奇門遁甲問答服務的 RESTful API",
+        baseUrl: `${req.protocol}://${req.get('host')}`,
+        endpoints: {
+            qimenQuestion: {
+                method: "POST",
+                path: "/api/qimen-question",
+                description: "提交問題並獲得基於奇門遁甲的 AI 分析回答",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                parameters: {
+                    question: {
+                        type: "string",
+                        required: true,
+                        description: "要詢問的問題",
+                        example: "今天適合投資嗎？"
+                    },
+                    datetime: {
+                        type: "string",
+                        required: false,
+                        description: "指定排盤時間 (ISO 8601 格式)，不提供則使用當前時間",
+                        example: "2024-12-10T14:30:00"
+                    },
+                    mode: {
+                        type: "string",
+                        required: false,
+                        default: "advanced",
+                        description: "時間精度模式",
+                        enum: ["traditional", "advanced"]
+                    },
+                    purpose: {
+                        type: "string",
+                        required: false,
+                        default: "綜合",
+                        description: "問事用途",
+                        example: "事業"
+                    },
+                    timezone: {
+                        type: "string",
+                        required: false,
+                        default: "+08:00",
+                        description: "時區偏移 (±HH:MM 格式)",
+                        example: "+08:00"
+                    },
+                    lang: {
+                        type: "string",
+                        required: false,
+                        default: "zh-tw",
+                        description: "回答語言",
+                        enum: ["zh-tw", "zh-cn"]
+                    }
+                },
+                responseExample: {
+                    success: true,
+                    question: "今天適合投資嗎？",
+                    answer: "根據當前奇門盤分析...",
+                    qimenInfo: {
+                        datetime: "2024-12-10T14:30:00.000Z",
+                        localDate: "2024/12/10",
+                        localTime: "下午2:30:00",
+                        mode: "advanced",
+                        purpose: "綜合"
+                    },
+                    metadata: {
+                        provider: "openai",
+                        model: "gpt-4o-mini",
+                        language: "zh-tw"
+                    },
+                    discord: {
+                        questionSent: true,
+                        analysisSent: true,
+                        enabled: true
+                    }
+                }
+            },
+            discordTest: {
+                method: "GET",
+                path: "/api/discord-test",
+                description: "測試 Discord webhook 連接"
+            },
+            llmConfig: {
+                method: "GET",
+                path: "/api/llm-config",
+                description: "獲取 LLM 和 Discord 配置狀態"
+            }
+        },
+        examples: {
+            curl: `curl -X POST ${req.protocol}://${req.get('host')}/api/qimen-question \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "question": "今天適合投資嗎？",
+    "mode": "advanced",
+    "purpose": "事業"
+  }'`,
+            javascript: `fetch('${req.protocol}://${req.get('host')}/api/qimen-question', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    question: '今天適合投資嗎？',
+    mode: 'advanced',
+    purpose: '事業'
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));`
+        },
+        notes: [
+            "所有時間都基於指定時區進行排盤計算",
+            "如果配置了 Discord webhook，問題和回答會自動發送到 Discord 頻道",
+            "LLM 分析基於真實的奇門遁甲排盤結果",
+            "API 支援即時排盤，每次請求都會重新計算奇門盤"
+        ]
+    };
+
+    res.json(apiDocs);
 });
 
 // 時區調試 API
