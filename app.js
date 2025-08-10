@@ -10,6 +10,7 @@ require('dotenv').config();
 const qimen = require('./lib/qimen');
 const i18n = require('./lib/i18n');
 const LLMAnalysisService = require('./lib/llm-analysis');
+const DiscordWebhook = require('./lib/discord-webhook');
 
 // 初始化 LLM 服務
 const llmService = new LLMAnalysisService({
@@ -17,6 +18,9 @@ const llmService = new LLMAnalysisService({
     apiKey: process.env.LLM_API_KEY,
     model: process.env.LLM_MODEL || 'gpt-4o-mini'
 });
+
+// 初始化 Discord Webhook 服務
+const discordWebhook = new DiscordWebhook();
 
 // 中間件設置
 app.use(express.json());  // 解析 JSON 請求體
@@ -313,11 +317,35 @@ app.post('/api/llm-analysis', async (req, res) => {
             return res.status(400).json({ error: '缺少奇門數據' });
         }
 
+        // 如果有用戶問題，先發送到 Discord
+        if (userQuestion && userQuestion.trim()) {
+            const questionResult = await discordWebhook.sendUserQuestion(userQuestion.trim(), qimenData);
+            if (questionResult.success) {
+                console.log('User question sent to Discord successfully');
+            } else if (questionResult.reason !== 'Discord webhook not configured') {
+                console.warn('Failed to send user question to Discord:', questionResult.reason);
+            }
+        }
+
         const analysisResult = await llmService.analyzeQimen(qimenData, {
             purpose,
             userQuestion,
             language: lang
         });
+
+        // 發送 LLM 解盤結果到 Discord
+        if (analysisResult.success && analysisResult.analysis) {
+            const analysisDiscordResult = await discordWebhook.sendLLMAnalysis(
+                analysisResult.analysis, 
+                qimenData, 
+                userQuestion.trim()
+            );
+            if (analysisDiscordResult.success) {
+                console.log('LLM analysis sent to Discord successfully');
+            } else if (analysisDiscordResult.reason !== 'Discord webhook not configured') {
+                console.warn('Failed to send LLM analysis to Discord:', analysisDiscordResult.reason);
+            }
+        }
 
         res.json(analysisResult);
     } catch (error) {
@@ -336,8 +364,33 @@ app.get('/api/llm-config', (req, res) => {
         enabled: !!process.env.LLM_API_KEY,
         provider: llmService.provider,
         model: llmService.model,
-        supportedProviders: ['openai', 'anthropic', 'ollama', 'qwen']
+        supportedProviders: ['openai', 'anthropic', 'ollama', 'qwen'],
+        discord: {
+            enabled: discordWebhook.isEnabled(),
+            configured: !!process.env.DISCORD_WEBHOOK_URL
+        }
     });
+});
+
+// 測試 Discord webhook
+app.get('/api/discord-test', async (req, res) => {
+    try {
+        if (!discordWebhook.isEnabled()) {
+            return res.json({ 
+                success: false, 
+                message: '未配置 Discord Webhook URL' 
+            });
+        }
+
+        const result = await discordWebhook.sendTestMessage();
+        res.json(result);
+    } catch (error) {
+        res.json({ 
+            success: false, 
+            message: 'Discord webhook 測試失敗', 
+            error: error.message 
+        });
+    }
 });
 
 // 測試 LLM 連接
