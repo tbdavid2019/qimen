@@ -8,8 +8,8 @@ $(document).ready(function() {
         
         // 頁面載入時檢查URL參數並設置正確的模式
         const urlParams = new URLSearchParams(window.location.search);
-        // 預設直接進入進階模式
-        const currentMode = urlParams.get('timePrecisionMode') || 'advanced';
+        // 預設為傳統模式，只有明確指定時才使用進階模式
+        const currentMode = urlParams.get('timePrecisionMode') || 'traditional';
         // 初始化模式顯示
         initializeTimePrecisionMode(currentMode);
     }
@@ -19,14 +19,16 @@ $(document).ready(function() {
         if (mode === 'advanced') {
             $('#traditionalModeBtn').removeClass('active');
             $('#advancedModeBtn').addClass('active');
-            $('input[name="timeMode"][value="advanced"]').prop('checked', true);
+            var radioBtn = $('input[name="timeMode"][value="advanced"]');
+            radioBtn.data('programmatic', true).prop('checked', true);
             $('#advancedModeInfo').show();
             $('#timePrecision').text('進階模式');
             updateTimePrecisionDisplay(mode);
         } else {
             $('#traditionalModeBtn').addClass('active');
             $('#advancedModeBtn').removeClass('active');
-            $('input[name="timeMode"][value="traditional"]').prop('checked', true);
+            var radioBtn = $('input[name="timeMode"][value="traditional"]');
+            radioBtn.data('programmatic', true).prop('checked', true);
             $('#advancedModeInfo').hide();
             $('#timePrecision').text('傳統模式');
             $('#timeSegmentInfo').hide();
@@ -60,19 +62,32 @@ $(document).ready(function() {
 
     // 時間精度模式切換 - radio button change事件
     $('input[name="timeMode"]').change(function() {
+        // 如果是程式設定的，不要重複觸發
+        if ($(this).data('programmatic')) {
+            $(this).removeData('programmatic');
+            return;
+        }
         var selectedMode = $(this).val();
         switchTimePrecisionMode(selectedMode);
     });
 
     // 模式按鈕點擊事件 - 直接處理按鈕點擊
-    $('#traditionalModeBtn').click(function() {
-        $('input[name="timeMode"][value="traditional"]').prop('checked', true);
-        switchTimePrecisionMode('traditional');
+    $('#traditionalModeBtn').click(function(e) {
+        e.preventDefault();
+        if (!$(this).hasClass('active')) {
+            var radioBtn = $('input[name="timeMode"][value="traditional"]');
+            radioBtn.data('programmatic', true).prop('checked', true);
+            switchTimePrecisionMode('traditional');
+        }
     });
     
-    $('#advancedModeBtn').click(function() {
-        $('input[name="timeMode"][value="advanced"]').prop('checked', true);
-        switchTimePrecisionMode('advanced');
+    $('#advancedModeBtn').click(function(e) {
+        e.preventDefault();
+        if (!$(this).hasClass('active')) {
+            var radioBtn = $('input[name="timeMode"][value="advanced"]');
+            radioBtn.data('programmatic', true).prop('checked', true);
+            switchTimePrecisionMode('advanced');
+        }
     });
 
     // 根據時間精度模式重新載入頁面
