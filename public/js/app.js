@@ -40,6 +40,38 @@ $(document).ready(function() {
         $('#customPanForm').submit();
     });
 
+    // 高對比度模式切換
+    $('#contrastToggle').click(function() {
+        $('body').toggleClass('high-contrast-mode');
+        $(this).toggleClass('active');
+        
+        // 保存用戶偏好設定到 localStorage
+        const isHighContrast = $('body').hasClass('high-contrast-mode');
+        localStorage.setItem('highContrastMode', isHighContrast);
+        
+        if (isHighContrast) {
+            $(this).html('<i class="glyphicon glyphicon-adjust"></i> 標準');
+            $(this).attr('title', '切換回標準模式');
+        } else {
+            $(this).html('<i class="glyphicon glyphicon-adjust"></i> 高對比');
+            $(this).attr('title', '切換高對比度模式 (適合色弱用戶)');
+        }
+    });
+
+    // 載入用戶的高對比度偏好設定
+    function loadHighContrastPreference() {
+        const isHighContrast = localStorage.getItem('highContrastMode') === 'true';
+        if (isHighContrast) {
+            $('body').addClass('high-contrast-mode');
+            $('#contrastToggle').addClass('active')
+                .html('<i class="glyphicon glyphicon-adjust"></i> 標準')
+                .attr('title', '切換回標準模式');
+        }
+    }
+
+    // 初始化高對比度設定
+    loadHighContrastPreference();
+
     // 統一的模式切換處理函數
     function switchTimePrecisionMode(mode) {
         if (mode === 'advanced') {

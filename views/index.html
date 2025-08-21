@@ -66,6 +66,11 @@
         </div>
     </nav>
 
+    <!-- 高對比度切換按鈕 -->
+    <button id="contrastToggle" class="contrast-toggle" title="切換高對比度模式 (適合色弱用戶)">
+        <i class="glyphicon glyphicon-adjust"></i> 高對比
+    </button>
+
     <div class="container">
         <!-- AI 問答區域（永遠顯示） -->
         <% if (enableLLM) { %>
@@ -436,6 +441,33 @@
                                     emptyType: 'yellow',
                                     emptyContent: '空'
                                 }) %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 吉凶標記圖例說明 -->
+                    <div class="auspicious-legend">
+                        <h4>宮位吉凶標記說明 (色弱友善設計)</h4>
+                        <div class="auspicious-items">
+                            <div class="auspicious-item">
+                                <div class="auspicious-sample sample-da-ji"></div>
+                                <span class="auspicious-text">大吉 - 深綠斜紋 + ◆</span>
+                            </div>
+                            <div class="auspicious-item">
+                                <div class="auspicious-sample sample-xiao-ji"></div>
+                                <span class="auspicious-text">小吉 - 淺綠點紋 + ♦</span>
+                            </div>
+                            <div class="auspicious-item">
+                                <div class="auspicious-sample sample-ping"></div>
+                                <span class="auspicious-text">平 - 白底灰框 + ○</span>
+                            </div>
+                            <div class="auspicious-item">
+                                <div class="auspicious-sample sample-xiao-xiong"></div>
+                                <span class="auspicious-text">小兇 - 橙色點紋 + ▲</span>
+                            </div>
+                            <div class="auspicious-item">
+                                <div class="auspicious-sample sample-da-xiong"></div>
+                                <span class="auspicious-text">大兇 - 紅色斜紋 + ✖</span>
                             </div>
                         </div>
                     </div>
