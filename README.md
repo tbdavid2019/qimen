@@ -22,6 +22,8 @@ https://qi.david888.com
 ### 🤖 AI 智能解盤
 - **AI 大師解盤**：使用大語言模型進行智能解讀
 - **互動問答**：針對排盤結果提出具體問題
+- **續問功能**：支援多輪對話，AI 會記住對話脈絡，可深入追問細節
+- **清除對話**：一鍵清除對話記錄，開始新的問題
 - **多模型支援**：支援 OpenAI、Claude、Groq、通義千問、本地 Ollama 等 [更詳細說明](LLM-INTEGRATION.md)
 - **個性化分析**：根據不同用途提供專門建議
 
@@ -127,7 +129,7 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOO
 - `GET /start`：靜心起盤頁面
 
 ### LLM AI 分析
-- `POST /api/llm-analysis`：AI 解盤分析
+- `POST /api/llm-analysis`：AI 解盤分析（支援 `conversationHistory` 參數進行多輪對話）
 - `GET /api/llm-config`：LLM 配置狀態
 - `GET /api/llm-test`：測試 LLM 連接
 
@@ -234,6 +236,41 @@ print(result['answer'])
 - **第三方整合**：其他占卜網站、應用程式
 - **自動化查詢**：定時獲取每日運勢
 - **批量分析**：研究不同時間點的運勢變化
+
+---
+
+## 💬 續問功能說明
+
+AI 問答支援多輪對話，讓您可以深入追問細節：
+
+### 使用方式
+1. 輸入第一個問題，AI 回答後會顯示在對話區域
+2. 在輸入框繼續輸入續問問題，AI 會記住之前的對話脈絡
+3. 點擊 🗑️ 按鈕可清除對話記錄，開始新的問題
+
+### 技術細節
+- 對話歷史儲存在瀏覽器端（前端儲存）
+- 最多保留 10 輪對話，避免超過 API token 限制
+- 重新整理頁面會清空對話記錄
+
+### API 調用續問
+```javascript
+// 透過 conversationHistory 參數傳遞對話歷史
+const response = await fetch('/api/llm-analysis', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    qimenData: qimenData,
+    userQuestion: '可以再詳細說明財運部分嗎？',
+    conversationHistory: [
+      { role: 'user', content: '今天運勢如何？' },
+      { role: 'assistant', content: 'AI 的第一個回答...' }
+    ],
+    purpose: '綜合',
+    lang: 'zh-tw'
+  })
+});
+```
 
 ---
 
