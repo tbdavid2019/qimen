@@ -93,6 +93,11 @@
                         </h3>
                     </div>
                     <div class="panel-body">
+                        <!-- 對話歷史區域 -->
+                        <div id="conversationHistory" class="conversation-history" style="display: none; max-height: 400px; overflow-y: auto; margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                            <!-- 對話記錄將動態插入這裡 -->
+                        </div>
+                        
                         <div class="form-group">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="userQuestion" 
@@ -100,6 +105,9 @@
                                 <span class="input-group-btn">
                                     <button class="btn btn-primary" type="button" id="askLLMQuestion">
                                         <i class="glyphicon glyphicon-comment"></i> 詢問
+                                    </button>
+                                    <button class="btn btn-warning" type="button" id="clearConversation" style="display: none;" title="清除對話，開始新問題">
+                                        <i class="glyphicon glyphicon-trash"></i>
                                     </button>
                                 </span>
                             </div>
@@ -112,7 +120,7 @@
                         
                         <div class="text-muted" style="margin-top: 10px; font-size: 12px;">
                             <i class="glyphicon glyphicon-info-sign"></i> 
-                            您可以直接詢問關於當前奇門盤的任何問題，AI 會基於排盤結果給出建議
+                            您可以直接詢問關於當前奇門盤的任何問題，AI 會基於排盤結果給出建議。<strong>支援續問功能</strong>，AI 會記住對話脈絡。
                         </div>
                     </div>
                 </div>

@@ -312,7 +312,7 @@ app.get('/api/qimen', (req, res) => {
 // LLM 解盤 API
 app.post('/api/llm-analysis', async (req, res) => {
     try {
-        const { qimenData, purpose = '綜合', userQuestion = '', lang = 'zh-tw' } = req.body;
+        const { qimenData, purpose = '綜合', userQuestion = '', conversationHistory = [], lang = 'zh-tw' } = req.body;
         
         if (!qimenData) {
             return res.status(400).json({ error: '缺少奇門數據' });
@@ -331,6 +331,7 @@ app.post('/api/llm-analysis', async (req, res) => {
         const analysisResult = await llmService.analyzeQimen(qimenData, {
             purpose,
             userQuestion,
+            conversationHistory,
             language: lang
         });
 

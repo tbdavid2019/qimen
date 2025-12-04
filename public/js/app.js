@@ -251,7 +251,55 @@ $(document).ready(function() {
         });
     }
 
-    // LLM 問答功能
+    // 對話歷史管理
+    var conversationHistory = [];
+    var MAX_HISTORY_LENGTH = 10; // 最多保留 10 輪對話
+
+    // 渲染對話歷史
+    function renderConversationHistory() {
+        var $historyDiv = $('#conversationHistory');
+        var $clearBtn = $('#clearConversation');
+        
+        if (conversationHistory.length === 0) {
+            $historyDiv.hide().empty();
+            $clearBtn.hide();
+            $('#userQuestion').attr('placeholder', '例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？');
+            return;
+        }
+        
+        var html = '';
+        conversationHistory.forEach(function(msg, index) {
+            if (msg.role === 'user') {
+                html += '<div class="conversation-msg user-msg" style="margin-bottom: 10px; text-align: right;">';
+                html += '<span class="label label-primary" style="font-size: 12px;">您</span> ';
+                html += '<span style="background: #337ab7; color: white; padding: 5px 10px; border-radius: 10px; display: inline-block; max-width: 80%; text-align: left;">' + msg.content.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>';
+                html += '</div>';
+            } else {
+                html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 10px;">';
+                html += '<span class="label label-success" style="font-size: 12px;">AI 大師</span><br>';
+                html += '<span style="background: #f5f5f5; padding: 8px 12px; border-radius: 10px; display: inline-block; max-width: 90%; border: 1px solid #ddd;">' + msg.content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') + '</span>';
+                html += '</div>';
+            }
+        });
+        
+        $historyDiv.html(html).show();
+        $clearBtn.show();
+        $('#userQuestion').attr('placeholder', '續問：想了解更多細節？或輸入新問題...');
+        
+        // 滾動到底部
+        $historyDiv.scrollTop($historyDiv[0].scrollHeight);
+    }
+
+    // 清除對話歷史
+    $('#clearConversation').click(function() {
+        if (confirm('確定要清除對話記錄嗎？')) {
+            conversationHistory = [];
+            renderConversationHistory();
+            $('#llmQuestionResponse').hide();
+        }
+    });
+
+    // LLM 問答功能（支援續問）
     $('#askLLMQuestion').click(function() {
         var question = $('#userQuestion').val().trim();
         if (!question) {
@@ -266,13 +314,14 @@ $(document).ready(function() {
 
         // 顯示載入狀態
         $button.prop('disabled', true).html('<i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> 分析中...');
+        $('#clearConversation').prop('disabled', true);
         $responseDiv.show();
         $responseContent.html('<i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> AI 大師正在思考您的問題...');
 
         // 準備奇門數據（從頁面獲取）
         var qimenData = window.qimenData || {};
 
-        // 發送請求到 LLM API
+        // 發送請求到 LLM API（帶上對話歷史）
         $.ajax({
             url: '/api/llm-analysis',
             type: 'POST',
@@ -280,17 +329,30 @@ $(document).ready(function() {
             data: JSON.stringify({
                 qimenData: qimenData,
                 userQuestion: question,
+                conversationHistory: conversationHistory,
                 purpose: '綜合',
                 lang: $('html').attr('lang') || 'zh-tw'
             }),
             success: function(response) {
                 if (response.success) {
-                    // 清理任何可能的 HTML 標籤，然後轉換換行
-                    var cleanContent = response.analysis
-                        .replace(/<[^>]*>/g, '')  // 移除 HTML 標籤
-                        .replace(/\n/g, '<br>');  // 轉換換行為 <br>
-                    $responseContent.html(cleanContent);
-                    $responseTime.text('回答時間：' + new Date().toLocaleString('zh-TW'));
+                    // 將問答加入歷史
+                    conversationHistory.push({ role: 'user', content: question });
+                    conversationHistory.push({ role: 'assistant', content: response.analysis });
+                    
+                    // 限制歷史長度
+                    while (conversationHistory.length > MAX_HISTORY_LENGTH * 2) {
+                        conversationHistory.shift();
+                        conversationHistory.shift();
+                    }
+                    
+                    // 渲染對話歷史
+                    renderConversationHistory();
+                    
+                    // 清空輸入框
+                    $('#userQuestion').val('');
+                    
+                    // 隱藏單獨的回應區（因為已經顯示在對話歷史中）
+                    $responseDiv.hide();
                 } else {
                     var fallbackContent = (response.fallback || '請稍後再試。')
                         .replace(/<[^>]*>/g, '')
@@ -304,6 +366,7 @@ $(document).ready(function() {
             },
             complete: function() {
                 $button.prop('disabled', false).html('<i class="glyphicon glyphicon-comment"></i> 詢問');
+                $('#clearConversation').prop('disabled', false);
             }
         });
     });
