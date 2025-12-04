@@ -8,8 +8,8 @@ $(document).ready(function() {
         
         // 頁面載入時檢查URL參數並設置正確的模式
         const urlParams = new URLSearchParams(window.location.search);
-        // 預設為傳統模式，只有明確指定時才使用進階模式
-        const currentMode = urlParams.get('timePrecisionMode') || 'traditional';
+        // 預設為進階模式，只有明確指定時才切換回傳統模式
+        const currentMode = urlParams.get('timePrecisionMode') || 'advanced';
         // 初始化模式顯示
         initializeTimePrecisionMode(currentMode);
     }
@@ -140,11 +140,11 @@ $(document).ready(function() {
         const seconds = String(now.getSeconds()).padStart(2, '0');
         const userDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
         
-        if (mode === 'traditional') {
-            // 傳統模式時移除參數（因為預設就是傳統模式）
+        if (mode === 'advanced') {
+            // 進階模式為預設，保持 URL 簡潔
             currentUrl.searchParams.delete('timePrecisionMode');
         } else {
-            // 進階模式時設置參數
+            // 傳統模式時顯式帶上參數
             currentUrl.searchParams.set('timePrecisionMode', mode);
         }
         

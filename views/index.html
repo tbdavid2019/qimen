@@ -211,13 +211,13 @@
                 <!-- 時間精度模式選擇器 -->
                 <div class="time-mode-selector" style="margin-bottom: 20px;">
                     <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-default" id="traditionalModeBtn">
-                            <input type="radio" name="timeMode" value="traditional"> 
+                        <label class="btn btn-default <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'active' : '' %>" id="traditionalModeBtn">
+                            <input type="radio" name="timeMode" value="traditional" <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'checked' : '' %>> 
                             <i class="glyphicon glyphicon-time"></i> 傳統模式
                             <small style="display: block; font-size: 11px; color: #666;">以當下時辰起盤（兩小時一盤）</small>
                         </label>
-                        <label class="btn btn-default" id="advancedModeBtn">
-                            <input type="radio" name="timeMode" value="advanced"> 
+                        <label class="btn btn-default <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'active' : '' %>" id="advancedModeBtn">
+                            <input type="radio" name="timeMode" value="advanced" <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'checked' : '' %>> 
                             <i class="glyphicon glyphicon-dashboard"></i> 進階模式
                             <small style="display: block; font-size: 11px; color: #666;">九宮拆補（13分鐘法）</small>
                         </label>
@@ -236,7 +236,7 @@
                         <strong><%= t('form.method') %>:</strong> <span id="panMethod"><%= qimen.basicInfo && qimen.basicInfo.method || '' %></span>
                     </div>
                     <div class="info-item">
-                        <strong>時間精度:</strong> <span id="timePrecision">傳統模式</span>
+                        <strong>時間精度:</strong> <span id="timePrecision"><%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? '傳統模式' : '進階模式' %></span>
                         <span id="timeSegmentInfo" style="display: none;"></span>
                     </div>
                     <% if (process.env.NODE_ENV !== 'production') { %>
@@ -616,8 +616,8 @@
                         <div class="form-group">
                             <label for="timePrecisionMode">時間精度模式</label>
                             <select class="form-control" id="timePrecisionMode" name="timePrecisionMode">
-                                <option value="traditional">傳統模式（以時辰起盤）</option>
-                                <option value="advanced">進階模式（九宮拆補13分鐘法）</option>
+                                <option value="traditional" <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'selected' : '' %>>傳統模式（以時辰起盤）</option>
+                                <option value="advanced" <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'selected' : '' %>>進階模式（九宮拆補13分鐘法）</option>
                             </select>
                             <small class="form-text text-muted">進階模式將每個時辰細分為9個時段，每段約13分鐘</small>
                         </div>

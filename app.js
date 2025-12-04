@@ -116,7 +116,7 @@ app.get('/', async (req, res) => {
     }
     
     // 獲取時間精度模式參數
-    const timePrecisionMode = req.query.timePrecisionMode || 'traditional';
+    const timePrecisionMode = req.query.timePrecisionMode || 'advanced';
 
     // 計算奇門盤
     const options = {
@@ -178,7 +178,7 @@ app.get('/custom', async (req, res) => {
     const timeStr = req.query.time;
     const location = req.query.location || '默認位置';
     const purpose = req.query.purpose || '綜合';
-    const timePrecisionMode = req.query.timePrecisionMode || 'traditional';
+    const timePrecisionMode = req.query.timePrecisionMode || 'advanced';
 
     // 解析日期時間
     let date;
@@ -253,7 +253,7 @@ app.get('/api/qimen', (req, res) => {
     const timeStr = req.query.time;
     const location = req.query.location || '默認位置';
     const purpose = req.query.purpose || '綜合';
-    const timePrecisionMode = req.query.timePrecisionMode || 'traditional';
+    const timePrecisionMode = req.query.timePrecisionMode || 'advanced';
 
     // 解析日期時間
     let date;
@@ -568,12 +568,14 @@ app.get('/api/llm-test', async (req, res) => {
         // 使用簡單的測試提示詞
         const testPrompt = '請回答：你好，請簡單介紹奇門遁甲';
         const response = await llmService.callLLM(testPrompt);
+        const responsePreview = response?.content || '';
         
         res.json({ 
             success: true, 
             message: 'LLM 連接正常',
             provider: llmService.provider,
-            response: response.substring(0, 100) + '...'
+            finishReason: response?.finishReason || null,
+            response: responsePreview.substring(0, 100) + '...'
         });
     } catch (error) {
         res.json({ 
