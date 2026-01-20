@@ -13,9 +13,26 @@
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#111a20">
 
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) {
+                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+                        ? 'dark'
+                        : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {
+                // Ignore storage errors.
+            }
+        })();
+    </script>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style-new.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
@@ -56,6 +73,14 @@
             
             <!-- 語言切換選單 -->
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" id="darkModeToggle" class="dark-mode-toggle"
+                       data-label-light="暗黑" data-label-dark="明亮"
+                       data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式"
+                       role="button" aria-pressed="false">
+                        <span class="dark-mode-label">暗黑</span>
+                    </a>
+                </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <%= t('language.switch') %> <span class="caret"></span>
@@ -71,11 +96,6 @@
             </ul>
         </div>
     </nav>
-
-    <!-- 高對比度切換按鈕 -->
-    <button id="contrastToggle" class="contrast-toggle" title="切換高對比度模式 (適合色弱用戶)">
-        <i class="glyphicon glyphicon-adjust"></i> 高對比
-    </button>
 
     <div class="container">
         <!-- AI 問答區域（永遠顯示） -->
@@ -732,6 +752,7 @@
         window.enableLLM = <%= enableLLM ? 'true' : 'false' %>;
     </script>
     
+    <script src="js/theme.js"></script>
     <script src="js/app.js"></script>
 </body>
 
