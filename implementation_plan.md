@@ -61,45 +61,7 @@
 
 **預估時間**: 0.5 天
 
----
 
-### 1.2 GPS 位置獲取與方位分析 ⭐⭐⭐ (高優先級)
-
-**目標**: 獲取用戶位置,提供方位吉凶分析
-
-**任務清單**:
-- [ ] 前端添加 Geolocation API 獲取 GPS 座標
-- [ ] 創建 `/lib/location-analysis.js` 位置分析模組
-- [ ] 實作方位計算邏輯 (八方位對應九宮)
-- [ ] 在排盤結果中顯示當前位置和方位建議
-- [ ] 整合到 LLM 分析 prompt 中
-- [ ] 添加位置隱私說明和用戶授權
-
-**核心功能**:
-```javascript
-// lib/location-analysis.js
-function calculateDirection(userLat, userLng, targetLat, targetLng) {
-  // 計算方位角
-  // 對應到八卦方位 (乾坤震巽坎離艮兌)
-  // 返回吉凶建議
-}
-
-function analyzeLocationInfluence(qimenPan, userLocation) {
-  // 根據九宮分析當前位置的影響
-  // 提供最佳行動方位
-}
-```
-
-**LLM Prompt 增強**:
-```
-用戶當前位置: ${location.city} (${location.lat}, ${location.lng})
-最佳行動方位: ${bestDirection} (${directionGua}宮)
-方位建議: 往${bestDirection}方向行動最為吉利...
-```
-
-**預估時間**: 1 天
-
----
 
 ### 1.4 靜心問事頁面簡化 ⭐⭐
 
@@ -1455,7 +1417,6 @@ const record = {
 
 ### 階段一重點 (2.5天)
 - 深色模式 (0.5天)
-- GPS 定位 (1天)
 - 導航欄設計 (0.5天)
 - 靜心問事簡化 (0.5天)
 
@@ -1512,7 +1473,7 @@ const record = {
 ### 技術風險
 1. **農曆轉換準確性**: 需要仔細測試邊界情況
 2. **LLM API 穩定性**: 需要錯誤處理和重試機制
-3. **GPS 定位精度**: 室內或信號差時可能不準確
+
 
 ### 解決方案
 1. 使用成熟的 lunar-javascript 庫,並添加單元測試
@@ -1556,3 +1517,19 @@ const record = {
 **版本**: v1.0  
 **更新日期**: 2026-01-20  
 **負責人**: David
+
+---
+
+## 🛑 已知問題與失敗嘗試 (Known Issues & Failed Attempts)
+
+### 3.1 LLM 數據流脆弱性 (LLM Data Flow Fragility)
+- **問題描述**: 對 `app.js` 或 `views/index.html` 進行細微修改時，極易導致 LLM 無法讀取到排盤數據 (`qimenData`)，後端日誌顯示 `qimenData` 為 undefined 或 missing。
+- **失敗嘗試**: 
+  - 試圖調整 body-parser 大小限制 (50mb) 但未完全解決。
+  - 試圖通過前端 `console.log` 調試，發現數據在傳輸過程中丟失。
+  - 需要非常謹慎地處理 `express.json()` 和 `express.urlencoded()` 的配置順序。
+
+### 3.2 字體文件缺失 (Font 404 Errors)
+- **問題描述**: 專案依賴 Bootstrap 的 Glyphicons，但 `public/fonts` 目錄缺失，導致控制台出現大量 404 錯誤 (`glyphicons-halflings-regular.woff2` 等)。
+- **暫時解決方案**: 將所有 `glyphicon` 類替換為 Unicode Emoji (如 ❤️, ✨, 👁️)。
+- **待解決**: 若要恢復 Glyphicons 樣式，必須重新下載並配置正確的字體文件。

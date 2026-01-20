@@ -8,6 +8,7 @@ require('dotenv').config();
 
 // 導入奇門遁甲計算模塊
 const qimen = require('./lib/qimen');
+const meihua = require('./lib/meihua');
 const i18n = require('./lib/i18n');
 const LLMAnalysisService = require('./lib/llm-analysis');
 const DiscordWebhook = require('./lib/discord-webhook');
@@ -306,6 +307,52 @@ app.get('/api/qimen', (req, res) => {
     } catch (error) {
         console.error('API排盤錯誤:', error);
         res.status(500).json({error: '排盤錯誤', message: error.message});
+    }
+});
+
+// 梅花易數起卦 API
+app.post('/api/meihua/qigua', (req, res) => {
+    try {
+        const {
+            method = 'time',
+            datetime = null,
+            num1 = null,
+            num2 = null,
+            num3 = null
+        } = req.body || {};
+
+        if (method === 'time') {
+            const date = datetime ? new Date(datetime) : new Date();
+            if (Number.isNaN(date.getTime())) {
+                return res.status(400).json({ success: false, error: '無效的時間參數' });
+            }
+
+            const result = meihua.qiguaByGregorianTime(date);
+            return res.json({ success: true, data: result });
+        }
+
+        if (method === 'number') {
+            const parsedNum1 = Number.parseInt(num1, 10);
+            const parsedNum2 = Number.parseInt(num2, 10);
+            const parsedNum3 = num3 !== null && num3 !== undefined && num3 !== ''
+                ? Number.parseInt(num3, 10)
+                : null;
+
+            if (!Number.isInteger(parsedNum1) || !Number.isInteger(parsedNum2)) {
+                return res.status(400).json({ success: false, error: '數字起卦需要提供兩個整數' });
+            }
+            if (parsedNum3 !== null && !Number.isInteger(parsedNum3)) {
+                return res.status(400).json({ success: false, error: '第三個數字必須為整數' });
+            }
+
+            const result = meihua.qiguaByNumbers(parsedNum1, parsedNum2, parsedNum3);
+            return res.json({ success: true, data: result });
+        }
+
+        return res.status(400).json({ success: false, error: '不支援的起卦方式' });
+    } catch (error) {
+        console.error('梅花易數起卦 API 錯誤:', error);
+        return res.status(500).json({ success: false, error: '起卦失敗', message: error.message });
     }
 });
 
