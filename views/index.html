@@ -727,8 +727,8 @@
     <script src="js/bootstrap.min.js"></script>
     
     <!-- 將奇門數據傳遞給前端 -->
+    <script id="qimen-data" type="application/json"><%- JSON.stringify(qimen).replace(/</g, '\\u003c') %></script>
     <script type="text/javascript">
-        window.qimenData = <%- JSON.stringify(qimen) %>;
         window.enableLLM = <%= enableLLM ? 'true' : 'false' %>;
     </script>
     

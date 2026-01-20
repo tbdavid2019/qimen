@@ -311,12 +311,94 @@ app.get('/api/qimen', (req, res) => {
 
 // LLM 解盤 API
 app.post('/api/llm-analysis', async (req, res) => {
+    let resolvedQimenData = null;
     try {
-        const { qimenData, purpose = '綜合', userQuestion = '', conversationHistory = [], lang = 'zh-tw' } = req.body;
+        const {
+            qimenData: requestQimenData,
+            purpose = '綜合',
+            userQuestion = '',
+            conversationHistory = [],
+            lang = 'zh-tw',
+            userDateTime = null,
+            timestamp = null,
+            timezoneOffset = null,
+            timePrecisionMode = 'advanced'
+        } = req.body;
         
-        if (!qimenData) {
-            return res.status(400).json({ error: '缺少奇門數據' });
+        let qimenData = requestQimenData;
+
+        if (typeof qimenData === 'string') {
+            try {
+                qimenData = JSON.parse(qimenData);
+            } catch (parseError) {
+                qimenData = null;
+            }
         }
+
+        if (!qimenData || (typeof qimenData === 'object' && Object.keys(qimenData).length === 0)) {
+            const supportedLangs = ['zh-tw', 'zh-cn'];
+            if (supportedLangs.includes(lang)) {
+                i18n.setLanguage(lang);
+            } else {
+                i18n.setLanguage('zh-tw');
+            }
+
+            const parsedTimestamp = timestamp !== null ? parseInt(timestamp, 10) : null;
+            const parsedTimezoneOffset = timezoneOffset !== null ? parseInt(timezoneOffset, 10) : null;
+            let date;
+
+            if (userDateTime) {
+                date = new Date(userDateTime);
+            } else if (!Number.isNaN(parsedTimestamp) && parsedTimestamp !== null) {
+                date = new Date(parsedTimestamp);
+                if ((process.env.VERCEL || process.env.NODE_ENV === 'production') && parsedTimezoneOffset !== null && !Number.isNaN(parsedTimezoneOffset)) {
+                    const offsetDiff = -parsedTimezoneOffset;
+                    date = new Date(date.getTime() + offsetDiff * 60000);
+                }
+            } else {
+                date = new Date();
+                if (parsedTimezoneOffset !== null && !Number.isNaN(parsedTimezoneOffset)) {
+                    const serverOffset = date.getTimezoneOffset();
+                    const offsetDiff = serverOffset - parsedTimezoneOffset;
+                    date = new Date(date.getTime() + offsetDiff * 60000);
+                }
+            }
+
+            if (Number.isNaN(date.getTime())) {
+                return res.status(400).json({
+                    error: '缺少奇門數據',
+                    message: '請提供 qimenData 或有效的時間參數'
+                });
+            }
+
+            qimenData = qimen.calculate(date, {
+                type: '四柱',
+                method: '時家',
+                purpose: purpose,
+                location: '默認位置',
+                timePrecisionMode: timePrecisionMode || 'advanced'
+            });
+
+            // 初始化缺失的屬性，確保模板不會報錯
+            if (!qimenData.jiuGongAnalysis) {
+                qimenData.jiuGongAnalysis = {};
+            }
+
+            // 確保每個宮位都有基本屬性
+            for (let i = 1; i <= 9; i++) {
+                if (!qimenData.jiuGongAnalysis[i]) {
+                    qimenData.jiuGongAnalysis[i] = {
+                        direction: '',
+                        gongName: '',
+                        jiXiong: 'ping'
+                    };
+                }
+            }
+
+            console.warn('LLM 解盤使用後端重算盤口 (qimenData 缺失)');
+        }
+
+        resolvedQimenData = qimenData;
 
         // 如果有用戶問題，先發送到 Discord
         if (userQuestion && userQuestion.trim()) {
@@ -355,7 +437,7 @@ app.post('/api/llm-analysis', async (req, res) => {
         res.status(500).json({ 
             error: '分析失敗', 
             message: error.message,
-            fallback: llmService.getFallbackAnalysis(req.body?.qimenData || {})
+            fallback: llmService.getFallbackAnalysis(resolvedQimenData || req.body?.qimenData || {})
         });
     }
 });

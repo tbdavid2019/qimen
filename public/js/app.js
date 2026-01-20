@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    window.qimenData = loadQimenDataFromDom();
+
     // 檢查是否需要用本地時間重新載入頁面
     if (!ensureTimezoneParams()) {
         // 只有在不需要重新載入時才繼續執行
@@ -205,6 +207,7 @@ $(document).ready(function() {
 
         // 準備奇門數據
         var qimenData = window.qimenData || {};
+        var timeParams = getClientTimeParams();
 
         // 發送請求到 LLM API
         $.ajax({
@@ -213,6 +216,10 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({
                 qimenData: qimenData,
+                userDateTime: timeParams.userDateTime,
+                timestamp: timeParams.timestamp,
+                timezoneOffset: timeParams.timezoneOffset,
+                timePrecisionMode: timeParams.timePrecisionMode,
                 userQuestion: '',
                 purpose: '綜合',
                 lang: $('html').attr('lang') || 'zh-tw'
@@ -320,6 +327,7 @@ $(document).ready(function() {
 
         // 準備奇門數據（從頁面獲取）
         var qimenData = window.qimenData || {};
+        var timeParams = getClientTimeParams();
 
         // 發送請求到 LLM API（帶上對話歷史）
         $.ajax({
@@ -328,6 +336,10 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({
                 qimenData: qimenData,
+                userDateTime: timeParams.userDateTime,
+                timestamp: timeParams.timestamp,
+                timezoneOffset: timeParams.timezoneOffset,
+                timePrecisionMode: timeParams.timePrecisionMode,
                 userQuestion: question,
                 conversationHistory: conversationHistory,
                 purpose: '綜合',
@@ -378,6 +390,51 @@ $(document).ready(function() {
         }
     });
 });
+
+function loadQimenDataFromDom() {
+    var dataEl = document.getElementById('qimen-data');
+    if (!dataEl) {
+        return window.qimenData || {};
+    }
+
+    try {
+        return JSON.parse(dataEl.textContent || '{}');
+    } catch (error) {
+        console.error('奇門數據解析失敗:', error);
+        return window.qimenData || {};
+    }
+}
+
+function getClientTimeParams() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var userDateTime = urlParams.get('userDateTime');
+    var timestamp = urlParams.get('timestamp');
+    var timezoneOffset = urlParams.get('timezoneOffset');
+
+    if (!userDateTime || !timestamp || !timezoneOffset) {
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = String(now.getMonth() + 1).padStart(2, '0');
+        var day = String(now.getDate()).padStart(2, '0');
+        var hours = String(now.getHours()).padStart(2, '0');
+        var minutes = String(now.getMinutes()).padStart(2, '0');
+        var seconds = String(now.getSeconds()).padStart(2, '0');
+        userDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        timestamp = now.getTime().toString();
+        timezoneOffset = now.getTimezoneOffset().toString();
+    }
+
+    var timePrecisionMode = urlParams.get('timePrecisionMode') ||
+        (window.qimenData && window.qimenData.basicInfo && window.qimenData.basicInfo.timePrecisionMode) ||
+        'advanced';
+
+    return {
+        userDateTime: userDateTime,
+        timestamp: timestamp,
+        timezoneOffset: timezoneOffset,
+        timePrecisionMode: timePrecisionMode
+    };
+}
 
 // 檢查並調整時區
 function checkAndAdjustTimezone() {
