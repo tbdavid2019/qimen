@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>梅花易數</title>
+
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#111a20">
+
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) {
+                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+                        ? 'dark'
+                        : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {
+                // Ignore storage errors.
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-new.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="stylesheet" href="css/meihua.css">
+</head>
+
+<body class="meihua-page">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切換導航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">梅花易數</a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/start">
+                        <i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>
+                        靜心問事
+                    </a>
+                </li>
+                <li>
+                    <a href="/">實時排盤</a>
+                </li>
+                <li class="active">
+                    <a href="/meihua">梅花易數</a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" id="darkModeToggle" class="dark-mode-toggle"
+                       data-label-light="暗黑" data-label-dark="明亮"
+                       data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式"
+                       role="button" aria-pressed="false">
+                        <span class="dark-mode-label">暗黑</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="meihua-header">
+            <h2>梅花易數起卦</h2>
+            <p class="text-muted">使用時間起卦，快速獲得卦象與體用分析</p>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">時間起卦</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="radio-inline">
+                        <input type="radio" name="timeMode" value="current" checked> 使用當前時間
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="timeMode" value="custom"> 自定義時間
+                    </label>
+                </div>
+
+                <div id="customTimeGroup" class="form-group" style="display: none;">
+                    <input type="datetime-local" id="customDateTime" class="form-control">
+                </div>
+
+                <p class="text-muted">當前時間：<span id="currentTime"></span></p>
+
+                <button id="qiguaBtn" class="btn btn-primary">
+                    <i class="glyphicon glyphicon-star"></i> 起卦
+                </button>
+            </div>
+        </div>
+
+        <div id="meihuaResult" class="panel panel-default" style="display: none;">
+            <div class="panel-heading">
+                <h3 class="panel-title">卦象結果</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row meihua-result-grid">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="panel panel-default meihua-card">
+                            <div class="panel-heading">本卦</div>
+                            <div class="panel-body">
+                                <div id="benguaLines" class="meihua-hexagram"></div>
+                                <div class="meihua-symbol" id="benguaSymbol"></div>
+                                <div class="meihua-section-title" id="benguaName"></div>
+                                <div class="meihua-meta">上卦：<span id="benguaUpper"></span></div>
+                                <div class="meihua-meta">下卦：<span id="benguaLower"></span></div>
+                                <div class="meihua-meta">動爻：<span id="benguaDongYao"></span></div>
+                                <div class="meihua-meta">二進位：<span id="benguaBinary"></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="panel panel-default meihua-card">
+                            <div class="panel-heading">體用分析</div>
+                            <div class="panel-body">
+                                <div class="meihua-section-title">體卦：<span id="tiGua"></span></div>
+                                <div class="meihua-section-title">用卦：<span id="yongGua"></span></div>
+                                <div class="meihua-meta">五行生克：<span id="wuxingRelation"></span></div>
+                                <div class="meihua-meta">斷語：<span id="wuxingJudgement"></span></div>
+                                <div class="meihua-meta" id="wuxingDetail"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="panel panel-default meihua-card">
+                            <div class="panel-heading">互卦 / 變卦</div>
+                            <div class="panel-body">
+                                <div class="meihua-subhexagram">
+                                    <div class="meihua-section-title">互卦：<span id="huguaName"></span></div>
+                                    <div id="huguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                                </div>
+                                <div class="meihua-subhexagram">
+                                    <div class="meihua-section-title">變卦：<span id="bianguaName"></span></div>
+                                    <div id="bianguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="panel panel-default meihua-card">
+                            <div class="panel-heading">起卦計算</div>
+                            <div class="panel-body">
+                                <p class="meihua-meta">年數：<span id="calcYearSum"></span></p>
+                                <p class="meihua-meta">月數：<span id="calcMonth"></span></p>
+                                <p class="meihua-meta">日數：<span id="calcDay"></span></p>
+                                <p class="meihua-meta">時辰：<span id="calcShichen"></span></p>
+                                <p class="meihua-meta">上卦：<span id="calcUpper"></span></p>
+                                <p class="meihua-meta">下卦：<span id="calcLower"></span></p>
+                                <p class="meihua-meta">動爻：<span id="calcDongYao"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="meihuaTexts" class="panel panel-default" style="display: none;">
+            <div class="panel-heading">
+                <h3 class="panel-title">卦辭 / 爻辭</h3>
+            </div>
+            <div class="panel-body">
+                <div class="meihua-section-title" id="guaCiTitle"></div>
+                <p id="guaCi" class="meihua-meta"></p>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered meihua-yaoci-table">
+                        <thead>
+                            <tr>
+                                <th>爻位</th>
+                                <th>爻辭</th>
+                                <th>白話</th>
+                            </tr>
+                        </thead>
+                        <tbody id="yaoCiTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default meihua-llm-disabled">
+            <div class="panel-heading">
+                <h3 class="panel-title">AI 大師解卦</h3>
+            </div>
+            <div class="panel-body">
+                <p class="meihua-llm-note">
+                    這個功能尚未開放，待看板與解卦邏輯完成後再啟用。
+                </p>
+                <textarea class="form-control" rows="4" disabled placeholder="AI 解卦功能尚未開放"></textarea>
+                <div style="margin-top: 10px;">
+                    <button class="btn btn-primary" disabled>
+                        🤖 AI 大師解卦
+                    </button>
+                    <button class="btn btn-default" disabled>
+                        🗑️ 清除對話
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted">奇門遁甲排盤系統 &copy; 2025</p>
+        </div>
+    </footer>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/meihua.js"></script>
+</body>
+
+</html>

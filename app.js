@@ -9,6 +9,7 @@ require('dotenv').config();
 // 導入奇門遁甲計算模塊
 const qimen = require('./lib/qimen');
 const meihua = require('./lib/meihua');
+const meihuaText = require('./lib/meihua-text');
 const i18n = require('./lib/i18n');
 const LLMAnalysisService = require('./lib/llm-analysis');
 const DiscordWebhook = require('./lib/discord-webhook');
@@ -59,6 +60,11 @@ app.use((req, res, next) => {
 // 靜心起盤頁面
 app.get('/start', (req, res) => {
     res.render('start');
+});
+
+// 梅花易數頁面
+app.get('/meihua', (req, res) => {
+    res.render('meihua');
 });
 
 // 首頁 - 實時排盤
@@ -316,18 +322,52 @@ app.post('/api/meihua/qigua', (req, res) => {
         const {
             method = 'time',
             datetime = null,
+            userDateTime = null,
+            timestamp = null,
+            timezoneOffset = null,
             num1 = null,
             num2 = null,
             num3 = null
         } = req.body || {};
 
         if (method === 'time') {
-            const date = datetime ? new Date(datetime) : new Date();
+            let date;
+
+            if (userDateTime) {
+                date = new Date(userDateTime);
+            } else if (datetime) {
+                date = new Date(datetime);
+            } else if (timestamp) {
+                const parsedTimestamp = Number.parseInt(timestamp, 10);
+                date = new Date(parsedTimestamp);
+
+                const parsedTimezoneOffset = Number.parseInt(timezoneOffset, 10);
+                if ((process.env.VERCEL || process.env.NODE_ENV === 'production')
+                    && !Number.isNaN(parsedTimezoneOffset)) {
+                    const offsetDiff = -parsedTimezoneOffset;
+                    date = new Date(date.getTime() + offsetDiff * 60000);
+                }
+            } else {
+                date = new Date();
+
+                const parsedTimezoneOffset = Number.parseInt(timezoneOffset, 10);
+                if (!Number.isNaN(parsedTimezoneOffset)) {
+                    const serverOffset = date.getTimezoneOffset();
+                    const offsetDiff = serverOffset - parsedTimezoneOffset;
+                    date = new Date(date.getTime() + offsetDiff * 60000);
+                }
+            }
+
             if (Number.isNaN(date.getTime())) {
                 return res.status(400).json({ success: false, error: '無效的時間參數' });
             }
 
             const result = meihua.qiguaByGregorianTime(date);
+            result.texts = {
+                bengua: meihuaText.getHexagramText(result.bengua.num),
+                hugua: meihuaText.getHexagramText(result.hugua.num),
+                biangua: meihuaText.getHexagramText(result.biangua.num)
+            };
             return res.json({ success: true, data: result });
         }
 
@@ -346,6 +386,11 @@ app.post('/api/meihua/qigua', (req, res) => {
             }
 
             const result = meihua.qiguaByNumbers(parsedNum1, parsedNum2, parsedNum3);
+            result.texts = {
+                bengua: meihuaText.getHexagramText(result.bengua.num),
+                hugua: meihuaText.getHexagramText(result.hugua.num),
+                biangua: meihuaText.getHexagramText(result.biangua.num)
+            };
             return res.json({ success: true, data: result });
         }
 

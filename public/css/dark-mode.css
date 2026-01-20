@@ -307,3 +307,39 @@
 [data-theme="dark"] #llmQuestionResponse .response-time {
     border-top-color: #2a323c;
 }
+
+[data-theme="dark"] body.meihua-page {
+    background-color: #0f131a;
+}
+
+[data-theme="dark"] .meihua-yao-line {
+    background-color: #e6e6e6;
+}
+
+[data-theme="dark"] .meihua-yao-yin {
+    background: linear-gradient(to right, #e6e6e6 0 40%, transparent 40% 60%, #e6e6e6 60% 100%);
+}
+
+[data-theme="dark"] .meihua-yao-changing::after {
+    background-color: #f0ad4e;
+}
+
+[data-theme="dark"] .meihua-meta,
+[data-theme="dark"] .meihua-llm-note {
+    color: #9aa4b2;
+}
+
+[data-theme="dark"] .meihua-symbol {
+    color: #cfd6df;
+}
+
+[data-theme="dark"] .meihua-yaoci-table th {
+    background-color: #1a2230;
+    border-color: #2a323c;
+    color: #e6e6e6;
+}
+
+[data-theme="dark"] .meihua-yaoci-table td {
+    border-color: #2a323c;
+    color: #e6e6e6;
+}
