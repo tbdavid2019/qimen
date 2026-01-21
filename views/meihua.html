@@ -129,6 +129,43 @@
             </div>
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">數字起卦</h3>
+            </div>
+            <div class="panel-body">
+                <p class="text-muted">請直覺選三個數字（1 - 100），或使用骰子隨機生成。</p>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="meihuaNum1">第一個數字（上卦）</label>
+                            <input type="number" id="meihuaNum1" class="form-control" min="1" max="100" placeholder="1 - 100">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="meihuaNum2">第二個數字（下卦）</label>
+                            <input type="number" id="meihuaNum2" class="form-control" min="1" max="100" placeholder="1 - 100">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="meihuaNum3">第三個數字（動爻）</label>
+                            <input type="number" id="meihuaNum3" class="form-control" min="1" max="100" placeholder="1 - 100">
+                        </div>
+                    </div>
+                </div>
+                <div class="meihua-number-actions">
+                    <button id="meihuaDice" class="btn btn-default">
+                        <i class="glyphicon glyphicon-refresh"></i> 隨機
+                    </button>
+                    <button id="numberQiguaBtn" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-star"></i> 起卦
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="meihuaResult" class="panel panel-default" style="display: none;">
             <div class="panel-heading">
                 <h3 class="panel-title">卦象結果</h3>
@@ -183,13 +220,13 @@
                         <div class="panel panel-default meihua-card">
                             <div class="panel-heading">起卦計算</div>
                             <div class="panel-body">
-                                <p class="meihua-meta">年數：<span id="calcYearSum"></span></p>
-                                <p class="meihua-meta">月數：<span id="calcMonth"></span></p>
-                                <p class="meihua-meta">日數：<span id="calcDay"></span></p>
-                                <p class="meihua-meta">時辰：<span id="calcShichen"></span></p>
-                                <p class="meihua-meta">上卦：<span id="calcUpper"></span></p>
-                                <p class="meihua-meta">下卦：<span id="calcLower"></span></p>
-                                <p class="meihua-meta">動爻：<span id="calcDongYao"></span></p>
+                                <p class="meihua-meta" id="calcYearRow"><span id="calcYearLabel">年數</span>：<span id="calcYearSum"></span></p>
+                                <p class="meihua-meta" id="calcMonthRow"><span id="calcMonthLabel">月數</span>：<span id="calcMonth"></span></p>
+                                <p class="meihua-meta" id="calcDayRow"><span id="calcDayLabel">日數</span>：<span id="calcDay"></span></p>
+                                <p class="meihua-meta" id="calcShichenRow"><span id="calcShichenLabel">時辰</span>：<span id="calcShichen"></span></p>
+                                <p class="meihua-meta" id="calcUpperRow"><span id="calcUpperLabel">上卦</span>：<span id="calcUpper"></span></p>
+                                <p class="meihua-meta" id="calcLowerRow"><span id="calcLowerLabel">下卦</span>：<span id="calcLower"></span></p>
+                                <p class="meihua-meta" id="calcDongRow"><span id="calcDongLabel">動爻</span>：<span id="calcDongYao"></span></p>
                             </div>
                         </div>
                     </div>

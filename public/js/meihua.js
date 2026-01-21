@@ -59,6 +59,20 @@ function renderHexagramLines(containerId, binary, dongYao) {
     }
 }
 
+function setCalcLabelText(id, text) {
+    var label = document.getElementById(id);
+    if (label) {
+        label.textContent = text;
+    }
+}
+
+function setCalcRowVisible(id, visible) {
+    var row = document.getElementById(id);
+    if (row) {
+        row.style.display = visible ? '' : 'none';
+    }
+}
+
 function updateResult(data) {
     document.getElementById('meihuaResult').style.display = 'block';
 
@@ -83,13 +97,54 @@ function updateResult(data) {
     renderHexagramLines('bianguaLines', data.biangua.binary, null);
 
     if (data.calculations) {
-        document.getElementById('calcYearSum').textContent = data.calculations.yearSum;
-        document.getElementById('calcMonth').textContent = data.calculations.month;
-        document.getElementById('calcDay').textContent = data.calculations.day;
-        document.getElementById('calcShichen').textContent = `${data.shichen.name} (${data.calculations.shichenNum})`;
-        document.getElementById('calcUpper').textContent = `${data.calculations.upperSum} mod 8 = ${data.calculations.upperGua}`;
-        document.getElementById('calcLower').textContent = `${data.calculations.lowerSum} mod 8 = ${data.calculations.lowerGua}`;
-        document.getElementById('calcDongYao').textContent = `${data.calculations.lowerSum} mod 6 = ${data.calculations.dongYao}`;
+        var method = data.method || 'time';
+        var isNumberMethod = method === 'numbers' || method === 'number';
+
+        if (isNumberMethod) {
+            var num1 = data.numbers ? data.numbers.num1 : null;
+            var num2 = data.numbers ? data.numbers.num2 : null;
+            var num3 = data.numbers ? data.numbers.num3 : null;
+
+            setCalcLabelText('calcYearLabel', '數字一');
+            setCalcLabelText('calcMonthLabel', '數字二');
+            setCalcLabelText('calcDayLabel', '數字三');
+            setCalcLabelText('calcUpperLabel', '上卦');
+            setCalcLabelText('calcLowerLabel', '下卦');
+            setCalcLabelText('calcDongLabel', '動爻');
+
+            setCalcRowVisible('calcShichenRow', false);
+
+            document.getElementById('calcYearSum').textContent = num1 !== null ? num1 : '';
+            document.getElementById('calcMonth').textContent = num2 !== null ? num2 : '';
+            document.getElementById('calcDay').textContent = num3 !== null ? num3 : '';
+            document.getElementById('calcUpper').textContent = num1 !== null
+                ? `${num1} mod 8 = ${data.calculations.upperGua}`
+                : (data.calculations.upperGua || '');
+            document.getElementById('calcLower').textContent = num2 !== null
+                ? `${num2} mod 8 = ${data.calculations.lowerGua}`
+                : (data.calculations.lowerGua || '');
+            document.getElementById('calcDongYao').textContent = num3 !== null
+                ? `${num3} mod 6 = ${data.calculations.dongYao}`
+                : (data.calculations.dongYao || '');
+        } else {
+            setCalcLabelText('calcYearLabel', '年數');
+            setCalcLabelText('calcMonthLabel', '月數');
+            setCalcLabelText('calcDayLabel', '日數');
+            setCalcLabelText('calcUpperLabel', '上卦');
+            setCalcLabelText('calcLowerLabel', '下卦');
+            setCalcLabelText('calcDongLabel', '動爻');
+            setCalcLabelText('calcShichenLabel', '時辰');
+
+            setCalcRowVisible('calcShichenRow', true);
+
+            document.getElementById('calcYearSum').textContent = data.calculations.yearSum;
+            document.getElementById('calcMonth').textContent = data.calculations.month;
+            document.getElementById('calcDay').textContent = data.calculations.day;
+            document.getElementById('calcShichen').textContent = `${data.shichen.name} (${data.calculations.shichenNum})`;
+            document.getElementById('calcUpper').textContent = `${data.calculations.upperSum} mod 8 = ${data.calculations.upperGua}`;
+            document.getElementById('calcLower').textContent = `${data.calculations.lowerSum} mod 8 = ${data.calculations.lowerGua}`;
+            document.getElementById('calcDongYao').textContent = `${data.calculations.lowerSum} mod 6 = ${data.calculations.dongYao}`;
+        }
     }
 
     var textPanel = document.getElementById('meihuaTexts');
@@ -165,6 +220,44 @@ function bindMeihuaEvents() {
         return result.data;
     }
 
+    function parseNumberInput(id) {
+        var value = document.getElementById(id).value;
+        var parsed = Number.parseInt(value, 10);
+        if (!Number.isInteger(parsed)) {
+            throw new Error('請輸入 1 到 100 的整數');
+        }
+        if (parsed < 1 || parsed > 100) {
+            throw new Error('數字範圍需在 1 到 100');
+        }
+        return parsed;
+    }
+
+    async function requestNumberQiguaData() {
+        var num1 = parseNumberInput('meihuaNum1');
+        var num2 = parseNumberInput('meihuaNum2');
+        var num3 = parseNumberInput('meihuaNum3');
+
+        var response = await fetch('/api/meihua/qigua', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                method: 'number',
+                num1: num1,
+                num2: num2,
+                num3: num3
+            })
+        });
+
+        var result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || '未知錯誤');
+        }
+
+        updateResult(result.data);
+        toggleMeihuaLLM(true);
+        return result.data;
+    }
+
     var radios = document.querySelectorAll('input[name="timeMode"]');
     radios.forEach(function(radio) {
         radio.addEventListener('change', function() {
@@ -185,6 +278,35 @@ function bindMeihuaEvents() {
             } finally {
                 qiguaBtn.disabled = false;
                 qiguaBtn.textContent = '起卦';
+            }
+        });
+    }
+
+    var diceBtn = document.getElementById('meihuaDice');
+    if (diceBtn) {
+        diceBtn.addEventListener('click', function() {
+            var num1 = Math.floor(Math.random() * 100) + 1;
+            var num2 = Math.floor(Math.random() * 100) + 1;
+            var num3 = Math.floor(Math.random() * 100) + 1;
+            document.getElementById('meihuaNum1').value = num1;
+            document.getElementById('meihuaNum2').value = num2;
+            document.getElementById('meihuaNum3').value = num3;
+        });
+    }
+
+    var numberQiguaBtn = document.getElementById('numberQiguaBtn');
+    if (numberQiguaBtn) {
+        numberQiguaBtn.addEventListener('click', async function() {
+            numberQiguaBtn.disabled = true;
+            numberQiguaBtn.textContent = '起卦中...';
+
+            try {
+                await requestNumberQiguaData();
+            } catch (error) {
+                alert(`起卦失敗: ${error.message}`);
+            } finally {
+                numberQiguaBtn.disabled = false;
+                numberQiguaBtn.textContent = '起卦';
             }
         });
     }

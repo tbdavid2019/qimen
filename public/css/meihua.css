@@ -94,6 +94,12 @@ body.meihua-page {
     color: #666;
 }
 
+.meihua-number-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 .conversation-history {
     display: none;
     max-height: 320px;
