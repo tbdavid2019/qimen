@@ -528,7 +528,7 @@ module.exports = {
     
     <!-- AI 問答區 (與奇門遁甲相同結構) -->
     <div id="ai-section" class="ai-section" style="display:none;">
-      <h2>💬 AI 大師解卦</h2>
+      <h2>💬 梅花易數大師本人解卦</h2>
       
       <!-- 對話歷史顯示 -->
       <div id="conversationHistory" class="conversation-history"></div>
