@@ -1,80 +1,79 @@
-const path = require('path');
-const { execFileSync } = require('child_process');
-
 const meihua = require('./lib/meihua');
 
-const scriptPath = path.join(__dirname, 'meihua-yishu', 'scripts', 'meihua_calc.py');
-const pythonBin = process.env.MEIHUA_PYTHON || 'python3';
+function assertEqual(label, actual, expected) {
+    if (actual !== expected) {
+        throw new Error(`${label} 不一致：${actual} !== ${expected}`);
+    }
+}
 
-function runPython(args) {
+function assertHexagram(label, actual, expected) {
+    assertEqual(`${label} 卦序`, actual.num, expected.num);
+    assertEqual(`${label} 名稱`, actual.name, expected.name);
+    if (expected.binary) {
+        assertEqual(`${label} 二進位`, actual.binary, expected.binary);
+    }
+}
+
+function runCase(label, actual, expected) {
     try {
-        return execFileSync(pythonBin, [scriptPath, ...args], { encoding: 'utf8' });
-    } catch (error) {
-        if (pythonBin === 'python3') {
-            return execFileSync('python', [scriptPath, ...args], { encoding: 'utf8' });
+        assertHexagram(`${label} 本卦`, actual.bengua, expected.bengua);
+        assertHexagram(`${label} 互卦`, actual.hugua, expected.hugua);
+        assertHexagram(`${label} 變卦`, actual.biangua, expected.biangua);
+        assertEqual(`${label} 五行生克`, actual.wuxingRelation, expected.wuxingRelation);
+        Object.keys(expected.calculations).forEach((key) => {
+            assertEqual(`${label} 計算 ${key}`, actual.calculations[key], expected.calculations[key]);
+        });
+        if (expected.shichen) {
+            assertEqual(`${label} 時辰`, actual.shichen.name, expected.shichen.name);
         }
-        throw error;
-    }
-}
-
-function parsePythonOutput(output) {
-    const hexMatches = [...output.matchAll(/第\s*(\d+)\s*卦：([^\r\n]+)/g)];
-    const bengua = hexMatches[0] ? { num: Number(hexMatches[0][1]), name: hexMatches[0][2].trim() } : null;
-    const biangua = hexMatches[1] ? { num: Number(hexMatches[1][1]), name: hexMatches[1][2].trim() } : null;
-    const huguaMatch = output.match(/【四、互卦】\s*\r?\n\s*([^（\r\n]+)/);
-    const hugua = huguaMatch ? { name: huguaMatch[1].trim() } : null;
-    const wuxingMatch = output.match(/生克：([^\r\n]+)/);
-    const wuxingRelation = wuxingMatch ? wuxingMatch[1].trim() : null;
-
-    return { bengua, biangua, hugua, wuxingRelation };
-}
-
-function compareResult(label, jsResult, pyResult) {
-    const issues = [];
-
-    if (!pyResult.bengua || !pyResult.biangua || !pyResult.hugua) {
-        issues.push('無法解析 Python 輸出');
-    } else {
-        if (jsResult.bengua.num !== pyResult.bengua.num || jsResult.bengua.name !== pyResult.bengua.name) {
-            issues.push(`本卦不一致：JS(${jsResult.bengua.num} ${jsResult.bengua.name}) vs PY(${pyResult.bengua.num} ${pyResult.bengua.name})`);
-        }
-        if (jsResult.biangua.num !== pyResult.biangua.num || jsResult.biangua.name !== pyResult.biangua.name) {
-            issues.push(`變卦不一致：JS(${jsResult.biangua.num} ${jsResult.biangua.name}) vs PY(${pyResult.biangua.num} ${pyResult.biangua.name})`);
-        }
-        if (jsResult.hugua.name !== pyResult.hugua.name) {
-            issues.push(`互卦不一致：JS(${jsResult.hugua.name}) vs PY(${pyResult.hugua.name})`);
-        }
-        if (pyResult.wuxingRelation && jsResult.wuxingRelation !== pyResult.wuxingRelation) {
-            issues.push(`五行生克不一致：JS(${jsResult.wuxingRelation}) vs PY(${pyResult.wuxingRelation})`);
-        }
-    }
-
-    if (issues.length === 0) {
         console.log(`✅ ${label} 一致`);
-    } else {
+    } catch (error) {
         console.log(`❌ ${label} 不一致`);
-        issues.forEach((issue) => console.log(`   - ${issue}`));
+        console.log(`   - ${error.message}`);
     }
 }
 
 function testTimeCase() {
-    const args = ['gregorian', '2026', '1', '20', '15'];
-    const output = runPython(args);
-    const pyResult = parsePythonOutput(output);
     const jsResult = meihua.qiguaByGregorianComponents(2026, 1, 20, 15);
+    const expected = {
+        bengua: { num: 23, name: '山地剝', binary: '100000' },
+        hugua: { num: 2, name: '坤為地', binary: '000000' },
+        biangua: { num: 4, name: '山水蒙', binary: '100010' },
+        wuxingRelation: '比和（吉）',
+        calculations: {
+            yearSum: 9,
+            month: 12,
+            day: 2,
+            shichenNum: 9,
+            upperSum: 23,
+            lowerSum: 32,
+            upperGua: 7,
+            lowerGua: 8,
+            dongYao: 2
+        },
+        shichen: { name: '申' }
+    };
 
-    compareResult('時間起卦 (2026-01-20 15:00)', jsResult, pyResult);
+    runCase('時間起卦 (2026-01-20 15:00)', jsResult, expected);
 }
 
 function testNumberCase() {
-    const args = ['num', '6', '8', '3'];
-    const output = runPython(args);
-    const pyResult = parsePythonOutput(output);
     const jsResult = meihua.qiguaByNumbers(6, 8, 3);
+    const expected = {
+        bengua: { num: 8, name: '水地比', binary: '010000' },
+        hugua: { num: 23, name: '山地剝', binary: '100000' },
+        biangua: { num: 39, name: '水山蹇', binary: '010100' },
+        wuxingRelation: '用克體（凶）',
+        calculations: {
+            upperGua: 6,
+            lowerGua: 8,
+            dongYao: 3
+        }
+    };
 
-    compareResult('數字起卦 (6, 8, 3)', jsResult, pyResult);
+    runCase('數字起卦 (6, 8, 3)', jsResult, expected);
 }
 
-console.log('=== 梅花易數 JS vs Python 對照測試 ===');
+console.log('=== 梅花易數 JS 對照測試 ===');
 testTimeCase();
 testNumberCase();

@@ -77,6 +77,27 @@
     </nav>
 
     <div class="container">
+        <div class="panel panel-default" id="meihuaLLMSection">
+            <div class="panel-heading">
+                <h3 class="panel-title">AI 大師解卦</h3>
+            </div>
+            <div class="panel-body">
+                <p class="meihua-llm-note meihua-llm-status">
+                    可針對本卦提出問題，AI 會結合卦辭與動爻提供建議。
+                </p>
+                <div id="meihuaConversation" class="conversation-history"></div>
+                <textarea id="meihuaQuestion" class="form-control" rows="4" placeholder="例如：這個卦象對我的事業有什麼提醒？"></textarea>
+                <div style="margin-top: 10px;">
+                    <button id="meihuaAsk" class="btn btn-primary">
+                        🤖 AI 大師解卦
+                    </button>
+                    <button id="meihuaClear" class="btn btn-default">
+                        🗑️ 清除對話
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="meihua-header">
             <h2>梅花易數起卦</h2>
             <p class="text-muted">使用時間起卦，快速獲得卦象與體用分析</p>
@@ -199,25 +220,6 @@
             </div>
         </div>
 
-        <div class="panel panel-default meihua-llm-disabled">
-            <div class="panel-heading">
-                <h3 class="panel-title">AI 大師解卦</h3>
-            </div>
-            <div class="panel-body">
-                <p class="meihua-llm-note">
-                    這個功能尚未開放，待看板與解卦邏輯完成後再啟用。
-                </p>
-                <textarea class="form-control" rows="4" disabled placeholder="AI 解卦功能尚未開放"></textarea>
-                <div style="margin-top: 10px;">
-                    <button class="btn btn-primary" disabled>
-                        🤖 AI 大師解卦
-                    </button>
-                    <button class="btn btn-default" disabled>
-                        🗑️ 清除對話
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <footer class="footer">
@@ -228,6 +230,9 @@
 
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        window.enableLLM = <%= enableLLM ? 'true' : 'false' %>;
+    </script>
     <script src="js/theme.js"></script>
     <script src="js/meihua.js"></script>
 </body>

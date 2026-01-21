@@ -19,6 +19,12 @@ https://qi.david888.com
   - **傳統模式**：以當下時辰起盤（兩小時一盤）
   - **進階模式**：九宮拆補（13分鐘法），每時辰細分為9段
 
+### 🌸 梅花易數
+- **時間起卦**：採用傳統時辰（子時 23:00–00:59 起算）
+- **卦象結果**：本卦、互卦、變卦與體用五行分析
+- **卦辭/爻辭**：完整 64 卦與 384 爻資料
+- **AI 解卦**：支援梅花易數的 AI 分析與外部 API 問答
+
 ### 🤖 AI 智能解盤
 - **AI 大師解盤**：使用大語言模型進行智能解讀
 - **互動問答**：針對排盤結果提出具體問題
@@ -127,20 +133,24 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOO
 - `GET /`：主頁面（實時排盤）
 - `GET /custom`：自定義排盤
 - `GET /start`：靜心起盤頁面
+- `GET /meihua`：梅花易數起卦頁面
 
 ### LLM AI 分析
 - `POST /api/llm-analysis`：AI 解盤分析（支援 `conversationHistory` 參數進行多輪對話）
+- `POST /api/meihua/llm-analysis`：梅花易數 AI 解卦
 - `GET /api/llm-config`：LLM 配置狀態
 - `GET /api/llm-test`：測試 LLM 連接
 
 ### 外部 API 調用
 - `POST /api/qimen-question`：**奇門問答 API**（供外部系統調用）
+- `POST /api/meihua-question`：**梅花易數問答 API**（供外部系統調用）
 
 ### Discord 整合
 - `GET /api/discord-test`：Discord webhook 測試
 
 ### 其他
 - `GET /api/qimen`：奇門排盤數據查詢
+- `POST /api/meihua/qigua`：梅花易數起卦
 - `GET /api/timezone-debug`：時區調試信息
 
 ---
@@ -194,6 +204,57 @@ curl -X POST http://localhost:3000/api/qimen-question \
     "question": "今天適合投資嗎？",
     "mode": "advanced",
     "purpose": "財運"
+  }'
+```
+
+---
+
+## 🌸 梅花易數外部 API
+
+### API 端點
+```
+POST /api/meihua-question
+```
+
+### 請求格式
+```json
+{
+  "question": "今天適合簽約嗎？",
+  "method": "time",
+  "datetime": "2026-01-20T15:30:00",
+  "timezone": "+08:00"
+}
+```
+
+### 欄位說明
+- `question`：必填，使用者問題
+- `method`：`time`（時間起卦）或 `numbers`（數字起卦）
+- `datetime`：可選，時間起卦的指定時間（ISO 格式），預設為現在
+- `timezone`：可選，時區偏移，預設為系統時區（例如 `+08:00`）
+- `num1`、`num2`、`num3`：數字起卦用（`method=numbers`）
+
+### cURL 調用
+```bash
+curl -X POST http://localhost:3000/api/meihua-question \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "今天適合簽約嗎？",
+    "method": "time",
+    "datetime": "2026-01-20T15:30:00",
+    "timezone": "+08:00"
+  }'
+```
+
+#### 數字起卦範例
+```bash
+curl -X POST http://localhost:3000/api/meihua-question \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "這個合作案的結果如何？",
+    "method": "numbers",
+    "num1": 6,
+    "num2": 8,
+    "num3": 3
   }'
 ```
 
@@ -306,8 +367,12 @@ curl http://localhost:3000/api/discord-test
 ```text
 qimen/
 ├── app.js                    # 主應用程序
+├── data/                     # 資料檔
+│   └── meihua/yaoci.md       # 梅花易數卦辭/爻辭
 ├── lib/                      # 核心庫
 │   ├── qimen.js             # 奇門遁甲計算引擎
+│   ├── meihua.js            # 梅花易數計算引擎
+│   ├── meihua-text.js       # 卦辭/爻辭資料處理
 │   ├── llm-analysis.js      # AI 解盤服務
 │   ├── discord-webhook.js   # Discord Webhook 整合
 │   ├── api-time-handler.js  # API 時間處理工具
@@ -334,6 +399,12 @@ A Node.js-based Qimen Dunjia divination system following the Maoshan school meth
 - **Custom Divination**: Choose any date and time for divination
 - **Multiple Methods**: Support for Shijia, Rijia, Yuejia, Nianjia Qimen
 - **Multi-purpose Analysis**: General, career, wealth, love, health consultations
+
+### 🌸 Meihua Yishu
+- **Time-based Qigua**: Uses traditional shichen ranges (Zi hour starts at 23:00)
+- **Hexagram Results**: Ben Gua, Hu Gua, Bian Gua, and wuxing analysis
+- **Full Text**: Complete 64 gua and 384 yao content
+- **AI Reading**: LLM analysis and external API support
 
 ### 🤖 AI-Powered Analysis
 - **AI Master Reading**: Intelligent interpretation using Large Language Models
@@ -455,4 +526,3 @@ qimen/
 ├── lang/                     # Language files
 └── .env.example             # Environment variables example (with Discord config)
 ```
-

@@ -64,7 +64,9 @@ app.get('/start', (req, res) => {
 
 // 梅花易數頁面
 app.get('/meihua', (req, res) => {
-    res.render('meihua');
+    res.render('meihua', {
+        enableLLM: !!process.env.LLM_API_KEY
+    });
 });
 
 // 首頁 - 實時排盤
@@ -695,6 +697,191 @@ app.post('/api/qimen-question', async (req, res) => {
     }
 });
 
+// 梅花易數 LLM 解卦 API
+app.post('/api/meihua/llm-analysis', async (req, res) => {
+    try {
+        const {
+            meihuaData,
+            userQuestion = '',
+            purpose = '綜合',
+            conversationHistory = [],
+            lang = 'zh-tw'
+        } = req.body;
+
+        if (!meihuaData) {
+            return res.status(400).json({ error: '缺少梅花易數數據' });
+        }
+
+        if (userQuestion && userQuestion.trim()) {
+            const questionResult = await discordWebhook.sendUserQuestion(userQuestion.trim(), null);
+            if (questionResult.success) {
+                console.log('Meihua question sent to Discord successfully');
+            }
+        }
+
+        const analysisResult = await llmService.analyzeMeihua(meihuaData, {
+            purpose,
+            userQuestion,
+            conversationHistory,
+            language: lang
+        });
+
+        if (analysisResult.success && analysisResult.analysis) {
+            const analysisDiscordResult = await discordWebhook.sendLLMAnalysis(
+                analysisResult.analysis,
+                null,
+                userQuestion.trim()
+            );
+            if (analysisDiscordResult.success) {
+                console.log('Meihua analysis sent to Discord successfully');
+            }
+        }
+
+        res.json(analysisResult);
+    } catch (error) {
+        console.error('梅花易數 LLM 分析錯誤:', error);
+        res.status(500).json({
+            error: '分析失敗',
+            message: error.message
+        });
+    }
+});
+
+// 梅花易數問答 API - 遠端 POST 請求接口
+app.post('/api/meihua-question', async (req, res) => {
+    try {
+        const {
+            question,
+            method = 'time',
+            datetime = null,
+            num1 = null,
+            num2 = null,
+            num3 = null,
+            purpose = '綜合',
+            timezone = '+08:00',
+            lang = 'zh-tw'
+        } = req.body;
+
+        if (!question || typeof question !== 'string' || !question.trim()) {
+            return res.status(400).json({
+                success: false,
+                error: '缺少必需參數',
+                message: 'question 參數是必需的且不能為空'
+            });
+        }
+
+        const timeValidation = APITimeHandler.validateTimeParams({ datetime, timezone });
+        if (!timeValidation.valid) {
+            return res.status(400).json({
+                success: false,
+                error: '參數驗證失敗',
+                message: timeValidation.errors.join(', ')
+            });
+        }
+
+        let meihuaData;
+        if (method === 'time') {
+            const meihuaDate = APITimeHandler.generateQimenDateTime({ datetime, timezone });
+            meihuaData = meihua.qiguaByGregorianTime(meihuaDate);
+        } else if (method === 'number') {
+            const parsedNum1 = Number.parseInt(num1, 10);
+            const parsedNum2 = Number.parseInt(num2, 10);
+            const parsedNum3 = num3 !== null && num3 !== undefined && num3 !== ''
+                ? Number.parseInt(num3, 10)
+                : null;
+
+            if (!Number.isInteger(parsedNum1) || !Number.isInteger(parsedNum2)) {
+                return res.status(400).json({
+                    success: false,
+                    error: '數字起卦需要提供兩個整數'
+                });
+            }
+
+            if (parsedNum3 !== null && !Number.isInteger(parsedNum3)) {
+                return res.status(400).json({
+                    success: false,
+                    error: '第三個數字必須為整數'
+                });
+            }
+
+            meihuaData = meihua.qiguaByNumbers(parsedNum1, parsedNum2, parsedNum3);
+        } else {
+            return res.status(400).json({
+                success: false,
+                error: '無效的起卦方式'
+            });
+        }
+
+        meihuaData.texts = {
+            bengua: meihuaText.getHexagramText(meihuaData.bengua.num),
+            hugua: meihuaText.getHexagramText(meihuaData.hugua.num),
+            biangua: meihuaText.getHexagramText(meihuaData.biangua.num)
+        };
+
+        const questionResult = await discordWebhook.sendUserQuestion(question.trim(), null);
+        let discordQuestionSent = false;
+        if (questionResult.success) {
+            discordQuestionSent = true;
+            console.log('Meihua API question sent to Discord successfully');
+        }
+
+        const analysisResult = await llmService.analyzeMeihua(meihuaData, {
+            purpose,
+            userQuestion: question.trim(),
+            language: lang
+        });
+
+        let discordAnalysisSent = false;
+        if (analysisResult.success && analysisResult.analysis) {
+            const analysisDiscordResult = await discordWebhook.sendLLMAnalysis(
+                analysisResult.analysis,
+                null,
+                question.trim()
+            );
+            if (analysisDiscordResult.success) {
+                discordAnalysisSent = true;
+                console.log('Meihua API analysis sent to Discord successfully');
+            }
+        }
+
+        return res.json({
+            success: analysisResult.success,
+            question: question.trim(),
+            answer: analysisResult.analysis || analysisResult.fallback || '抱歉，暫時無法提供分析',
+            meihuaInfo: {
+                ...APITimeHandler.formatTimeInfo(meihuaData.solar ? new Date(
+                    meihuaData.solar.year,
+                    meihuaData.solar.month - 1,
+                    meihuaData.solar.day,
+                    meihuaData.solar.hour
+                ) : new Date(), timezone),
+                method,
+                purpose
+            },
+            metadata: {
+                provider: analysisResult.provider || null,
+                model: analysisResult.model || null,
+                language: lang,
+                apiVersion: '1.0'
+            },
+            discord: {
+                questionSent: discordQuestionSent,
+                analysisSent: discordAnalysisSent,
+                enabled: discordWebhook.isEnabled()
+            },
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('梅花易數問答 API 錯誤:', error);
+        return res.status(500).json({
+            success: false,
+            error: '服務器內部錯誤',
+            message: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
 // 獲取 LLM 配置 API
 app.get('/api/llm-config', (req, res) => {
     res.json({
@@ -850,6 +1037,67 @@ app.get('/api/docs', (req, res) => {
                 method: "GET",
                 path: "/api/llm-config",
                 description: "獲取 LLM 和 Discord 配置狀態"
+            },
+            meihuaQuestion: {
+                method: "POST",
+                path: "/api/meihua-question",
+                description: "提交問題並獲得基於梅花易數的 AI 分析回答",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                parameters: {
+                    question: {
+                        type: "string",
+                        required: true,
+                        description: "要詢問的問題"
+                    },
+                    method: {
+                        type: "string",
+                        required: false,
+                        default: "time",
+                        enum: ["time", "number"],
+                        description: "起卦方式"
+                    },
+                    datetime: {
+                        type: "string",
+                        required: false,
+                        description: "指定時間 (ISO 8601 格式)"
+                    },
+                    num1: {
+                        type: "number",
+                        required: false,
+                        description: "數字起卦第一數"
+                    },
+                    num2: {
+                        type: "number",
+                        required: false,
+                        description: "數字起卦第二數"
+                    },
+                    num3: {
+                        type: "number",
+                        required: false,
+                        description: "數字起卦第三數 (動爻)"
+                    },
+                    purpose: {
+                        type: "string",
+                        required: false,
+                        default: "綜合",
+                        description: "問事用途"
+                    },
+                    timezone: {
+                        type: "string",
+                        required: false,
+                        default: "+08:00",
+                        description: "時區偏移 (±HH:MM 格式)"
+                    },
+                    lang: {
+                        type: "string",
+                        required: false,
+                        default: "zh-tw",
+                        enum: ["zh-tw", "zh-cn"],
+                        description: "回答語言"
+                    }
+                }
             }
         },
         examples: {

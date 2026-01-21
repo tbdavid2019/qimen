@@ -1197,7 +1197,7 @@ app.post('/api/meihua/llm-analysis', async (req, res) => {
 **目標**: 實作梅花易數的測字法
 
 **任務清單**:
-- [ ] 研究 `meihua-yishu/references/cezi-method.md`
+- [ ] 研究測字起卦方法（待補參考來源）
 - [ ] 實作測字起卦算法 (筆畫、部首、字形分析)
 - [ ] 創建測字輸入界面
 - [ ] 整合 LLM 進行字形分析
@@ -1507,7 +1507,7 @@ const record = {
 ## 參考資料
 
 - [lunar-javascript 文檔](https://github.com/6tail/lunar-javascript)
-- [梅花易數 SKILL.md](meihua-yishu/SKILL.md)
+- [梅花易數卦辭/爻辭資料](data/meihua/yaoci.md)
 - [Bootstrap 5 文檔](https://getbootstrap.com/)
 - [Leaflet.js 文檔](https://leafletjs.com/)
 - [OpenAI API 文檔](https://platform.openai.com/docs)
