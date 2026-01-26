@@ -7,6 +7,64 @@ body {
     color: #333;
 }
 
+.ad-sidebar {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 160px;
+    height: 600px;
+    z-index: 100;
+    display: none;
+}
+
+.ad-left {
+    left: 10px;
+}
+
+.ad-right {
+    right: 10px;
+}
+
+.ad-footer {
+    width: 100%;
+    max-width: 728px;
+    height: 90px;
+    margin: 20px auto;
+    text-align: center;
+    overflow: hidden;
+}
+
+.ad-slot {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.ad-mobile-container {
+    display: none;
+    margin-bottom: 30px;
+}
+
+.ad-mobile {
+    width: 100%;
+    max-width: 728px;
+    margin: 0 auto;
+    text-align: center;
+    overflow: hidden;
+}
+
+@media (max-width: 1200px) {
+    .ad-mobile-container {
+        display: block;
+    }
+}
+
+@media (min-width: 1201px) {
+    .ad-sidebar {
+        display: block;
+    }
+}
+
 /* 時間精度模式選擇器 */
 .time-mode-selector {
     background-color: #fff;
