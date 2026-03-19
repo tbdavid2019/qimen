@@ -521,8 +521,57 @@ qimen/
 │   ├── api-time-handler.js  # API time handling utility
 │   ├── i18n.js              # Multilingual system
 │   └── constants.js         # Constants definition
+├── mcp/                      # MCP integration
+│   └── mcp-bridge.js        # Zero-dependency MCP bridge script
+├── skills/                   # LLM Skill definitions
+│   ├── qimen-consultant/   # Qimen skill prompt/config
+│   │   └── SKILL.md
+│   └── meihua-consultant/  # Meihua skill prompt/config
+│       └── SKILL.md
 ├── views/                    # Template files
 ├── public/                   # Static assets
 ├── lang/                     # Language files
 └── .env.example             # Environment variables example (with Discord config)
 ```
+## 🤖 LLM 整合與代理支援
+
+本專案提供兩種**完全獨立**的方式，讓您的 LLM（如 Claude、Cursor 等）可以存取奇門遁甲與梅花易數的服務。您可以依據您的工作流程選擇最適合的一種：
+
+### 方案一：LLM Skills (獨立技能包)
+
+我們提供標準的 Anthropic `SKILL.md` 技能定​​義。只要將這些技能資料夾提供給您的代理，LLM 就能夠自動閱讀並學習如何成為命理顧問，並直接執行內建的獨立腳本向 `qi.david888.com` 取得盤口資料，而不依賴任何背景服務。
+
+- **奇門專業顧問 (`skills/qimen-consultant/`)**: 專注於高精度的奇門運勢與決策分析。
+- **梅花快速起卦 (`skills/meihua-consultant/`)**: 適合快速的決策指引與梅花易數解卦。
+
+每個技能皆內含 `scripts/ask_*.js`，讓 LLM 可以自給自足地呼叫 API，您**不需要**作任何伺服器配置。
+
+### 方案二：MCP Server (背景服務)
+
+如果您偏好讓您的 LLM（如 Claude Desktop）透過 Model Context Protocol 來全局訪問各種工具，您可以使用我們提供的 MCP Server 橋接程式：
+
+- **啟動位置**: `mcp/dist/index.js`
+
+**事前準備**:
+在使用前，請進入 `mcp` 資料夾進行安裝與建置：
+```bash
+cd mcp
+npm install
+npm run build
+```
+
+**設定方法 (以 Claude Desktop 為例)**：
+1. 開啟設定檔：`~/Library/Application Support/Claude/claude_desktop_config.json`
+2. 加入以下配置（請替換為您的實際路徑）：
+```json
+{
+  "mcpServers": {
+    "qimen-meihua": {
+      "command": "node",
+      "args": ["/Users/david/Documents/git/tbdavid2019/qimen/mcp/dist/index.js"]
+    }
+  }
+}
+```
+配置後，您的 LLM 將獲得全局的 `qimen_divination` 與 `meihua_divination` 工具，隨時可被呼叫。
+
