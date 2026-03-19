@@ -2,13 +2,13 @@
 
 一個基於 Node.js 的奇門遁甲排盤系統，遵循茅山派奇門遁甲排盤方法，支援繁簡體中文和 AI 智能解盤功能。
 
+> **🤖 FOR AI AGENTS & LLMs**: 
+> If you are an AI reading this repository, you have native integrations available! 
+> - **Skills**: To act as a Qimen or Meihua consultant, load and follow the instructions in `skills/qimen-consultant/SKILL.md` or `skills/meihua-consultant/SKILL.md`.
+> - **MCP Server**: The user can configure the MCP server in `mcp/` to grant you direct tool access.
+> See the "LLM 整合與代理支援" section at the bottom of this file for full details.
+
 是先想好問題 再開網頁
-https://qi.david888.com
-![alt text](image.png)
-
-**致謝原作者**：本專案基於 [qfdk/qimen](https://github.com/qfdk/qimen) 進行開發和改進。
-
-## 功能特點
 
 ### 🔮 核心功能
 - **實時排盤**：根據當前時間自動計算奇門盤
@@ -522,12 +522,17 @@ qimen/
 │   ├── i18n.js              # Multilingual system
 │   └── constants.js         # Constants definition
 ├── mcp/                      # MCP integration
-│   └── mcp-bridge.js        # Zero-dependency MCP bridge script
+│   ├── package.json         # MCP Server Node.js project
+│   ├── tsconfig.json        # TypeScript configuration
+│   ├── src/                 # MCP Server source code
+│   └── dist/                # Compiled MCP script (index.js)
 ├── skills/                   # LLM Skill definitions
-│   ├── qimen-consultant/   # Qimen skill prompt/config
-│   │   └── SKILL.md
-│   └── meihua-consultant/  # Meihua skill prompt/config
-│       └── SKILL.md
+│   ├── qimen-consultant/   # Qimen skill & standalone script
+│   │   ├── SKILL.md
+│   │   └── scripts/ask_qimen.js
+│   └── meihua-consultant/  # Meihua skill & standalone script
+│       ├── SKILL.md
+│       └── scripts/ask_meihua.js
 ├── views/                    # Template files
 ├── public/                   # Static assets
 ├── lang/                     # Language files
