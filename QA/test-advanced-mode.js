@@ -1,4 +1,4 @@
-const qimen = require('./lib/qimen');
+const qimen = require('../lib/qimen');
 
 console.log('=================================');
 console.log('奇門遁甲進階模式測試');
@@ -19,15 +19,15 @@ const testCases = [
 
 testCases.forEach((testCase, index) => {
     const date = new Date(testCase.time);
-    const result = qimen.calculate(date, { 
-        method: '時家', 
-        timePrecisionMode: 'advanced' 
+    const result = qimen.calculate(date, {
+        method: '時家',
+        timePrecisionMode: 'advanced'
     });
 
     console.log(`\n${index + 1}. ${testCase.desc}`);
     console.log(`   時間: ${testCase.time}`);
     console.log(`   時柱: ${result.siZhu.time}`);
-    
+
     if (result.timePrecision) {
         const tp = result.timePrecision;
         console.log(`   九宮段: 第${tp.segment}段/${tp.totalSegments}段`);
@@ -45,9 +45,9 @@ const testTime = new Date('2025-08-04T14:25:00');
 console.log(`\n測試時間: ${testTime.toLocaleString()}`);
 
 // 傳統模式
-const traditionalResult = qimen.calculate(testTime, { 
-    method: '時家', 
-    timePrecisionMode: 'traditional' 
+const traditionalResult = qimen.calculate(testTime, {
+    method: '時家',
+    timePrecisionMode: 'traditional'
 });
 
 console.log('\n【傳統模式】');
@@ -56,9 +56,9 @@ console.log(`局數: ${traditionalResult.juShu.fullName}`);
 console.log(`時間精度: ${traditionalResult.basicInfo.timePrecisionMode}`);
 
 // 進階模式
-const advancedResult = qimen.calculate(testTime, { 
-    method: '時家', 
-    timePrecisionMode: 'advanced' 
+const advancedResult = qimen.calculate(testTime, {
+    method: '時家',
+    timePrecisionMode: 'advanced'
 });
 
 console.log('\n【進階模式】');

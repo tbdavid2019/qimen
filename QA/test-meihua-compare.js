@@ -1,4 +1,4 @@
-const meihua = require('./lib/meihua');
+const meihua = require('../lib/meihua');
 
 function assertEqual(label, actual, expected) {
     if (actual !== expected) {

@@ -1,12 +1,15 @@
 # 奇門遁甲排盤系統
 
+> [!IMPORTANT]
+> **🤖 FOR AI AGENTS & LLMs**: 
+> This repository provides native Model Context Protocol (MCP) support and standard API endpoints. If you are an AI reading this, you can directly interact with the divination service:
+> - **Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to immediately access `qimen_divination` and `meihua_divination` tools via stdio. No installation required.
+> - **Production APIs**: Send POST requests to `https://qi.david888.com/api/qimen-question` and `https://qi.david888.com/api/meihua-question`.
+> - **Consultant Skills**: Detailed behavioral instructions are in `skills/qimen-consultant/SKILL.md` and `skills/meihua-consultant/SKILL.md`.
+
 一個基於 Node.js 的奇門遁甲排盤系統，遵循茅山派奇門遁甲排盤方法，支援繁簡體中文和 AI 智能解盤功能。
 
-> **🤖 FOR AI AGENTS & LLMs**: 
-> If you are an AI reading this repository, you have native integrations available! 
-> - **Skills**: To act as a Qimen or Meihua consultant, load and follow the instructions in `skills/qimen-consultant/SKILL.md` or `skills/meihua-consultant/SKILL.md`.
-> - **MCP Server**: The user can configure the MCP server in `mcp/` to grant you direct tool access.
-> See the "LLM 整合與代理支援" section at the bottom of this file for full details.
+👉 [查看更新日誌 (Changelog)](docs/changelog.md)
 
 是先想好問題 再開網頁
 
@@ -551,32 +554,31 @@ qimen/
 
 每個技能皆內含 `scripts/ask_*.js`，讓 LLM 可以自給自足地呼叫 API，您**不需要**作任何伺服器配置。
 
-### 方案二：MCP Server (背景服務)
+### 方案二：MCP Server (官方 SDK 版本)
 
-如果您偏好讓您的 LLM（如 Claude Desktop）透過 Model Context Protocol 來全局訪問各種工具，您可以使用我們提供的 MCP Server 橋接程式：
+如果您偏好使用官方 SDK 並進行本地建置，可以使用此版本。
 
 - **啟動位置**: `mcp/dist/index.js`
+- **優點**: 使用官方 SDK，結構嚴謹，適合在地開發。
+- **缺點**: 需要執行 `pnpm install` 與 `npm run build`。
 
-**事前準備**:
-在使用前，請進入 `mcp` 資料夾進行安裝與建置：
-```bash
-cd mcp
-npm install
-npm run build
-```
+### 方案三：輕量級 MCP 橋接 (✨ 零依賴版本 - 推薦)
 
-**設定方法 (以 Claude Desktop 為例)**：
-1. 開啟設定檔：`~/Library/Application Support/Claude/claude_desktop_config.json`
-2. 加入以下配置（請替換為您的實際路徑）：
+如果您希望不需安裝任何 `node_modules` 就能使用，請使用此版本。這是專為快速部署與 AI 代理設計的。
+
+- **啟動位置**: `mcp-bridge.js`
+- **優點**: **不需安裝依賴**，下載即可使用。支援 `qimen_divination` 與 `meihua_divination`。
+- **設定方法 (以 Claude Desktop 為例)**：
+  1. 開啟設定檔：`~/Library/Application Support/Claude/claude_desktop_config.json`
+  2. 加入以下配置（請替換為您的實際絕對路徑）：
 ```json
 {
   "mcpServers": {
-    "qimen-meihua": {
+    "qimen-bridge": {
       "command": "node",
-      "args": ["/Users/david/Documents/git/tbdavid2019/qimen/mcp/dist/index.js"]
+      "args": ["/絕對路徑/到/qimen/mcp-bridge.js"]
     }
   }
 }
 ```
-配置後，您的 LLM 將獲得全局的 `qimen_divination` 與 `meihua_divination` 工具，隨時可被呼叫。
 
