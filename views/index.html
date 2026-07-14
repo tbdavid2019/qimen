@@ -1,13 +1,44 @@
 <!DOCTYPE html>
-<html lang="zh-tw">
+<html lang="zh-Hant-TW">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= t('title') %></title>
+    <meta name="description" content="免費線上奇門遁甲與梅花易數排盤系統，支援即時起盤、自定義排盤與繁簡中文介面。">
+    <link rel="canonical" href="https://qi.david888.com/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= t('title') %>">
+    <meta property="og:description" content="免費線上奇門遁甲與梅花易數排盤系統，支援即時起盤、自定義排盤與繁簡中文介面。">
+    <meta property="og:url" content="https://qi.david888.com/">
+    <meta property="og:site_name" content="333奇門遁甲梅花易數排盤系統">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:image" content="https://qi.david888.com/android-chrome-512x512.png">
+    <meta property="og:image:alt" content="333奇門遁甲梅花易數排盤系統圖示">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= t('title') %>">
+    <meta name="twitter:description" content="免費線上奇門遁甲與梅花易數排盤系統，支援即時起盤、自定義排盤與繁簡中文介面。">
+    <meta name="twitter:image" content="https://qi.david888.com/android-chrome-512x512.png">
+    <meta name="twitter:image:alt" content="333奇門遁甲梅花易數排盤系統圖示">
+    <meta name="twitter:site" content="@david888">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "333奇門遁甲梅花易數排盤系統",
+        "url": "https://qi.david888.com/",
+        "description": "免費線上奇門遁甲與梅花易數排盤系統，支援即時起盤、自定義排盤與繁簡中文介面。",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web"
+    }
+    </script>
 
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
@@ -251,7 +282,7 @@
 
         <div class="row">
             <div class="col-md-12 text-center">
-                <h2 class="page-title"><%= t('main.pageTitle') %></h2>
+                <h1 class="page-title"><%= t('main.pageTitle') %></h1>
                 
                 <!-- 時間精度模式選擇器 -->
                 <div class="time-mode-selector" style="margin-bottom: 20px;">
