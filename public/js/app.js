@@ -197,9 +197,7 @@ $(document).ready(function() {
                 
                 if (response.success) {
                     // 顯示成功結果
-                    var cleanContent = response.analysis
-                        .replace(/<[^>]*>/g, '')  // 移除 HTML 標籤
-                        .replace(/\n/g, '<br>');  // 轉換換行為 <br>
+                    var cleanContent = MarkdownRenderer.render(response.analysis);
                     
                     $('#llmAnalysisContent').html(cleanContent);
                     $('#llmTimestamp').text('解盤時間：' + new Date().toLocaleString('zh-TW'));
@@ -211,9 +209,7 @@ $(document).ready(function() {
                     $('#llmResultPanel').show();
                 } else {
                     // 顯示錯誤狀態
-                    var fallbackContent = (response.fallback || '請稍後再試。')
-                        .replace(/<[^>]*>/g, '')
-                        .replace(/\n/g, '<br>');
+                    var fallbackContent = MarkdownRenderer.render(response.fallback || '請稍後再試。');
                     $('#llmErrorContent').html(fallbackContent);
                     $('#llmErrorPanel').show();
                 }
@@ -247,12 +243,12 @@ $(document).ready(function() {
             if (msg.role === 'user') {
                 html += '<div class="conversation-msg user-msg" style="margin-bottom: 10px; text-align: right;">';
                 html += '<span class="label label-primary" style="font-size: 12px;">您</span> ';
-                html += '<span style="background: #337ab7; color: white; padding: 5px 10px; border-radius: 10px; display: inline-block; max-width: 80%; text-align: left;">' + msg.content.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>';
+                html += '<span style="background: #337ab7; color: white; padding: 5px 10px; border-radius: 10px; display: inline-block; max-width: 80%; text-align: left;">' + MarkdownRenderer.escapeHtml(msg.content) + '</span>';
                 html += '</div>';
             } else {
                 html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 10px;">';
                 html += '<span class="label label-success" style="font-size: 12px;">AI 大師</span><br>';
-                html += '<span style="background: #f5f5f5; padding: 8px 12px; border-radius: 10px; display: inline-block; max-width: 90%; border: 1px solid #ddd;">' + msg.content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') + '</span>';
+                html += '<div class="markdown-body" style="background: #f5f5f5; padding: 8px 12px; border-radius: 10px; display: inline-block; width: 100%; border: 1px solid #ddd;">' + MarkdownRenderer.render(msg.content) + '</div>';
                 html += '</div>';
             }
         });
@@ -334,9 +330,7 @@ $(document).ready(function() {
                     // 隱藏單獨的回應區（因為已經顯示在對話歷史中）
                     $responseDiv.hide();
                 } else {
-                    var fallbackContent = (response.fallback || '請稍後再試。')
-                        .replace(/<[^>]*>/g, '')
-                        .replace(/\n/g, '<br>');
+                    var fallbackContent = MarkdownRenderer.render(response.fallback || '請稍後再試。');
                     $responseContent.html('<div class="alert alert-warning">抱歉，AI 暫時無法回答您的問題。<br>' + 
                                         fallbackContent + '</div>');
                 }

@@ -36,6 +36,16 @@
 - 完整測試在本機時區與 UTC 均為 32 passed、0 failed。
 - Vercel 正式站驗收：固定奇門盤維持 `2026-01-20 15:00:00` 且包含 9 宮；首頁與相容 fallback 回傳 200，五支時間相關 JSON API 的非法輸入均回傳 400 與正確 `INVALID_DATETIME` 欄位。
 
+### 📝 AI Markdown 顯示
+
+- 新增奇門與梅花共用的零依賴 Markdown renderer，統一初始分析與後續問答的顯示結果。
+- 支援 GFM pipe table 與欄位對齊，修正表格原始 `|`、`---` 直接顯示的問題。
+- 共用標題、清單與程式碼排版；表格在窄螢幕可橫向捲動，並補齊暗色模式配色。
+- 梅花 AI 回覆改用完整內容寬度，減少長篇分析右側的不必要留白。
+- 所有輸入先做 HTML escape，並加入 script／事件屬性注入回歸測試。
+- 此次沒有變更 API request 或 response 規格，後端與既有應用不需重寫。
+- Markdown focused tests 為 11 passed、0 failed；完整測試在本機與 UTC 均為 43 passed、0 failed。
+
 ## [2026-04-08]
 
 ### 🚀 新功能

@@ -79,6 +79,22 @@
 - 保留既有 API 參數、成功 response shape，以及只傳 `date` 或 `time` 時的 fallback 行為；既有應用不需重寫。
 - 新增純函式、相容層與真實 Express server API 測試；本機與 UTC 完整測試均為 32 passed、0 failed。
 
+## P1.5：統一 AI Markdown 顯示
+
+- [x] 建立奇門與梅花共用、零外部依賴的安全 Markdown renderer。
+- [x] 支援標題、段落、清單、粗斜體、行內／區塊程式碼及 GFM pipe table。
+- [x] 將原始 HTML 全部 escape，避免 LLM 回覆注入 script 或事件屬性。
+- [x] 將 Markdown CSS 移到共用樣式，表格在窄螢幕可橫向捲動並支援暗色模式。
+- [x] 梅花 AI 回覆改為使用完整可用寬度，避免表格右側留下大片空白。
+- [x] 保留所有 API request／response 規格；此次只調整前端顯示層。
+
+### P1.5 驗收記錄
+
+- TDD RED：整合測試先確認兩頁尚未載入共用 renderer，CSS 測試先確認響應式表格與暗色規則缺失。
+- Focused tests：Markdown renderer 與整合樣式共 11 passed、0 failed。
+- 完整測試：本機與 UTC 均為 43 passed、0 failed。
+- 安全回歸：原始 `<script>` 與 `<img onerror>` 會被 escape，無法成為可執行 HTML。
+
 ## P2：降低模組耦合
 
 - [ ] 刪除 `lib/qimen.js` 中未被執行的重複九星、八門、八神實作。

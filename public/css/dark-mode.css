@@ -364,3 +364,18 @@
     background: #0f141b;
     border: 1px solid #2a323c;
 }
+
+[data-theme="dark"] .markdown-body table {
+    background: #1e252b;
+    color: #e8edf2;
+}
+
+[data-theme="dark"] .markdown-body th {
+    background: #2b353d;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .markdown-body th,
+[data-theme="dark"] .markdown-body td {
+    border-color: #46535d;
+}

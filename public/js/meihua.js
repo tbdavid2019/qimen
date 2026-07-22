@@ -411,112 +411,18 @@ function renderMeihuaConversation() {
         if (msg.role === 'user') {
             html += '<div class="conversation-msg user-msg">';
             html += '<span class="label label-primary">您</span> ';
-            html += `<div class="conversation-bubble user-bubble">${escapeHtml(msg.content)}</div>`;
+            html += `<div class="conversation-bubble user-bubble">${MarkdownRenderer.escapeHtml(msg.content)}</div>`;
             html += '</div>';
         } else {
             html += '<div class="conversation-msg assistant-msg">';
             html += '<span class="label label-success">AI 大師</span><br>';
-            html += `<div class="conversation-bubble assistant-bubble markdown-body">${parseMarkdown(msg.content)}</div>`;
+            html += `<div class="conversation-bubble assistant-bubble markdown-body">${MarkdownRenderer.render(msg.content)}</div>`;
             html += '</div>';
         }
     });
     history.innerHTML = html;
     history.style.display = 'block';
     history.scrollTop = history.scrollHeight;
-}
-
-function escapeHtml(text) {
-    return String(text || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-}
-
-function parseMarkdown(text) {
-    var escaped = escapeHtml(text);
-    var codeBlocks = [];
-
-    escaped = escaped.replace(/```([\s\S]*?)```/g, function(match, code) {
-        var index = codeBlocks.length;
-        codeBlocks.push(code);
-        return `@@CODEBLOCK_${index}@@`;
-    });
-
-    var lines = escaped.split(/\r?\n/);
-    var htmlLines = [];
-    var inList = false;
-    var listType = null;
-
-    function closeList() {
-        if (inList) {
-            htmlLines.push(listType === 'ol' ? '</ol>' : '</ul>');
-            inList = false;
-            listType = null;
-        }
-    }
-
-    lines.forEach(function(line) {
-        if (!line.trim()) {
-            closeList();
-            htmlLines.push('<br>');
-            return;
-        }
-
-        var headingMatch = line.match(/^(#{1,4})\s+(.*)$/);
-        if (headingMatch) {
-            closeList();
-            var level = headingMatch[1].length;
-            htmlLines.push(`<h${level}>${inlineMarkdown(headingMatch[2])}</h${level}>`);
-            return;
-        }
-
-        var olMatch = line.match(/^\s*\d+\.\s+(.*)$/);
-        if (olMatch) {
-            if (!inList || listType !== 'ol') {
-                closeList();
-                inList = true;
-                listType = 'ol';
-                htmlLines.push('<ol>');
-            }
-            htmlLines.push(`<li>${inlineMarkdown(olMatch[1])}</li>`);
-            return;
-        }
-
-        var ulMatch = line.match(/^\s*[-*]\s+(.*)$/);
-        if (ulMatch) {
-            if (!inList || listType !== 'ul') {
-                closeList();
-                inList = true;
-                listType = 'ul';
-                htmlLines.push('<ul>');
-            }
-            htmlLines.push(`<li>${inlineMarkdown(ulMatch[1])}</li>`);
-            return;
-        }
-
-        closeList();
-        htmlLines.push(`<p>${inlineMarkdown(line)}</p>`);
-    });
-
-    closeList();
-
-    var html = htmlLines.join('');
-    html = html.replace(/@@CODEBLOCK_(\d+)@@/g, function(match, index) {
-        var code = codeBlocks[Number(index)] || '';
-        return `<pre><code>${code}</code></pre>`;
-    });
-
-    return html;
-}
-
-function inlineMarkdown(text) {
-    var output = text;
-    output = output.replace(/`([^`]+)`/g, '<code>$1</code>');
-    output = output.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    output = output.replace(/__([^_]+)__/g, '<strong>$1</strong>');
-    output = output.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    output = output.replace(/_([^_]+)_/g, '<em>$1</em>');
-    return output;
 }
 
 function toggleMeihuaLLM(enabled) {

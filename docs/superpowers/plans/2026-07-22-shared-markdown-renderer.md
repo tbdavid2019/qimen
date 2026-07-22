@@ -16,7 +16,7 @@
 - Create: `test/markdown-renderer.test.js`
 - Create: `public/js/markdown-renderer.js`
 
-- [ ] **Step 1: Write failing renderer tests**
+- [x] **Step 1: Write failing renderer tests**
 
 Import `../public/js/markdown-renderer` and assert the production-shaped input:
 
@@ -43,13 +43,13 @@ assert.doesNotMatch(unsafe, /<script|<img/i);
 assert.match(unsafe, /&lt;script&gt;/);
 ```
 
-- [ ] **Step 2: Run the focused test and verify RED**
+- [x] **Step 2: Run the focused test and verify RED**
 
 Run: `node --test test/markdown-renderer.test.js`
 
 Expected: FAIL because `public/js/markdown-renderer.js` does not exist.
 
-- [ ] **Step 3: Implement the renderer**
+- [x] **Step 3: Implement the renderer**
 
 Create a UMD module that exports the same API to browsers and Node:
 
@@ -78,7 +78,7 @@ Create a UMD module that exports the same API to browsers and Node:
 
 Implement block parsing for fenced code, valid header/delimiter pipe tables, headings, consecutive ordered/unordered lists, and paragraphs. Escape input before inserting it. Apply inline code, bold, and italic only to escaped text. Table delimiter cells must match `^:?-{3,}:?$`; emit `text-left`, `text-center`, or `text-right` classes from colon markers.
 
-- [ ] **Step 4: Run the focused test and verify GREEN**
+- [x] **Step 4: Run the focused test and verify GREEN**
 
 Run: `node --test test/markdown-renderer.test.js`
 
@@ -93,7 +93,7 @@ Expected: all renderer and XSS assertions pass.
 - Modify: `public/js/app.js`
 - Modify: `public/js/meihua.js`
 
-- [ ] **Step 1: Write failing integration assertions**
+- [x] **Step 1: Write failing integration assertions**
 
 Read the templates and page scripts as text. Assert both templates contain `js/markdown-renderer.js` before their page-specific script; assert Qimen analysis and conversation calls `MarkdownRenderer.render`; assert Meihua calls it and no longer declares `function parseMarkdown`.
 
@@ -105,21 +105,21 @@ assert.match(meihuaJs, /MarkdownRenderer\.render\(msg\.content\)/);
 assert.doesNotMatch(meihuaJs, /function parseMarkdown/);
 ```
 
-- [ ] **Step 2: Run integration tests and verify RED**
+- [x] **Step 2: Run integration tests and verify RED**
 
 Run: `node --test test/markdown-integration.test.js`
 
 Expected: FAIL because neither template loads the renderer and the scripts still use independent conversions.
 
-- [ ] **Step 3: Replace Qimen rendering paths**
+- [x] **Step 3: Replace Qimen rendering paths**
 
 Load `js/markdown-renderer.js` immediately before `js/app.js`. Add `markdown-body` to `#llmAnalysisContent`. Use `MarkdownRenderer.render(response.analysis)` for the initial answer and assistant conversation messages, `MarkdownRenderer.render(response.fallback || '請稍後再試。')` for fallback text, and `MarkdownRenderer.escapeHtml(msg.content)` for user messages.
 
-- [ ] **Step 4: Replace Meihua rendering paths**
+- [x] **Step 4: Replace Meihua rendering paths**
 
 Load `js/markdown-renderer.js` immediately before `js/meihua.js`. Replace `parseMarkdown(msg.content)` with `MarkdownRenderer.render(msg.content)`, replace local user escaping with `MarkdownRenderer.escapeHtml(msg.content)`, then remove the local `escapeHtml`, `parseMarkdown`, and `inlineMarkdown` functions.
 
-- [ ] **Step 5: Run integration and renderer tests**
+- [x] **Step 5: Run integration and renderer tests**
 
 Run: `node --test test/markdown-renderer.test.js test/markdown-integration.test.js`
 
@@ -133,17 +133,17 @@ Expected: both test files pass.
 - Modify: `public/css/meihua.css`
 - Modify: `public/css/dark-mode.css`
 
-- [ ] **Step 1: Add failing CSS integration assertions**
+- [x] **Step 1: Add failing CSS integration assertions**
 
 Assert `style-new.css` contains shared selectors for `.markdown-body table`, `.markdown-body th`, `.markdown-body td`, and `.markdown-table-wrapper`; assert dark mode defines table header/cell colors; assert the old general `.markdown-body` block has been removed from `meihua.css`.
 
-- [ ] **Step 2: Run the integration test and verify RED**
+- [x] **Step 2: Run the integration test and verify RED**
 
 Run: `node --test test/markdown-integration.test.js`
 
 Expected: FAIL because shared table styles do not exist.
 
-- [ ] **Step 3: Centralize Markdown styles**
+- [x] **Step 3: Centralize Markdown styles**
 
 Move the existing heading, paragraph, list, code, and preformatted styles from `meihua.css` into `style-new.css`. Add:
 
@@ -157,7 +157,7 @@ Move the existing heading, paragraph, list, code, and preformatted styles from `
 
 Use existing Bootstrap alignment classes emitted by the renderer. Add dark-mode table background and border overrides. Do not alter surrounding panel or navigation styles.
 
-- [ ] **Step 4: Run focused and complete tests**
+- [x] **Step 4: Run focused and complete tests**
 
 Run: `node --test test/markdown-renderer.test.js test/markdown-integration.test.js`
 
@@ -174,11 +174,11 @@ Expected: all tests pass in both host timezones.
 - Modify: `docs/changelog.md`
 - Modify: `docs/superpowers/plans/2026-07-22-shared-markdown-renderer.md`
 
-- [ ] **Step 1: Record P1.5 completion**
+- [x] **Step 1: Record P1.5 completion**
 
 Add the shared renderer, GFM table, responsive layout, and XSS regression evidence to TODO and changelog. Record exact test totals.
 
-- [ ] **Step 2: Run final verification**
+- [x] **Step 2: Run final verification**
 
 Run syntax checks for all changed JavaScript files, `npm audit --audit-level=low`, and `git diff --check`. Re-run the complete suite immediately before commit.
 
