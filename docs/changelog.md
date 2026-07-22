@@ -2,6 +2,25 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-07-22]
+
+### 🔒 安全性
+
+- 將 Axios 從 1.11.0 升級至 1.18.1，修復 DoS、SSRF、header injection 與 prototype pollution 相關漏洞。
+- 將 EJS 從 2.7.4 升級至 6.0.1，修復 critical template injection 與 pollution protection 漏洞。
+- 將 Express 從 4.21.2 升級至 4.22.2，在保留 Express 4 API 的前提下更新 `body-parser`、`path-to-regexp` 與 `qs`。
+- 將 Nodemon 從 2.0.22 升級至 3.1.14，移除開發依賴鏈漏洞。
+- 更新 Axios／Express／Biome 相關間接依賴；`npm audit --audit-level=low` 結果為 0 vulnerabilities。
+- 移除 root `pnpm-lock.yaml`，統一由 npm 與 `package-lock.json` 提供可重現的 Vercel 安裝結果。
+
+### 🧪 測試與穩定性
+
+- 建立正式 `npm test` 指令，測試範圍限定在離線的 `test/*.test.js`，避免舊 QA 腳本誤呼叫外部服務。
+- 新增奇門九星、八門、八神完整性測試，以及完整排盤 smoke test。
+- 將兩組梅花易數固定案例轉為真正會回傳失敗狀態的自動測試。
+- 修正八神模組輸出的 `腾蛇`／`太阴` 為 canonical `騰蛇`／`太陰`，恢復吉凶分數與八神說明查找。
+- 在本機時區與 UTC 環境完成 6 項測試，皆為 6 passed、0 failed。
+
 ## [2026-04-08]
 
 ### 🚀 新功能
