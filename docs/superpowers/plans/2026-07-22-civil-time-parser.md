@@ -250,11 +250,11 @@ git diff --check
 
 Expected: every command exits 0 and npm reports 0 vulnerabilities.
 
-- [ ] **Step 3: Commit and push only intended files**
+- [x] **Step 3: Commit and push only intended files**
 
 Stage the parser, handler, app routes, tests, TODO, changelog, design amendment, and this plan. Commit with `fix: unify civil time parsing`, then push `origin main`.
 
-- [ ] **Step 4: Verify production API behavior**
+- [x] **Step 4: Verify production API behavior**
 
 Verify `https://qi.david888.com` after deployment:
 
