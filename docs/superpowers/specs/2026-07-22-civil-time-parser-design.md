@@ -34,6 +34,8 @@ The module exports:
 parseCivilTime({
     userDateTime,
     datetime,
+    date,
+    time,
     timestamp,
     timezoneOffset,
     timezone
@@ -55,14 +57,17 @@ The parser uses this precedence, preserving current public behavior:
 
 1. `userDateTime`
 2. `datetime`
-3. `timestamp`
-4. current time
+3. the `date` and `time` pair, when both are present
+4. `timestamp`
+5. current time
 
 Only the selected time source and the timezone metadata that applies to it are parsed. Lower-priority values are ignored, matching the existing precedence behavior. For example, a valid `userDateTime` is not rejected because an unused `timestamp` is malformed.
 
+For backward compatibility, a lone `date` or lone `time` remains an incomplete optional input and is ignored, matching the current fallback-to-now behavior. Valid clients do not need to change, and stricter handling can be introduced only in a future versioned API.
+
 ### Civil datetime strings
 
-`userDateTime` and `datetime` represent the civil clock fields written in the string. `2026-01-20T15:00:00+08:00` therefore means 15:00 at `+08:00`, and `2026-01-20T15:00:00Z` means 15:00 at UTC. The parser preserves the literal 15:00 fields instead of allowing the host timezone to shift them.
+`userDateTime`, `datetime`, and a combined `date`/`time` pair represent the civil clock fields written in the input. `2026-01-20T15:00:00+08:00` therefore means 15:00 at `+08:00`, and `2026-01-20T15:00:00Z` means 15:00 at UTC. The parser preserves the literal 15:00 fields instead of allowing the host timezone to shift them.
 
 Accepted strings use ISO calendar and time fields: `YYYY-MM-DDTHH:mm`, optionally seconds, milliseconds, and a trailing `Z` or `±HH:MM`. Calendar values must form a real date; rollover values such as February 30 are rejected.
 
@@ -111,7 +116,7 @@ Existing API clients must not need to change their request format:
 
 | Endpoint | Existing time inputs retained | Parser mapping |
 | --- | --- | --- |
-| `GET /api/qimen` | `date=YYYY-MM-DD`, `time=HH:mm[:ss]` | Combine into `datetime`, then parse as civil time |
+| `GET /api/qimen` | `date=YYYY-MM-DD`, `time=HH:mm[:ss]` | Pass the pair to the shared parser as civil time |
 | `POST /api/meihua/qigua` | `userDateTime`, `datetime`, `timestamp`, `timezoneOffset` | Pass through with the documented precedence |
 | `POST /api/llm-analysis` | `qimenData`, or `userDateTime`, `timestamp`, `timezoneOffset` | Parse only when `qimenData` is absent and the server must recalculate |
 | `POST /api/qimen-question` | `datetime`, `timezone`, `mode` | Parse `datetime` as civil time; validate `timezone` without double shifting |
@@ -119,7 +124,7 @@ Existing API clients must not need to change their request format:
 
 The homepage and `/custom` route remain compatible with their current query parameters. `/custom` continues accepting separate `date` and `time` values and maps them to the same parser.
 
-For `/custom` and `GET /api/qimen`, `date` and `time` form one input and must either both be present or both be absent. Supplying only one returns HTTP 400 instead of silently calculating the current time. Existing clients that supply both values or neither value remain compatible.
+For `/custom` and `GET /api/qimen`, `date` and `time` form one input when both are present. Supplying only one preserves the existing fallback behavior, so current API clients are not forced to change.
 
 For JSON endpoints, malformed supplied time data returns a stable structure while preserving endpoint-specific fields such as `success` where they already exist:
 
