@@ -45,6 +45,8 @@
 - 所有輸入先做 HTML escape，並加入 script／事件屬性注入回歸測試。
 - 此次沒有變更 API request 或 response 規格，後端與既有應用不需重寫。
 - Markdown focused tests 為 11 passed、0 failed；完整測試在本機與 UTC 均為 43 passed、0 failed。
+- Vercel 正式站驗收：首頁、梅花頁、renderer 與共用 CSS 均回傳 200；兩頁皆先載入 renderer，再載入頁面程式。正式 renderer 與本機 SHA-1 完全一致。
+- 正式站 DOM 注入固定 Markdown 案例後產生 1 個標題、2 欄表格、3 列（含表頭）及粗體內容；表格容器為 `overflow-x: auto`，桌面回覆寬度可使用對話區的大部分空間。最終人工畫面操作由站方驗收。
 
 ## [2026-04-08]
 

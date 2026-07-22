@@ -182,10 +182,10 @@ Add the shared renderer, GFM table, responsive layout, and XSS regression eviden
 
 Run syntax checks for all changed JavaScript files, `npm audit --audit-level=low`, and `git diff --check`. Re-run the complete suite immediately before commit.
 
-- [ ] **Step 3: Commit and push `main`**
+- [x] **Step 3: Commit and push `main`**
 
 Commit only intended renderer, integration, styling, test, and documentation files. Push `origin main` to trigger Vercel.
 
-- [ ] **Step 4: Verify Vercel**
+- [x] **Step 4: Verify Vercel**
 
 Confirm `/js/markdown-renderer.js`, `/`, and `/meihua` return HTTP 200. Confirm both production HTML pages load the shared renderer before their page script. If the browser surface is available, render or trigger the production table example and inspect layout plus console errors; otherwise report the visual-browser limitation separately from the verified asset and integration evidence.
