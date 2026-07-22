@@ -14,6 +14,11 @@ const i18n = require('./lib/i18n');
 const LLMAnalysisService = require('./lib/llm-analysis');
 const DiscordWebhook = require('./lib/discord-webhook');
 const APITimeHandler = require('./lib/api-time-handler');
+const { parseCivilTime } = require('./lib/civil-time');
+
+function getHttpErrorStatus(error) {
+    return error && error.statusCode === 400 ? 400 : 500;
+}
 
 // 初始化 LLM 服務
 const llmService = new LLMAnalysisService({
@@ -73,55 +78,10 @@ app.get('/meihua', (req, res) => {
 app.get('/', async (req, res) => {
     // 獲取時間參數（來自前端或使用伺服器時間）
     let date;
-    const serverTime = new Date();
-    
-    // 優先順序：userDateTime > timestamp > 伺服器時間 + 時區調整
-    if (req.query.userDateTime) {
-        // 使用前端傳遞的本地時間字串（格式：YYYY-MM-DDTHH:mm:ss）
-        const userDateTime = req.query.userDateTime;
-        date = new Date(userDateTime);
-        
-        if (process.env.NODE_ENV !== 'production') {
-            console.log(`使用前端本地時間字串: ${userDateTime}`);
-            console.log(`解析後的時間: ${date.toString()}`);
-        }
-    } else if (req.query.timestamp) {
-        // 備用：使用時間戳，但需要考慮時區差異
-        const timestamp = parseInt(req.query.timestamp);
-        const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : 0;
-        
-        // 建立基於時間戳的 Date 物件
-        date = new Date(timestamp);
-        
-        // 在 Vercel (UTC) 環境中，需要調整顯示時間
-        if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-            // 計算時區差異：用戶時區偏移 vs UTC (0)
-            const offsetDiff = -timezoneOffset; // 負號是因為 getTimezoneOffset 返回相反值
-            date = new Date(date.getTime() + offsetDiff * 60000);
-        }
-        
-        if (process.env.NODE_ENV !== 'production') {
-            console.log(`使用時間戳: ${timestamp}, 時區偏移: ${timezoneOffset}`);
-            console.log(`調整後時間: ${date.toString()}`);
-        }
-    } else {
-        // 使用伺服器時間，根據用戶時區調整
-        date = new Date();
-        const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : null;
-        
-        if (timezoneOffset !== null) {
-            const serverOffset = date.getTimezoneOffset();
-            const userOffset = timezoneOffset;
-            const offsetDiff = serverOffset - userOffset;
-            date = new Date(date.getTime() + offsetDiff * 60000);
-            
-            if (process.env.NODE_ENV !== 'production') {
-                console.log(`時區調整: 伺服器=${serverOffset}, 用戶=${userOffset}, 差異=${offsetDiff}分鐘`);
-            }
-        }
-    }
-    if (Number.isNaN(date.getTime())) {
-        return res.status(400).send('無效的日期時間');
+    try {
+        date = parseCivilTime(req.query);
+    } catch (error) {
+        return res.status(getHttpErrorStatus(error)).send('排盤錯誤: ' + error.message);
     }
     if (process.env.NODE_ENV !== 'production') {
         console.log(`最終使用時間: ${date.toISOString()}, 本地表示: ${date.toString()}`);
@@ -176,7 +136,7 @@ app.get('/', async (req, res) => {
         });
     } catch (error) {
         console.error('排盤錯誤:', error);
-        const statusCode = qimen.getQimenErrorStatus(error);
+        const statusCode = getHttpErrorStatus(error);
         res.status(statusCode).send('排盤錯誤: ' + error.message);
     }
 });
@@ -192,17 +152,11 @@ app.get('/custom', async (req, res) => {
     const purpose = req.query.purpose || '綜合';
     const timePrecisionMode = req.query.timePrecisionMode || 'advanced';
 
-    // 解析日期時間
     let date;
-    if (dateStr && timeStr) {
-        date = new Date(`${dateStr}T${timeStr}`);
-    } else {
-        date = new Date();
-    }
-
-    // 檢查日期是否有效
-    if (isNaN(date.getTime())) {
-        return res.status(400).send('無效的日期時間');
+    try {
+        date = parseCivilTime({ date: dateStr, time: timeStr });
+    } catch (error) {
+        return res.status(getHttpErrorStatus(error)).send('排盤錯誤: ' + error.message);
     }
 
     try {
@@ -251,7 +205,7 @@ app.get('/custom', async (req, res) => {
         });
     } catch (error) {
         console.error('自定義排盤錯誤:', error);
-        const statusCode = qimen.getQimenErrorStatus(error);
+        const statusCode = getHttpErrorStatus(error);
         res.status(statusCode).send('排盤錯誤: ' + error.message);
     }
 });
@@ -267,17 +221,17 @@ app.get('/api/qimen', (req, res) => {
     const purpose = req.query.purpose || '綜合';
     const timePrecisionMode = req.query.timePrecisionMode || 'advanced';
 
-    // 解析日期時間
     let date;
-    if (dateStr && timeStr) {
-        date = new Date(`${dateStr}T${timeStr}`);
-    } else {
-        date = new Date();
-    }
-
-    // 檢查日期是否有效
-    if (isNaN(date.getTime())) {
-        return res.status(400).json({error: '無效的日期時間'});
+    try {
+        date = parseCivilTime({ date: dateStr, time: timeStr });
+    } catch (error) {
+        const statusCode = getHttpErrorStatus(error);
+        return res.status(statusCode).json({
+            error: statusCode === 400 ? '參數驗證失敗' : '排盤錯誤',
+            message: error.message,
+            code: error.code,
+            field: error.field
+        });
     }
 
     try {
@@ -317,7 +271,7 @@ app.get('/api/qimen', (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('API排盤錯誤:', error);
-        const statusCode = qimen.getQimenErrorStatus(error);
+        const statusCode = getHttpErrorStatus(error);
         res.status(statusCode).json({
             error: statusCode === 400 ? '參數驗證失敗' : '排盤錯誤',
             message: error.message,
@@ -342,36 +296,7 @@ app.post('/api/meihua/qigua', (req, res) => {
         } = req.body || {};
 
         if (method === 'time') {
-            let date;
-
-            if (userDateTime) {
-                date = new Date(userDateTime);
-            } else if (datetime) {
-                date = new Date(datetime);
-            } else if (timestamp) {
-                const parsedTimestamp = Number.parseInt(timestamp, 10);
-                date = new Date(parsedTimestamp);
-
-                const parsedTimezoneOffset = Number.parseInt(timezoneOffset, 10);
-                if ((process.env.VERCEL || process.env.NODE_ENV === 'production')
-                    && !Number.isNaN(parsedTimezoneOffset)) {
-                    const offsetDiff = -parsedTimezoneOffset;
-                    date = new Date(date.getTime() + offsetDiff * 60000);
-                }
-            } else {
-                date = new Date();
-
-                const parsedTimezoneOffset = Number.parseInt(timezoneOffset, 10);
-                if (!Number.isNaN(parsedTimezoneOffset)) {
-                    const serverOffset = date.getTimezoneOffset();
-                    const offsetDiff = serverOffset - parsedTimezoneOffset;
-                    date = new Date(date.getTime() + offsetDiff * 60000);
-                }
-            }
-
-            if (Number.isNaN(date.getTime())) {
-                return res.status(400).json({ success: false, error: '無效的時間參數' });
-            }
+            const date = parseCivilTime({ userDateTime, datetime, timestamp, timezoneOffset });
 
             const result = meihua.qiguaByGregorianTime(date);
             result.texts = {
@@ -408,7 +333,14 @@ app.post('/api/meihua/qigua', (req, res) => {
         return res.status(400).json({ success: false, error: '不支援的起卦方式' });
     } catch (error) {
         console.error('梅花易數起卦 API 錯誤:', error);
-        return res.status(500).json({ success: false, error: '起卦失敗', message: error.message });
+        const statusCode = getHttpErrorStatus(error);
+        return res.status(statusCode).json({
+            success: false,
+            error: statusCode === 400 ? '參數驗證失敗' : '起卦失敗',
+            message: error.message,
+            code: error.code,
+            field: error.field
+        });
     }
 });
 
@@ -446,33 +378,7 @@ app.post('/api/llm-analysis', async (req, res) => {
                 i18n.setLanguage('zh-tw');
             }
 
-            const parsedTimestamp = timestamp !== null ? parseInt(timestamp, 10) : null;
-            const parsedTimezoneOffset = timezoneOffset !== null ? parseInt(timezoneOffset, 10) : null;
-            let date;
-
-            if (userDateTime) {
-                date = new Date(userDateTime);
-            } else if (!Number.isNaN(parsedTimestamp) && parsedTimestamp !== null) {
-                date = new Date(parsedTimestamp);
-                if ((process.env.VERCEL || process.env.NODE_ENV === 'production') && parsedTimezoneOffset !== null && !Number.isNaN(parsedTimezoneOffset)) {
-                    const offsetDiff = -parsedTimezoneOffset;
-                    date = new Date(date.getTime() + offsetDiff * 60000);
-                }
-            } else {
-                date = new Date();
-                if (parsedTimezoneOffset !== null && !Number.isNaN(parsedTimezoneOffset)) {
-                    const serverOffset = date.getTimezoneOffset();
-                    const offsetDiff = serverOffset - parsedTimezoneOffset;
-                    date = new Date(date.getTime() + offsetDiff * 60000);
-                }
-            }
-
-            if (Number.isNaN(date.getTime())) {
-                return res.status(400).json({
-                    error: '缺少奇門數據',
-                    message: '請提供 qimenData 或有效的時間參數'
-                });
-            }
+            const date = parseCivilTime({ userDateTime, timestamp, timezoneOffset });
 
             qimenData = qimen.calculate(date, {
                 type: '四柱',
@@ -537,7 +443,7 @@ app.post('/api/llm-analysis', async (req, res) => {
         res.json(analysisResult);
     } catch (error) {
         console.error('LLM 分析 API 錯誤:', error);
-        const statusCode = qimen.getQimenErrorStatus(error);
+        const statusCode = getHttpErrorStatus(error);
         const response = {
             error: statusCode === 400 ? '參數驗證失敗' : '分析失敗',
             message: error.message,
@@ -578,7 +484,9 @@ app.post('/api/qimen-question', async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: '參數驗證失敗',
-                message: timeValidation.errors.join(', ')
+                message: timeValidation.errors.join(', '),
+                code: timeValidation.code,
+                field: timeValidation.field
             });
         }
 
@@ -607,7 +515,7 @@ app.post('/api/qimen-question', async (req, res) => {
             qimenPan = qimen.calculate(qimenDate, options);
         } catch (qimenError) {
             console.error('排盤計算錯誤:', qimenError);
-            const statusCode = qimen.getQimenErrorStatus(qimenError);
+            const statusCode = getHttpErrorStatus(qimenError);
             return res.status(statusCode).json({
                 success: false,
                 error: statusCode === 400 ? '參數驗證失敗' : '排盤計算失敗',
@@ -793,7 +701,9 @@ app.post('/api/meihua-question', async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: '參數驗證失敗',
-                message: timeValidation.errors.join(', ')
+                message: timeValidation.errors.join(', '),
+                code: timeValidation.code,
+                field: timeValidation.field
             });
         }
 
