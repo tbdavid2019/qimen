@@ -53,7 +53,7 @@
 
 ## P1：統一輸入、錯誤與請求狀態
 
-- [ ] 統一核心錯誤契約；`qimen.calculate()` 不再把例外偽裝成正常結果。
+- [x] 統一核心錯誤契約；`qimen.calculate()` 不再把例外偽裝成正常結果。
 - [ ] 所有 HTTP 入口使用同一個排盤輸入驗證器。
 - [ ] 建立唯一的時間／時區解析函式，移除前後端重複與 5／10 分鐘差異。
 - [ ] 將 i18n 改為 request-local，不再修改全域 `currentLang`。
@@ -61,6 +61,13 @@
 - [x] npm／pnpm 擇一並只保留一份 root lockfile。
 - [ ] 統一 Node.js 版本；更新 `package.json`、README、Dockerfile 與部署設定。
 - [x] 檢視 npm audit 報告，逐項升級或替換存在漏洞的直接／間接依賴。
+
+### P1 第一批驗收記錄：核心錯誤契約
+
+- `qimen.calculate()` 現在會驗證日期、排盤方法與時間精度模式，輸入錯誤統一拋出帶有 `code`、`field` 與 `statusCode` 的 `QimenValidationError`。
+- 核心計算不再回傳容易被誤認為正常盤面的 `{ error: true }`；未預期錯誤會保留原始例外並交由呼叫端處理。
+- 首頁、自定義排盤、奇門 JSON API、LLM 分析與奇門問答的計算錯誤路徑，會將輸入錯誤回覆為 HTTP 400、內部錯誤回覆為 HTTP 500。
+- 新增 4 項錯誤契約回歸測試；完整驗收結果記錄於同日 changelog。
 
 ## P2：降低模組耦合
 

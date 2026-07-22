@@ -120,6 +120,9 @@ app.get('/', async (req, res) => {
             }
         }
     }
+    if (Number.isNaN(date.getTime())) {
+        return res.status(400).send('無效的日期時間');
+    }
     if (process.env.NODE_ENV !== 'production') {
         console.log(`最終使用時間: ${date.toISOString()}, 本地表示: ${date.toString()}`);
     }
@@ -173,8 +176,8 @@ app.get('/', async (req, res) => {
         });
     } catch (error) {
         console.error('排盤錯誤:', error);
-        // 返回錯誤頁面
-        res.status(500).send('排盤錯誤: ' + error.message);
+        const statusCode = qimen.getQimenErrorStatus(error);
+        res.status(statusCode).send('排盤錯誤: ' + error.message);
     }
 });
 
@@ -248,8 +251,8 @@ app.get('/custom', async (req, res) => {
         });
     } catch (error) {
         console.error('自定義排盤錯誤:', error);
-        // 返回錯誤頁面
-        res.status(500).send('排盤錯誤: ' + error.message);
+        const statusCode = qimen.getQimenErrorStatus(error);
+        res.status(statusCode).send('排盤錯誤: ' + error.message);
     }
 });
 
@@ -314,7 +317,13 @@ app.get('/api/qimen', (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('API排盤錯誤:', error);
-        res.status(500).json({error: '排盤錯誤', message: error.message});
+        const statusCode = qimen.getQimenErrorStatus(error);
+        res.status(statusCode).json({
+            error: statusCode === 400 ? '參數驗證失敗' : '排盤錯誤',
+            message: error.message,
+            code: error.code,
+            field: error.field
+        });
     }
 });
 
@@ -528,11 +537,17 @@ app.post('/api/llm-analysis', async (req, res) => {
         res.json(analysisResult);
     } catch (error) {
         console.error('LLM 分析 API 錯誤:', error);
-        res.status(500).json({ 
-            error: '分析失敗', 
+        const statusCode = qimen.getQimenErrorStatus(error);
+        const response = {
+            error: statusCode === 400 ? '參數驗證失敗' : '分析失敗',
             message: error.message,
-            fallback: llmService.getFallbackAnalysis(resolvedQimenData || req.body?.qimenData || {})
-        });
+            code: error.code,
+            field: error.field
+        };
+        if (statusCode === 500) {
+            response.fallback = llmService.getFallbackAnalysis(resolvedQimenData || req.body?.qimenData || {});
+        }
+        res.status(statusCode).json(response);
     }
 });
 
@@ -592,10 +607,13 @@ app.post('/api/qimen-question', async (req, res) => {
             qimenPan = qimen.calculate(qimenDate, options);
         } catch (qimenError) {
             console.error('排盤計算錯誤:', qimenError);
-            return res.status(500).json({
+            const statusCode = qimen.getQimenErrorStatus(qimenError);
+            return res.status(statusCode).json({
                 success: false,
-                error: '排盤計算失敗',
+                error: statusCode === 400 ? '參數驗證失敗' : '排盤計算失敗',
                 message: qimenError.message,
+                code: qimenError.code,
+                field: qimenError.field,
                 fallback: '抱歉，排盤計算出現問題，無法提供基於奇門盤的分析'
             });
         }
