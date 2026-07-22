@@ -16,7 +16,7 @@
 - Create: `test/civil-time.test.js`
 - Create: `lib/civil-time.js`
 
-- [ ] **Step 1: Write failing parser contract tests**
+- [x] **Step 1: Write failing parser contract tests**
 
 Create tests that import `parseCivilTime` and `CivilTimeValidationError`, assert local date fields through a helper, and cover these exact cases:
 
@@ -52,13 +52,13 @@ assert.throws(
 
 Also assert `INVALID_TIMESTAMP`, `INVALID_TIMEZONE_OFFSET`, `INVALID_TIMEZONE`, and that a partial `date`/`time` pair preserves the existing fallback-to-`now` behavior.
 
-- [ ] **Step 2: Run the focused test and verify RED**
+- [x] **Step 2: Run the focused test and verify RED**
 
 Run: `node --test test/civil-time.test.js`
 
 Expected: FAIL because `../lib/civil-time` does not exist.
 
-- [ ] **Step 3: Implement the minimal parser**
+- [x] **Step 3: Implement the minimal parser**
 
 Implement and export this interface:
 
@@ -88,13 +88,13 @@ module.exports = { CivilTimeValidationError, parseCivilTime };
 
 Use one strict ISO regex, validate calendar rollover by comparing every constructed local field, accept millisecond epoch values only, validate browser offsets within `-840..840`, and validate API offsets no further than `±14:00`. For timestamp conversion, use `timestamp - timezoneOffset * 60000` for browser offsets and `timestamp + apiOffsetMinutes * 60000` for API offsets, read the shifted instant with UTC getters, then construct the local civil `Date`.
 
-- [ ] **Step 4: Run focused tests and verify GREEN**
+- [x] **Step 4: Run focused tests and verify GREEN**
 
 Run: `node --test test/civil-time.test.js`
 
 Expected: all civil-time tests pass in the default timezone.
 
-- [ ] **Step 5: Prove host-timezone independence**
+- [x] **Step 5: Prove host-timezone independence**
 
 Run: `TZ=UTC node --test test/civil-time.test.js`
 
@@ -106,7 +106,7 @@ Expected: the same tests pass with identical asserted civil fields.
 - Create: `test/api-time-handler.test.js`
 - Modify: `lib/api-time-handler.js`
 
-- [ ] **Step 1: Write failing compatibility tests**
+- [x] **Step 1: Write failing compatibility tests**
 
 Test that `generateQimenDateTime({ datetime: '2026-01-20T15:00:00', timezone: '+08:00' })` has local hour 15, not 23; test that `validateTimeParams` returns invalid for `+15:00` and February 30; test that valid input remains valid.
 
@@ -122,13 +122,13 @@ assert.equal(APITimeHandler.validateTimeParams({
 }).valid, false);
 ```
 
-- [ ] **Step 2: Run the focused test and verify RED**
+- [x] **Step 2: Run the focused test and verify RED**
 
 Run: `node --test test/api-time-handler.test.js`
 
 Expected: at least the 15:00 preservation or strict calendar/timezone validation assertion fails against the current double-shift implementation.
 
-- [ ] **Step 3: Delegate generation and validation**
+- [x] **Step 3: Delegate generation and validation**
 
 Import `parseCivilTime` and `CivilTimeValidationError`. Replace `generateQimenDateTime` with `return parseCivilTime(apiParams)`. Implement `validateTimeParams` by calling `parseCivilTime` with a fixed `now` and returning the existing `{ valid, errors }` shape:
 
@@ -148,7 +148,7 @@ static validateTimeParams(params) {
 
 Keep `formatTimeInfo` and `getSystemTimezone` response fields unchanged. Remove the private duplicate adjustment formula; retain `adjustTimezone` only as a compatibility wrapper around timestamp-plus-timezone parsing.
 
-- [ ] **Step 4: Run parser and facade tests**
+- [x] **Step 4: Run parser and facade tests**
 
 Run: `node --test test/civil-time.test.js test/api-time-handler.test.js`
 
@@ -160,7 +160,7 @@ Expected: all tests pass.
 - Create: `test/api-time-routes.test.js`
 - Modify: `app.js`
 
-- [ ] **Step 1: Write failing real-server API tests**
+- [x] **Step 1: Write failing real-server API tests**
 
 Use `node:child_process` to spawn `node app.js` with an available loopback port, `TZ=UTC`, `LLM_API_KEY=''`, and `DISCORD_WEBHOOK_URL=''`. Wait for the startup line, use built-in `fetch`, and always terminate the child in `after()`.
 
@@ -189,13 +189,13 @@ assert.equal((await invalidQuestionTime.json()).code, 'INVALID_DATETIME');
 
 Add equivalent invalid-time assertions for `/api/meihua/qigua`, `/api/llm-analysis`, and `/api/meihua-question`. These requests must stop at validation and never contact LLM or Discord services.
 
-- [ ] **Step 2: Run the route test and verify RED**
+- [x] **Step 2: Run the route test and verify RED**
 
 Run: `node --test test/api-time-routes.test.js`
 
 Expected: FAIL because impossible calendar dates currently roll into the next month and existing validation responses omit the stable code/field contract.
 
-- [ ] **Step 3: Replace duplicated route parsing**
+- [x] **Step 3: Replace duplicated route parsing**
 
 Import the parser:
 
@@ -211,13 +211,13 @@ Use `parseCivilTime(req.query)` in `/`; `parseCivilTime({ date: dateStr, time: t
 
 Move parsing inside each route's `try` boundary. Replace Qimen-only status mapping with `getHttpErrorStatus`. For a `CivilTimeValidationError`, JSON responses include `code` and `field`, preserve an existing `success: false` field where applicable, and do not attach an LLM fallback.
 
-- [ ] **Step 4: Run the route test and verify GREEN**
+- [x] **Step 4: Run the route test and verify GREEN**
 
 Run: `node --test test/api-time-routes.test.js`
 
 Expected: all HTTP assertions pass and the child server exits cleanly.
 
-- [ ] **Step 5: Run the complete suite in two host timezones**
+- [x] **Step 5: Run the complete suite in two host timezones**
 
 Run: `npm test`
 
@@ -232,11 +232,11 @@ Expected: both commands pass with no leaked server process or external-service c
 - Modify: `docs/changelog.md`
 - Modify: `docs/superpowers/plans/2026-07-22-civil-time-parser.md`
 
-- [ ] **Step 1: Record the completed P1 time-parser work**
+- [x] **Step 1: Record the completed P1 time-parser work**
 
 Mark the single time/timezone parser item complete. Record exact test totals, both timezone runs, syntax checks, audit result, and production HTTP evidence in the changelog.
 
-- [ ] **Step 2: Run final local verification**
+- [x] **Step 2: Run final local verification**
 
 Run:
 
