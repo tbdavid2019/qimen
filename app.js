@@ -24,7 +24,9 @@ function getHttpErrorStatus(error) {
 const llmService = new LLMAnalysisService({
     provider: process.env.LLM_PROVIDER || 'openai',
     apiKey: process.env.LLM_API_KEY,
-    model: process.env.LLM_MODEL || 'gpt-4o-mini'
+    models: process.env.LLM_MODELS || [process.env.LLM_MODEL, process.env.LLM_FALLBACK_MODELS]
+        .filter(Boolean)
+        .join(',') || 'gpt-4o-mini'
 });
 
 // 初始化 Discord Webhook 服務
@@ -816,6 +818,7 @@ app.get('/api/llm-config', (req, res) => {
         enabled: !!process.env.LLM_API_KEY,
         provider: llmService.provider,
         model: llmService.model,
+        models: llmService.models,
         supportedProviders: ['openai', 'anthropic', 'ollama', 'qwen'],
         discord: {
             enabled: discordWebhook.isEnabled(),
@@ -946,7 +949,7 @@ app.get('/api/docs', (req, res) => {
                     },
                     metadata: {
                         provider: "openai",
-                        model: "gpt-4o-mini",
+                        model: "gpt-5.6-sol",
                         language: "zh-tw"
                     },
                     discord: {

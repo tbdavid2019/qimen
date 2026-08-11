@@ -36,7 +36,7 @@
 ```
 LLM_PROVIDER=openai
 LLM_API_KEY=your_api_key_here
-LLM_MODEL=gpt-4o-mini
+LLM_MODEL=gpt-5.6-sol
 PORT=3000
 ```
 

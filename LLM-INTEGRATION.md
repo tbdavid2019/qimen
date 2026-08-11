@@ -40,8 +40,23 @@ cp .env.example .env
 ```env
 LLM_PROVIDER=openai
 LLM_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-LLM_MODEL=gpt-4o-mini
+LLM_MODEL=gpt-5.6-sol
 ```
+
+若要設定 fallback 模型，使用 `LLM_MODELS`，模型會由左至右依序嘗試：
+```env
+LLM_PROVIDER=openai
+LLM_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+LLM_MODELS=gpt-5.6-sol,gpt-5.6-terra,gpt-5.6-luna
+```
+
+也可以保留主要模型設定，只額外指定備援模型：
+```env
+LLM_MODEL=gpt-5.6-sol
+LLM_FALLBACK_MODELS=gpt-5.6-terra,gpt-5.6-luna
+```
+
+當模型呼叫失敗、逾時或回傳空白內容時，系統會自動嘗試下一個模型；全部模型都失敗時，才會使用內建的備用分析。
 
 #### Anthropic Claude
 ```env
