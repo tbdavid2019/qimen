@@ -32,7 +32,8 @@
 - **AI 大師解盤**：使用大語言模型進行智能解讀
 - **互動問答**：針對排盤結果提出具體問題
 - **續問功能**：支援多輪對話，AI 會記住對話脈絡，可深入追問細節
-- **多模型 fallback**：主要模型失敗、逾時或回傳空白時，依序切換備援模型
+- **多模型 fallback**：可用 `LLM_MODELS=model-a,model-b,model-c` 設定多個模型，主要模型失敗、逾時或回傳空白時，系統會依序切換下一個模型
+- **相容單模型設定**：也可用 `LLM_MODEL` 搭配 `LLM_FALLBACK_MODELS`，例如 `LLM_MODEL=model-a`、`LLM_FALLBACK_MODELS=model-b,model-c`
 - **清除對話**：一鍵清除對話記錄，開始新的問題
 - **多模型支援**：支援 OpenAI、Claude、Groq、通義千問、本地 Ollama 等 [更詳細說明](LLM-INTEGRATION.md)
 - **個性化分析**：根據不同用途提供專門建議
