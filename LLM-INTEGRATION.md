@@ -23,8 +23,14 @@
 
 ### API 接口
 - `POST /api/llm-analysis`：LLM 解盤分析
+- `POST /api/qimen-question`：奇門問答與占卜大師接口
+- `POST /api/meihua-question`：梅花問答與占卜大師接口
 - `GET /api/llm-config`：獲取 LLM 配置狀態
 - `GET /api/llm-test`：測試 LLM 連接
+
+### WebMCP & MCP 支援
+- **WebMCP（瀏覽器端）**：基於 Chrome WebMCP 規範，提供 `document.modelContext.registerTool` 命令式與 HTML 宣告式工具，支援 AI 瀏覽器代理直接互動。
+- **Stdio MCP Bridge**：`mcp-bridge.js`，零依賴提供 standard MCP 協議工具（`qimen_divination`、`meihua_divination`）。
 
 ## 配置方法
 

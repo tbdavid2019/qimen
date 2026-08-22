@@ -62,3 +62,7 @@ typings/
 
 # macOS
 .DS_Store
+
+# Sync conflicts
+*.sync-conflict-*
+

@@ -1308,3 +1308,54 @@ body {
         font-size: 16px;
     }
 }
+
+/* ==========================================================================
+   WebMCP Styling (Chrome WebMCP Declarative API & Indicators)
+   ========================================================================== */
+
+/* WebMCP Active Tool Form & Submit Button States */
+form:tool-form-active {
+    outline: 2px dashed #337ab7;
+    outline-offset: 4px;
+    transition: outline 0.2s ease-in-out;
+}
+
+button:tool-submit-active,
+input:tool-submit-active {
+    outline: 2px dashed #d9534f;
+    outline-offset: 2px;
+    box-shadow: 0 0 10px rgba(217, 83, 79, 0.5);
+}
+
+/* WebMCP Agent Activity Toast Indicator */
+.webmcp-agent-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(30, 41, 59, 0.95);
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    z-index: 99999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.webmcp-agent-indicator.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.webmcp-agent-indicator.error {
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(69, 10, 10, 0.95);
+}
+

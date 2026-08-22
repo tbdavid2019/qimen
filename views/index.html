@@ -150,20 +150,23 @@
                             <!-- 對話記錄將動態插入這裡 -->
                         </div>
                         
-                        <div class="form-group">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="userQuestion" 
-                                       placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-primary" type="button" id="askLLMQuestion">
-                                        <i class="glyphicon glyphicon-comment"></i> 詢問
-                                    </button>
-                                    <button class="btn btn-warning" type="button" id="clearConversation" style="display: none;" title="清除對話，開始新問題">
-                                        <i class="glyphicon glyphicon-trash"></i>
-                                    </button>
-                                </span>
+                        <form id="qimenQuestionForm" toolname="qimen_question_tool" tooldescription="向奇門遁甲 AI 大師提出具體問題進行深度解盤" toolautosubmit onsubmit="return false;">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="userQuestion" name="question"
+                                           toolparamdescription="您想詢問的具體問題或狀況（例如：今天適合投資嗎？感情運勢如何？）"
+                                           placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit" id="askLLMQuestion">
+                                            <i class="glyphicon glyphicon-comment"></i> 詢問
+                                        </button>
+                                        <button class="btn btn-warning" type="button" id="clearConversation" style="display: none;" title="清除對話，開始新問題">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                         
                         <div id="llmQuestionResponse" class="well" style="display: none; margin-top: 15px;">
                             <div class="response-content"></div>
@@ -676,18 +679,21 @@
                     <h4 class="modal-title"><%= t('form.customPaipan') %></h4>
                 </div>
                 <div class="modal-body">
-                    <form id="customPanForm" action="/custom" method="get">
+                    <form id="customPanForm" action="/custom" method="get"
+                          toolname="qimen_custom_paipan_tool"
+                          tooldescription="設定自定義日期、時間、地點與模式進行奇門遁甲排盤"
+                          toolautosubmit>
                         <input type="hidden" name="lang" value="<%= currentLang %>">
                         <div class="form-group">
                             <label for="type"><%= t('form.type') %></label>
-                            <select class="form-control" id="type" name="type">
+                            <select class="form-control" id="type" name="type" toolparamdescription="排盤類型（預設：四柱）">
                                 <option value="四柱">四柱</option>
                                 <option value="三元">三元</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="method"><%= t('form.method') %></label>
-                            <select class="form-control" id="method" name="method">
+                            <select class="form-control" id="method" name="method" toolparamdescription="排盤方法（時家、日家、月家、年家）">
                                 <option value="時家"><%= t('form.methods.shijia') %></option>
                                 <option value="日家"><%= t('form.methods.rijia') %></option>
                                 <option value="月家"><%= t('form.methods.yuejia') %></option>
@@ -696,7 +702,7 @@
                         </div>
                         <div class="form-group">
                             <label for="timePrecisionMode">時間精度模式</label>
-                            <select class="form-control" id="timePrecisionMode" name="timePrecisionMode">
+                            <select class="form-control" id="timePrecisionMode" name="timePrecisionMode" toolparamdescription="時間精度模式：進階九時段模式 (advanced) 或傳統時辰模式 (traditional)">
                                 <option value="traditional" <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'selected' : '' %>>傳統模式（以時辰起盤）</option>
                                 <option value="advanced" <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'selected' : '' %>>進階模式（九宮拆補13分鐘法）</option>
                             </select>
@@ -704,19 +710,19 @@
                         </div>
                         <div class="form-group">
                             <label for="date"><%= t('form.date') %></label>
-                            <input type="date" class="form-control" id="date" name="date" required>
+                            <input type="date" class="form-control" id="date" name="date" toolparamdescription="排盤日期 (YYYY-MM-DD)" required>
                         </div>
                         <div class="form-group">
                             <label for="time"><%= t('form.time') %></label>
-                            <input type="time" class="form-control" id="time" name="time" required>
+                            <input type="time" class="form-control" id="time" name="time" toolparamdescription="排盤時間 (HH:mm)" required>
                         </div>
                         <div class="form-group">
                             <label for="location"><%= t('form.location') %></label>
-                            <input type="text" class="form-control" id="location" name="location" placeholder="如：高雄市">
+                            <input type="text" class="form-control" id="location" name="location" toolparamdescription="排盤地點名稱（如：高雄市、台北市）" placeholder="如：高雄市">
                         </div>
                         <div class="form-group">
                             <label for="purpose"><%= t('form.purpose') %></label>
-                            <select class="form-control" id="purpose" name="purpose">
+                            <select class="form-control" id="purpose" name="purpose" toolparamdescription="占卜分析目的（綜合、事業、財運、婚姻、健康、學業）">
                                 <option value="綜合"><%= t('form.purposes.zonghe') %></option>
                                 <option value="事業">事業</option>
                                 <option value="財運"><%= t('form.purposes.caiyun') %></option>
@@ -845,6 +851,7 @@
     <script src="js/theme.js"></script>
     <script src="js/markdown-renderer.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/webmcp.js"></script>
 </body>
 
 </html>

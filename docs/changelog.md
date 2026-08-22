@@ -2,6 +2,33 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-08-23]
+
+### 🌐 WebMCP (Web Model Context Protocol) 支援
+
+- **支援 Chrome WebMCP 規範**：整合最新 Chrome WebMCP 標準（支援 `document.modelContext` 及前導 `navigator.modelContext` 相容），讓 AI 瀏覽器代理（如 Chrome 內建 AI、Model Context Tool Inspector 等）能直接探索並在頁面上調用排盤與占卜工具。
+- **命令式工具註冊（Imperative API）**：
+  - `qimen_divination`：奇門遁甲即時起盤與 AI 大師深度解盤。
+  - `qimen_custom_paipan`：奇門遁甲自定義排盤（四柱、時家/日家/月家/年家、時間精度模式、自訂時地）。
+  - `get_current_pan`：擷取當前頁面奇門遁甲盤九宮結構化資料。
+  - `switch_time_mode`：切換進階九時段模式（13分鐘法）與傳統時辰模式（2小時）。
+  - `switch_theme`：切換暗黑（dark）與明亮（light）主題風格。
+  - `meihua_qigua_time`：梅花易數時間起卦（本卦、互卦、變卦、體用五行與爻辭）。
+  - `meihua_qigua_numbers`：梅花易數三數字起卦（1-100）。
+  - `meihua_divination`：梅花易數大師解卦。
+  - `start_meditation_divination`：靜心問事並啟動起盤流程。
+- **宣告式表單支援（Declarative API）**：
+  - 首頁、梅花易數頁及靜心起盤頁的所有主要表單均加上 `toolname`、`tooldescription`、`toolautosubmit` 與 `toolparamdescription` 屬性。
+  - 支援表單 `event.agentInvoked` 判斷與 `event.respondWith(...)` 回應。
+  - 支援全域 `toolactivated` 與 `toolcancel` 事件監聽與動態 Toast 提示反饋。
+- **WebMCP 樣式規範**：
+  - 實作官方規範的 `form:tool-form-active` 聚焦虛線外框與 `button:tool-submit-active` 提交光暈，並完整支援深色模式。
+- **安全性標頭**：
+  - Express 伺服器預設回傳 `Permissions-Policy: tools=(self)` 標頭。
+- **測試**：
+  - 新增 `test/webmcp.test.js` 完整覆蓋 WebMCP 模組定義、JSON Schema 規範、HTML 宣告式屬性、CSS 偽類樣式與 HTTP 安全標頭。
+  - 完整測試結果：54 passed、0 failed。
+
 ## [2026-08-11]
 
 ### 🤖 AI 穩定性

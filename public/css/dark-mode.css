@@ -379,3 +379,21 @@
 [data-theme="dark"] .markdown-body td {
     border-color: #46535d;
 }
+
+/* WebMCP Dark Mode Styles */
+[data-theme="dark"] form:tool-form-active {
+    outline-color: #5bc0de;
+}
+
+[data-theme="dark"] button:tool-submit-active,
+[data-theme="dark"] input:tool-submit-active {
+    outline-color: #f0ad4e;
+    box-shadow: 0 0 10px rgba(240, 173, 78, 0.5);
+}
+
+[data-theme="dark"] .webmcp-agent-indicator {
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgba(96, 165, 250, 0.5);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+

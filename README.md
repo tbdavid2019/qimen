@@ -2,7 +2,8 @@
 
 > [!IMPORTANT]
 > **🤖 FOR AI AGENTS & LLMs**: 
-> This repository provides native Model Context Protocol (MCP) support and standard API endpoints. If you are an AI reading this, you can directly interact with the divination service:
+> This repository provides native Model Context Protocol (MCP) and **WebMCP** (Chrome In-Browser Agent Tools) support, plus standard API endpoints. If you are an AI reading this, you can directly interact with the divination service:
+> - **🌐 WebMCP (In-Browser Tools)**: Full support for Chrome WebMCP Imperative & Declarative API (`document.modelContext`). AI browser agents can directly discover and execute `qimen_divination`, `qimen_custom_paipan`, `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_divination`, etc.
 > - **Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to immediately access `qimen_divination` and `meihua_divination` tools via stdio. No installation required.
 > - **Production APIs**: Send POST requests to `https://qi.david888.com/api/qimen-question` and `https://qi.david888.com/api/meihua-question`.
 > - **Consultant Skills**: Detailed behavioral instructions are in `skills/qimen-consultant/SKILL.md` and `skills/meihua-consultant/SKILL.md`.
@@ -37,6 +38,27 @@
 - **清除對話**：一鍵清除對話記錄，開始新的問題
 - **多模型支援**：支援 OpenAI、Claude、Groq、通義千問、本地 Ollama 等 [更詳細說明](LLM-INTEGRATION.md)
 - **個性化分析**：根據不同用途提供專門建議
+
+### 🌐 WebMCP (Web Model Context Protocol)
+- **瀏覽器標準 AI 代理支援**：全面支援 Chrome WebMCP 規範，讓瀏覽器 AI 代理（如 Chrome 內建 AI、Model Context Tool Inspector 擴充功能等）能直接與網頁互動。
+- **命令式 API (`document.modelContext`)**：自動註冊各頁面專屬的結構化工具：
+  - `qimen_divination`：奇門遁甲即時起盤與 AI 大師解盤
+  - `qimen_custom_paipan`：奇門遁甲自定義排盤（四柱、時家/日家/月家/年家、時間精度模式、自訂時地）
+  - `get_current_pan`：讀取當前奇門遁甲盤九宮結構化數據
+  - `switch_time_mode`：切換進階九時段模式 / 傳統時辰模式
+  - `switch_theme`：切換暗黑 / 明亮視覺主題
+  - `meihua_qigua_time`：梅花易數時間起卦
+  - `meihua_qigua_numbers`：梅花易數數字起卦（三數字 1-100）
+  - `meihua_divination`：梅花易數大師解卦
+  - `start_meditation_divination`：靜心問事起盤
+- **宣告式 API (Declarative HTML Forms)**：
+  - 各表單具備 `toolname`、`tooldescription`、`toolautosubmit` 與 `toolparamdescription` 屬性
+  - 支援 `event.agentInvoked` 與 `event.respondWith(...)`
+  - 支援 `:tool-form-active` 與 `:tool-submit-active` 視覺樣式反饋
+- **本地測試與開發**：
+  1. 開啟 Chrome 瀏覽器前往 `chrome://flags/#enable-webmcp-testing` 並啟用。
+  2. 安裝 [Model Context Tool Inspector](https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd) 擴充功能即可在開發者工具中檢視與測試工具呼叫。
+
 
 ### 🌏 多語言支援
 - **繁體中文**（預設）

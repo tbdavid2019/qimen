@@ -44,6 +44,12 @@ app.engine('html', require('ejs').renderFile);
 app.use(express.static(path.join(__dirname, 'public')));
 app.disable('view cache');
 
+// 中介軟體：WebMCP 權限政策
+app.use((req, res, next) => {
+    res.setHeader('Permissions-Policy', 'tools=(self)');
+    next();
+});
+
 // 中介軟體：處理語言參數
 app.use((req, res, next) => {
     const lang = req.query.lang || req.headers['accept-language'] || 'zh-tw';
@@ -1098,6 +1104,10 @@ app.get('/api/timezone-debug', (req, res) => {
 
 // 啟動服務器
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`奇門遁甲在運行中 http://localhost:${port}`);
-});
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`奇門遁甲在運行中 http://localhost:${port}`);
+    });
+}
+
+module.exports = app;

@@ -111,15 +111,23 @@
                     可針對本卦提出問題，AI 會結合卦辭與動爻提供建議。
                 </p>
                 <div id="meihuaConversation" class="conversation-history"></div>
-                <textarea id="meihuaQuestion" class="form-control" rows="4" placeholder="例如：這個卦象對我的事業有什麼提醒？"></textarea>
-                <div style="margin-top: 10px;">
-                    <button id="meihuaAsk" class="btn btn-primary">
-                        🤖 大師解卦
-                    </button>
-                    <button id="meihuaClear" class="btn btn-default">
-                        🗑️ 清除對話
-                    </button>
-                </div>
+                <form id="meihuaQuestionForm"
+                      toolname="meihua_question_tool"
+                      tooldescription="針對梅花易數當前卦象提出問題進行大師解卦"
+                      toolautosubmit
+                      onsubmit="return false;">
+                    <textarea id="meihuaQuestion" name="question" class="form-control" rows="4"
+                              toolparamdescription="針對當前卦象想詢問的具體問題或事項"
+                              placeholder="例如：這個卦象對我的事業有什麼提醒？"></textarea>
+                    <div style="margin-top: 10px;">
+                        <button id="meihuaAsk" type="submit" class="btn btn-primary">
+                            🤖 大師解卦
+                        </button>
+                        <button id="meihuaClear" type="button" class="btn btn-default">
+                            🗑️ 清除對話
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -149,24 +157,30 @@
                 <h3 class="panel-title">時間起卦</h3>
             </div>
             <div class="panel-body">
-                <div class="form-group">
-                    <label class="radio-inline">
-                        <input type="radio" name="timeMode" value="current" checked> 使用當前時間
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" name="timeMode" value="custom"> 自定義時間
-                    </label>
-                </div>
+                <form id="meihuaTimeForm"
+                      toolname="meihua_time_qigua_tool"
+                      tooldescription="使用時間進行梅花易數起卦"
+                      toolautosubmit
+                      onsubmit="return false;">
+                    <div class="form-group">
+                        <label class="radio-inline">
+                            <input type="radio" name="timeMode" value="current" checked toolparamdescription="起卦時間模式：當前時間 (current) 或自定義時間 (custom)"> 使用當前時間
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="timeMode" value="custom"> 自定義時間
+                        </label>
+                    </div>
 
-                <div id="customTimeGroup" class="form-group" style="display: none;">
-                    <input type="datetime-local" id="customDateTime" class="form-control">
-                </div>
+                    <div id="customTimeGroup" class="form-group" style="display: none;">
+                        <input type="datetime-local" id="customDateTime" name="customDateTime" class="form-control" toolparamdescription="自定義起卦日期時間 (YYYY-MM-DDTHH:mm)">
+                    </div>
 
-                <p class="text-muted">當前時間：<span id="currentTime"></span></p>
+                    <p class="text-muted">當前時間：<span id="currentTime"></span></p>
 
-                <button id="qiguaBtn" class="btn btn-primary">
-                    <i class="glyphicon glyphicon-star"></i> 起卦
-                </button>
+                    <button id="qiguaBtn" type="submit" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-star"></i> 起卦
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -176,34 +190,40 @@
             </div>
             <div class="panel-body">
                 <p class="text-muted">請直覺選三個數字（1 - 100），或使用骰子隨機生成。</p>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="meihuaNum1">第一個數字（上卦）</label>
-                            <input type="number" id="meihuaNum1" class="form-control" min="1" max="100" placeholder="1 - 100">
+                <form id="meihuaNumberForm"
+                      toolname="meihua_number_qigua_tool"
+                      tooldescription="使用三個數字(1-100)進行梅花易數數字起卦"
+                      toolautosubmit
+                      onsubmit="return false;">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="meihuaNum1">第一個數字（上卦）</label>
+                                <input type="number" id="meihuaNum1" name="num1" class="form-control" min="1" max="100" placeholder="1 - 100" toolparamdescription="第一個數字（1-100，計算上卦）">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="meihuaNum2">第二個數字（下卦）</label>
+                                <input type="number" id="meihuaNum2" name="num2" class="form-control" min="1" max="100" placeholder="1 - 100" toolparamdescription="第二個數字（1-100，計算下卦）">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="meihuaNum3">第三個數字（動爻）</label>
+                                <input type="number" id="meihuaNum3" name="num3" class="form-control" min="1" max="100" placeholder="1 - 100" toolparamdescription="第三個數字（1-100，計算動爻）">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="meihuaNum2">第二個數字（下卦）</label>
-                            <input type="number" id="meihuaNum2" class="form-control" min="1" max="100" placeholder="1 - 100">
-                        </div>
+                    <div class="meihua-number-actions">
+                        <button id="meihuaDice" type="button" class="btn btn-default">
+                            <i class="glyphicon glyphicon-refresh"></i> 隨機
+                        </button>
+                        <button id="numberQiguaBtn" type="submit" class="btn btn-primary">
+                            <i class="glyphicon glyphicon-star"></i> 起卦
+                        </button>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="meihuaNum3">第三個數字（動爻）</label>
-                            <input type="number" id="meihuaNum3" class="form-control" min="1" max="100" placeholder="1 - 100">
-                        </div>
-                    </div>
-                </div>
-                <div class="meihua-number-actions">
-                    <button id="meihuaDice" class="btn btn-default">
-                        <i class="glyphicon glyphicon-refresh"></i> 隨機
-                    </button>
-                    <button id="numberQiguaBtn" class="btn btn-primary">
-                        <i class="glyphicon glyphicon-star"></i> 起卦
-                    </button>
-                </div>
+                </form>
             </div>
         </div>
 
@@ -351,6 +371,7 @@
     <script src="js/theme.js"></script>
     <script src="js/markdown-renderer.js"></script>
     <script src="js/meihua.js"></script>
+    <script src="js/webmcp.js"></script>
 </body>
 
 </html>
