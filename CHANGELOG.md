@@ -2,6 +2,25 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-08-25]
+
+- 修正八宅明鏡八宅遊年九星表，補正坤宅、艮宅重複星，並校正八宅完整方位配置與伏位。
+- 修正八字十神，加入天干陰陽同性／異性判斷，完整支援比肩、劫財、食神、傷官、偏印、正印、偏財、正財、七殺與正官。
+- 修正八字缺少出生日期時的輸入驗證，改回傳明確的「請提供出生日期」訊息。
+- 新增塔羅、風水、八字二與月老姻緣四個頁面與 Express API。
+- 將塔羅抽牌與八字排盤邏輯以純 JavaScript 實作，可在 Vercel Node runtime 執行，不需要 Python。
+- 新增八宅／九運飛星、八字四柱與大運、生肖／合婚／籤詩／桃花／紅線等結構化結果。
+- 新增模組化 Discord 完整記錄，會保存輸入、計算結果及使用者主動觸發的 AI 解讀。
+
+### 參考來源
+
+本次四個模組的功能規劃與規則整理參考以下公開專案；實際執行邏輯已改寫為本 repo 的 JavaScript 模組：
+
+- [daman-ovo-0404/tarot-skill](https://github.com/daman-ovo-0404/tarot-skill)：78 張牌、六種牌陣、牌間關係與安全抽牌流程。
+- [voidforall/fengshui.skill](https://github.com/voidforall/fengshui.skill)：三元玄空飛星、八宅明鏡、形勢與擇日流程。
+- [jinchenma94/bazi-skill](https://github.com/jinchenma94/bazi-skill)：四柱八字、十神藏干、神煞、大運與流年分析流程。
+- [Ming-H/yinyuan-skills](https://github.com/Ming-H/yinyuan-skills)：八字合婚、生肖配對、夫妻宮、姻緣籤、桃花與紅線模式。
+
 ## [2026-08-23]
 
 ### 🌐 WebMCP (Web Model Context Protocol) 支援

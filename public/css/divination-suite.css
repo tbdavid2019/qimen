@@ -1,0 +1,7 @@
+.suite-page { padding: 86px 0 40px; background: #f7f4ee; min-height: 100vh; }
+.suite-card { max-width: 880px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 28px; box-shadow: 0 4px 18px rgba(45, 32, 20, .12); }
+.suite-card h1 { color: #5c3b19; margin-top: 0; }
+.suite-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.suite-actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.suite-result { white-space: pre-wrap; background: #201b18; color: #f8f0df; border-radius: 8px; padding: 18px; margin-top: 20px; max-height: 620px; overflow: auto; }
+.suite-note { color: #765d42; }

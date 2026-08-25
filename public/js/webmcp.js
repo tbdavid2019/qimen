@@ -554,6 +554,28 @@
 		},
 	};
 
+	function createSuiteTool(name, description, endpoint) {
+		return {
+			name,
+			description,
+			inputSchema: { type: "object", properties: { question: { type: "string", description: "使用者的問題或補充說明" } } },
+			annotations: { readOnlyHint: false, untrustedContentHint: false },
+			execute: async (args) => {
+				const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(args || {}) });
+				const data = await response.json();
+				if (!data.success) throw new Error(data.error || "計算失敗");
+				return JSON.stringify(data.reading || data.report || data.chart || data.result);
+			},
+		};
+	}
+
+	Object.assign(toolDefinitions, {
+		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與結構化結果。", "/api/tarot/reading"),
+		fengshui_report: createSuiteTool("fengshui_report", "八宅與飛星風水報告。", "/api/fengshui/report"),
+		bazi2_chart: createSuiteTool("bazi2_chart", "八字二四柱、大運與五行排盤。", "/api/bazi2/chart"),
+		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣、生肖、籤詩與桃花測算。", "/api/yinyuan/reading"),
+	});
+
 	/**
 	 * WebMCP Controller & Registration Manager
 	 */
@@ -578,6 +600,9 @@
 				toolDefinitions.meihua_divination,
 				toolDefinitions.switch_theme,
 			];
+		} else if (["/tarot", "/fengshui", "/bazi2", "/yinyuan"].includes(pathname)) {
+			const suiteTool = { "/tarot": "tarot_reading", "/fengshui": "fengshui_report", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading" }[pathname];
+			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme];
 		} else if (pathname === "/start") {
 			toolsToRegister = [
 				toolDefinitions.start_meditation_divination,

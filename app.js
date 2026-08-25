@@ -15,6 +15,10 @@ const LLMAnalysisService = require('./lib/llm-analysis');
 const DiscordWebhook = require('./lib/discord-webhook');
 const APITimeHandler = require('./lib/api-time-handler');
 const { parseCivilTime } = require('./lib/civil-time');
+const { drawCards } = require('./lib/tarot');
+const { calculateFengShui } = require('./lib/fengshui');
+const { calculateBazi } = require('./lib/bazi2');
+const { zodiacMatch, drawFortuneStick, redThreadReading, baziMatch, marriagePalace, peachBlossom } = require('./lib/yinyuan');
 
 function getHttpErrorStatus(error) {
     return error && error.statusCode === 400 ? 400 : 500;
@@ -80,6 +84,70 @@ app.get('/meihua', (req, res) => {
     res.render('meihua', {
         enableLLM: !!process.env.LLM_API_KEY
     });
+});
+
+// 新增術數頁面
+['tarot', 'fengshui', 'bazi2', 'yinyuan'].forEach((page) => {
+    app.get(`/${page}`, (req, res) => res.render(page, { enableLLM: !!process.env.LLM_API_KEY }));
+});
+
+function sendModuleRecord(moduleName, input, result, analysis = '') {
+    return discordWebhook.sendDivinationRecord(moduleName, input, result, analysis)
+        .catch((error) => ({ success: false, reason: error.message }));
+}
+
+app.post('/api/tarot/reading', async (req, res) => {
+    try {
+        const reading = drawCards(req.body || {});
+        const discord = await sendModuleRecord('塔羅', req.body, reading);
+        res.json({ success: true, reading, discord });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+});
+
+app.post('/api/fengshui/report', async (req, res) => {
+    try {
+        const report = calculateFengShui(req.body || {});
+        const discord = await sendModuleRecord('風水', req.body, report);
+        res.json({ success: true, report, discord });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+});
+
+app.post('/api/bazi2/chart', async (req, res) => {
+    try {
+        const chart = calculateBazi(req.body || {});
+        const discord = await sendModuleRecord('八字二', req.body, chart);
+        res.json({ success: true, chart, discord });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+});
+
+app.post('/api/yinyuan/reading', async (req, res) => {
+    try {
+        const body = req.body || {}; let result;
+        if (body.mode === 'zodiac') result = zodiacMatch(body.firstYear, body.secondYear);
+        else if (body.mode === 'fortune') result = drawFortuneStick(body.seed);
+        else if (body.mode === 'red-thread') result = redThreadReading(body.chart);
+        else if (body.mode === 'bazi-match') result = baziMatch(body.firstChart, body.secondChart);
+        else if (body.mode === 'marriage-palace') result = marriagePalace(body.chart);
+        else if (body.mode === 'peach-blossom') result = peachBlossom(body.firstYear, body.status);
+        else throw new Error('請選擇可用的姻緣測算模式');
+        const discord = await sendModuleRecord('姻緣', body, result);
+        res.json({ success: true, result, discord });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+});
+
+app.post('/api/:module/llm-analysis', async (req, res, next) => {
+    const modules = { tarot: '塔羅', fengshui: '風水', bazi2: '八字', yinyuan: '姻緣' };
+    const moduleName = modules[req.params.module];
+    if (!moduleName) return next();
+    try {
+        const { result, question = '', conversationHistory = [] } = req.body || {};
+        if (!result) return res.status(400).json({ success: false, error: '缺少計算結果' });
+        const prompt = `你是精通${moduleName}的傳統文化顧問。僅根據以下已計算結果解讀，不得修改計算事實。請以繁體中文給出具體、理性、不宿命化的建議；健康、法律與投資問題須提醒尋求專業意見。\n\n問題：${question}\n\n計算結果：${JSON.stringify(result)}`;
+        const response = await llmService.callLLMWithHistory(prompt, conversationHistory);
+        const analysis = typeof response === 'string' ? response : response.content;
+        const discord = await sendModuleRecord(moduleName, req.body, result, analysis);
+        res.json({ success: true, analysis, provider: llmService.provider, model: response.model || llmService.model, discord });
+    } catch (error) { res.status(500).json({ success: false, error: error.message }); }
 });
 
 // 首頁 - 實時排盤
