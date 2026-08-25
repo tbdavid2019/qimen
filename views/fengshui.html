@@ -1,1 +1,169 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>風水顧問</title><link rel="stylesheet" href="/css/bootstrap.min.css"><link rel="stylesheet" href="/css/divination-suite.css"></head><body class="suite-page" data-suite="fengshui"><main class="suite-card"><h1>風水顧問</h1><p class="suite-note">提供八宅、九運飛星與流年參考；格局改善以實際採光、通風與安全優先。</p><form id="suiteForm"><div class="suite-grid"><label>房屋朝向<select class="form-control" name="facing"><option>南</option><option>北</option><option>東</option><option>西</option><option>東南</option><option>西北</option><option>東北</option><option>西南</option></select></label><label>入住／建造年<input class="form-control" name="moveInYear" type="number" value="2024"></label><label>居住者出生年<input class="form-control" name="residentYear" type="number" value="1990"></label><label>性別<select class="form-control" name="sex"><option>女</option><option>男</option></select></label><label>流年<input class="form-control" name="year" type="number" value="2026"></label></div><div class="suite-actions"><button class="btn btn-primary">產生風水報告</button><button type="button" id="suiteAnalyze" class="btn btn-warning" hidden>AI 深度解讀</button><a href="/" class="btn btn-default">回首頁</a></div></form><pre id="suiteResult" class="suite-result" hidden></pre></main><script src="/js/divination-suite.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>風水顧問 · 八宅與九運飛星</title>
+    <meta name="description" content="專業陽宅風水分析工具，結合三元玄空飛星與八宅明鏡，提供科學理性的居家空間規劃與 AI 堪輿建議。">
+    <link rel="canonical" href="https://qi.david888.com/fengshui">
+
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#111a20">
+
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) {
+                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {}
+        })();
+    </script>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style-new.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/divination-suite.css">
+</head>
+
+<body class="suite-page" data-suite="fengshui">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切換導航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">333奇門遁甲梅花易數排盤系統</a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/start"><i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>靜心問事</a></li>
+                <li><a href="/">奇門遁甲</a></li>
+                <li><a href="/meihua">梅花易數</a></li>
+                <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">生辰八字</a></li>
+                <li><a href="/bazi2">生辰八字2</a></li>
+                <li><a href="/tarot">塔羅</a></li>
+                <li class="active"><a href="/fengshui">風水</a></li>
+                <li><a href="/yinyuan">姻緣</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" id="darkModeToggle" class="dark-mode-toggle"
+                       data-label-light="暗黑" data-label-dark="明亮"
+                       data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式"
+                       role="button" aria-pressed="false">
+                        <span class="dark-mode-label">暗黑</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="suite-container">
+        <div class="suite-hero">
+            <span class="suite-hero-badge">🏡 堪輿智慧 · 科學人居</span>
+            <h1>堪輿風水顧問</h1>
+            <p class="suite-hero-subtitle">
+                融匯八宅明鏡與九運玄空飛星；秉持「風水以採光、通風、動線與安全為本」之理念，由 AI 堪輿顧問提供實用的格局調整建議。
+            </p>
+        </div>
+
+        <div class="suite-card">
+            <form id="suiteForm" toolname="fengshui_report" tooldescription="八宅與九運飛星風水報告分析">
+                <div class="suite-form-row">
+                    <div class="suite-form-group">
+                        <label for="fengshuiFacing">房屋朝向（大門或陽台朝向）</label>
+                        <select class="form-control input-lg" id="fengshuiFacing" name="facing">
+                            <option value="南" selected>朝南（坎宅 · 坐北朝南）</option>
+                            <option value="北">朝北（離宅 · 坐南朝北）</option>
+                            <option value="東">朝東（兌宅 · 坐西朝東）</option>
+                            <option value="西">朝西（震宅 · 坐東朝西）</option>
+                            <option value="東南">朝東南（乾宅 · 坐西北朝東南）</option>
+                            <option value="西北">朝西北（巽宅 · 坐東南朝西北）</option>
+                            <option value="東北">朝東北（坤宅 · 坐西南朝東北）</option>
+                            <option value="西南">朝西南（艮宅 · 坐東北朝西南）</option>
+                        </select>
+                    </div>
+
+                    <div class="suite-form-group">
+                        <label for="residentYear">主要居住者出生年</label>
+                        <input type="number" class="form-control input-lg" id="residentYear" name="residentYear" value="1990">
+                    </div>
+
+                    <div class="suite-form-group">
+                        <label for="residentSex">性別</label>
+                        <select class="form-control input-lg" id="residentSex" name="sex">
+                            <option value="女" selected>女</option>
+                            <option value="男">男</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="suite-form-group">
+                    <label for="fengshuiQuestion">想諮詢的空間或問題（選填）</label>
+                    <input type="text" class="form-control input-lg" id="fengshuiQuestion" name="question"
+                           placeholder="例如：主臥室與書房該如何安排？客廳財位佈置有何建議？">
+                </div>
+
+                <details class="suite-details">
+                    <summary>⚙️ 進階建造／入住與流年設定</summary>
+                    <div class="suite-details-body suite-form-row">
+                        <div class="suite-form-group">
+                            <label>入住／建造年份（決定運盤）</label>
+                            <input type="number" class="form-control" name="moveInYear" value="2024">
+                        </div>
+                        <div class="suite-form-group">
+                            <label>當前分析流年</label>
+                            <input type="number" class="form-control" name="year" value="2026">
+                        </div>
+                    </div>
+                </details>
+
+                <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
+                    <span>✨ 生成風水格局並請教堪輿顧問</span>
+                </button>
+            </form>
+
+            <!-- Visual Board -->
+            <div id="suiteVisualBoard" class="suite-visual-board" hidden></div>
+
+            <!-- AI Chat & Interpretation Section -->
+            <div id="suiteAiSection" class="suite-ai-section" hidden>
+                <div class="suite-ai-header">
+                    <h3 class="suite-ai-title">🏡 堪輿顧問深度分析</h3>
+                </div>
+
+                <div id="suiteAiLoading" class="suite-loading-state">
+                    <div class="suite-spinner"></div>
+                    <div>顧問正在勘測八宅九星與流年飛星格局…</div>
+                </div>
+
+                <div id="suiteConversation" class="suite-conversation-stream"></div>
+
+                <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
+                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向風水顧問追問（例如：床頭與書桌該如何擺放？）">
+                    <button type="submit" class="suite-follow-up-btn">追問</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/markdown-renderer.js"></script>
+    <script src="/js/webmcp.js"></script>
+    <script src="/js/divination-suite.js"></script>
+</body>
+</html>

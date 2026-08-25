@@ -572,7 +572,7 @@
 	Object.assign(toolDefinitions, {
 		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與結構化結果。", "/api/tarot/reading"),
 		fengshui_report: createSuiteTool("fengshui_report", "八宅與飛星風水報告。", "/api/fengshui/report"),
-		bazi2_chart: createSuiteTool("bazi2_chart", "八字二四柱、大運與五行排盤。", "/api/bazi2/chart"),
+		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、大運與五行排盤。", "/api/bazi2/chart"),
 		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣、生肖、籤詩與桃花測算。", "/api/yinyuan/reading"),
 	});
 

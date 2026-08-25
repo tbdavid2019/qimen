@@ -88,7 +88,7 @@ app.get('/meihua', (req, res) => {
 
 // 新增術數頁面
 ['tarot', 'fengshui', 'bazi2', 'yinyuan'].forEach((page) => {
-    app.get(`/${page}`, (req, res) => res.render(page, { enableLLM: !!process.env.LLM_API_KEY }));
+    app.get(`/${page}`, (req, res) => res.render(page, { enableLLM: !!process.env.LLM_API_KEY, activePage: page }));
 });
 
 function sendModuleRecord(moduleName, input, result, analysis = '') {
@@ -115,7 +115,7 @@ app.post('/api/fengshui/report', async (req, res) => {
 app.post('/api/bazi2/chart', async (req, res) => {
     try {
         const chart = calculateBazi(req.body || {});
-        const discord = await sendModuleRecord('八字二', req.body, chart);
+        const discord = await sendModuleRecord('生辰八字2', req.body, chart);
         res.json({ success: true, chart, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
 });

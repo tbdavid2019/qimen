@@ -1,1 +1,156 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>塔羅占卜</title><link rel="stylesheet" href="/css/bootstrap.min.css"><link rel="stylesheet" href="/css/divination-suite.css"></head><body class="suite-page" data-suite="tarot"><main class="suite-card"><h1>塔羅占卜</h1><p class="suite-note">選擇牌陣後以安全亂數抽牌；結果保留 seed，可重現本次抽牌。</p><form id="suiteForm"><div class="suite-grid"><label>牌陣<select class="form-control" name="spread"><option value="single">單張指引</option><option value="three" selected>三牌陣</option><option value="diamond">五牌陣</option><option value="moon">月亮牌陣</option><option value="horseshoe">馬蹄形</option><option value="celtic">凱爾特十字</option></select></label><label>問題<input class="form-control" name="question" placeholder="例如：我的工作下一步？"></label></div><div class="suite-actions"><button class="btn btn-primary">抽牌</button><button type="button" id="suiteAnalyze" class="btn btn-warning" hidden>AI 深度解讀</button><a href="/" class="btn btn-default">回首頁</a></div></form><pre id="suiteResult" class="suite-result" hidden></pre></main><script src="/js/divination-suite.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>塔羅占卜 · 心靈指引</title>
+    <meta name="description" content="免費線上塔羅牌占卜，結合心理占卜學派與 78 張牌陣，提供即時抽牌與 AI 深度解牌指引。">
+    <link rel="canonical" href="https://qi.david888.com/tarot">
+
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#111a20">
+
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) {
+                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {}
+        })();
+    </script>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style-new.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/divination-suite.css">
+</head>
+
+<body class="suite-page" data-suite="tarot">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切換導航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">333奇門遁甲梅花易數排盤系統</a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/start"><i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>靜心問事</a></li>
+                <li><a href="/">奇門遁甲</a></li>
+                <li><a href="/meihua">梅花易數</a></li>
+                <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">生辰八字</a></li>
+                <li><a href="/bazi2">生辰八字2</a></li>
+                <li class="active"><a href="/tarot">塔羅</a></li>
+                <li><a href="/fengshui">風水</a></li>
+                <li><a href="/yinyuan">姻緣</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" id="darkModeToggle" class="dark-mode-toggle"
+                       data-label-light="暗黑" data-label-dark="明亮"
+                       data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式"
+                       role="button" aria-pressed="false">
+                        <span class="dark-mode-label">暗黑</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="suite-container">
+        <div class="suite-hero">
+            <span class="suite-hero-badge">🔮 心理塔羅 · 照見內心</span>
+            <h1>塔羅心靈占卜</h1>
+            <p class="suite-hero-subtitle">
+                「塔羅是一面鏡子，反映你的內心與當下狀態。」輸入心中困惑，抽取牌陣並由 AI 塔羅師為您做深度解析與指引。
+            </p>
+        </div>
+
+        <div class="suite-card">
+            <form id="suiteForm" toolname="tarot_reading" tooldescription="塔羅牌陣抽牌與 AI 深度解讀">
+                <div class="suite-form-group">
+                    <label for="tarotQuestion">心中所想的問題</label>
+                    <input type="text" class="form-control input-lg" id="tarotQuestion" name="question"
+                           placeholder="例如：我最近在猶豫是否該換工作？或這段感情接下來的走向？" autofocus>
+                </div>
+
+                <div class="suite-form-group">
+                    <label>選擇牌陣</label>
+                    <div class="suite-chips">
+                        <label class="suite-chip-radio">
+                            <input type="radio" name="spread" value="three" checked>
+                            <span>🌟 三牌陣（過去·現在·未來）</span>
+                        </label>
+                        <label class="suite-chip-radio">
+                            <input type="radio" name="spread" value="single">
+                            <span>💫 單張指引（核心建議）</span>
+                        </label>
+                        <label class="suite-chip-radio">
+                            <input type="radio" name="spread" value="diamond">
+                            <span>💎 五牌陣（阻力與潛力）</span>
+                        </label>
+                        <label class="suite-chip-radio">
+                            <input type="radio" name="spread" value="moon">
+                            <span>🌙 月亮牌陣（情緒與週期）</span>
+                        </label>
+                        <label class="suite-chip-radio">
+                            <input type="radio" name="spread" value="horseshoe">
+                            <span>🐴 馬蹄形（發展路徑）</span>
+                        </label>
+                        <label class="suite-chip-radio">
+                            <input type="radio" name="spread" value="celtic">
+                            <span>⚔️ 凱爾特十字（全方位深度）</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
+                    <span>✨ 開始占卜並由 AI 深度解析</span>
+                </button>
+            </form>
+
+            <!-- Visual Board -->
+            <div id="suiteVisualBoard" class="suite-visual-board" hidden></div>
+
+            <!-- AI Chat & Interpretation Section -->
+            <div id="suiteAiSection" class="suite-ai-section" hidden>
+                <div class="suite-ai-header">
+                    <h3 class="suite-ai-title">🔮 塔羅大師深度解析</h3>
+                </div>
+
+                <div id="suiteAiLoading" class="suite-loading-state">
+                    <div class="suite-spinner"></div>
+                    <div>大師正在凝視牌陣，為您解讀牌意中…</div>
+                </div>
+
+                <div id="suiteConversation" class="suite-conversation-stream"></div>
+
+                <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
+                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向塔羅大師進一步追問（例如：逆位牌具體提醒我什麼？）">
+                    <button type="submit" class="suite-follow-up-btn">追問</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/markdown-renderer.js"></script>
+    <script src="/js/webmcp.js"></script>
+    <script src="/js/divination-suite.js"></script>
+</body>
+</html>

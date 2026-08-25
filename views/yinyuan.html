@@ -1,1 +1,157 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>月老姻緣</title><link rel="stylesheet" href="/css/bootstrap.min.css"><link rel="stylesheet" href="/css/divination-suite.css"></head><body class="suite-page" data-suite="yinyuan"><main class="suite-card"><h1>月老姻緣</h1><p class="suite-note">可做生肖配對、姻緣籤與紅線指引；結果僅供文化參考。</p><form id="suiteForm"><div class="suite-grid"><label>模式<select class="form-control" name="mode"><option value="zodiac">生肖配對</option><option value="fortune">求姻緣籤</option></select></label><label>你的出生年<input class="form-control" name="firstYear" type="number" value="1990"></label><label>對方出生年<input class="form-control" name="secondYear" type="number" value="1991"></label><label>問題（AI 解讀用）<input class="form-control" name="question"></label></div><div class="suite-actions"><button class="btn btn-primary">開始測算</button><button type="button" id="suiteAnalyze" class="btn btn-warning" hidden>AI 深度解讀</button><a href="/" class="btn btn-default">回首頁</a></div></form><pre id="suiteResult" class="suite-result" hidden></pre></main><script src="/js/divination-suite.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>月老姻緣 · 情感測算</title>
+    <meta name="description" content="線上賽博月老求籤、生肖合婚、桃花方位與八字夫妻宮測算，提供溫暖正向的 AI 情感諮詢與指引。">
+    <link rel="canonical" href="https://qi.david888.com/yinyuan">
+
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#111a20">
+
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) {
+                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {}
+        })();
+    </script>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style-new.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/divination-suite.css">
+</head>
+
+<body class="suite-page" data-suite="yinyuan">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切換導航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">333奇門遁甲梅花易數排盤系統</a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/start"><i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>靜心問事</a></li>
+                <li><a href="/">奇門遁甲</a></li>
+                <li><a href="/meihua">梅花易數</a></li>
+                <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">生辰八字</a></li>
+                <li><a href="/bazi2">生辰八字2</a></li>
+                <li><a href="/tarot">塔羅</a></li>
+                <li><a href="/fengshui">風水</a></li>
+                <li class="active"><a href="/yinyuan">姻緣</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" id="darkModeToggle" class="dark-mode-toggle"
+                       data-label-light="暗黑" data-label-dark="明亮"
+                       data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式"
+                       role="button" aria-pressed="false">
+                        <span class="dark-mode-label">暗黑</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="suite-container">
+        <div class="suite-hero">
+            <span class="suite-hero-badge">🏮 賽博月老 · 牽引良緣</span>
+            <h1>月老姻緣情感測算</h1>
+            <p class="suite-hero-subtitle">
+                求月老靈籤、測生肖契合度、查桃花吉方；由賽博月老為您解籤點撥，用真誠與智慧經營美好關係。
+            </p>
+        </div>
+
+        <div class="suite-card">
+            <form id="suiteForm" toolname="yinyuan_reading" tooldescription="月老姻緣求籤、生肖合婚與桃花指引">
+                <div class="suite-form-group">
+                    <label for="yinyuanMode">選擇測算項目</label>
+                    <select class="form-control input-lg" id="yinyuanMode" name="mode">
+                        <option value="fortune" selected>🏮 求月老靈籤（感情走向與指引）</option>
+                        <option value="zodiac">🐴 生肖合婚配對（兩人契合度）</option>
+                        <option value="peach-blossom">🌸 桃花方位指引（提升個人魅力）</option>
+                    </select>
+                </div>
+
+                <div class="suite-form-row">
+                    <div class="suite-form-group">
+                        <label for="firstYear">你的出生西元年</label>
+                        <input type="number" class="form-control input-lg" id="firstYear" name="firstYear" value="1990">
+                    </div>
+
+                    <div class="suite-form-group" id="secondYearGroup" style="display:none;">
+                        <label for="secondYear">對方的出生西元年</label>
+                        <input type="number" class="form-control input-lg" id="secondYear" name="secondYear" value="1991">
+                    </div>
+
+                    <div class="suite-form-group" id="statusGroup" style="display:none;">
+                        <label for="yinyuanStatus">目前感情狀態</label>
+                        <select class="form-control input-lg" id="yinyuanStatus" name="status">
+                            <option value="單身" selected>單身尋覓中</option>
+                            <option value="曖昧中">曖昧/發展中</option>
+                            <option value="穩定交往">穩定戀愛中</option>
+                            <option value="婚姻中">已婚經營</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="suite-form-group">
+                    <label for="yinyuanQuestion">想請月老指點的事（選填）</label>
+                    <input type="text" class="form-control input-lg" id="yinyuanQuestion" name="question"
+                           placeholder="例如：我和他近期常常溝通不良，該如何改善？或何時能遇到正緣？">
+                </div>
+
+                <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
+                    <span>🏮 祈請月老指引並由 AI 深度解讀</span>
+                </button>
+            </form>
+
+            <!-- Visual Board -->
+            <div id="suiteVisualBoard" class="suite-visual-board" hidden></div>
+
+            <!-- AI Chat & Interpretation Section -->
+            <div id="suiteAiSection" class="suite-ai-section" hidden>
+                <div class="suite-ai-header">
+                    <h3 class="suite-ai-title">🏮 賽博月老開示</h3>
+                </div>
+
+                <div id="suiteAiLoading" class="suite-loading-state">
+                    <div class="suite-spinner"></div>
+                    <div>月老正在為您搖籤合盤，細看紅線姻緣…</div>
+                </div>
+
+                <div id="suiteConversation" class="suite-conversation-stream"></div>
+
+                <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
+                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向月老追問（例如：具體該如何突破目前僵局？）">
+                    <button type="submit" class="suite-follow-up-btn">追問</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/markdown-renderer.js"></script>
+    <script src="/js/webmcp.js"></script>
+    <script src="/js/divination-suite.js"></script>
+</body>
+</html>
