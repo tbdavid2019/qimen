@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Qimen/Meihua MCP Bridge
+ * Qimen suite MCP Bridge
  * Zero-dependency bridge for qi.david888.com
  * Supports JSON-RPC 2.0 over stdio
  */
@@ -10,7 +10,7 @@ const https = require('https');
 const readline = require('readline');
 
 // The production API endpoint
-const API_BASE = 'https://qi.david888.com/api';
+const API_BASE = `${(process.env.QIMEN_API_BASE_URL || 'https://qi.david888.com').replace(/\/$/, '')}/api`;
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -111,6 +111,90 @@ const tools = [
       },
       required: ["question"]
     }
+  },
+  {
+    name: "tarot_divination",
+    description: "塔羅六種牌陣抽牌與 AI 反思指引。",
+    inputSchema: {
+      type: "object",
+      properties: {
+        question: { type: "string", description: "您的塔羅問題" },
+        spread: { type: "string", enum: ["single", "three", "diamond", "moon", "horseshoe", "celtic"], default: "three", description: "牌陣" },
+        seed: { type: "string", description: "可選的可重現抽牌種子" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" }
+      },
+      required: ["question"]
+    }
+  },
+  {
+    name: "fengshui_consultation",
+    description: "八宅、九運與流年飛星風水報告及生活化建議。",
+    inputSchema: {
+      type: "object",
+      properties: {
+        question: { type: "string", description: "您的空間問題" },
+        facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南"], default: "南" },
+        moveInYear: { type: "integer", minimum: 1, maximum: 9999 },
+        residentYear: { type: "integer", minimum: 1, maximum: 9999 },
+        sex: { type: "string", enum: ["男", "女"] },
+        year: { type: "integer", minimum: 1, maximum: 9999 },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" }
+      },
+      required: ["question"]
+    }
+  },
+  {
+    name: "bazi2_analysis",
+    description: "生辰八字2四柱、十神、五行、大運與 AI 命理解讀。",
+    inputSchema: {
+      type: "object",
+      properties: {
+        question: { type: "string", description: "您的命理問題" },
+        date: { type: "string", description: "出生日期 YYYY-MM-DD" },
+        time: { type: "string", default: "12:00", description: "出生時間 HH:mm" },
+        sex: { type: "string", enum: ["男", "女"], default: "男" },
+        calendar: { type: "string", enum: ["solar", "lunar"], default: "solar" },
+        name: { type: "string" },
+        formerName: { type: "string" },
+        place: { type: "string" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" }
+      },
+      required: ["question", "date"]
+    }
+  },
+  {
+    name: "yinyuan_reading",
+    description: "月老籤、生肖合婚、夫妻宮、紅線、八字合婚與桃花指引。",
+    inputSchema: {
+      type: "object",
+      properties: {
+        question: { type: "string", description: "您的感情問題" },
+        mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "peach-blossom"], default: "fortune" },
+        firstYear: { type: "integer", minimum: 1, maximum: 9999 },
+        secondYear: { type: "integer", minimum: 1, maximum: 9999 },
+        status: { type: "string", default: "單身" },
+        seed: { type: "string" },
+        chart: { type: "object" },
+        firstChart: { type: "object" },
+        secondChart: { type: "object" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" }
+      },
+      required: ["question"]
+    }
+  },
+  {
+    name: "answerbook_reading",
+    description: "解答之書直接默念取得提醒，或輸入問題後取得答案並由 AI 解讀。",
+    inputSchema: {
+      type: "object",
+      properties: {
+        mode: { type: "string", enum: ["direct", "question"], default: "direct", description: "direct 直接默念；question 輸入問題並由 AI 解讀" },
+        question: { type: "string", description: "問題模式使用的具體問題；直接模式可省略" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
+        conversationHistory: { type: "array", description: "問題模式的續問對話歷史" }
+      },
+      required: []
+    }
   }
 ];
 
@@ -169,6 +253,25 @@ rl.on('line', async (line) => {
           const result = await makeApiRequest('meihua-question', payload);
           const responseText = result.success ? result.answer : `Error: ${result.message || result.error || 'Unknown error'}`;
           return sendResponse(id, { content: [{ type: 'text', text: responseText }] });
+        } catch (err) {
+          return sendResponse(id, { content: [{ type: 'text', text: `Failed to connect to divination service: ${err.message}` }], isError: true });
+        }
+      }
+
+      const suiteEndpoints = {
+        tarot_divination: 'tarot-question',
+        fengshui_consultation: 'fengshui-question',
+        bazi2_analysis: 'bazi2-question',
+        yinyuan_reading: 'yinyuan-question',
+        answerbook_reading: 'answerbook-question'
+      };
+      if (suiteEndpoints[toolName]) {
+        try {
+          const result = await makeApiRequest(suiteEndpoints[toolName], args);
+          const responseText = result.success
+            ? `${result.answer || 'No reading generated.'}${result.analysis ? `\n\nAI 解讀：\n${result.analysis}` : ''}\n\n${JSON.stringify(result.result || result.reading || result.report || result.chart || null, null, 2)}`
+            : `Error: ${result.message || result.error || 'Unknown error'}`;
+          return sendResponse(id, { content: [{ type: 'text', text: responseText }], isError: !result.success });
         } catch (err) {
           return sendResponse(id, { content: [{ type: 'text', text: `Failed to connect to divination service: ${err.message}` }], isError: true });
         }

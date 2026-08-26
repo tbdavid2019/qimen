@@ -2,6 +2,27 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-08-26]
+
+- 移除沒有實際計算作用的「靜心問事」入口：刪除 `/start`、頁面、導航連結與 WebMCP 工具。
+- 新增塔羅、風水、生辰八字2、姻緣四個一站式問答 API，統一支援 JavaScript 計算、同一組 LLM fallback、AI 回覆與 Discord 完整記錄。
+- 新增四份 JavaScript Skill：`tarot-consultant`、`fengshui-consultant`、`bazi2-consultant`、`yinyuan-consultant`。
+- WebMCP 四個套件工具改為完整輸入 schema，並直接呼叫對應一站式 API。
+- 官方 MCP Server 與零依賴 `mcp-bridge.js` 均先擴充至六個服務工具，後續再加入解答之書成為七個服務。
+- 新增「解答之書」頁面與 `POST /api/answerbook-question`：支援直接默念取得原始答案，以及輸入問題後由共用 LLM 解讀。
+- 新增 `answerbook-consultant` JavaScript Skill、WebMCP `answerbook_reading`、官方 MCP 與 bridge 工具，並將導覽列擴充至七個服務。
+- 解答之書後端代理使用 `GET https://answerbook.david888.com/answersOriginal`，保存原始答案、問題與 AI 回應至 Discord。
+- `/api/docs`、README、LLM 整合與 Vercel 文件同步更新。
+- 新增共用服務問答流程、模組專用 AI 提示詞、API／Skill／MCP／文件回歸測試。
+
+### 本次採用的參考來源
+
+- [daman-ovo-0404/tarot-skill](https://github.com/daman-ovo-0404/tarot-skill)：塔羅 78 張牌與六種牌陣規劃；本專案以 JavaScript 重新實作抽牌服務。
+- [voidforall/fengshui.skill](https://github.com/voidforall/fengshui.skill)：八宅、九運飛星與居家建議流程；本專案以 JavaScript 重新實作 API。
+- [jinchenma94/bazi-skill](https://github.com/jinchenma94/bazi-skill)：四柱、十神、藏干、大運與流年分析方向；本專案保留生辰八字2的 JavaScript 計算核心。
+- [Ming-H/yinyuan-skills](https://github.com/Ming-H/yinyuan-skills)：生肖、合婚、夫妻宮、姻緣籤、桃花與紅線模式；本專案以 JavaScript API 與 Skill 重新整合。
+- [解答之書 API](https://answerbook.david888.com/answersOriginal)：提供原始 `{ answer }` 回應；本專案以後端代理整合 direct/question 兩種流程。
+
 ## [2026-08-25]
 
 - 修正八宅明鏡八宅遊年九星表，補正坤宅、艮宅重複星，並校正八宅完整方位配置與伏位。

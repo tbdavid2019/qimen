@@ -47,7 +47,6 @@
 
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/start"><i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>靜心問事</a></li>
                 <li><a href="/">奇門遁甲</a></li>
                 <li><a href="/meihua">梅花易數</a></li>
                 <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">生辰八字</a></li>
@@ -55,6 +54,7 @@
                 <li class="active"><a href="/tarot">塔羅</a></li>
                 <li><a href="/fengshui">風水</a></li>
                 <li><a href="/yinyuan">姻緣</a></li>
+                <li><a href="/answerbook">解答之書</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -80,10 +80,11 @@
         </div>
 
         <div class="suite-card">
-            <form id="suiteForm" toolname="tarot_reading" tooldescription="塔羅牌陣抽牌與 AI 深度解讀">
+            <form id="suiteForm" toolname="tarot_reading" tooldescription="塔羅牌陣抽牌與 AI 深度解讀" toolautosubmit>
                 <div class="suite-form-group">
                     <label for="tarotQuestion">心中所想的問題</label>
                     <input type="text" class="form-control input-lg" id="tarotQuestion" name="question"
+                           toolparamdescription="想詢問的具體問題"
                            placeholder="例如：我最近在猶豫是否該換工作？或這段感情接下來的走向？" autofocus>
                 </div>
 
@@ -91,7 +92,7 @@
                     <label>選擇牌陣</label>
                     <div class="suite-chips">
                         <label class="suite-chip-radio">
-                            <input type="radio" name="spread" value="three" checked>
+                            <input type="radio" name="spread" value="three" checked toolparamdescription="塔羅牌陣：single、three、diamond、moon、horseshoe 或 celtic">
                             <span>🌟 三牌陣（過去·現在·未來）</span>
                         </label>
                         <label class="suite-chip-radio">

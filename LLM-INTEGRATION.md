@@ -2,7 +2,7 @@
 
 ## 功能特點
 
-1. **智能解盤**：使用 AI 大語言模型對奇門遁甲排盤結果進行深度解讀
+1. **智能解盤**：使用 AI 大語言模型對七個本地術數服務結果進行深度解讀
 2. **互動問答**：用戶可以針對排盤結果提出具體問題
 3. **多種用途**：支援事業、財運、感情、健康等不同用途的專門分析
 4. **多模型支援**：支援 OpenAI、Claude、Groq、通義千問、本地 Ollama 等多種 LLM 服務
@@ -12,7 +12,7 @@
 ### 後端架構
 - `lib/llm-analysis.js`：LLM 解盤服務核心類
 - 支援多種 LLM 提供商的統一接口
-- 智能提示詞生成，將奇門數據轉換為結構化描述
+- 模組專用提示詞，將每個服務的結構化結果轉換為可理解的描述
 - 錯誤處理和備用分析機制
 
 ### 前端設計
@@ -25,12 +25,29 @@
 - `POST /api/llm-analysis`：LLM 解盤分析
 - `POST /api/qimen-question`：奇門問答與占卜大師接口
 - `POST /api/meihua-question`：梅花問答與占卜大師接口
+- `POST /api/tarot-question`：塔羅抽牌與 AI 解讀
+- `POST /api/fengshui-question`：風水報告與 AI 建議
+- `POST /api/bazi2-question`：生辰八字2排盤與 AI 解讀
+- `POST /api/yinyuan-question`：姻緣測算與 AI 指引
+- `POST /api/answerbook-question`：解答之書直接默念或取得答案後由 AI 解讀
 - `GET /api/llm-config`：獲取 LLM 配置狀態
 - `GET /api/llm-test`：測試 LLM 連接
 
 ### WebMCP & MCP 支援
 - **WebMCP（瀏覽器端）**：基於 Chrome WebMCP 規範，提供 `document.modelContext.registerTool` 命令式與 HTML 宣告式工具，支援 AI 瀏覽器代理直接互動。
-- **Stdio MCP Bridge**：`mcp-bridge.js`，零依賴提供 standard MCP 協議工具（`qimen_divination`、`meihua_divination`）。
+- **Stdio MCP Bridge**：`mcp-bridge.js`，零依賴提供七個服務的 standard MCP 協議工具。
+
+所有服務使用同一組 `LLM_API_KEY`、模型 fallback 與 Discord Webhook；新增服務透過 `analyzeService` 使用各自的角色與分析焦點。解答之書的 direct 模式只取回原始答案，question 模式才呼叫 LLM。
+
+### Skill 路徑
+
+- `skills/qimen-consultant/`
+- `skills/meihua-consultant/`
+- `skills/tarot-consultant/`
+- `skills/fengshui-consultant/`
+- `skills/bazi2-consultant/`
+- `skills/yinyuan-consultant/`
+- `skills/answerbook-consultant/`
 
 ## 配置方法
 

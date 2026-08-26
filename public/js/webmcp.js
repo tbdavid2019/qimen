@@ -515,65 +515,98 @@
 			},
 		},
 
-		// 9. 靜心問事並起盤
-		start_meditation_divination: {
-			name: "start_meditation_divination",
-			description: "輸入靜心問事題目，並進入奇門遁甲起盤流程。",
-			inputSchema: {
-				type: "object",
-				properties: {
-					question: {
-						type: "string",
-						description: "靜心後想問的題目",
-					},
-					mode: {
-						type: "string",
-						enum: ["advanced", "traditional"],
-						description: "時間精度模式，預設 advanced",
-					},
-				},
-				required: ["question"],
-			},
-			annotations: {
-				readOnlyHint: false,
-				untrustedContentHint: false,
-			},
-			execute: async (args) => {
-				const question = args.question;
-				const mode = args.mode || "advanced";
-				showAgentFeedback(`靜心問事起盤：「${question}」`);
-
-				const now = new Date();
-				const userDateTime = now.toISOString().slice(0, 19);
-				const targetUrl = `/?timePrecisionMode=${mode}&fromMeditation=true&userDateTime=${userDateTime}`;
-				if (typeof window !== "undefined") {
-					window.location.href = targetUrl;
-				}
-				return `已進入靜心起盤流程，跳轉至: ${targetUrl}`;
-			},
-		},
 	};
 
-	function createSuiteTool(name, description, endpoint) {
+	function createSuiteTool(name, description, endpoint, inputSchema) {
 		return {
 			name,
 			description,
-			inputSchema: { type: "object", properties: { question: { type: "string", description: "使用者的問題或補充說明" } } },
+			inputSchema,
 			annotations: { readOnlyHint: false, untrustedContentHint: false },
 			execute: async (args) => {
 				const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(args || {}) });
 				const data = await response.json();
 				if (!data.success) throw new Error(data.error || "計算失敗");
-				return JSON.stringify(data.reading || data.report || data.chart || data.result);
+				return JSON.stringify({
+					answer: data.answer || null,
+					analysis: data.analysis || null,
+					mode: data.mode || null,
+					result: data.result || data.reading || data.report || data.chart || null,
+					metadata: data.metadata || null
+				}, null, 2);
 			},
 		};
 	}
 
 	Object.assign(toolDefinitions, {
-		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與結構化結果。", "/api/tarot/reading"),
-		fengshui_report: createSuiteTool("fengshui_report", "八宅與飛星風水報告。", "/api/fengshui/report"),
-		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、大運與五行排盤。", "/api/bazi2/chart"),
-		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣、生肖、籤詩與桃花測算。", "/api/yinyuan/reading"),
+		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與 AI 深度解讀。", "/api/tarot-question", {
+			type: "object",
+			properties: {
+				question: { type: "string", description: "使用者的問題" },
+				spread: { type: "string", enum: ["single", "three", "diamond", "moon", "horseshoe", "celtic"], description: "牌陣" },
+				seed: { type: "string", description: "可選的可重現抽牌種子" },
+				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
+			},
+			required: ["question"]
+		}),
+		fengshui_report: createSuiteTool("fengshui_report", "八宅、九運與流年飛星風水報告及 AI 建議。", "/api/fengshui-question", {
+			type: "object",
+			properties: {
+				question: { type: "string", description: "使用者的空間問題" },
+				facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南"], description: "房屋朝向" },
+				moveInYear: { type: "integer", minimum: 1, maximum: 9999, description: "入住或建造年份" },
+				residentYear: { type: "integer", minimum: 1, maximum: 9999, description: "主要居住者出生年" },
+				sex: { type: "string", enum: ["男", "女"], description: "主要居住者性別" },
+				year: { type: "integer", minimum: 1, maximum: 9999, description: "分析流年" },
+				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
+			},
+			required: ["question"]
+		}),
+		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、大運與 AI 命理解讀。", "/api/bazi2-question", {
+			type: "object",
+			properties: {
+				question: { type: "string", description: "使用者的命理問題" },
+				date: { type: "string", description: "出生日期 YYYY-MM-DD" },
+				time: { type: "string", description: "出生時間 HH:mm" },
+				sex: { type: "string", enum: ["男", "女"], description: "命主性別" },
+				calendar: { type: "string", enum: ["solar", "lunar"], description: "曆法" },
+				name: { type: "string", description: "姓名（可選）" },
+				formerName: { type: "string", description: "曾用名（可選）" },
+				place: { type: "string", description: "出生地（可選）" },
+				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
+			},
+			required: ["question", "date"]
+		}),
+		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣籤、生肖、夫妻宮與桃花 AI 指引。", "/api/yinyuan-question", {
+			type: "object",
+			properties: {
+				question: { type: "string", description: "使用者的感情問題" },
+				mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "peach-blossom"], description: "姻緣測算模式" },
+				firstYear: { type: "integer", minimum: 1, maximum: 9999, description: "第一人的出生年" },
+				secondYear: { type: "integer", minimum: 1, maximum: 9999, description: "第二人的出生年" },
+				status: { type: "string", description: "目前感情狀態" },
+				seed: { type: "string", description: "籤詩可重現種子" },
+				chart: { type: "object", description: "夫妻宮或紅線模式使用的八字命盤" },
+				firstChart: { type: "object", description: "八字合婚第一份命盤" },
+				secondChart: { type: "object", description: "八字合婚第二份命盤" },
+				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
+						},
+					required: ["question"]
+		}),
+		answerbook_reading: createSuiteTool("answerbook_reading", "解答之書直接默念取得提醒，或輸入問題後請 AI 解讀。", "/api/answerbook-question", {
+			type: "object",
+			properties: {
+				mode: { type: "string", enum: ["direct", "question"], default: "direct", description: "direct 直接默念；question 輸入問題並由 AI 解讀" },
+				question: { type: "string", description: "問題模式使用的具體問題；直接模式可省略" },
+				lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw", description: "回答語言" },
+				conversationHistory: { type: "array", description: "問題模式的續問對話歷史" }
+			},
+			required: []
+		})
 	});
 
 	/**
@@ -600,15 +633,9 @@
 				toolDefinitions.meihua_divination,
 				toolDefinitions.switch_theme,
 			];
-		} else if (["/tarot", "/fengshui", "/bazi2", "/yinyuan"].includes(pathname)) {
-			const suiteTool = { "/tarot": "tarot_reading", "/fengshui": "fengshui_report", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading" }[pathname];
+		} else if (["/tarot", "/fengshui", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
+			const suiteTool = { "/tarot": "tarot_reading", "/fengshui": "fengshui_report", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
 			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme];
-		} else if (pathname === "/start") {
-			toolsToRegister = [
-				toolDefinitions.start_meditation_divination,
-				toolDefinitions.qimen_divination,
-				toolDefinitions.switch_theme,
-			];
 		} else {
 			// Default / or /custom
 			toolsToRegister = [

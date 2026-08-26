@@ -3,10 +3,10 @@
 > [!IMPORTANT]
 > **🤖 FOR AI AGENTS & LLMs**: 
 > This repository provides native Model Context Protocol (MCP) and **WebMCP** (Chrome In-Browser Agent Tools) support, plus standard API endpoints. If you are an AI reading this, you can directly interact with the divination service:
-> - **🌐 WebMCP (In-Browser Tools)**: Full support for Chrome WebMCP Imperative & Declarative API (`document.modelContext`). AI browser agents can directly discover and execute `qimen_divination`, `qimen_custom_paipan`, `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_divination`, etc.
-> - **Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to immediately access `qimen_divination` and `meihua_divination` tools via stdio. No installation required.
-> - **Production APIs**: Send POST requests to `https://qi.david888.com/api/qimen-question` and `https://qi.david888.com/api/meihua-question`.
-> - **Consultant Skills**: Detailed behavioral instructions are in `skills/qimen-consultant/SKILL.md` and `skills/meihua-consultant/SKILL.md`.
+> - **🌐 WebMCP (In-Browser Tools)**: Full support for Chrome WebMCP Imperative & Declarative API (`document.modelContext`). AI browser agents can directly discover and execute tools for all seven local services.
+> - **Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to access all seven service tools via stdio. No installation required.
+> - **Production APIs**: Send POST requests to the one-shot question endpoints under `https://qi.david888.com/api/`, including the answerbook endpoint.
+> - **Consultant Skills**: Detailed behavioral instructions are available in `skills/*-consultant/SKILL.md` for all seven local services.
 
 一個基於 Node.js 的奇門遁甲排盤系統，遵循茅山派奇門遁甲排盤方法，支援繁簡體中文和 AI 智能解盤功能。
 
@@ -34,6 +34,7 @@
 - **風水**：八宅命卦、九運與流年飛星資料。
 - **生辰八字2**：純 JavaScript 四柱、十神、五行、神煞、大運與流年排盤。
 - **月老姻緣**：生肖與八字合婚、夫妻宮、姻緣籤、桃花及紅線指引。
+- **解答之書**：直接默念取得原始答案，或輸入問題後由 AI 協助解讀。
 
 上述頁面沿用 `DISCORD_WEBHOOK_URL` 傳送完整輸入、計算結果與 AI 回應，並提供對應 JSON API。
 
@@ -58,7 +59,11 @@
   - `meihua_qigua_time`：梅花易數時間起卦
   - `meihua_qigua_numbers`：梅花易數數字起卦（三數字 1-100）
   - `meihua_divination`：梅花易數大師解卦
-  - `start_meditation_divination`：靜心問事起盤
+  - `tarot_reading`：塔羅六種牌陣與 AI 解讀
+  - `fengshui_report`：八宅、九運與流年飛星風水報告
+  - `bazi2_chart`：生辰八字2四柱、大運與 AI 解讀
+  - `yinyuan_reading`：月老籤、合婚、夫妻宮與桃花指引
+  - `answerbook_reading`：解答之書直接默念或問題解讀
 - **宣告式 API (Declarative HTML Forms)**：
   - 各表單具備 `toolname`、`tooldescription`、`toolautosubmit` 與 `toolparamdescription` 屬性
   - 支援 `event.agentInvoked` 與 `event.respondWith(...)`
@@ -167,8 +172,9 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOO
 ### Web 界面
 - `GET /`：主頁面（實時排盤）
 - `GET /custom`：自定義排盤
-- `GET /start`：靜心起盤頁面
 - `GET /meihua`：梅花易數起卦頁面
+- `GET /tarot`、`GET /fengshui`、`GET /bazi2`、`GET /yinyuan`：術數套件頁面
+- `GET /answerbook`：解答之書頁面
 
 ### LLM AI 分析
 - `POST /api/llm-analysis`：AI 解盤分析（支援 `conversationHistory` 參數進行多輪對話）
@@ -179,6 +185,11 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOO
 ### 外部 API 調用
 - `POST /api/qimen-question`：**奇門問答 API**（供外部系統調用）
 - `POST /api/meihua-question`：**梅花易數問答 API**（供外部系統調用）
+- `POST /api/tarot-question`：塔羅抽牌與 AI 解讀
+- `POST /api/fengshui-question`：風水報告與 AI 建議
+- `POST /api/bazi2-question`：生辰八字2排盤與 AI 解讀
+- `POST /api/yinyuan-question`：姻緣測算與 AI 指引
+- `POST /api/answerbook-question`：解答之書直接默念或取得答案後由 AI 解讀
 
 ### Discord 整合
 - `GET /api/discord-test`：Discord webhook 測試
@@ -187,6 +198,18 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOO
 - `GET /api/qimen`：奇門排盤數據查詢
 - `POST /api/meihua/qigua`：梅花易數起卦
 - `GET /api/timezone-debug`：時區調試信息
+
+### 解答之書 API
+
+```jsonc
+// 直接默念（question 可省略）
+{ "mode": "direct" }
+
+// 輸入問題並取得 AI 解讀
+{ "mode": "question", "question": "我現在適合轉職嗎？" }
+```
+
+兩種模式都會回傳 `answer` 與 `result`；`question` 模式另外回傳 `analysis`。後端會代理 `GET https://answerbook.david888.com/answersOriginal`，並依設定將完整紀錄送至 Discord。
 
 ---
 
@@ -547,6 +570,14 @@ LLM_MODEL=mixtral-8x7b-32768
 
 - `GET /`: Main page (real-time divination)
 - `GET /custom`: Custom divination
+- `GET /meihua`, `GET /tarot`, `GET /fengshui`, `GET /bazi2`, `GET /yinyuan`: Service pages
+- `POST /api/qimen-question`: Qimen one-shot question and AI answer
+- `POST /api/meihua-question`: Meihua one-shot question and AI answer
+- `POST /api/tarot-question`: Tarot draw and AI interpretation
+- `POST /api/fengshui-question`: Feng Shui report and AI advice
+- `POST /api/bazi2-question`: Bazi 2 chart and AI interpretation
+- `POST /api/yinyuan-question`: Relationship divination and AI guidance
+- `POST /api/answerbook-question`: Direct Answerbook response or question-based AI interpretation
 - `POST /api/llm-analysis`: AI divination analysis
 - `GET /api/llm-config`: LLM configuration status
 - `GET /api/llm-test`: Test LLM connection
@@ -572,9 +603,14 @@ qimen/
 │   ├── qimen-consultant/   # Qimen skill & standalone script
 │   │   ├── SKILL.md
 │   │   └── scripts/ask_qimen.js
-│   └── meihua-consultant/  # Meihua skill & standalone script
-│       ├── SKILL.md
-│       └── scripts/ask_meihua.js
+│   ├── meihua-consultant/  # Meihua skill & standalone script
+│   │   ├── SKILL.md
+│   │   └── scripts/ask_meihua.js
+│   ├── tarot-consultant/   # Tarot skill & standalone script
+│   ├── fengshui-consultant/ # Feng Shui skill & standalone script
+│   ├── bazi2-consultant/   # Bazi 2 skill & standalone script
+│   ├── yinyuan-consultant/ # Relationship skill & standalone script
+│   └── answerbook-consultant/ # Answerbook skill & standalone script
 ├── views/                    # Template files
 ├── public/                   # Static assets
 ├── lang/                     # Language files
@@ -582,14 +618,19 @@ qimen/
 ```
 ## 🤖 LLM 整合與代理支援
 
-本專案提供兩種**完全獨立**的方式，讓您的 LLM（如 Claude、Cursor 等）可以存取奇門遁甲與梅花易數的服務。您可以依據您的工作流程選擇最適合的一種：
+本專案提供 Skills、WebMCP 與 MCP 三種方式，讓您的 LLM（如 Claude、Cursor 等）可以存取七個本地術數服務。
 
 ### 方案一：LLM Skills (獨立技能包)
 
 我們提供標準的 Anthropic `SKILL.md` 技能定​​義。只要將這些技能資料夾提供給您的代理，LLM 就能夠自動閱讀並學習如何成為命理顧問，並直接執行內建的獨立腳本向 `qi.david888.com` 取得盤口資料，而不依賴任何背景服務。
 
-- **奇門專業顧問 (`skills/qimen-consultant/`)**: 專注於高精度的奇門運勢與決策分析。
-- **梅花快速起卦 (`skills/meihua-consultant/`)**: 適合快速的決策指引與梅花易數解卦。
+- `skills/qimen-consultant/`：奇門遁甲
+- `skills/meihua-consultant/`：梅花易數
+- `skills/tarot-consultant/`：塔羅
+- `skills/fengshui-consultant/`：風水
+- `skills/bazi2-consultant/`：生辰八字2
+- `skills/yinyuan-consultant/`：姻緣
+- `skills/answerbook-consultant/`：解答之書
 
 每個技能皆內含 `scripts/ask_*.js`，讓 LLM 可以自給自足地呼叫 API，您**不需要**作任何伺服器配置。
 
@@ -606,7 +647,7 @@ qimen/
 如果您希望不需安裝任何 `node_modules` 就能使用，請使用此版本。這是專為快速部署與 AI 代理設計的。
 
 - **啟動位置**: `mcp-bridge.js`
-- **優點**: **不需安裝依賴**，下載即可使用。支援 `qimen_divination` 與 `meihua_divination`。
+- **優點**: **不需安裝依賴**，下載即可使用。支援七個本地服務工具。
 - **設定方法 (以 Claude Desktop 為例)**：
   1. 開啟設定檔：`~/Library/Application Support/Claude/claude_desktop_config.json`
   2. 加入以下配置（請替換為您的實際絕對路徑）：

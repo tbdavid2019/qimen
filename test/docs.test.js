@@ -1,0 +1,36 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const test = require('node:test');
+
+const root = path.join(__dirname, '..');
+function read(file) { return fs.readFileSync(path.join(root, file), 'utf8'); }
+
+test('README 與 LLM 文件列出解答之書一站式 API', () => {
+    const text = `${read('README.md')}\n${read('LLM-INTEGRATION.md')}`;
+    for (const endpoint of ['tarot-question', 'fengshui-question', 'bazi2-question', 'yinyuan-question', 'answerbook-question']) {
+        assert.match(text, new RegExp(endpoint), endpoint);
+    }
+    for (const skill of ['tarot-consultant', 'fengshui-consultant', 'bazi2-consultant', 'yinyuan-consultant', 'answerbook-consultant']) {
+        assert.match(text, new RegExp(skill), skill);
+    }
+});
+
+test('所有主要頁面導覽都包含解答之書', () => {
+    for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
+        assert.match(read(file), /href="\/answerbook"[^>]*>解答之書/, file);
+    }
+});
+
+test('目前網站模板不再引用靜心問事入口', () => {
+    for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html']) {
+        assert.doesNotMatch(read(file), /\/start|靜心問事/, file);
+    }
+});
+
+test('根目錄 CHANGELOG 記錄新增整合來源', () => {
+    const changelog = read('CHANGELOG.md');
+    for (const source of ['daman-ovo-0404/tarot-skill', 'voidforall/fengshui.skill', 'jinchenma94/bazi-skill', 'Ming-H/yinyuan-skills', 'answerbook.david888.com']) {
+        assert.match(changelog, new RegExp(source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), source);
+    }
+});

@@ -14,6 +14,26 @@ export interface MeihuaResponse {
     error?: string;
     message?: string;
 }
+export interface ServiceResponse {
+    success: boolean;
+    mode?: string;
+    answer?: string;
+    analysis?: string | null;
+    analysisSuccess?: boolean | null;
+    rawAnswer?: unknown;
+    result?: unknown;
+    reading?: unknown;
+    report?: unknown;
+    chart?: unknown;
+    error?: string;
+    message?: string;
+    metadata?: {
+        provider?: string | null;
+        model?: string | null;
+        language?: string;
+        apiVersion?: string;
+    };
+}
 /**
  * Perform a POST request to qi.david888.com
  */

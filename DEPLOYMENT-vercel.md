@@ -109,3 +109,4 @@ CMD ["npm", "start"]
 - `/` - 主頁面
 - `/api/llm-test` - LLM 連接測試
 - `/api/llm-analysis` - LLM 解盤 API
+- `/api/tarot-question`、`/api/fengshui-question`、`/api/bazi2-question`、`/api/yinyuan-question`、`/api/answerbook-question` - 五個新增服務一站式問答 API（解答之書支援 direct/question 兩種模式）

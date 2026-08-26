@@ -47,7 +47,6 @@
 
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/start"><i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>靜心問事</a></li>
                 <li><a href="/">奇門遁甲</a></li>
                 <li><a href="/meihua">梅花易數</a></li>
                 <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">生辰八字</a></li>
@@ -55,6 +54,7 @@
                 <li><a href="/tarot">塔羅</a></li>
                 <li class="active"><a href="/fengshui">風水</a></li>
                 <li><a href="/yinyuan">姻緣</a></li>
+                <li><a href="/answerbook">解答之書</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -80,11 +80,11 @@
         </div>
 
         <div class="suite-card">
-            <form id="suiteForm" toolname="fengshui_report" tooldescription="八宅與九運飛星風水報告分析">
+            <form id="suiteForm" toolname="fengshui_report" tooldescription="八宅與九運飛星風水報告分析" toolautosubmit>
                 <div class="suite-form-row">
                     <div class="suite-form-group">
                         <label for="fengshuiFacing">房屋朝向（大門或陽台朝向）</label>
-                        <select class="form-control input-lg" id="fengshuiFacing" name="facing">
+                        <select class="form-control input-lg" id="fengshuiFacing" name="facing" toolparamdescription="房屋大門或陽台的朝向方位">
                             <option value="南" selected>朝南（坎宅 · 坐北朝南）</option>
                             <option value="北">朝北（離宅 · 坐南朝北）</option>
                             <option value="東">朝東（兌宅 · 坐西朝東）</option>
@@ -98,12 +98,12 @@
 
                     <div class="suite-form-group">
                         <label for="residentYear">主要居住者出生年</label>
-                        <input type="number" class="form-control input-lg" id="residentYear" name="residentYear" value="1990">
+                        <input type="number" class="form-control input-lg" id="residentYear" name="residentYear" value="1990" toolparamdescription="主要居住者的出生西元年份">
                     </div>
 
                     <div class="suite-form-group">
                         <label for="residentSex">性別</label>
-                        <select class="form-control input-lg" id="residentSex" name="sex">
+                        <select class="form-control input-lg" id="residentSex" name="sex" toolparamdescription="主要居住者性別">
                             <option value="女" selected>女</option>
                             <option value="男">男</option>
                         </select>
@@ -112,7 +112,7 @@
 
                 <div class="suite-form-group">
                     <label for="fengshuiQuestion">想諮詢的空間或問題（選填）</label>
-                    <input type="text" class="form-control input-lg" id="fengshuiQuestion" name="question"
+                    <input type="text" class="form-control input-lg" id="fengshuiQuestion" name="question" toolparamdescription="想諮詢的空間配置或風水問題"
                            placeholder="例如：主臥室與書房該如何安排？客廳財位佈置有何建議？">
                 </div>
 
@@ -121,11 +121,11 @@
                     <div class="suite-details-body suite-form-row">
                         <div class="suite-form-group">
                             <label>入住／建造年份（決定運盤）</label>
-                            <input type="number" class="form-control" name="moveInYear" value="2024">
+                            <input type="number" class="form-control" name="moveInYear" value="2024" toolparamdescription="房屋入住或建造年份，用於運盤分析">
                         </div>
                         <div class="suite-form-group">
                             <label>當前分析流年</label>
-                            <input type="number" class="form-control" name="year" value="2026">
+                            <input type="number" class="form-control" name="year" value="2026" toolparamdescription="要分析的流年年份">
                         </div>
                     </div>
                 </details>

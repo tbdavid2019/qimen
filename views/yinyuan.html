@@ -47,7 +47,6 @@
 
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/start"><i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>靜心問事</a></li>
                 <li><a href="/">奇門遁甲</a></li>
                 <li><a href="/meihua">梅花易數</a></li>
                 <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">生辰八字</a></li>
@@ -55,6 +54,7 @@
                 <li><a href="/tarot">塔羅</a></li>
                 <li><a href="/fengshui">風水</a></li>
                 <li class="active"><a href="/yinyuan">姻緣</a></li>
+                <li><a href="/answerbook">解答之書</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -80,10 +80,10 @@
         </div>
 
         <div class="suite-card">
-            <form id="suiteForm" toolname="yinyuan_reading" tooldescription="月老姻緣求籤、生肖合婚與桃花指引">
+            <form id="suiteForm" toolname="yinyuan_reading" tooldescription="月老姻緣求籤、生肖合婚與桃花指引" toolautosubmit>
                 <div class="suite-form-group">
                     <label for="yinyuanMode">選擇測算項目</label>
-                    <select class="form-control input-lg" id="yinyuanMode" name="mode">
+                    <select class="form-control input-lg" id="yinyuanMode" name="mode" toolparamdescription="姻緣服務類型：求籤、生肖合婚或桃花方位">
                         <option value="fortune" selected>🏮 求月老靈籤（感情走向與指引）</option>
                         <option value="zodiac">🐴 生肖合婚配對（兩人契合度）</option>
                         <option value="peach-blossom">🌸 桃花方位指引（提升個人魅力）</option>
@@ -93,17 +93,17 @@
                 <div class="suite-form-row">
                     <div class="suite-form-group">
                         <label for="firstYear">你的出生西元年</label>
-                        <input type="number" class="form-control input-lg" id="firstYear" name="firstYear" value="1990">
+                        <input type="number" class="form-control input-lg" id="firstYear" name="firstYear" value="1990" toolparamdescription="你的出生西元年份">
                     </div>
 
                     <div class="suite-form-group" id="secondYearGroup" style="display:none;">
                         <label for="secondYear">對方的出生西元年</label>
-                        <input type="number" class="form-control input-lg" id="secondYear" name="secondYear" value="1991">
+                        <input type="number" class="form-control input-lg" id="secondYear" name="secondYear" value="1991" toolparamdescription="對方的出生西元年份，生肖合婚時使用">
                     </div>
 
                     <div class="suite-form-group" id="statusGroup" style="display:none;">
                         <label for="yinyuanStatus">目前感情狀態</label>
-                        <select class="form-control input-lg" id="yinyuanStatus" name="status">
+                        <select class="form-control input-lg" id="yinyuanStatus" name="status" toolparamdescription="目前感情狀態">
                             <option value="單身" selected>單身尋覓中</option>
                             <option value="曖昧中">曖昧/發展中</option>
                             <option value="穩定交往">穩定戀愛中</option>
@@ -114,7 +114,7 @@
 
                 <div class="suite-form-group">
                     <label for="yinyuanQuestion">想請月老指點的事（選填）</label>
-                    <input type="text" class="form-control input-lg" id="yinyuanQuestion" name="question"
+                    <input type="text" class="form-control input-lg" id="yinyuanQuestion" name="question" toolparamdescription="想請月老指點的感情問題"
                            placeholder="例如：我和他近期常常溝通不良，該如何改善？或何時能遇到正緣？">
                 </div>
 

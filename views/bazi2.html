@@ -47,7 +47,6 @@
 
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/start"><i class="glyphicon glyphicon-heart" style="margin-right: 5px;"></i>靜心問事</a></li>
                 <li><a href="/">奇門遁甲</a></li>
                 <li><a href="/meihua">梅花易數</a></li>
                 <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">生辰八字</a></li>
@@ -55,6 +54,7 @@
                 <li><a href="/tarot">塔羅</a></li>
                 <li><a href="/fengshui">風水</a></li>
                 <li><a href="/yinyuan">姻緣</a></li>
+                <li><a href="/answerbook">解答之書</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -80,19 +80,19 @@
         </div>
 
         <div class="suite-card">
-            <form id="suiteForm" toolname="bazi2_chart" tooldescription="四柱八字排盤與大師命理解析">
+            <form id="suiteForm" toolname="bazi2_chart" tooldescription="四柱八字排盤與大師命理解析" toolautosubmit>
                 <div class="suite-form-row">
                     <div class="suite-form-group">
                         <label for="baziDate">出生公曆日期 <span style="color:#ef4444;">*</span></label>
-                        <input type="date" class="form-control input-lg" id="baziDate" name="date" required value="1995-06-15">
+                        <input type="date" class="form-control input-lg" id="baziDate" name="date" required value="1995-06-15" toolparamdescription="出生公曆日期，格式 YYYY-MM-DD">
                     </div>
                     <div class="suite-form-group">
                         <label for="baziTime">出生時間</label>
-                        <input type="time" class="form-control input-lg" id="baziTime" name="time" value="12:00">
+                        <input type="time" class="form-control input-lg" id="baziTime" name="time" value="12:00" toolparamdescription="出生時間，格式 HH:MM">
                     </div>
                     <div class="suite-form-group">
                         <label for="baziSex">性別</label>
-                        <select class="form-control input-lg" id="baziSex" name="sex">
+                        <select class="form-control input-lg" id="baziSex" name="sex" toolparamdescription="命主性別，男或女">
                             <option value="男" selected>乾造（男）</option>
                             <option value="女">坤造（女）</option>
                         </select>
@@ -101,7 +101,7 @@
 
                 <div class="suite-form-group">
                     <label for="baziQuestion">想請教大師的事項（選填）</label>
-                    <input type="text" class="form-control input-lg" id="baziQuestion" name="question"
+                    <input type="text" class="form-control input-lg" id="baziQuestion" name="question" toolparamdescription="想請教大師的命理問題"
                            placeholder="例如：想了解未來的事業創業方向、財運重點或感情走向">
                 </div>
 
@@ -110,18 +110,18 @@
                     <div class="suite-details-body suite-form-row">
                         <div class="suite-form-group">
                             <label>曆法選擇</label>
-                            <select class="form-control" name="calendar">
+                            <select class="form-control" name="calendar" toolparamdescription="出生日期使用公曆或農曆">
                                 <option value="solar" selected>公曆（陽曆）</option>
                                 <option value="lunar">農曆（陰曆）</option>
                             </select>
                         </div>
                         <div class="suite-form-group">
                             <label>姓名</label>
-                            <input type="text" class="form-control" name="name" placeholder="命主姓名">
+                            <input type="text" class="form-control" name="name" placeholder="命主姓名" toolparamdescription="命主姓名，可選填">
                         </div>
                         <div class="suite-form-group">
                             <label>出生地點</label>
-                            <input type="text" class="form-control" name="place" placeholder="例如：台北市、香港">
+                            <input type="text" class="form-control" name="place" placeholder="例如：台北市、香港" toolparamdescription="出生地點，可選填">
                         </div>
                     </div>
                 </details>

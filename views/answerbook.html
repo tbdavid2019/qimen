@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>解答之書 · 默念與 AI 解讀</title>
+    <meta name="description" content="解答之書線上服務：直接默念取得一句提醒，或輸入問題請 AI 協助解讀。">
+    <link rel="canonical" href="https://qi.david888.com/answerbook">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#111a20">
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style-new.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/divination-suite.css">
+</head>
+<body class="suite-page" data-suite="answerbook">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切換導航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">333奇門遁甲梅花易數排盤系統</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">奇門遁甲</a></li>
+                <li><a href="/meihua">梅花易數</a></li>
+                <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">生辰八字</a></li>
+                <li><a href="/bazi2">生辰八字2</a></li>
+                <li><a href="/tarot">塔羅</a></li>
+                <li><a href="/fengshui">風水</a></li>
+                <li><a href="/yinyuan">姻緣</a></li>
+                <li class="active"><a href="/answerbook">解答之書</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" id="darkModeToggle" class="dark-mode-toggle" data-label-light="暗黑" data-label-dark="明亮" data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式" role="button" aria-pressed="false"><span class="dark-mode-label">暗黑</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="suite-container">
+        <section class="suite-hero">
+            <span class="suite-hero-badge">📖 一句提醒 · 照見當下</span>
+            <h1>解答之書</h1>
+            <p class="suite-hero-subtitle">默念心中的問題，接收一句簡潔提醒；也可以輸入問題，請 AI 顧問根據這句答案提供具體解讀。</p>
+        </section>
+
+        <section class="suite-card">
+            <div class="answerbook-mode-grid" role="tablist" aria-label="解答之書模式">
+                <button type="button" class="answerbook-mode-btn active" data-mode="direct" role="tab" aria-selected="true">
+                    <strong>🔮 直接默念</strong><span>不輸入文字，直接取得解答之書的一句提醒</span>
+                </button>
+                <button type="button" class="answerbook-mode-btn" data-mode="question" role="tab" aria-selected="false">
+                    <strong>💬 輸入問題並解讀</strong><span>取得答案後，再請 AI 結合你的問題說明</span>
+                </button>
+            </div>
+
+            <form id="answerbookForm" toolname="answerbook_reading" tooldescription="解答之書直接默念或輸入問題後請 AI 解讀" toolautosubmit>
+                <input type="hidden" id="answerbookMode" name="mode" value="direct" toolparamdescription="direct 直接默念；question 輸入問題並由 AI 解讀">
+                <div id="answerbookQuestionGroup" class="suite-form-group" hidden>
+                    <label for="answerbookQuestion">想請解答之書回應的問題</label>
+                    <textarea id="answerbookQuestion" name="question" class="form-control input-lg" rows="3" toolparamdescription="想詢問的具體問題；省略問題則為直接默念模式" placeholder="例如：我現在適合接受這份工作嗎？"></textarea>
+                </div>
+                <button type="submit" id="answerbookSubmit" class="suite-btn-submit"><span>📖 默念後取得解答</span></button>
+            </form>
+
+            <div id="answerbookLoading" class="suite-loading-state" hidden>
+                <div class="suite-spinner"></div>
+                <div id="answerbookLoadingText">解答之書正在回應…</div>
+            </div>
+            <div id="answerbookError" class="answerbook-status" role="alert" hidden></div>
+
+            <div id="answerbookResult" hidden>
+                <div class="answerbook-answer-card">
+                    <div class="answerbook-answer-label">解答之書回覆</div>
+                    <div id="answerbookAnswer" class="answerbook-answer-text"></div>
+                    <div class="answerbook-answer-raw">以上為解答之書原始回覆，請依你的現況審慎參考。</div>
+                </div>
+                <div id="answerbookAnalysisCard" class="answerbook-analysis-card" hidden>
+                    <div class="answerbook-answer-label">AI 解讀</div>
+                    <div id="answerbookAnalysis"></div>
+                </div>
+                <div id="answerbookStatus" class="answerbook-status"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/markdown-renderer.js"></script>
+    <script src="/js/webmcp.js"></script>
+    <script src="/js/answerbook.js"></script>
+</body>
+</html>

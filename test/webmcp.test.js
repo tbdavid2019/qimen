@@ -24,7 +24,11 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 		"meihua_qigua_time",
 		"meihua_qigua_numbers",
 		"meihua_divination",
-		"start_meditation_divination",
+		"tarot_reading",
+		"fengshui_report",
+		"bazi2_chart",
+		"yinyuan_reading",
+		"answerbook_reading",
 	];
 
 	for (const toolName of expectedTools) {
@@ -151,9 +155,71 @@ test("梅花頁面正確載入 webmcp.js 並包含宣告式 WebMCP 表單屬性"
 	assert.match(html, /<form[^>]*id="meihuaQuestionForm"[^>]*toolautosubmit/);
 });
 
-test("靜心起盤頁面正確載入 webmcp.js", () => {
-	const html = read("views/start.html");
-	assert.ok(html.includes("js/webmcp.js"), "start.html 必須載入 js/webmcp.js");
+test("新增四個服務的 WebMCP schema 暴露完整輸入", () => {
+	const WebMCP = require("../public/js/webmcp");
+	const expectations = {
+		tarot_reading: ["question", "spread", "seed"],
+		fengshui_report: ["question", "facing", "moveInYear", "residentYear", "sex", "year"],
+		bazi2_chart: ["question", "date", "time", "sex", "calendar", "name", "formerName", "place"],
+		yinyuan_reading: ["question", "mode", "firstYear", "secondYear", "status", "chart", "firstChart", "secondChart"]
+	};
+
+	for (const [toolName, fields] of Object.entries(expectations)) {
+		const tool = WebMCP.tools[toolName];
+		assert.ok(tool, `缺少工具：${toolName}`);
+		for (const field of fields) {
+			assert.ok(tool.inputSchema.properties[field], `${toolName} 缺少 ${field} schema`);
+		}
+	}
+});
+
+test("解答之書 WebMCP schema 支援兩種模式", () => {
+	const WebMCP = require("../public/js/webmcp");
+	const tool = WebMCP.tools.answerbook_reading;
+	assert.ok(tool, "缺少 answerbook_reading 工具");
+	assert.deepEqual(tool.inputSchema.properties.mode.enum, ["direct", "question"]);
+	assert.ok(tool.inputSchema.properties.question);
+	assert.ok(tool.inputSchema.properties.lang);
+	assert.ok(tool.inputSchema.properties.conversationHistory);
+	assert.deepEqual(tool.inputSchema.required, []);
+});
+
+test("解答之書頁面包含宣告式 WebMCP 表單與兩種操作", () => {
+	const html = read("views/answerbook.html");
+	assert.ok(html.includes("js/webmcp.js"));
+	assert.match(html, /<form[^>]*id="answerbookForm"[^>]*toolname="answerbook_reading"/);
+	assert.match(html, /toolautosubmit/);
+	assert.match(html, /data-mode="direct"/);
+	assert.match(html, /data-mode="question"/);
+	assert.match(html, /toolparamdescription=/);
+});
+
+test("四個術數套件頁面都提供宣告式 WebMCP 表單欄位", () => {
+	const pages = {
+		tarot: ["tarotQuestion"],
+		fengshui: ["fengshuiQuestion", "fengshuiFacing"],
+		bazi2: ["baziQuestion", "baziDate"],
+		yinyuan: ["yinyuanQuestion", "yinyuanMode"]
+	};
+	for (const [page, ids] of Object.entries(pages)) {
+		const html = read(`views/${page}.html`);
+		assert.match(html, /<form[^>]*id="suiteForm"[^>]*toolautosubmit/, page);
+		for (const id of ids) assert.match(html, new RegExp(`<[^>]+id="${id}"[^>]*toolparamdescription=`), `${page} ${id}`);
+	}
+});
+
+test("靜心問事功能已從網站移除", async () => {
+	const app = require("../app");
+	const server = http.createServer(app);
+	await new Promise((resolve) => server.listen(0, resolve));
+	const port = server.address().port;
+
+	try {
+		const response = await fetch(`http://127.0.0.1:${port}/start`);
+		assert.equal(response.status, 404);
+	} finally {
+		await new Promise((resolve) => server.close(resolve));
+	}
 });
 
 test("樣式表包含 WebMCP :tool-form-active 與 :tool-submit-active 規則", () => {

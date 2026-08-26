@@ -19,6 +19,9 @@ const { drawCards } = require('./lib/tarot');
 const { calculateFengShui } = require('./lib/fengshui');
 const { calculateBazi } = require('./lib/bazi2');
 const { zodiacMatch, drawFortuneStick, redThreadReading, baziMatch, marriagePalace, peachBlossom } = require('./lib/yinyuan');
+const { SPREADS: TAROT_SPREADS } = require('./lib/tarot');
+const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
+const { AnswerBookClient, createAnswerbookQuestionHandler } = require('./lib/answerbook');
 
 function getHttpErrorStatus(error) {
     return error && error.statusCode === 400 ? 400 : 500;
@@ -74,11 +77,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// 靜心起盤頁面
-app.get('/start', (req, res) => {
-    res.render('start');
-});
-
 // 梅花易數頁面
 app.get('/meihua', (req, res) => {
     res.render('meihua', {
@@ -90,6 +88,7 @@ app.get('/meihua', (req, res) => {
 ['tarot', 'fengshui', 'bazi2', 'yinyuan'].forEach((page) => {
     app.get(`/${page}`, (req, res) => res.render(page, { enableLLM: !!process.env.LLM_API_KEY, activePage: page }));
 });
+app.get('/answerbook', (req, res) => res.render('answerbook', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'answerbook' }));
 
 function sendModuleRecord(moduleName, input, result, analysis = '') {
     return discordWebhook.sendDivinationRecord(moduleName, input, result, analysis)
@@ -135,8 +134,140 @@ app.post('/api/yinyuan/reading', async (req, res) => {
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
 });
 
+const FENGSHUI_FACINGS = new Set(['南', '北', '東', '西', '東南', '西北', '東北', '西南']);
+const YINYUAN_MODES = new Set(['fortune', 'zodiac', 'red-thread', 'bazi-match', 'marriage-palace', 'peach-blossom']);
+
+function parseYear(value, field, { required = true } = {}) {
+    if ((value === undefined || value === null || value === '') && !required) return undefined;
+    const year = Number(value);
+    if (!Number.isInteger(year) || year < 1 || year > 9999) {
+        throw validationError(`${field} 必須是有效年份`, 'INVALID_YEAR', field);
+    }
+    return year;
+}
+
+function validateTarotQuestion(body) {
+    const spread = body.spread || 'three';
+    if (typeof spread !== 'string' || !Object.prototype.hasOwnProperty.call(TAROT_SPREADS, spread)) {
+        throw validationError('不支援的塔羅牌陣', 'INVALID_SPREAD', 'spread');
+    }
+    return { ...body, spread };
+}
+
+function validateFengShuiQuestion(body) {
+    const facing = body.facing || '南';
+    if (!FENGSHUI_FACINGS.has(facing)) {
+        throw validationError('請提供有效的房屋朝向', 'INVALID_FACING', 'facing');
+    }
+    return {
+        ...body,
+        facing,
+        moveInYear: parseYear(body.moveInYear, 'moveInYear', { required: false }) || new Date().getFullYear(),
+        residentYear: parseYear(body.residentYear, 'residentYear', { required: false }) || 1990,
+        sex: body.sex === '男' ? '男' : '女',
+        year: parseYear(body.year, 'year', { required: false }) || new Date().getFullYear()
+    };
+}
+
+function validateBaziQuestion(body) {
+    if (typeof body.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(body.date)) {
+        throw validationError('請提供出生日期（YYYY-MM-DD）', 'MISSING_BIRTH_DATE', 'date');
+    }
+    const [year, month, day] = body.date.split('-').map(Number);
+    const check = new Date(Date.UTC(year, month - 1, day));
+    if (check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1 || check.getUTCDate() !== day) {
+        throw validationError('出生日期無效', 'INVALID_BIRTH_DATE', 'date');
+    }
+    const calendar = body.calendar || 'solar';
+    if (!['solar', 'lunar'].includes(calendar)) {
+        throw validationError('不支援的曆法', 'INVALID_CALENDAR', 'calendar');
+    }
+    if (body.sex !== undefined && !['男', '女'].includes(body.sex)) {
+        throw validationError('請選擇性別', 'INVALID_SEX', 'sex');
+    }
+    return { ...body, calendar, time: body.time || '12:00', sex: body.sex || '男' };
+}
+
+function validateYinyuanQuestion(body) {
+    const mode = body.mode || 'fortune';
+    if (!YINYUAN_MODES.has(mode)) {
+        throw validationError('請選擇可用的姻緣測算模式', 'INVALID_MODE', 'mode');
+    }
+    if (mode === 'zodiac') {
+        parseYear(body.firstYear, 'firstYear');
+        parseYear(body.secondYear, 'secondYear');
+    } else if (mode === 'peach-blossom') {
+        parseYear(body.firstYear, 'firstYear');
+    } else if (mode === 'red-thread' || mode === 'marriage-palace') {
+        if (!body.chart || typeof body.chart !== 'object') throw validationError('此模式需要完整八字命盤', 'MISSING_CHART', 'chart');
+    } else if (mode === 'bazi-match') {
+        if (!body.firstChart || typeof body.firstChart !== 'object') throw validationError('八字合婚需要第一份命盤', 'MISSING_CHART', 'firstChart');
+        if (!body.secondChart || typeof body.secondChart !== 'object') throw validationError('八字合婚需要第二份命盤', 'MISSING_CHART', 'secondChart');
+    }
+    return {
+        ...body,
+        mode,
+        status: body.status || '單身'
+    };
+}
+
+function calculateYinyuanQuestion(input) {
+    switch (input.mode) {
+        case 'zodiac': return zodiacMatch(input.firstYear, input.secondYear);
+        case 'fortune': return drawFortuneStick(input.seed);
+        case 'red-thread': return redThreadReading(input.chart);
+        case 'bazi-match': return baziMatch(input.firstChart, input.secondChart);
+        case 'marriage-palace': return marriagePalace(input.chart);
+        case 'peach-blossom': return peachBlossom(input.firstYear, input.status);
+        default: throw validationError('請選擇可用的姻緣測算模式', 'INVALID_MODE', 'mode');
+    }
+}
+
+app.post('/api/tarot-question', createServiceQuestionHandler({
+    moduleName: '塔羅',
+    resultKey: 'reading',
+    validate: validateTarotQuestion,
+    calculate: drawCards,
+    analyze: llmService.analyzeTarot.bind(llmService),
+    discord: discordWebhook
+}));
+
+app.post('/api/fengshui-question', createServiceQuestionHandler({
+    moduleName: '風水',
+    resultKey: 'report',
+    validate: validateFengShuiQuestion,
+    calculate: calculateFengShui,
+    analyze: llmService.analyzeFengShui.bind(llmService),
+    discord: discordWebhook
+}));
+
+app.post('/api/bazi2-question', createServiceQuestionHandler({
+    moduleName: '生辰八字2',
+    resultKey: 'chart',
+    validate: validateBaziQuestion,
+    calculate: calculateBazi,
+    analyze: llmService.analyzeBazi2.bind(llmService),
+    discord: discordWebhook
+}));
+
+app.post('/api/yinyuan-question', createServiceQuestionHandler({
+    moduleName: '姻緣',
+    resultKey: 'result',
+    validate: validateYinyuanQuestion,
+    calculate: calculateYinyuanQuestion,
+    analyze: llmService.analyzeYinyuan.bind(llmService),
+    discord: discordWebhook
+}));
+
+const answerBookClient = new AnswerBookClient();
+app.post('/api/answerbook-question', createAnswerbookQuestionHandler({
+    client: answerBookClient,
+    analyze: llmService.analyzeAnswerbook.bind(llmService),
+    discord: discordWebhook
+}));
+
 app.post('/api/:module/llm-analysis', async (req, res, next) => {
-    const modules = { tarot: '塔羅', fengshui: '風水', bazi2: '八字', yinyuan: '姻緣' };
+    const modules = { tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣' };
     const moduleName = modules[req.params.module];
     if (!moduleName) return next();
     try {
@@ -956,9 +1087,9 @@ app.get('/api/llm-test', async (req, res) => {
 // API 文檔端點
 app.get('/api/docs', (req, res) => {
     const apiDocs = {
-        title: "奇門遁甲問答 API 文檔",
+        title: "奇門遁甲術數問答 API 文檔",
         version: "1.0",
-        description: "提供遠端奇門遁甲問答服務的 RESTful API",
+        description: "提供奇門、梅花、塔羅、風水、生辰八字2、姻緣與解答之書服務的 RESTful API",
         baseUrl: `${req.protocol}://${req.get('host')}`,
         endpoints: {
             qimenQuestion: {
@@ -1102,6 +1233,91 @@ app.get('/api/docs', (req, res) => {
                         enum: ["zh-tw", "zh-cn"],
                         description: "回答語言"
                     }
+                }
+            },
+            tarotQuestion: {
+                method: "POST",
+                path: "/api/tarot-question",
+                description: "抽取塔羅牌並獲得模組化 AI 解讀",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "要詢問的問題" },
+                    spread: { type: "string", required: false, default: "three", enum: Object.keys(TAROT_SPREADS), description: "牌陣" },
+                    seed: { type: "string", required: false, description: "可重現抽牌的亂數種子" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
+                }
+            },
+            fengshuiQuestion: {
+                method: "POST",
+                path: "/api/fengshui-question",
+                description: "計算八宅、九運與流年飛星並獲得 AI 建議",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "要詢問的問題" },
+                    facing: { type: "string", required: false, default: "南", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南"], description: "房屋朝向" },
+                    moveInYear: { type: "integer", required: false, description: "入住年份" },
+                    residentYear: { type: "integer", required: false, description: "居住者出生年份" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "居住者性別" },
+                    year: { type: "integer", required: false, description: "分析年份" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
+                }
+            },
+            bazi2Question: {
+                method: "POST",
+                path: "/api/bazi2-question",
+                description: "計算生辰八字2命盤並獲得 AI 解讀",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "要詢問的問題" },
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, default: "12:00", description: "出生時間（HH:mm）" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
+                    calendar: { type: "string", required: false, default: "solar", enum: ["solar", "lunar"], description: "曆法" },
+                    name: { type: "string", required: false, description: "姓名（可選）" },
+                    formerName: { type: "string", required: false, description: "曾用名（可選）" },
+                    place: { type: "string", required: false, description: "出生地（可選）" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
+                }
+            },
+            yinyuanQuestion: {
+                method: "POST",
+                path: "/api/yinyuan-question",
+                description: "提供月老姻緣、生肖合婚、八字合婚與桃花指引",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "要詢問的問題" },
+                    mode: { type: "string", required: false, default: "fortune", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "peach-blossom"], description: "姻緣測算模式" },
+                    firstYear: { type: "integer", required: false, description: "第一位出生年份（生肖／桃花模式）" },
+                    secondYear: { type: "integer", required: false, description: "第二位出生年份（生肖合婚模式）" },
+                    status: { type: "string", required: false, default: "單身", description: "感情狀態" },
+                    seed: { type: "string", required: false, description: "姻緣籤亂數種子" },
+                    chart: { type: "object", required: false, description: "八字命盤（紅線／夫妻宮模式）" },
+                    firstChart: { type: "object", required: false, description: "第一份八字命盤（合婚模式）" },
+                    secondChart: { type: "object", required: false, description: "第二份八字命盤（合婚模式）" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
+                }
+            },
+            answerbookQuestion: {
+                method: "POST",
+                path: "/api/answerbook-question",
+                description: "直接默念取得解答之書原始答案，或輸入問題後由 AI 解讀",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    mode: { type: "string", required: false, default: "direct", enum: ["direct", "question"], description: "direct 直接默念；question 輸入問題並由 AI 解讀" },
+                    question: { type: "string", required: false, description: "問題模式的具體問題；省略時為直接默念" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "問題模式的多輪對話歷史" }
+                },
+                responseExample: {
+                    success: true,
+                    mode: "question",
+                    answer: "準時\\nBE ON TIME",
+                    analysis: "請依問題與現況安排可執行的下一步。",
+                    analysisSuccess: true
                 }
             }
         },

@@ -671,6 +671,97 @@ body.suite-page {
     background: var(--suite-primary-hover);
 }
 
+/* Answerbook */
+.answerbook-mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.answerbook-mode-btn {
+    border: 1px solid var(--suite-border);
+    border-radius: 12px;
+    background: var(--suite-bg);
+    color: var(--suite-text);
+    padding: 14px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.answerbook-mode-btn:hover,
+.answerbook-mode-btn.active {
+    border-color: var(--suite-primary);
+    background: rgba(124, 58, 237, 0.1);
+    transform: translateY(-1px);
+}
+
+.answerbook-mode-btn strong,
+.answerbook-mode-btn span {
+    display: block;
+}
+
+.answerbook-mode-btn span {
+    margin-top: 4px;
+    color: var(--suite-text-muted);
+    font-size: 12px;
+}
+
+.answerbook-answer-card {
+    margin-top: 22px;
+    padding: 22px;
+    border: 1px solid var(--suite-border);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(124, 58, 237, 0.12), var(--suite-bg));
+    animation: fadeIn 0.3s ease;
+}
+
+.answerbook-answer-label {
+    color: var(--suite-text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.answerbook-answer-text {
+    margin-top: 10px;
+    color: var(--suite-text);
+    font-size: clamp(24px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.35;
+    white-space: pre-line;
+}
+
+.answerbook-answer-raw {
+    margin-top: 12px;
+    color: var(--suite-text-muted);
+    font-size: 13px;
+    white-space: pre-line;
+}
+
+.answerbook-analysis-card {
+    margin-top: 18px;
+    padding: 20px;
+    border-left: 4px solid var(--suite-primary);
+    border-radius: 0 12px 12px 0;
+    background: var(--suite-bg);
+    color: var(--suite-text);
+    line-height: 1.8;
+}
+
+.answerbook-status {
+    margin-top: 14px;
+    color: var(--suite-text-muted);
+    font-size: 13px;
+}
+
+@media (max-width: 640px) {
+    .answerbook-mode-grid { grid-template-columns: 1fr; }
+    .answerbook-answer-card { padding: 17px; }
+}
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
     .suite-hero h1 { font-size: 22px; }
