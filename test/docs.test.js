@@ -50,10 +50,14 @@ test('根目錄 CHANGELOG 記錄新增整合來源', () => {
 
 test('全站使用新的網站標題與統一 footer', () => {
     const siteTitle = '333 一句提醒·照見當下';
+    const seoTitle = '333 一句提醒·照見當下｜奇門遁甲、梅花易數、塔羅、風水與八字 AI 解析平台｜線上人生決策工具｜免費線上服務';
     const footer = read('views/partials/site-footer.html');
-    assert.match(read('lang/zh-tw.json'), new RegExp(siteTitle));
-    assert.match(read('lang/zh-cn.json'), new RegExp(siteTitle));
-    assert.match(footer, /333奇門遁甲梅花易數排盤系統 © 2026/);
+    for (const file of ['lang/zh-tw.json', 'lang/zh-cn.json']) {
+        const lang = read(file);
+        assert.match(lang, new RegExp(`"title":\\s*"${seoTitle}"`), `${file} SEO title`);
+        assert.match(lang, new RegExp(`"navbar":\\s*\\{\\s*"title":\\s*"${siteTitle}"`), `${file} navbar title`);
+    }
+    assert.doesNotMatch(footer, /333奇門遁甲梅花易數排盤系統 © 2026/);
     assert.match(footer, /技術提供\s*<a href="https:\/\/david888\.com" target="_blank" rel="noopener">https:\/\/david888\.com<\/a>\s*\|\s*2026/);
 
     for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
@@ -64,4 +68,19 @@ test('全站使用新的網站標題與統一 footer', () => {
     for (const file of ['views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
         assert.match(read(file), new RegExp(`<a class="navbar-brand"[^>]*>${siteTitle}<\\/a>`), `${file} navbar title`);
     }
+});
+
+test('首頁 SEO 與社群分享 metadata 使用完整 OG 圖片規格', () => {
+    const html = read('views/index.html');
+    const description = '免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤、AI 解讀與多輪問答，提供工作、感情、財運與居家布局的實用線索，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。';
+    assert.match(html, /<meta name="description" content="[^"]{110,160}">/);
+    assert.match(html, new RegExp(`meta name="description" content="${description}"`));
+    assert.match(html, /<meta property="og:image" content="https:\/\/qi\.david888\.com\/og-image\.png">/);
+    assert.match(html, /<meta property="og:image:width" content="1200">/);
+    assert.match(html, /<meta property="og:image:height" content="630">/);
+    assert.match(html, /<meta property="og:image:type" content="image\/png">/);
+    assert.match(html, /<meta property="og:image:secure_url" content="https:\/\/qi\.david888\.com\/og-image\.png">/);
+    assert.match(html, /<meta name="twitter:card" content="summary_large_image">/);
+    assert.match(html, /<meta name="twitter:image" content="https:\/\/qi\.david888\.com\/og-image\.png">/);
+    assert.match(html, /<meta name="twitter:image:alt" content="[^"]+">/);
 });
