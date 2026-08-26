@@ -14,6 +14,7 @@
 - 解答之書後端代理使用 `GET https://answerbook.david888.com/answersOriginal`，保存原始答案、問題與 AI 回應至 Discord。
 - `/api/docs`、README、LLM 整合與 Vercel 文件同步更新。
 - 新增共用服務問答流程、模組專用 AI 提示詞、API／Skill／MCP／文件回歸測試。
+- 全站導覽列將外部八字站改名為「888人生K線」，移至最右側並保留 `target="_blank"` 新視窗開啟。
 
 ### 本次採用的參考來源
 

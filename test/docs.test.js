@@ -22,6 +22,19 @@ test('所有主要頁面導覽都包含解答之書', () => {
     }
 });
 
+test('888人生K線外部站連結位於導覽最右側並另開新視窗', () => {
+    for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
+        const html = read(file);
+        const mainNavStart = html.indexOf('<ul class="nav navbar-nav">');
+        const rightNavStart = html.indexOf('<ul class="nav navbar-nav navbar-right">');
+        const externalLink = '<a href="https://bazi.david888.com/" target="_blank" rel="noopener">888人生K線</a>';
+        assert.ok(mainNavStart >= 0 && rightNavStart > mainNavStart, `${file} 應有左右導覽列`);
+        assert.ok(html.indexOf(externalLink) > rightNavStart, `${file} 外部站連結應位於右側導覽列`);
+        assert.doesNotMatch(html.slice(mainNavStart, rightNavStart), /生辰八字<\/a>/, file);
+        assert.doesNotMatch(html, /<a href="https:\/\/bazi\.david888\.com\/"[^>]*>生辰八字<\/a>/, file);
+    }
+});
+
 test('目前網站模板不再引用靜心問事入口', () => {
     for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html']) {
         assert.doesNotMatch(read(file), /\/start|靜心問事/, file);
