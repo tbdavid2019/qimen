@@ -15,6 +15,7 @@
 - `/api/docs`、README、LLM 整合與 Vercel 文件同步更新。
 - 新增共用服務問答流程、模組專用 AI 提示詞、API／Skill／MCP／文件回歸測試。
 - 全站導覽列將外部八字站改名為「888人生K線」，移至最右側並保留 `target="_blank"` 新視窗開啟。
+- 優化新增術數服務的 Discord Webhook：以易讀 Embed 分區呈現問題、輸入、計算摘要與 AI 回覆，完整原始資料改以 JSON 附件保存。
 
 ### 本次採用的參考來源
 

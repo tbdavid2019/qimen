@@ -193,6 +193,7 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOO
 
 ### Discord 整合
 - `GET /api/discord-test`：Discord webhook 測試
+- 新增服務會先以 Embed 顯示問題、參數、計算摘要與 AI 回覆；完整結構化資料會以 JSON 附件保存，避免頻道只看到難讀的原始 JSON。
 
 ### 其他
 - `GET /api/qimen`：奇門排盤數據查詢

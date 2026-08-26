@@ -37,7 +37,7 @@
 - **WebMCP（瀏覽器端）**：基於 Chrome WebMCP 規範，提供 `document.modelContext.registerTool` 命令式與 HTML 宣告式工具，支援 AI 瀏覽器代理直接互動。
 - **Stdio MCP Bridge**：`mcp-bridge.js`，零依賴提供七個服務的 standard MCP 協議工具。
 
-所有服務使用同一組 `LLM_API_KEY`、模型 fallback 與 Discord Webhook；新增服務透過 `analyzeService` 使用各自的角色與分析焦點。解答之書的 direct 模式只取回原始答案，question 模式才呼叫 LLM。
+所有服務使用同一組 `LLM_API_KEY`、模型 fallback 與 Discord Webhook；新增服務透過 `analyzeService` 使用各自的角色與分析焦點。Discord 會以易讀 Embed 顯示問題、參數、計算摘要與 AI 回覆，並附上完整 JSON 檔案保存原始資料。解答之書的 direct 模式只取回原始答案，question 模式才呼叫 LLM。
 
 ### Skill 路徑
 
