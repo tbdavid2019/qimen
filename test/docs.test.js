@@ -47,3 +47,21 @@ test('根目錄 CHANGELOG 記錄新增整合來源', () => {
         assert.match(changelog, new RegExp(source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), source);
     }
 });
+
+test('全站使用新的網站標題與統一 footer', () => {
+    const siteTitle = '333 一句提醒·照見當下';
+    const footer = read('views/partials/site-footer.html');
+    assert.match(read('lang/zh-tw.json'), new RegExp(siteTitle));
+    assert.match(read('lang/zh-cn.json'), new RegExp(siteTitle));
+    assert.match(footer, /333奇門遁甲梅花易數排盤系統 © 2026/);
+    assert.match(footer, /技術提供\s*<a href="https:\/\/david888\.com" target="_blank" rel="noopener">https:\/\/david888\.com<\/a>\s*\|\s*2026/);
+
+    for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
+        const html = read(file);
+        assert.match(html, /partials\/site-footer\.html/, `${file} footer partial`);
+    }
+
+    for (const file of ['views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
+        assert.match(read(file), new RegExp(`<a class="navbar-brand"[^>]*>${siteTitle}<\\/a>`), `${file} navbar title`);
+    }
+});

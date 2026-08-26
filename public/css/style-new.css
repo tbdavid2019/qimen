@@ -1359,3 +1359,25 @@ input:tool-submit-active {
     background: rgba(69, 10, 10, 0.95);
 }
 
+/* 統一網站 footer */
+.footer.site-footer {
+    height: auto;
+    min-height: 84px;
+    padding: 15px 0 13px;
+}
+
+.site-footer p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.site-footer-provider {
+    margin-top: 3px !important;
+    font-size: 12px;
+}
+
+.site-footer a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
