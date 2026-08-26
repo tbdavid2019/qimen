@@ -19,6 +19,7 @@
 - 統一全站 footer，移除舊版「333奇門遁甲梅花易數排盤系統 © 2026」文字，只保留技術提供與年度資訊；網站品牌標題為「333 一句提醒·照見當下」。
 - 新增 1200×630 `og-image.png`，補齊 Open Graph 圖片尺寸、格式、安全 URL 與 alternate locale metadata，並同步完善 Twitter Card、robots、canonical 與 JSON-LD 描述。
 - 首頁 SEO 標題與描述擴充至適合搜尋與社群摘要的完整長度，涵蓋奇門、梅花、塔羅、風水、八字、姻緣與解答之書服務。
+- PWA manifest 的站名與短名稱同步更新為「333 一句提醒·照見當下」。
 
 ### 本次採用的參考來源
 

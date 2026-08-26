@@ -57,6 +57,9 @@ test('全站使用新的網站標題與統一 footer', () => {
         assert.match(lang, new RegExp(`"title":\\s*"${seoTitle}"`), `${file} SEO title`);
         assert.match(lang, new RegExp(`"navbar":\\s*\\{\\s*"title":\\s*"${siteTitle}"`), `${file} navbar title`);
     }
+    const manifest = read('public/site.webmanifest');
+    assert.match(manifest, /"name":\s*"333 一句提醒·照見當下"/);
+    assert.match(manifest, /"short_name":\s*"333 一句提醒"/);
     assert.doesNotMatch(footer, /333奇門遁甲梅花易數排盤系統 © 2026/);
     assert.match(footer, /技術提供\s*<a href="https:\/\/david888\.com" target="_blank" rel="noopener">https:\/\/david888\.com<\/a>\s*\|\s*2026/);
 
