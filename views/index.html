@@ -258,12 +258,17 @@
 
                         <!-- 解盤結果 -->
                         <div id="llmResultPanel" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
+                                <div id="llmTimestamp" class="text-muted" style="font-size: 12px;">
+                                    <!-- 解盤時間將顯示在這裡 -->
+                                </div>
+                                <button type="button" id="copyAnalysisBtn" class="btn btn-default btn-xs" style="padding: 3px 10px; font-size: 12px; border-radius: 4px;" title="複製完整解盤內容">
+                                    <i class="glyphicon glyphicon-copy"></i> 複製解盤內容
+                                </button>
+                            </div>
+
                             <div id="llmAnalysisContent" class="llm-analysis-content markdown-body">
                                 <!-- AI 解盤結果將顯示在這裡 -->
-                            </div>
-                            
-                            <div id="llmTimestamp" class="text-muted" style="margin-top: 15px; font-size: 12px;">
-                                <!-- 解盤時間將顯示在這裡 -->
                             </div>
 
                             <!-- 重新解盤按鈕 -->

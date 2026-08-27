@@ -197,6 +197,7 @@ $(document).ready(function() {
                 
                 if (response.success) {
                     // 顯示成功結果
+                    window.lastQimenAnalysisText = response.analysis;
                     var cleanContent = MarkdownRenderer.render(response.analysis);
                     
                     $('#llmAnalysisContent').html(cleanContent);
@@ -222,6 +223,60 @@ $(document).ready(function() {
         });
     }
 
+    // 剪貼簿複製輔助函式
+    function copyTextToClipboard(text, $btn) {
+        if (!text) return;
+        function showSuccess() {
+            if ($btn && $btn.length) {
+                var origHtml = $btn.html();
+                $btn.html('<i class="glyphicon glyphicon-ok" style="color:#10b981;"></i> 已複製！');
+                setTimeout(function() {
+                    $btn.html(origHtml);
+                }, 2000);
+            }
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(showSuccess).catch(function() {
+                fallbackCopy(text);
+                showSuccess();
+            });
+        } else {
+            fallbackCopy(text);
+            showSuccess();
+        }
+    }
+
+    function fallbackCopy(text) {
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error('Fallback copy failed', err);
+        }
+        document.body.removeChild(textArea);
+    }
+
+    // 複製解盤內容按鈕
+    $('#copyAnalysisBtn').click(function() {
+        var text = window.lastQimenAnalysisText || $('#llmAnalysisContent').text();
+        copyTextToClipboard(text, $(this));
+    });
+
+    // 複製特定對話訊息按鈕
+    $(document).on('click', '.btn-copy-msg', function() {
+        var idx = parseInt($(this).attr('data-msg-idx'), 10);
+        if (!isNaN(idx) && conversationHistory[idx]) {
+            copyTextToClipboard(conversationHistory[idx].content, $(this));
+        }
+    });
+
     // 對話歷史管理
     var conversationHistory = [];
     var MAX_HISTORY_LENGTH = 10; // 最多保留 10 輪對話
@@ -241,14 +296,19 @@ $(document).ready(function() {
         var html = '';
         conversationHistory.forEach(function(msg, index) {
             if (msg.role === 'user') {
-                html += '<div class="conversation-msg user-msg" style="margin-bottom: 10px; text-align: right;">';
+                html += '<div class="conversation-msg user-msg" style="margin-bottom: 12px; text-align: right;">';
                 html += '<span class="label label-primary" style="font-size: 12px;">您</span> ';
-                html += '<span style="background: #337ab7; color: white; padding: 5px 10px; border-radius: 10px; display: inline-block; max-width: 80%; text-align: left;">' + MarkdownRenderer.escapeHtml(msg.content) + '</span>';
+                html += '<span style="background: #337ab7; color: white; padding: 6px 12px; border-radius: 10px; display: inline-block; max-width: 80%; text-align: left;">' + MarkdownRenderer.escapeHtml(msg.content) + '</span>';
                 html += '</div>';
             } else {
-                html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 10px;">';
-                html += '<span class="label label-success" style="font-size: 12px;">AI 大師</span><br>';
-                html += '<div class="markdown-body" style="background: #f5f5f5; padding: 8px 12px; border-radius: 10px; display: inline-block; width: 100%; border: 1px solid #ddd;">' + MarkdownRenderer.render(msg.content) + '</div>';
+                html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 16px;">';
+                html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">';
+                html += '  <span class="label label-success" style="font-size: 12px;"><i class="glyphicon glyphicon-star"></i> AI 大師解讀</span>';
+                html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg" data-msg-idx="' + index + '" style="padding: 2px 8px; font-size: 12px; border-radius: 4px; color: #555; background: #fff; border: 1px solid #ccc;" title="複製此解讀內容">';
+                html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
+                html += '  </button>';
+                html += '</div>';
+                html += '<div class="markdown-body" style="background: #f9f9f9; padding: 12px 16px; border-radius: 10px; display: block; width: 100%; border: 1px solid #e0e0e0;">' + MarkdownRenderer.render(msg.content) + '</div>';
                 html += '</div>';
             }
         });

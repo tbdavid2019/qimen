@@ -434,11 +434,63 @@
 
     // --- Message Stream Helper ---
 
+    function copyTextToClipboard(text, btn) {
+        if (!text) return;
+        function showSuccess() {
+            if (btn) {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '✅ 已複製！';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+            }
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(showSuccess).catch(() => {
+                fallbackCopy(text);
+                showSuccess();
+            });
+        } else {
+            fallbackCopy(text);
+            showSuccess();
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error('Fallback copy failed', err);
+        }
+        document.body.removeChild(textArea);
+    }
+
     function appendMessage(role, content) {
         const bubble = document.createElement('div');
         bubble.className = `suite-message-bubble ${role}`;
         if (role === 'assistant') {
-            bubble.innerHTML = renderMarkdown(content);
+            const header = document.createElement('div');
+            header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.06); padding-bottom: 6px;';
+            header.innerHTML = `
+                <span style="font-size: 13px; font-weight: 600; opacity: 0.85;">🏮 AI 解讀指引</span>
+                <button type="button" class="suite-copy-btn" style="background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--suite-primary);">
+                    📋 複製內容
+                </button>
+            `;
+            const copyBtn = header.querySelector('.suite-copy-btn');
+            copyBtn.addEventListener('click', () => {
+                copyTextToClipboard(content, copyBtn);
+            });
+            const contentDiv = document.createElement('div');
+            contentDiv.innerHTML = renderMarkdown(content);
+            bubble.appendChild(header);
+            bubble.appendChild(contentDiv);
         } else {
             bubble.textContent = content;
         }
