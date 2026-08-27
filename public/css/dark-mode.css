@@ -397,58 +397,10 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 }
 
-/* Footer Skills Hub Dark Mode */
+/* Footer Dark Mode */
 [data-theme="dark"] .footer.site-footer {
     background: #0f172a !important;
     border-top-color: #1e293b !important;
-    color: #94a3b8 !important;
-}
-
-[data-theme="dark"] .site-footer-skills-hub {
-    border-bottom-color: #1e293b !important;
-}
-
-[data-theme="dark"] .skills-hub-heading {
-    color: #f1f5f9 !important;
-}
-
-[data-theme="dark"] .skills-hub-desc {
-    color: #94a3b8 !important;
-}
-
-[data-theme="dark"] .btn-skill-hub-sub {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #cbd5e1 !important;
-}
-
-[data-theme="dark"] .btn-skill-hub-sub:hover {
-    background: #334155 !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .skill-item-card {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #e2e8f0 !important;
-}
-
-[data-theme="dark"] .skill-item-card:hover {
-    border-color: #818cf8 !important;
-    background: #242f4c !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
-}
-
-[data-theme="dark"] .skill-item-name {
-    color: #f8fafc !important;
-}
-
-[data-theme="dark"] .skill-tag {
-    background: #0f172a !important;
-    color: #94a3b8 !important;
-}
-
-[data-theme="dark"] .skill-item-brief {
     color: #94a3b8 !important;
 }
 

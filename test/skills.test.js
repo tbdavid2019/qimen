@@ -36,35 +36,3 @@ test('Skill 腳本只使用 Node.js JavaScript，不依賴 Python', () => {
         assert.match(content, /fetch\(/, skillName);
     }
 });
-
-test('API /api/skills 回傳完整的 7 大 Skills 清單與協議端點', async () => {
-    const http = require('node:http');
-    const app = require('../app');
-    const server = http.createServer(app);
-    await new Promise((resolve) => server.listen(0, resolve));
-    const port = server.address().port;
-
-    try {
-        const res = await fetch(`http://127.0.0.1:${port}/api/skills`);
-        assert.equal(res.status, 200);
-        const data = await res.json();
-        assert.equal(data.success, true);
-        assert.ok(data.hub);
-        assert.equal(data.skills.length, 7);
-        const names = data.skills.map(s => s.name);
-        for (const [skillName] of skills) {
-            assert.ok(names.includes(skillName), `缺少 skill: ${skillName}`);
-        }
-    } finally {
-        await new Promise((resolve) => server.close(resolve));
-    }
-});
-
-test('全站頁面 Footer 均提供 Skills 總體與 7 大獨立功能導覽卡片', () => {
-    const footerHtml = fs.readFileSync(path.join(root, 'views', 'partials', 'site-footer.html'), 'utf8');
-    assert.match(footerHtml, /site-footer-skills-hub/);
-    assert.match(footerHtml, /Skills 總體倉庫/);
-    for (const [skillName] of skills) {
-        assert.match(footerHtml, new RegExp(skillName));
-    }
-});

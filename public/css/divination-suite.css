@@ -839,182 +839,22 @@ body.suite-page {
     .bazi-char-cell { font-size: 18px; }
     .fengshui-grid { gap: 6px; }
     .fortune-scroll-poem { font-size: 17px; }
-    .skills-hub-header { flex-direction: column; align-items: stretch; }
-    .skills-grid { grid-template-columns: 1fr; }
 }
 
-/* Site Footer & AI Skills Hub */
+/* Site Footer */
 .footer.site-footer {
     width: 100%;
     margin-top: 40px;
-    padding: 35px 20px 25px;
+    padding: 24px 20px;
     background: var(--suite-card-bg);
     border-top: 1px solid var(--suite-border);
     color: var(--suite-text-muted);
-}
-
-.site-footer-skills-hub {
-    max-width: 1100px;
-    margin: 0 auto 25px;
-    padding-bottom: 25px;
-    border-bottom: 1px solid var(--suite-border);
-}
-
-.skills-hub-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.skills-hub-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 12px;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-}
-
-.skills-hub-heading {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--suite-text);
-    margin: 4px 0 6px;
-}
-
-.skills-hub-desc {
-    font-size: 13px;
-    color: var(--suite-text-muted);
-    margin: 0;
-    max-width: 680px;
-    line-height: 1.5;
-}
-
-.skills-hub-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.btn-skill-hub-main {
-    display: inline-flex;
-    align-items: center;
-    padding: 7px 14px;
-    background: var(--suite-primary);
-    color: #ffffff !important;
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: 8px;
-    text-decoration: none !important;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
-}
-
-.btn-skill-hub-main:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
-}
-
-.btn-skill-hub-sub {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 12px;
-    background: var(--suite-bg);
-    border: 1px solid var(--suite-border);
-    color: var(--suite-text) !important;
-    font-size: 13px;
-    font-weight: 500;
-    border-radius: 8px;
-    text-decoration: none !important;
-    transition: all 0.2s ease;
-}
-
-.btn-skill-hub-sub:hover {
-    background: var(--suite-card-bg);
-    border-color: var(--suite-primary);
-}
-
-.skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 12px;
-}
-
-.skill-item-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--suite-bg);
-    border: 1px solid var(--suite-border);
-    border-radius: 10px;
-    text-decoration: none !important;
-    color: inherit !important;
-    transition: all 0.2s ease;
-}
-
-.skill-item-card:hover {
-    border-color: var(--suite-primary);
-    background: var(--suite-card-bg);
-    transform: translateY(-2px);
-    box-shadow: var(--suite-shadow);
-}
-
-.skill-item-icon {
-    font-size: 24px;
-    line-height: 1;
-    flex-shrink: 0;
-}
-
-.skill-item-content {
-    min-width: 0;
-    flex: 1;
-}
-
-.skill-item-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--suite-text);
-    margin-bottom: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.skill-tag {
-    font-size: 10px;
-    font-weight: 600;
-    background: var(--suite-border);
-    color: var(--suite-text-muted);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-}
-
-.skill-item-brief {
-    font-size: 12px;
-    color: var(--suite-text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.site-footer-bottom {
     text-align: center;
-    max-width: 1100px;
-    margin: 0 auto;
 }
 
 .site-footer-provider {
-    margin-top: 3px !important;
-    font-size: 12px;
+    margin: 0 !important;
+    font-size: 13px;
     color: var(--suite-text-muted);
 }
 
