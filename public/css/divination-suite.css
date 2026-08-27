@@ -112,16 +112,25 @@ body.suite-page {
     color: var(--suite-text);
 }
 
-.suite-form-group .form-control {
+.suite-form-group .form-control, select.form-control {
     background: var(--suite-card-bg);
     border: 1.5px solid var(--suite-border);
     color: var(--suite-text);
     border-radius: 10px;
-    padding: 10px 14px;
-    height: auto;
+    padding: 8px 14px;
+    height: 42px !important;
+    min-height: 42px !important;
+    line-height: 1.5 !important;
     font-size: 15px;
     box-shadow: none;
     transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+.suite-form-group textarea.form-control {
+    height: auto !important;
+    min-height: 80px !important;
+    padding: 10px 14px !important;
 }
 
 .suite-form-group .form-control:focus {
