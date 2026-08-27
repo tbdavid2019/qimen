@@ -476,21 +476,36 @@
         bubble.className = `suite-message-bubble ${role}`;
         if (role === 'assistant') {
             const header = document.createElement('div');
-            header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.06); padding-bottom: 6px;';
+            header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--suite-border, rgba(0,0,0,0.06)); padding-bottom: 6px;';
             header.innerHTML = `
-                <span style="font-size: 13px; font-weight: 600; opacity: 0.85;">🏮 AI 解讀指引</span>
-                <button type="button" class="suite-copy-btn" style="background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--suite-primary);">
+                <span style="font-size: 13px; font-weight: 600; color: var(--suite-primary, #CC6B49);">🏮 大師解讀指引</span>
+                <button type="button" class="suite-copy-btn suite-copy-top" style="background: var(--suite-card, #fff); border: 1px solid var(--suite-border, #E8E0D6); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--suite-primary, #CC6B49);" title="複製內容">
                     📋 複製內容
                 </button>
             `;
-            const copyBtn = header.querySelector('.suite-copy-btn');
-            copyBtn.addEventListener('click', () => {
-                copyTextToClipboard(content, copyBtn);
+            const copyBtnTop = header.querySelector('.suite-copy-top');
+            copyBtnTop.addEventListener('click', () => {
+                copyTextToClipboard(content, copyBtnTop);
             });
+
             const contentDiv = document.createElement('div');
             contentDiv.innerHTML = renderMarkdown(content);
+
+            const footer = document.createElement('div');
+            footer.style.cssText = 'display: flex; justify-content: flex-end; margin-top: 8px; border-top: 1px solid var(--suite-border, rgba(0,0,0,0.04)); padding-top: 6px;';
+            footer.innerHTML = `
+                <button type="button" class="suite-copy-btn suite-copy-bottom" style="background: var(--suite-card, #fff); border: 1px solid var(--suite-border, #E8E0D6); border-radius: 6px; padding: 3px 12px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--suite-primary, #CC6B49);" title="複製內容">
+                    📋 複製內容
+                </button>
+            `;
+            const copyBtnBottom = footer.querySelector('.suite-copy-bottom');
+            copyBtnBottom.addEventListener('click', () => {
+                copyTextToClipboard(content, copyBtnBottom);
+            });
+
             bubble.appendChild(header);
             bubble.appendChild(contentDiv);
+            bubble.appendChild(footer);
         } else {
             bubble.textContent = content;
         }

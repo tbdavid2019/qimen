@@ -271,10 +271,13 @@
                                 <!-- AI 解盤結果將顯示在這裡 -->
                             </div>
 
-                            <!-- 重新解盤按鈕 -->
-                            <div class="text-center" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                            <!-- 底部操作列（含右下角複製與重新解盤） -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--claude-border, #eee); padding-top: 15px;">
                                 <button id="reAnalyzeButton" class="btn btn-default">
                                     <i class="glyphicon glyphicon-refresh"></i> 重新解盤
+                                </button>
+                                <button type="button" id="copyAnalysisBtnBottom" class="btn btn-default btn-sm" style="padding: 6px 14px; font-size: 13px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="複製完整解盤內容">
+                                    <i class="glyphicon glyphicon-copy"></i> 複製解盤內容
                                 </button>
                             </div>
                         </div>

@@ -263,8 +263,8 @@ $(document).ready(function() {
         document.body.removeChild(textArea);
     }
 
-    // 複製解盤內容按鈕
-    $('#copyAnalysisBtn').click(function() {
+    // 複製解盤內容按鈕（右上角與右下角）
+    $('#copyAnalysisBtn, #copyAnalysisBtnBottom').click(function() {
         var text = window.lastQimenAnalysisText || $('#llmAnalysisContent').text();
         copyTextToClipboard(text, $(this));
     });
@@ -311,6 +311,11 @@ $(document).ready(function() {
                 html += '  </button>';
                 html += '</div>';
                 html += '<div class="markdown-body" style="background: var(--claude-card, #fff); padding: 16px 20px; border-radius: 16px 16px 16px 4px; display: block; width: 100%; border: 1px solid var(--claude-border, #E8E0D6); box-shadow: var(--claude-shadow-xs, 0 1px 3px rgba(0,0,0,0.04)); color: var(--claude-text-body, #4A3F39); font-size: 14px; line-height: 1.6;">' + MarkdownRenderer.render(msg.content) + '</div>';
+                html += '<div style="display: flex; justify-content: flex-end; margin-top: 6px;">';
+                html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg" data-msg-idx="' + index + '" style="padding: 3px 10px; font-size: 12px; border-radius: 6px; color: var(--claude-primary, #CC6B49); background: var(--claude-card, #fff); border: 1px solid var(--claude-border, #E8E0D6);" title="複製此解讀內容">';
+                html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
+                html += '  </button>';
+                html += '</div>';
                 html += '</div>';
             }
         });
