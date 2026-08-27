@@ -1359,21 +1359,175 @@ input:tool-submit-active {
     background: rgba(69, 10, 10, 0.95);
 }
 
-/* 統一網站 footer */
+/* 統一網站 footer 與 AI Skills 生態區 */
 .footer.site-footer {
     height: auto;
     min-height: 84px;
-    padding: 15px 0 13px;
+    padding: 30px 0 25px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    color: #475569;
 }
 
-.site-footer p {
+.site-footer-skills-hub {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.skills-hub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.skills-hub-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.skills-hub-heading {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 4px 0 6px;
+}
+
+.skills-hub-desc {
+    font-size: 13px;
+    color: #64748b;
     margin: 0;
-    line-height: 1.6;
+    max-width: 680px;
+    line-height: 1.5;
+}
+
+.skills-hub-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-skill-hub-main {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    background: #4f46e5;
+    color: #ffffff !important;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+}
+.btn-skill-hub-main:hover {
+    background: #4338ca;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
+}
+
+.btn-skill-hub-sub {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155 !important;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+}
+.btn-skill-hub-sub:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a !important;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.skill-item-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    text-decoration: none !important;
+    color: inherit !important;
+    transition: all 0.2s ease;
+}
+.skill-item-card:hover {
+    border-color: #818cf8;
+    background: #f8faff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+}
+
+.skill-item-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.skill-item-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.skill-item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.skill-tag {
+    font-size: 10px;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.skill-item-brief {
+    font-size: 12px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.site-footer-bottom {
+    text-align: center;
 }
 
 .site-footer-provider {
     margin-top: 3px !important;
     font-size: 12px;
+    color: #64748b;
 }
 
 .site-footer a {

@@ -4,6 +4,15 @@
 
 ## [2026-08-27]
 
+### 🤖 全站 Footer AI Skills 總體樞紐與 7 大獨立 Consultant Skills 導覽矩陣
+
+- **🌐 全站統一頁尾升級 (`views/partials/site-footer.html`)**：
+  - 新增 **AI Agent Skills 生態樞紐卡片**，提供 Skills 總體倉庫 (`skills/`)、全介面參數文檔與 `/api/skills` JSON Manifest 快捷入口。
+  - 完整展示 7 大獨立 Consultant Skills 導覽矩陣，包含奇門遁甲、梅花易數、生辰八字、月老姻緣、易經風水、韋特塔羅與解答之書，可直接導向 GitHub 各模組專屬 `SKILL.md` 及 CLI 腳本。
+  - 支援明亮與暗黑主題無縫切換 (`public/css/style-new.css`, `public/css/dark-mode.css`, `public/css/divination-suite.css`)。
+- **⚡ 新增 `/api/skills` 端點**：
+  - 提供機器人與 AI 代理快速獲取 7 大術數技能清單、調用端點、協議標準與參數說明的 JSON Manifest。
+
 ### 🌟 全介面 5 層參數端到端對齊與系統文檔全面重構（嚴禁掛一漏萬）
 
 - **🌐 WebMCP 瀏覽器 AI 工具標準升級 (`public/js/webmcp.js`)**：
