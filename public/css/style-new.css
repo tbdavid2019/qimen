@@ -1,10 +1,297 @@
+/* ==========================================================================
+   Claude Design System (Anthropic Warm Intellectual Theme)
+   ========================================================================== */
+
+:root {
+    /* Claude Warm Canvas & Palette */
+    --claude-bg: #FAF7F2;
+    --claude-bg-subtle: #F4EFEA;
+    --claude-card: #FFFFFF;
+    --claude-card-subtle: #F7F3EE;
+    
+    /* Claude Terracotta Clay Primary Accent */
+    --claude-primary: #CC6B49;
+    --claude-primary-hover: #B85D3B;
+    --claude-primary-light: rgba(204, 107, 73, 0.1);
+    --claude-primary-border: rgba(204, 107, 73, 0.3);
+    --claude-primary-gradient: linear-gradient(135deg, #D97757 0%, #C15F3D 100%);
+    
+    /* Typography & Text Colors */
+    --claude-text-main: #2C221E;
+    --claude-text-body: #4A3F39;
+    --claude-text-muted: #8C7E74;
+    --claude-text-light: #B5A89E;
+    
+    /* Warm Sand Linen Borders */
+    --claude-border: #E8E0D6;
+    --claude-border-subtle: #F0EAE1;
+    --claude-border-focus: #CC6B49;
+    
+    /* Warm Diffuse Shadows */
+    --claude-shadow-xs: 0 1px 2px rgba(74, 58, 42, 0.04);
+    --claude-shadow-sm: 0 2px 8px rgba(74, 58, 42, 0.05);
+    --claude-shadow-md: 0 8px 24px rgba(74, 58, 42, 0.07), 0 2px 6px rgba(74, 58, 42, 0.03);
+    --claude-shadow-lg: 0 16px 40px rgba(74, 58, 42, 0.09), 0 4px 12px rgba(74, 58, 42, 0.04);
+}
+
 body {
     margin: 0;
     padding-bottom: 60px;
-    padding-top: 60px;
-    background-color: #f5f5f5;
-    font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #333;
+    padding-top: 88px;
+    background-color: var(--claude-bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    color: var(--claude-text-body);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 懸浮膠囊式導航列 (Floating Capsule Pill Navbar - Claude Style) */
+.navbar.navbar-inverse.navbar-fixed-top {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 10px 16px 0;
+    pointer-events: none;
+    min-height: auto;
+}
+
+.navbar.navbar-inverse.navbar-fixed-top > .container,
+.navbar.navbar-inverse.navbar-fixed-top > .container-fluid {
+    pointer-events: auto;
+    max-width: 1220px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--claude-border);
+    border-radius: 9999px;
+    box-shadow: var(--claude-shadow-md);
+    padding: 4px 18px;
+    transition: all 0.25s ease;
+}
+
+.navbar-inverse .navbar-brand {
+    color: var(--claude-text-main) !important;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px 10px 6px;
+    height: auto;
+}
+
+.navbar-inverse .navbar-brand::before {
+    content: "🏮";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--claude-primary-gradient);
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(204, 107, 73, 0.3);
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: var(--claude-text-body) !important;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 7px 15px !important;
+    margin: 4px 2px;
+    border-radius: 9999px;
+    transition: all 0.18s ease-in-out;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+    background-color: var(--claude-bg-subtle) !important;
+    color: var(--claude-text-main) !important;
+}
+
+.navbar-inverse .navbar-nav > .active > a,
+.navbar-inverse .navbar-nav > .active > a:hover,
+.navbar-inverse .navbar-nav > .active > a:focus {
+    background: var(--claude-primary-gradient) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(204, 107, 73, 0.35);
+    border-radius: 9999px;
+}
+
+.dark-mode-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid var(--claude-border) !important;
+    border-radius: 9999px !important;
+    padding: 6px 14px !important;
+    margin: 4px 4px !important;
+    background: var(--claude-card) !important;
+    color: var(--claude-text-body) !important;
+    font-size: 13px !important;
+    transition: all 0.2s ease;
+}
+
+.dark-mode-toggle:hover {
+    background: var(--claude-bg-subtle) !important;
+    border-color: var(--claude-primary-border) !important;
+    color: var(--claude-text-main) !important;
+}
+
+.dropdown-menu {
+    border: 1px solid var(--claude-border);
+    border-radius: 12px;
+    box-shadow: var(--claude-shadow-lg);
+    background: var(--claude-card);
+    padding: 6px;
+}
+
+.dropdown-menu > li > a {
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--claude-text-body);
+    font-size: 13px;
+}
+
+.dropdown-menu > li > a:hover {
+    background: var(--claude-bg-subtle);
+    color: var(--claude-text-main);
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover {
+    background: var(--claude-primary-gradient);
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .navbar.navbar-inverse.navbar-fixed-top > .container {
+        border-radius: 20px;
+        padding: 6px 12px;
+    }
+    .navbar-collapse {
+        background: var(--claude-card);
+        border: 1px solid var(--claude-border);
+        border-radius: 16px;
+        margin-top: 8px;
+        padding: 10px;
+        box-shadow: var(--claude-shadow-lg);
+    }
+    .navbar-inverse .navbar-nav > li > a {
+        border-radius: 10px;
+        padding: 10px 14px !important;
+        margin: 2px 0;
+    }
+}
+
+/* Claude 面板與卡片 */
+.panel, .basic-info, .qimen-pan, .time-mode-selector {
+    background-color: var(--claude-card);
+    border: 1px solid var(--claude-border);
+    border-radius: 16px;
+    box-shadow: var(--claude-shadow-sm);
+    margin-bottom: 20px;
+    transition: all 0.2s ease;
+}
+
+.panel:hover {
+    box-shadow: var(--claude-shadow-md);
+}
+
+.panel-heading {
+    background-color: var(--claude-card-subtle);
+    border-bottom: 1px solid var(--claude-border);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding: 14px 18px;
+    font-weight: 700;
+    color: var(--claude-text-main);
+}
+
+.panel-primary > .panel-heading {
+    background: var(--claude-primary-gradient);
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.panel-info > .panel-heading {
+    background-color: var(--claude-card-subtle);
+    color: var(--claude-text-main);
+    border-bottom-color: var(--claude-border);
+}
+
+.panel-body {
+    padding: 20px;
+    color: var(--claude-text-body);
+}
+
+/* Claude 按鈕系統 */
+.btn-primary, #askBtn, #calculateBtn, #startLLMAnalysis, .btn-submit-qimen {
+    background: var(--claude-primary-gradient) !important;
+    border: none !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    padding: 9px 20px !important;
+    box-shadow: 0 2px 8px rgba(204, 107, 73, 0.25) !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-primary:hover, #askBtn:hover, #calculateBtn:hover, #startLLMAnalysis:hover, .btn-submit-qimen:hover {
+    filter: brightness(1.06) !important;
+    box-shadow: 0 4px 14px rgba(204, 107, 73, 0.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+.btn-default, .btn-outline {
+    background: var(--claude-card) !important;
+    border: 1px solid var(--claude-border) !important;
+    color: var(--claude-text-body) !important;
+    border-radius: 10px !important;
+    font-weight: 500 !important;
+    padding: 8px 18px !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-default:hover, .btn-outline:hover {
+    background: var(--claude-bg-subtle) !important;
+    border-color: #D5C7B7 !important;
+    color: var(--claude-text-main) !important;
+}
+
+/* 表單元件 Form Controls */
+.form-control {
+    background-color: var(--claude-card);
+    border: 1.5px solid var(--claude-border);
+    border-radius: 10px;
+    color: var(--claude-text-main);
+    padding: 10px 14px;
+    height: auto;
+    font-size: 14px;
+    box-shadow: none;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--claude-border-focus);
+    box-shadow: 0 0 0 3px rgba(204, 107, 73, 0.15);
+    outline: none;
+}
+
+/* 標籤 Badge 與 Pill */
+.label-primary, .badge-primary {
+    background: var(--claude-primary-gradient) !important;
+    color: #ffffff !important;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.label-default {
+    background-color: var(--claude-bg-subtle);
+    color: var(--claude-text-muted);
+    border: 1px solid var(--claude-border);
 }
 
 .ad-sidebar {
@@ -67,9 +354,6 @@ body {
 
 /* 時間精度模式選擇器 */
 .time-mode-selector {
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     padding: 15px;
     margin-bottom: 20px;
 }
@@ -78,31 +362,34 @@ body {
     min-width: 180px;
     padding: 12px 15px;
     margin: 0 5px;
-    border-radius: 6px;
+    border-radius: 10px;
     transition: all 0.3s ease;
-    border: 2px solid #ddd;
+    border: 1.5px solid var(--claude-border);
+    background: var(--claude-bg-subtle);
+    color: var(--claude-text-body);
 }
 
 .time-mode-selector .btn-group label.active {
-    background-color: #5cb85c;
-    border-color: #4cae4c;
+    background: var(--claude-primary-gradient);
+    border-color: var(--claude-primary);
     color: #fff;
+    box-shadow: 0 2px 8px rgba(204, 107, 73, 0.3);
 }
 
 .time-mode-selector .btn-group label:not(.active):hover {
-    background-color: #f8f8f8;
-    border-color: #bbb;
+    background-color: var(--claude-card);
+    border-color: var(--claude-border-focus);
 }
 
 .time-mode-selector small {
     margin-top: 3px;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 /* 頁面標題 */
 .page-title {
     margin: 15px 0;
-    color: #333;
+    color: var(--claude-text-main);
     font-weight: bold;
 }
 
