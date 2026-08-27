@@ -5,6 +5,8 @@ const test = require('node:test');
 
 const root = path.join(__dirname, '..');
 const skills = [
+    ['qimen-consultant', 'ask_qimen.js'],
+    ['meihua-consultant', 'ask_meihua.js'],
     ['tarot-consultant', 'ask_tarot.js'],
     ['fengshui-consultant', 'ask_fengshui.js'],
     ['bazi2-consultant', 'ask_bazi2.js'],

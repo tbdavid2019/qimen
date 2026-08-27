@@ -66,7 +66,7 @@
 					},
 					purpose: {
 						type: "string",
-						enum: ["綜合", "事業", "財運", "婚姻", "健康", "學業"],
+						enum: ["綜合", "求財", "事業", "感情", "考試", "健康", "出行", "官司", "財運", "婚姻", "學業"],
 						description: "占卜目的，預設為「綜合」",
 					},
 					datetime: {
@@ -461,11 +461,61 @@
 			},
 		},
 
-		// 8. 梅花易數大師解卦
+		// 8. 梅花易數漢字報字起卦
+		meihua_qigua_text: {
+			name: "meihua_qigua_text",
+			description:
+				"梅花易數漢字報字起卦。輸入任意漢字，依筆畫計算上下卦與動爻，展開本互變錯綜五卦全息盤面。",
+			inputSchema: {
+				type: "object",
+				properties: {
+					text: {
+						type: "string",
+						description: "起卦漢字字串（如「吉祥」、「平安喜樂」）",
+					},
+					purpose: {
+						type: "string",
+						description: "占卜目的",
+					},
+				},
+				required: ["text"],
+			},
+			annotations: {
+				readOnlyHint: false,
+				untrustedContentHint: false,
+			},
+			execute: async (args) => {
+				const text = String(args?.text || "").trim();
+				showAgentFeedback(`梅花漢字起卦: ${text}`);
+
+				const res = await fetch("/api/meihua/qigua", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						method: "text",
+						text,
+						purpose: args?.purpose || "綜合",
+					}),
+				});
+				const data = await res.json();
+				if (!data.success) {
+					throw new Error(data.message || "梅花漢字起卦失敗");
+				}
+
+				if (typeof window.updateResult === "function") {
+					window.updateResult(data.data);
+				}
+
+				showAgentFeedback(`梅花起卦成功：${data.data.bengua.name}`);
+				return JSON.stringify(data.data, null, 2);
+			},
+		},
+
+		// 9. 梅花易數大師解卦
 		meihua_divination: {
 			name: "meihua_divination",
 			description:
-				"梅花易數大師解卦。輸入問題與占卜目的，結合卦象進行深度解答與吉凶決策建議。",
+				"梅花易數大師解卦。輸入問題與占卜目的（支援時間起卦、數字起卦、漢字起卦），結合五卦全息象數進行深度解答與吉凶決策建議。",
 			inputSchema: {
 				type: "object",
 				properties: {
@@ -473,10 +523,35 @@
 						type: "string",
 						description: "您的具體問題或想了解的事項",
 					},
+					method: {
+						type: "string",
+						enum: ["time", "numbers", "text"],
+						description: "起卦方式（time 時間起卦, numbers 數字起卦, text 漢字起卦，預設 time）",
+					},
+					text: {
+						type: "string",
+						description: "漢字起卦字串（method 為 text 時使用）",
+					},
+					num1: {
+						type: "integer",
+						description: "第一個數字（method 為 numbers 時使用）",
+					},
+					num2: {
+						type: "integer",
+						description: "第二個數字（method 為 numbers 時使用）",
+					},
+					num3: {
+						type: "integer",
+						description: "第三個數字（method 為 numbers 時使用）",
+					},
 					purpose: {
 						type: "string",
-						enum: ["綜合", "事業", "財運", "婚姻", "健康", "學業"],
+						enum: ["綜合", "求財", "事業", "感情", "考試", "健康", "出行", "官司", "財運", "婚姻", "學業"],
 						description: "占卜目的，預設「綜合」",
+					},
+					conversationHistory: {
+						type: "array",
+						description: "可選的續問對話歷史",
 					},
 				},
 				required: ["question"],
@@ -500,7 +575,12 @@
 					body: JSON.stringify({
 						question,
 						purpose,
-						method: "time",
+						method: args?.method || "time",
+						text: args?.text,
+						num1: args?.num1,
+						num2: args?.num2,
+						num3: args?.num3,
+						conversationHistory: args?.conversationHistory
 					}),
 				});
 				const data = await res.json();
@@ -539,32 +619,39 @@
 	}
 
 	Object.assign(toolDefinitions, {
-		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與 AI 深度解讀。", "/api/tarot-question", {
+		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與 AI 深度解讀（78張牌、6大牌陣與四維透鏡）。", "/api/tarot-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的問題" },
 				spread: { type: "string", enum: ["single", "three", "diamond", "moon", "horseshoe", "celtic"], description: "牌陣" },
+				variant: { type: "string", enum: ["timeline", "situation", "relationship"], description: "三牌陣變體解讀維度" },
 				seed: { type: "string", description: "可選的可重現抽牌種子" },
+				cards: { type: "array", description: "可選的自選指定牌組陣列" },
 				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
 				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
 			},
 			required: ["question"]
 		}),
-		fengshui_report: createSuiteTool("fengshui_report", "八宅、九運與流年飛星風水報告及 AI 建議。", "/api/fengshui-question", {
+		fengshui_report: createSuiteTool("fengshui_report", "八宅、九運與流年飛星、形煞化解及協紀辨方擇日風水報告與 AI 建議。", "/api/fengshui-question", {
 			type: "object",
 			properties: {
-				question: { type: "string", description: "使用者的空間問題" },
-				facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南"], description: "房屋朝向" },
-				moveInYear: { type: "integer", minimum: 1, maximum: 9999, description: "入住或建造年份" },
-				residentYear: { type: "integer", minimum: 1, maximum: 9999, description: "主要居住者出生年" },
+				question: { type: "string", description: "使用者的空間或擇日問題" },
+				mode: { type: "string", enum: ["yangzhai", "shaqi", "zeri"], description: "風水模式：yangzhai 陽宅飛星八宅；shaqi 形煞診斷；zeri 協紀辨方擇日" },
+				facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南"], description: "房屋朝向（陽宅模式）" },
+				moveInYear: { type: "integer", minimum: 1, maximum: 9999, description: "入住或建造年份（陽宅模式）" },
+				residentYear: { type: "integer", minimum: 1, maximum: 9999, description: "主要居住者出生年（陽宅模式）" },
 				sex: { type: "string", enum: ["男", "女"], description: "主要居住者性別" },
 				year: { type: "integer", minimum: 1, maximum: 9999, description: "分析流年" },
+				shaType: { type: "string", enum: ["road_rush", "tianzan", "bidau", "fangong", "chuangtang", "beam", "mirror"], description: "形煞類型（形煞模式）" },
+				matter: { type: "string", enum: ["movein", "open", "renovate", "marry"], description: "擇日事項（擇日模式）" },
+				zeriYear: { type: "integer", description: "擇日目標年份（擇日模式）" },
+				zeriMonth: { type: "integer", minimum: 1, maximum: 12, description: "擇日目標月份（擇日模式）" },
 				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
 				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
 			},
 			required: ["question"]
 		}),
-		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、大運與 AI 命理解讀。", "/api/bazi2-question", {
+		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、十神藏干、神煞、旺衰格局與 AI 命理解讀。", "/api/bazi2-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的命理問題" },
@@ -580,11 +667,11 @@
 			},
 			required: ["question", "date"]
 		}),
-		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣籤、生肖、夫妻宮與桃花 AI 指引。", "/api/yinyuan-question", {
+		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣籤（100籤）、生肖配對、紫微夫妻宮、桃花運勢、八字合婚與紅線測算 AI 指引。", "/api/yinyuan-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的感情問題" },
-				mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "ziwei-marriage", "peach-blossom"], description: "姻緣測算模式" },
+				mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "ziwei", "ziwei-marriage", "taohua", "peach-blossom"], description: "姻緣測算模式" },
 				firstYear: { type: "integer", minimum: 1, maximum: 9999, description: "第一人的出生年" },
 				secondYear: { type: "integer", minimum: 1, maximum: 9999, description: "第二人的出生年" },
 				firstZodiac: { type: "string", description: "第一人的生肖" },
@@ -644,6 +731,7 @@
 			toolsToRegister = [
 				toolDefinitions.meihua_qigua_time,
 				toolDefinitions.meihua_qigua_numbers,
+				toolDefinitions.meihua_qigua_text,
 				toolDefinitions.meihua_divination,
 				toolDefinitions.switch_theme,
 			];
@@ -659,6 +747,7 @@
 				toolDefinitions.switch_time_mode,
 				toolDefinitions.switch_theme,
 				toolDefinitions.meihua_qigua_time,
+				toolDefinitions.meihua_qigua_text,
 				toolDefinitions.meihua_divination,
 			];
 		}

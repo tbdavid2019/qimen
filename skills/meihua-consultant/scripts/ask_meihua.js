@@ -2,59 +2,51 @@
 
 /**
  * ask_meihua.js
- * A standalone script for the meihua-consultant skill to query qi.david888.com
- * Usage: node ask_meihua.js "Will it rain tomorrow?" ["time"] ["綜合"]
+ * Standalone CLI script for Meihua Yishu Consultant Skill
+ * Usage:
+ *   node ask_meihua.js '{"question":"明天面試順利嗎？","method":"time","purpose":"事業"}'
+ *   node ask_meihua.js '{"question":"投資計畫如何？","method":"text","text":"吉祥如意"}'
+ *   node ask_meihua.js "明天天氣如何？" "time" "綜合"
  */
 
-const https = require('https');
-
-const API_URL = 'https://qi.david888.com/api/meihua-question';
-
-const question = process.argv[2];
-const method = process.argv[3] || 'time';
-const purpose = process.argv[4] || '綜合';
-
-if (!question) {
-  console.error('Error: You must provide a question.');
-  console.error('Usage: node ask_meihua.js <question> [method: time/number] [purpose]');
-  process.exit(1);
+async function readInput() {
+    if (process.argv[2]) {
+        try {
+            return JSON.parse(process.argv[2]);
+        } catch (_e) {
+            return {
+                question: process.argv[2],
+                method: process.argv[3] || 'time',
+                purpose: process.argv[4] || '綜合'
+            };
+        }
+    }
+    if (process.stdin.isTTY) return {};
+    const chunks = [];
+    for await (const chunk of process.stdin) chunks.push(chunk);
+    const text = Buffer.concat(chunks).toString('utf8').trim();
+    return text ? JSON.parse(text) : {};
 }
 
-const payload = JSON.stringify({
-  question,
-  method,
-  purpose
-});
-
-const options = {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Content-Length': Buffer.byteLength(payload)
-  }
-};
-
-const req = https.request(API_URL, options, (res) => {
-  let data = '';
-  res.on('data', (chunk) => { data += chunk; });
-  res.on('end', () => {
-    try {
-      const result = JSON.parse(data);
-      if (result.success) {
-        console.log("=== Meihua Analysis ===");
-        console.log(result.answer);
-      } else {
-        console.log("Failed to get reading:", result.error || result.message);
-      }
-    } catch (e) {
-      console.log("Error parsing response:", e.message);
+async function main() {
+    const input = await readInput();
+    if (!input.question) {
+        process.stderr.write('Error: question is required\nUsage: node ask_meihua.js <question|json>\n');
+        process.exitCode = 1;
+        return;
     }
-  });
-});
+    const baseUrl = (process.env.QIMEN_API_BASE_URL || 'https://qi.david888.com').replace(/\/$/, '');
+    const response = await fetch(`${baseUrl}/api/meihua-question`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input)
+    });
+    const body = await response.json();
+    process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+    if (!response.ok || body.success === false) process.exitCode = 1;
+}
 
-req.on('error', (e) => {
-  console.error(`Status Request Error: ${e.message}`);
+main().catch((error) => {
+    process.stderr.write(`${error.message}\n`);
+    process.exitCode = 1;
 });
-
-req.write(payload);
-req.end();

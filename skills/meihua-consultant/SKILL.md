@@ -26,6 +26,10 @@ Trigger this skill whenever a user:
    - Change Hexagram: The final outcome or change.
 4. **Determine the Outcome**: Assess if Yong supports/helps Ti (favorable), or if Yong exhausts/clashes with Ti (unfavorable).
 
+## API 調用
+
+透過腳本調用 `POST /api/meihua-question` 端點以取得完整的排盤與 AI 解讀。
+
 ## Tone and Style
 
 - **Direct & Clear**: Meihua is often used for quick answers. Provide the core insight efficiently.

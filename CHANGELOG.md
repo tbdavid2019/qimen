@@ -4,6 +4,29 @@
 
 ## [2026-08-27]
 
+### 🌟 全介面 5 層參數端到端對齊與系統文檔全面重構（嚴禁掛一漏萬）
+
+- **🌐 WebMCP 瀏覽器 AI 工具標準升級 (`public/js/webmcp.js`)**：
+  - 新增 `meihua_qigua_text` 漢字報字起卦工具。
+  - 全面擴充所有 14 項 WebMCP 工具的 JSON Schema 參數定義：
+    - `qimen_divination`：支援 8 大專題用神目的枚舉與續問歷史。
+    - `tarot_reading`：支援 6 大牌陣、`variant`（時間線/現狀/關係）變體維度與指定牌組。
+    - `fengshui_report`：支援 `mode`（陽宅/形煞/擇日）、8 大朝向、8 大內外形煞類型、4 大擇日事項與目標年月。
+    - `bazi2_chart`：完整支援四柱日期、時辰、性別、姓名、曾用名、出生地與雙曆法。
+    - `yinyuan_reading`：支援 6 大模式、100 籤自選號碼、雙方四柱對象、相處階段、桃花查詢範圍與理想型特質偏好。
+  - 頁面工具註冊同步納入 `meihua_qigua_text`。
+
+- **⚡ 零依賴 MCP Bridge 升級 (`mcp-bridge.js`)**：
+  - 同步更新 JSON-RPC stdio 工具 schema，確保所有 7 大服務的完整參數皆可透過 Claude Desktop、Cursor 與任意 MCP 客戶端直接調用。
+
+- **🧠 CLI Skills 全量統一重構 (`skills/*-consultant/`)**：
+  - 升級 `qimen-consultant` 與 `meihua-consultant` 腳本為標準原生 `fetch` 實作，全 7 大技能統一支援 JSON/stdin 與 CLI 參數。
+  - 全數 `SKILL.md` 補齊 `POST /api/` 端點指南與完整參數說明。
+
+- **🚨 Agent 行為準則與項目說明文檔重構**：
+  - **`AGENTS.md`**：永久寫入「全介面 5 層參數嚴格對齊，嚴禁掛一漏萬」與「重大變更必須同步更新 README.md 及 CHANGELOG.md」約束條款。
+  - **`README.md`**：全面重構為生產級技術與使用手冊，完整收錄 7 大術數算法、全參數矩陣映射表、WebMCP / MCP-Bridge / CLI Skill 調用範例。
+
 ### 🌟 術數套件全量深度升級（拒絕閹割，全面對齊開源權威標準）
 
 - **🏮 月老 · 姻緣測算 (`/yinyuan`)**：

@@ -25,6 +25,10 @@ Trigger this skill whenever a user:
 4. **Determine the Outcome**: Look at the elemental relationships (Sheng 克/Ke 生) between the palaces of the Day Stem, Hour Stem, and Yong Shen.
 5. **Provide Guidance**: Deliver a professional, empathetic, and clear reading. Do not just list jargon; explain what it means in practical terms.
 
+## API 調用
+
+透過腳本調用 `POST /api/qimen-question` 端點以取得完整的排盤與 AI 解讀。
+
 ## Tone and Style
 
 - **Professional & Empathetic**: Treat the user's inquiry with respect. Avoid overly fatalistic language; focus on guidance and how to navigate the current energy.

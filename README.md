@@ -1,664 +1,167 @@
-# 奇門遁甲排盤系統
+# 333 一句提醒·照見當下 (Metaphysics & Divination Suite)
 
+> **傳統智慧，理性解讀；照見當下，指引行動**
+> 
 > [!IMPORTANT]
 > **🤖 FOR AI AGENTS & LLMs**: 
-> This repository provides native Model Context Protocol (MCP) and **WebMCP** (Chrome In-Browser Agent Tools) support, plus standard API endpoints. If you are an AI reading this, you can directly interact with the divination service:
-> - **🌐 WebMCP (In-Browser Tools)**: Full support for Chrome WebMCP Imperative & Declarative API (`document.modelContext`). AI browser agents can directly discover and execute tools for all seven local services.
-> - **Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to access all seven service tools via stdio. No installation required.
-> - **Production APIs**: Send POST requests to the one-shot question endpoints under `https://qi.david888.com/api/`, including the answerbook endpoint.
-> - **Consultant Skills**: Detailed behavioral instructions are available in `skills/*-consultant/SKILL.md` for all seven local services.
-
-一個基於 Node.js 的奇門遁甲排盤系統，遵循茅山派奇門遁甲排盤方法，支援繁簡體中文和 AI 智能解盤功能。
+> This repository provides native Model Context Protocol (MCP), **WebMCP** (Chrome In-Browser Agent Tools) support, Standalone CLI Skills, and standard JSON REST APIs.
+> - **🌐 WebMCP (In-Browser Tools)**: Full support for Chrome WebMCP Imperative & Declarative API (`document.modelContext`). AI browser agents can directly discover and execute tools across all 7 divination services.
+> - **⚡ Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to access all 7 services via JSON-RPC 2.0 stdio.
+> - **🚀 Production APIs**: Send POST requests to `https://qi.david888.com/api/` endpoints.
+> - **🧠 Consultant Skills**: Behavioral guidance and CLI tools available in `skills/*-consultant/SKILL.md`.
 
 👉 [查看更新日誌 (Changelog)](CHANGELOG.md)
 
-是先想好問題 再開網頁
+---
 
-### 🔮 核心功能
-- **實時排盤**：根據當前時間自動計算奇門盤
-- **自定義排盤**：可選擇任意日期時間進行奇門排盤
-- **多種排盤方法**：支援時家、日家、月家、年家奇門
-- **多用途分析**：綜合、事業、財運、感情、健康等不同用途
-- **時間精度模式**：
-  - **傳統模式**：以當下時辰起盤（兩小時一盤）
-  - **進階模式**：九宮拆補（13分鐘法），每時辰細分為9段
+## 🌟 7 大正統術數與心靈模組
 
-### 🌸 梅花易數
-- **時間起卦**：採用傳統時辰（子時 23:00–00:59 起算）
-- **卦象結果**：本卦、互卦、變卦與體用五行分析
-- **卦辭/爻辭**：完整 64 卦與 384 爻資料
-- **AI 解卦**：支援梅花易數的 AI 分析與外部 API 問答
+本系統拒絕任何敷衍與閹割版本，全量實作古典正統算法與全息數據庫：
 
-### 🧭 術數套件
-- **塔羅**：78 張牌、六種牌陣，以及可重現的安全亂數 seed。
-- **風水**：八宅命卦、九運與流年飛星資料。
-- **生辰八字2**：純 JavaScript 四柱、十神、五行、神煞、大運與流年排盤。
-- **月老姻緣**：生肖與八字合婚、夫妻宮、姻緣籤、桃花及紅線指引。
-- **解答之書**：直接默念取得原始答案，或輸入問題後由 AI 協助解讀。
+### 1. 🧭 奇門遁甲 (`/` & `/api/qimen-question`)
+- **排盤立極**：陰陽遁 18 局、三奇六儀、九宮、八門、九星、八神、值符值使。
+- **十天干克應格局庫 (`lib/qimen-geju.js`)**：青龍返首（戊+丙）、飛鳥跌穴（丙+戊）、玉女伏地（丁+乙）、奇儀順遂（乙+丙）、青龍逃走（乙+辛）、白虎猖狂（辛+乙）、朱雀投江（丁+癸）、騰蛇夭矯（癸+丁）、太白入熒（庚+丙）、熒入太白（丙+庚）、伏吟、反吟等。
+- **三遁吉格與門迫宮迫**：天遁、地遁、人遁、神遁、鬼遁、風遁、雲遁、龍遁、虎遁；精準計算八門五行與落宮生剋之門迫與宮迫。
+- **專題用神與主客動靜**：
+  - **求財投資**：生門（利潤）、甲子戊（本金資本）、日干。
+  - **工作事業**：開門（工作單位）、值符（主管貴人）、日干。
+  - **感情婚姻**：六合（合約婚姻）、乙（女方）、庚（男方）、日時干。
+  - **考試學業**：景門（成績）、天輔星（名聲）、丁奇（文章）。
+  - **疾病健康**：天芮星（病灶）、死門（嚴重度）、日干（結合現實就醫提醒）。
+  - **出行方位**：目標方位宮位、開門、生門、值符。
+  - **官司合約**：驚門、開門（法官合約）、天心星（律師）。
+  - **主客動靜**：辨析「宜主宜靜（防守等待）」或「宜客宜動（主動出擊）」。
+- **時間精度模式**：傳統時辰（兩小時一盤）與進階九宮拆補 13 分鐘法。
 
-上述頁面沿用 `DISCORD_WEBHOOK_URL` 傳送完整輸入、計算結果與 AI 回應，並提供對應 JSON API。
+### 2. 🌸 梅花易數 (`/meihua` & `/api/meihua-question`)
+- **起卦方式**：
+  - **時間起卦**：精確到年月日時與時辰。
+  - **數字起卦**：提供 3 個 1-100 數字計算上卦、下卦與動爻。
+  - **漢字起卦**：任意輸入 1 至多個漢字，依康熙/筆畫數定乾坤。
+- **五卦全息系統**：本卦（現狀基礎）、互卦（過程演變）、變卦（最終趨勢）、錯卦（盲點危機）、綜卦（換位思考）。
+- **爻辭與應期**：完整 64 卦與 384 爻動爻爻辭、體用五行生剋旺衰、四季得時與先天數應期推算。
 
-### 🤖 AI 智能解盤
-- **AI 大師解盤**：使用大語言模型進行智能解讀
-- **互動問答**：針對排盤結果提出具體問題
-- **續問功能**：支援多輪對話，AI 會記住對話脈絡，可深入追問細節
-- **多模型 fallback**：可用 `LLM_MODELS=model-a,model-b,model-c` 設定多個模型，主要模型失敗、逾時或回傳空白時，系統會依序切換下一個模型
-- **相容單模型設定**：也可用 `LLM_MODEL` 搭配 `LLM_FALLBACK_MODELS`，例如 `LLM_MODEL=model-a`、`LLM_FALLBACK_MODELS=model-b,model-c`
-- **清除對話**：一鍵清除對話記錄，開始新的問題
-- **多模型支援**：支援 OpenAI、Claude、Groq、通義千問、本地 Ollama 等 [更詳細說明](LLM-INTEGRATION.md)
-- **個性化分析**：根據不同用途提供專門建議
+### 3. 📜 八字命理 / 賽博算命 (`/bazi2` & `/api/bazi2-question`)
+- **四柱排盤**：年月日時四柱天干地支、六十甲子納音五行、十二長生運。
+- **十神與藏干**：十神六親、地支本氣/中氣/餘氣藏干。
+- **旺衰與五行力量**：日主得令、得地、得勢判定（身旺/身弱），五行百分比能量分佈。
+- **格局與喜用神**：正官格、七殺格、正偏財格、食神格、傷官格、印格、建祿格、陽刃格等判定，指明生扶/泄秀之喜用神與忌神。
+- **吉凶神煞**：天乙貴人、文昌貴人、驛馬、桃花咸池、華蓋、將星、祿神、羊刃、月德貴人。
+- **大運與流年**：十年大運排盤、流年干支生剋互動與歷史關鍵轉折年份驗證。
 
-### 🌐 WebMCP (Web Model Context Protocol)
-- **瀏覽器標準 AI 代理支援**：全面支援 Chrome WebMCP 規範，讓瀏覽器 AI 代理（如 Chrome 內建 AI、Model Context Tool Inspector 擴充功能等）能直接與網頁互動。
-- **命令式 API (`document.modelContext`)**：自動註冊各頁面專屬的結構化工具：
-  - `qimen_divination`：奇門遁甲即時起盤與 AI 大師解盤
-  - `qimen_custom_paipan`：奇門遁甲自定義排盤（四柱、時家/日家/月家/年家、時間精度模式、自訂時地）
-  - `get_current_pan`：讀取當前奇門遁甲盤九宮結構化數據
-  - `switch_time_mode`：切換進階九時段模式 / 傳統時辰模式
-  - `switch_theme`：切換暗黑 / 明亮視覺主題
-  - `meihua_qigua_time`：梅花易數時間起卦
-  - `meihua_qigua_numbers`：梅花易數數字起卦（三數字 1-100）
-  - `meihua_divination`：梅花易數大師解卦
-  - `tarot_reading`：塔羅六種牌陣與 AI 解讀
-  - `fengshui_report`：八宅、九運與流年飛星風水報告
-  - `bazi2_chart`：生辰八字2四柱、大運與 AI 解讀
-  - `yinyuan_reading`：月老籤、合婚、夫妻宮與桃花指引
-  - `answerbook_reading`：解答之書直接默念或問題解讀
-- **宣告式 API (Declarative HTML Forms)**：
-  - 各表單具備 `toolname`、`tooldescription`、`toolautosubmit` 與 `toolparamdescription` 屬性
-  - 支援 `event.agentInvoked` 與 `event.respondWith(...)`
-  - 支援 `:tool-form-active` 與 `:tool-submit-active` 視覺樣式反饋
-- **本地測試與開發**：
-  1. 開啟 Chrome 瀏覽器前往 `chrome://flags/#enable-webmcp-testing` 並啟用。
-  2. 安裝 [Model Context Tool Inspector](https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd) 擴充功能即可在開發者工具中檢視與測試工具呼叫。
+### 4. 🏮 月老 · 姻緣測算 (`/yinyuan` & `/api/yinyuan-question`)
+- **100 支月老靈籤 (`fortune`)**：支援自選籤號（1-100）或🎲誠心搖籤按鈕、信士姓名/性別（Radio Pills 快速點選）、出生日期、感情狀態（單身/暗戀/熱戀/備婚/已婚/分手挽回）與問事主題。
+- **生肖配對 (`zodiac`)**：12 生肖快速選擇或出生西元年份、相處階段（初識/曖昧/熱戀/備婚/已婚）、三合/六合/六沖/六害契合評分與磨合錦囊。
+- **紫微夫妻宮 (`ziwei-marriage`)**：姓名、性別、公曆/農曆雙曆法、出生年月日、十二時辰下拉、感情狀態、14 主星四化與配偶特質畫像。
+- **桃花運勢 (`peach-blossom`)**：出生年月日、性別、感情狀態、2026年度/近期3-6個月查詢範圍、本命桃花位（子午卯酉）與開運法。
+- **八字合婚 (`bazi-match`)**：甲方與乙方雙方姓名、性別、公曆/農曆、出生年月日、出生時辰、關係階段與四柱天合地合互補評分。
+- **紅線測算 (`red-thread`)**：命主姓名、性別、尋找對象性別、理想型特質偏好、單身狀態、正緣外貌氣質/職業/相遇場景與時機窗口。
 
+### 5. 🏡 易經風水 / 陽宅分析 (`/fengshui` & `/api/fengshui-question`)
+- **陽宅玄空飛星與八宅 (`yangzhai`)**：
+  - 8 大朝向與 24 山精確坐向立極。
+  - 1-9 元運運盤、山星盤、向星盤順逆飛九宮，判定「旺山旺向/雙星到向/雙星到坐/上山下水」。
+  - 流年九星飛臨，標註五黃大煞、二黑病符與當令旺星。
+  - 八宅明鏡（四吉方：生氣/天醫/延年/伏位；四凶方：絕命/五鬼/六煞/禍害）。
+  - 居住者命卦（男命/女命東四命/西四命配對）與空間功能區佈局優化。
+- **形煞診斷與化解 (`shaqi`)**：路沖煞、天斬煞、壁刀煞、反弓煞、穿堂風、橫梁壓頂、鏡對床等 8 大內外形煞「移形易位」化解法。
+- **協紀辨方擇日 (`zeri`)**：入宅喬遷、開業開市、動土裝修、婚嫁之建除十二神黃道吉日吉時，避太歲、歲破、三煞。
 
-### 🌏 多語言支援
-- **繁體中文**（預設）
-- **簡體中文**
-- **語言切換**：一鍵切換介面語言
+### 6. 🃏 韋特塔羅解讀 (`/tarot` & `/api/tarot-question`)
+- **78 張完整韋特牌庫**：22 張大阿爾克那 + 56 張小阿爾克那（權杖/火、聖杯/水、寶劍/風、錢幣/土），支援正逆位與自訂牌組/種子抽牌。
+- **6 大牌陣**：單張指引（`single`）、三牌陣（`three`：時間線/現狀/感情關係變體）、五牌鑽石（`diamond`）、月亮週期（`moon`）、七星馬蹄（`horseshoe`）、十牌凱爾特十字（`celtic`）。
+- **四維透鏡與能量矩陣**：鏡子（現狀）、窗戶（盲點）、門（突破路徑）、錨（核心價值）；大牌佔比、四大元素分佈、牌性生剋、經典牌對組合檢測與具體行動清單。
 
-### 📊 完整信息展示
-- **基本資訊**：局數（陰陽遁、上中下元）、四柱、旬首
-- **九宮分析**：八門、九星、八神分布
-- **地盤資訊**：地支、三奇六儀
-- **值符值使**：詳細位置和影響分析
-- **吉凶判斷**：各宮位吉凶標記和詳細說明
-
-### 🎨 用戶體驗
-- **響應式設計**：適配桌面和手機設備
-- **直觀界面**：圖形化九宮格顯示
-- **顏色標記**：五行顏色和吉凶標示
-- **詳細說明**：包含奇門遁甲基礎知識
-
-## 安裝使用
-
-### 環境要求
-- Node.js 14+ 
-- pnpm 或 npm
-
-### 快速開始
-```bash
-# 克隆專案
-git clone <repository-url>
-cd qimen
-
-# 安裝依賴
-pnpm install
-
-# 配置環境變數（可選，用於 AI 功能）
-cp .env.example .env
-# 編輯 .env 文件，設置 LLM API Key
-
-# 啟動應用
-pnpm start
-# 或
-node app.js
-
-# 訪問應用
-# 打開瀏覽器訪問 http://localhost:3000
-```
-
-### AI 功能配置
-
-#### OpenAI 配置
-```env
-LLM_PROVIDER=openai
-LLM_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-LLM_MODEL=gpt-5.6-sol
-```
-
-#### 本地 Ollama 配置（免費）
-```env
-LLM_PROVIDER=ollama
-LLM_API_KEY=not_required
-LLM_MODEL=llama3.1:latest
-LLM_BASE_URL=http://localhost:11434/v1
-```
-
-#### Groq 配置（高速推理）
-
-```env
-LLM_PROVIDER=groq
-LLM_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-LLM_MODEL=mixtral-8x7b-32768
-```
-
-#### Discord Webhook 配置（可選）
-```env
-DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
-```
-
-## 技術架構
-
-### 後端技術
-- **Express.js**：Web 框架
-- **lunar-javascript**：農曆和節氣計算
-- **EJS**：模板引擎
-- **多語言支援**：自建 i18n 系統
-
-### AI 整合
-- **LLM 服務**：統一的多提供商接口
-- **智能提示詞**：結構化奇門數據轉換
-- **錯誤處理**：優雅降級和備用分析
-
-### 前端技術
-- **Bootstrap**：響應式 UI 框架
-- **jQuery**：DOM 操作和 AJAX
-- **CSS3**：現代樣式和動畫
-
-## API 接口
-
-### Web 界面
-- `GET /`：主頁面（實時排盤）
-- `GET /custom`：自定義排盤
-- `GET /meihua`：梅花易數起卦頁面
-- `GET /tarot`、`GET /fengshui`、`GET /bazi2`、`GET /yinyuan`：術數套件頁面
-- `GET /answerbook`：解答之書頁面
-
-### LLM AI 分析
-- `POST /api/llm-analysis`：AI 解盤分析（支援 `conversationHistory` 參數進行多輪對話）
-- `POST /api/meihua/llm-analysis`：梅花易數 AI 解卦
-- `GET /api/llm-config`：LLM 配置狀態
-- `GET /api/llm-test`：測試 LLM 連接
-
-### 外部 API 調用
-- `POST /api/qimen-question`：**奇門問答 API**（供外部系統調用）
-- `POST /api/meihua-question`：**梅花易數問答 API**（供外部系統調用）
-- `POST /api/tarot-question`：塔羅抽牌與 AI 解讀
-- `POST /api/fengshui-question`：風水報告與 AI 建議
-- `POST /api/bazi2-question`：生辰八字2排盤與 AI 解讀
-- `POST /api/yinyuan-question`：姻緣測算與 AI 指引
-- `POST /api/answerbook-question`：解答之書直接默念或取得答案後由 AI 解讀
-
-### Discord 整合
-- `GET /api/discord-test`：Discord webhook 測試
-- 新增服務會先以 Embed 顯示問題、參數、計算摘要與 AI 回覆；完整結構化資料會以 JSON 附件保存，避免頻道只看到難讀的原始 JSON。
-
-### 其他
-- `GET /api/qimen`：奇門排盤數據查詢
-- `POST /api/meihua/qigua`：梅花易數起卦
-- `GET /api/timezone-debug`：時區調試信息
-
-### 解答之書 API
-
-```jsonc
-// 直接默念（question 可省略）
-{ "mode": "direct" }
-
-// 輸入問題並取得 AI 解讀
-{ "mode": "question", "question": "我現在適合轉職嗎？" }
-```
-
-兩種模式都會回傳 `answer` 與 `result`；`question` 模式另外回傳 `analysis`。後端會代理 `GET https://answerbook.david888.com/answersOriginal`，並依設定將完整紀錄送至 Discord。
+### 7. 📖 解答之書 (`/answerbook` & `/api/answerbook-question`)
+- **雙模式運作**：
+  - `direct`（直接默念）：隨機翻開一頁獲取宇宙的一句提醒。
+  - `question`（輸入問題）：輸入具體困惑，由 AI 結合書中籤言進行深層象徵解讀與理性行動指引。
 
 ---
 
-## 🚀 外部 API 調用 (v2.0 新功能)
+## 💻 全介面 5 層架構對齊矩陣
 
-現在您可以通過 API 直接調用奇門問答功能，無需打開網頁界面！
+本專案嚴格貫徹 **Web UI、API、Skill、WebMCP、MCP-Bridge 5 層參數完全對齊**：
 
-### API 端點
-```
-POST /api/qimen-question
-```
-
-### 請求格式
-```json
-{
-  "question": "今天適合投資嗎？",
-  "datetime": "2024-01-01T10:30:00",  // 可選，預設當前時間
-  "timezone": "+08:00",               // 可選，預設系統時區
-  "mode": "advanced",                 // 可選：traditional/advanced
-  "purpose": "事業"                   // 可選：綜合/事業/感情/財運等
-}
-```
-
-### 回應格式
-```json
-{
-  "success": true,
-  "answer": "根據當前奇門盤分析，今日庚金臨震宮...",
-  "qimenInfo": {
-    "datetime": "2024-01-01T10:30:00.000Z",
-    "localDate": "2024/1/1",
-    "localTime": "上午10:30:00",
-    "mode": "advanced",
-    "purpose": "事業"
-  },
-  "provider": "openai",
-  "model": "gpt-5.6-sol",
-  "timestamp": "2024-01-01T10:30:15.123Z",
-  "discordSent": true
-}
-```
-
-### 使用範例
-
-#### cURL 調用
-```bash
-curl -X POST http://localhost:3000/api/qimen-question \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "今天適合投資嗎？",
-    "mode": "advanced",
-    "purpose": "財運"
-  }'
-```
+| 服務模組 | 核心參數集合 (Full Parameters) | Web UI 路由 | API 端點 | CLI Skill 腳本 | WebMCP 工具名稱 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **奇門遁甲** | `question`, `purpose` (8大專題), `mode` (adv/trad), `datetime`, `conversationHistory` | `/` & `/custom` | `POST /api/qimen-question` | `skills/qimen-consultant/scripts/ask_qimen.js` | `qimen_divination`, `qimen_custom_paipan` |
+| **梅花易數** | `question`, `method` (time/numbers/text), `text`, `num1..3`, `purpose`, `conversationHistory` | `/meihua` | `POST /api/meihua-question` | `skills/meihua-consultant/scripts/ask_meihua.js` | `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_qigua_text`, `meihua_divination` |
+| **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory` | `/bazi2` | `POST /api/bazi2-question` | `skills/bazi2-consultant/scripts/ask_bazi2.js` | `bazi2_chart` |
+| **月老姻緣** | `question`, `mode` (6大模式), `name`, `sex`, `stickNum` (1-100), `calendar`, `date`, `time`, `status`, `stage`, `scope`, `seekingSex`, `first/secondZodiac`, `first/secondYear`, `first/second` (雙方四柱), `preference` | `/yinyuan` | `POST /api/yinyuan-question` | `skills/yinyuan-consultant/scripts/ask_yinyuan.js` | `yinyuan_reading` |
+| **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri), `facing`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question` | `skills/fengshui-consultant/scripts/ask_fengshui.js` | `fengshui_report` |
+| **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (3維度), `seed`, `cards`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
+| **解答之書** | `mode` (direct/question), `question`, `conversationHistory` | `/answerbook` | `POST /api/answerbook-question` | `skills/answerbook-consultant/scripts/ask_answerbook.js` | `answerbook_reading` |
 
 ---
 
-## 🌸 梅花易數外部 API
-
-### API 端點
-```
-POST /api/meihua-question
-```
-
-### 請求格式
-```json
-{
-  "question": "今天適合簽約嗎？",
-  "method": "time",
-  "datetime": "2026-01-20T15:30:00",
-  "timezone": "+08:00"
-}
-```
-
-### 欄位說明
-- `question`：必填，使用者問題
-- `method`：`time`（時間起卦）或 `numbers`（數字起卦）
-- `datetime`：可選，時間起卦的指定時間（ISO 格式），預設為現在
-- `timezone`：可選，時區偏移，預設為系統時區（例如 `+08:00`）
-- `num1`、`num2`、`num3`：數字起卦用（`method=numbers`）
-
-### cURL 調用
-```bash
-curl -X POST http://localhost:3000/api/meihua-question \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "今天適合簽約嗎？",
-    "method": "time",
-    "datetime": "2026-01-20T15:30:00",
-    "timezone": "+08:00"
-  }'
-```
-
-#### 數字起卦範例
-```bash
-curl -X POST http://localhost:3000/api/meihua-question \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "這個合作案的結果如何？",
-    "method": "numbers",
-    "num1": 6,
-    "num2": 8,
-    "num3": 3
-  }'
-```
-
-#### JavaScript 調用
-```javascript
-const response = await fetch('http://localhost:3000/api/qimen-question', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    question: '今天適合投資嗎？',
-    mode: 'advanced',
-    purpose: '財運'
-  })
-});
-
-const result = await response.json();
-console.log(result.answer);
-```
-
-#### Python 調用
-```python
-import requests
-
-response = requests.post('http://localhost:3000/api/qimen-question', 
-  json={
-    'question': '今天適合投資嗎？',
-    'mode': 'advanced', 
-    'purpose': '財運'
-  }
-)
-
-result = response.json()
-print(result['answer'])
-```
-
-### 應用場景
-- **聊天機器人**：Line Bot、Discord Bot、Telegram Bot
-- **第三方整合**：其他占卜網站、應用程式
-- **自動化查詢**：定時獲取每日運勢
-- **批量分析**：研究不同時間點的運勢變化
-
----
-
-## 💬 續問功能說明
-
-AI 問答支援多輪對話，讓您可以深入追問細節：
-
-### 使用方式
-1. 輸入第一個問題，AI 回答後會顯示在對話區域
-2. 在輸入框繼續輸入續問問題，AI 會記住之前的對話脈絡
-3. 點擊 🗑️ 按鈕可清除對話記錄，開始新的問題
-
-### 技術細節
-- 對話歷史儲存在瀏覽器端（前端儲存）
-- 最多保留 10 輪對話，避免超過 API token 限制
-- 重新整理頁面會清空對話記錄
-
-### API 調用續問
-```javascript
-// 透過 conversationHistory 參數傳遞對話歷史
-const response = await fetch('/api/llm-analysis', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    qimenData: qimenData,
-    userQuestion: '可以再詳細說明財運部分嗎？',
-    conversationHistory: [
-      { role: 'user', content: '今天運勢如何？' },
-      { role: 'assistant', content: 'AI 的第一個回答...' }
-    ],
-    purpose: '綜合',
-    lang: 'zh-tw'
-  })
-});
-```
-
----
-
-## 🔔 Discord Webhook 整合
-
-系統支援 Discord Webhook 整合，可將用戶問題和 AI 解答自動發送到 Discord 頻道。
-
-### 配置 Discord Webhook
-
-1. 在 Discord 伺服器中創建 Webhook：
-   - 進入頻道設定 → 整合 → Webhook
-   - 點擊「新增 Webhook」
-   - 複製 Webhook URL
-
-2. 在 `.env` 文件中配置：
-```env
-DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
-```
-
-### Discord 功能
-- **用戶問題通知**：當有人在網頁或 API 提問時，自動發送到 Discord
-- **AI 解答記錄**：LLM 的解盤結果也會發送到 Discord
-- **來源標記**：區分來自網頁界面或外部 API 的請求
-- **格式化顯示**：使用 Discord Embed 格式，美觀易讀
-
-### 測試 Discord 連接
-```bash
-curl http://localhost:3000/api/discord-test
-```
-
-## 專案結構
-
-```text
-qimen/
-├── app.js                    # 主應用程序
-├── data/                     # 資料檔
-│   └── meihua/yaoci.md       # 梅花易數卦辭/爻辭
-├── lib/                      # 核心庫
-│   ├── qimen.js             # 奇門遁甲計算引擎
-│   ├── meihua.js            # 梅花易數計算引擎
-│   ├── meihua-text.js       # 卦辭/爻辭資料處理
-│   ├── llm-analysis.js      # AI 解盤服務
-│   ├── discord-webhook.js   # Discord Webhook 整合
-│   ├── api-time-handler.js  # API 時間處理工具
-│   ├── i18n.js              # 多語言系統
-│   └── constants.js         # 常量定義
-├── views/                    # 模板文件
-├── public/                   # 靜態資源
-├── lang/                     # 語言文件
-└── .env.example             # 環境變數範例（含 Discord 配置）
-```
-
----
-
-# Qimen Dunjia Divination System
-
-A Node.js-based Qimen Dunjia divination system following the Maoshan school methodology, with Traditional/Simplified Chinese support and AI-powered analysis.
-
-**Credits**: This project is developed based on [qfdk/qimen](https://github.com/qfdk/qimen).
-
-## Features
-
-### 🔮 Core Functions
-- **Real-time Divination**: Automatic calculation based on current time
-- **Custom Divination**: Choose any date and time for divination
-- **Multiple Methods**: Support for Shijia, Rijia, Yuejia, Nianjia Qimen
-- **Multi-purpose Analysis**: General, career, wealth, love, health consultations
-
-### 🌸 Meihua Yishu
-- **Time-based Qigua**: Uses traditional shichen ranges (Zi hour starts at 23:00)
-- **Hexagram Results**: Ben Gua, Hu Gua, Bian Gua, and wuxing analysis
-- **Full Text**: Complete 64 gua and 384 yao content
-- **AI Reading**: LLM analysis and external API support
-
-### 🤖 AI-Powered Analysis
-- **AI Master Reading**: Intelligent interpretation using Large Language Models
-- **Interactive Q&A**: Ask specific questions about divination results
-- **Multiple AI Models**: Support for OpenAI, Claude, Groq, Qwen, local Ollama
-- **Personalized Analysis**: Tailored advice for different purposes
-
-### 🌏 Multi-language Support
-- **Traditional Chinese** (default)
-- **Simplified Chinese**
-- **Language Toggle**: One-click interface switching
-
-### 📊 Comprehensive Display
-- **Basic Info**: Bureau numbers, Four Pillars, Xun Shou
-- **Nine Palaces**: Eight Gates, Nine Stars, Eight Spirits distribution
-- **Earth Plate**: Earthly Branches, Three Wonders and Six Instruments
-- **Zhifu Zhishi**: Detailed position and influence analysis
-- **Fortune Assessment**: Palace-wise fortune marking and explanations
-
-### 🎨 User Experience
-- **Responsive Design**: Desktop and mobile compatibility
-- **Intuitive Interface**: Graphical nine-palace grid display
-- **Color Coding**: Five-element colors and fortune indicators
-- **Detailed Guide**: Qimen Dunjia fundamentals included
-
-## Installation
-
-### Requirements
-- Node.js 14+
-- pnpm or npm
-
-### Quick Start
-```bash
-# Clone the project
-git clone <repository-url>
-cd qimen
-
-# Install dependencies
-pnpm install
-
-# Configure environment (optional, for AI features)
-cp .env.example .env
-# Edit .env file to set LLM API Key
-
-# Start the application
-pnpm start
-# or
-node app.js
-
-# Access the application
-# Open browser and visit http://localhost:3000
-```
-
-### AI Configuration
-
-#### OpenAI Setup
-```env
-LLM_PROVIDER=openai
-LLM_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-LLM_MODEL=gpt-5.6-sol
-```
-
-可用 `LLM_MODELS` 設定依序嘗試的模型，或用 `LLM_FALLBACK_MODELS` 追加備援模型：
-```env
-LLM_MODELS=gpt-5.6-sol,gpt-5.6-terra,gpt-5.6-luna
-# 或：LLM_MODEL=gpt-5.6-sol
-#     LLM_FALLBACK_MODELS=gpt-5.6-terra,gpt-5.6-luna
-```
-
-#### Local Ollama Setup (Free)
-```env
-LLM_PROVIDER=ollama
-LLM_API_KEY=not_required
-LLM_MODEL=llama3.1:latest
-LLM_BASE_URL=http://localhost:11434/v1
-```
-
-#### Groq Setup (High-speed Inference)
-
-```env
-LLM_PROVIDER=groq
-LLM_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-LLM_MODEL=mixtral-8x7b-32768
-```
-
-## Technical Stack
-
-### Backend
-- **Express.js**: Web framework
-- **lunar-javascript**: Lunar calendar and solar terms calculation
-- **EJS**: Template engine
-- **i18n System**: Custom multilingual support
-
-### AI Integration
-- **LLM Service**: Unified multi-provider interface
-- **Smart Prompts**: Structured Qimen data conversion
-- **Error Handling**: Graceful fallback and backup analysis
-
-### Frontend
-- **Bootstrap**: Responsive UI framework
-- **jQuery**: DOM manipulation and AJAX
-- **CSS3**: Modern styling and animations
-
-## API Endpoints
-
-- `GET /`: Main page (real-time divination)
-- `GET /custom`: Custom divination
-- `GET /meihua`, `GET /tarot`, `GET /fengshui`, `GET /bazi2`, `GET /yinyuan`: Service pages
-- `POST /api/qimen-question`: Qimen one-shot question and AI answer
-- `POST /api/meihua-question`: Meihua one-shot question and AI answer
-- `POST /api/tarot-question`: Tarot draw and AI interpretation
-- `POST /api/fengshui-question`: Feng Shui report and AI advice
-- `POST /api/bazi2-question`: Bazi 2 chart and AI interpretation
-- `POST /api/yinyuan-question`: Relationship divination and AI guidance
-- `POST /api/answerbook-question`: Direct Answerbook response or question-based AI interpretation
-- `POST /api/llm-analysis`: AI divination analysis
-- `GET /api/llm-config`: LLM configuration status
-- `GET /api/llm-test`: Test LLM connection
-
-## Project Structure
-
-```text
-qimen/
-├── app.js                    # Main application
-├── lib/                      # Core libraries
-│   ├── qimen.js             # Qimen calculation engine
-│   ├── llm-analysis.js      # AI analysis service
-│   ├── discord-webhook.js   # Discord Webhook integration
-│   ├── api-time-handler.js  # API time handling utility
-│   ├── i18n.js              # Multilingual system
-│   └── constants.js         # Constants definition
-├── mcp/                      # MCP integration
-│   ├── package.json         # MCP Server Node.js project
-│   ├── tsconfig.json        # TypeScript configuration
-│   ├── src/                 # MCP Server source code
-│   └── dist/                # Compiled MCP script (index.js)
-├── skills/                   # LLM Skill definitions
-│   ├── qimen-consultant/   # Qimen skill & standalone script
-│   │   ├── SKILL.md
-│   │   └── scripts/ask_qimen.js
-│   ├── meihua-consultant/  # Meihua skill & standalone script
-│   │   ├── SKILL.md
-│   │   └── scripts/ask_meihua.js
-│   ├── tarot-consultant/   # Tarot skill & standalone script
-│   ├── fengshui-consultant/ # Feng Shui skill & standalone script
-│   ├── bazi2-consultant/   # Bazi 2 skill & standalone script
-│   ├── yinyuan-consultant/ # Relationship skill & standalone script
-│   └── answerbook-consultant/ # Answerbook skill & standalone script
-├── views/                    # Template files
-├── public/                   # Static assets
-├── lang/                     # Language files
-└── .env.example             # Environment variables example (with Discord config)
-```
-## 🤖 LLM 整合與代理支援
-
-本專案提供 Skills、WebMCP 與 MCP 三種方式，讓您的 LLM（如 Claude、Cursor 等）可以存取七個本地術數服務。
-
-### 方案一：LLM Skills (獨立技能包)
-
-我們提供標準的 Anthropic `SKILL.md` 技能定​​義。只要將這些技能資料夾提供給您的代理，LLM 就能夠自動閱讀並學習如何成為命理顧問，並直接執行內建的獨立腳本向 `qi.david888.com` 取得盤口資料，而不依賴任何背景服務。
-
-- `skills/qimen-consultant/`：奇門遁甲
-- `skills/meihua-consultant/`：梅花易數
-- `skills/tarot-consultant/`：塔羅
-- `skills/fengshui-consultant/`：風水
-- `skills/bazi2-consultant/`：生辰八字2
-- `skills/yinyuan-consultant/`：姻緣
-- `skills/answerbook-consultant/`：解答之書
-
-每個技能皆內含 `scripts/ask_*.js`，讓 LLM 可以自給自足地呼叫 API，您**不需要**作任何伺服器配置。
-
-### 方案二：MCP Server (官方 SDK 版本)
-
-如果您偏好使用官方 SDK 並進行本地建置，可以使用此版本。
-
-- **啟動位置**: `mcp/dist/index.js`
-- **優點**: 使用官方 SDK，結構嚴謹，適合在地開發。
-- **缺點**: 需要執行 `pnpm install` 與 `npm run build`。
-
-### 方案三：輕量級 MCP 橋接 (✨ 零依賴版本 - 推薦)
-
-如果您希望不需安裝任何 `node_modules` 就能使用，請使用此版本。這是專為快速部署與 AI 代理設計的。
-
-- **啟動位置**: `mcp-bridge.js`
-- **優點**: **不需安裝依賴**，下載即可使用。支援七個本地服務工具。
-- **設定方法 (以 Claude Desktop 為例)**：
-  1. 開啟設定檔：`~/Library/Application Support/Claude/claude_desktop_config.json`
-  2. 加入以下配置（請替換為您的實際絕對路徑）：
+## 🤖 外部調用與 AI Agent 整合
+
+### 1. WebMCP (Chrome 瀏覽器標準 In-Browser AI Tools)
+本系統全面支援 Chrome WebMCP 規範：
+- 開啟支援 WebMCP 的瀏覽器（如 Chrome 150+ 或啟用 `chrome://flags/#enable-webmcp-testing`）
+- 瀏覽器內建 AI 或擴充套件即可透過 `document.modelContext` 自動探索並執行網頁上的 14 項專屬工具。
+
+### 2. 零依賴 MCP Bridge (JSON-RPC stdio)
+供 Claude Desktop、Cursor 或任意 MCP Client 使用：
 ```json
 {
   "mcpServers": {
-    "qimen-bridge": {
+    "qimen-suite": {
       "command": "node",
-      "args": ["/絕對路徑/到/qimen/mcp-bridge.js"]
+      "args": ["/path/to/qimen/mcp-bridge.js"]
     }
   }
 }
 ```
+
+### 3. Standalone CLI Skills
+任何 Skill 腳本均可獨立運行，支援 JSON 輸入或命令列參數：
+```bash
+# 奇門占卜
+node skills/qimen-consultant/scripts/ask_qimen.js '{"question":"今天適合投資嗎？","purpose":"求財"}'
+
+# 梅花漢字起卦
+node skills/meihua-consultant/scripts/ask_meihua.js '{"question":"事業合作前景？","method":"text","text":"吉祥如意"}'
+
+# 月老靈籤自選籤號
+node skills/yinyuan-consultant/scripts/ask_yinyuan.js '{"mode":"fortune","stickNum":66,"question":"今年有正緣嗎？"}'
+
+# 風水擇日
+node skills/fengshui-consultant/scripts/ask_fengshui.js '{"mode":"zeri","matter":"movein","zeriYear":2026,"zeriMonth":9,"question":"推薦入宅吉日"}'
+```
+
+---
+
+## 🛠️ 本地安裝與快速啟動
+
+### 環境需求
+- **Node.js**: >= 18.0.0
+- **套件管理器**: `pnpm` 或 `npm`
+
+### 安裝與運行
+```bash
+# 1. 複製倉庫
+git clone https://github.com/tbdavid2019/qimen.git
+cd qimen
+
+# 2. 安裝依賴
+npm install
+
+# 3. 配置環境變數
+cp .env.example .env
+
+# 4. 運行單元與整合測試 (100% Pass Rate)
+npm test
+
+# 5. 啟動本機伺服器
+npm start
+# 訪問 http://localhost:3000
+```
+
+---
+
+## 📜 專案理念與社群規範
+
+> 「傳統智慧，理性解讀；照見當下，指引行動。」
+> 本系統旨在藉由傳統數術之符號全息系統，為使用者梳理思緒、發現盲點，不宣揚宿命迷信，賦予當下清晰理性的決策行動力。

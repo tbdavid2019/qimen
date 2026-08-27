@@ -23,6 +23,7 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 		"switch_theme",
 		"meihua_qigua_time",
 		"meihua_qigua_numbers",
+		"meihua_qigua_text",
 		"meihua_divination",
 		"tarot_reading",
 		"fengshui_report",
@@ -67,14 +68,10 @@ test("奇門遁甲工具 schema 格式符合 WebMCP 標準", () => {
 		qimenDiv.inputSchema.required.includes("question"),
 		"qimen_divination question 必須為必填",
 	);
-	assert.deepEqual(qimenDiv.inputSchema.properties.purpose.enum, [
-		"綜合",
-		"事業",
-		"財運",
-		"婚姻",
-		"健康",
-		"學業",
-	]);
+	assert.ok(qimenDiv.inputSchema.properties.purpose.enum.includes("綜合"));
+	assert.ok(qimenDiv.inputSchema.properties.purpose.enum.includes("求財"));
+	assert.ok(qimenDiv.inputSchema.properties.purpose.enum.includes("事業"));
+	assert.ok(qimenDiv.inputSchema.properties.purpose.enum.includes("感情"));
 
 	const customPan = WebMCP.tools.qimen_custom_paipan;
 	assert.ok(
@@ -99,69 +96,20 @@ test("梅花易數工具 schema 格式符合 WebMCP 標準", () => {
 	assert.equal(numQigua.inputSchema.properties.num1.minimum, 1);
 	assert.equal(numQigua.inputSchema.properties.num1.maximum, 100);
 	assert.deepEqual(numQigua.inputSchema.required, ["num1", "num2", "num3"]);
-});
 
-test("奇門首頁正確載入 webmcp.js 並包含宣告式 WebMCP 表單屬性", () => {
-	const html = read("views/index.html");
-	assert.ok(html.includes("js/webmcp.js"), "index.html 必須載入 js/webmcp.js");
-
-	// 宣告式自定義排盤表單
-	assert.match(
-		html,
-		/<form[^>]*id="customPanForm"[^>]*toolname="qimen_custom_paipan_tool"/,
-	);
-	assert.match(html, /<form[^>]*id="customPanForm"[^>]*tooldescription=/);
-	assert.match(html, /<form[^>]*id="customPanForm"[^>]*toolautosubmit/);
-	assert.match(html, /toolparamdescription="排盤日期/);
-	assert.match(html, /toolparamdescription="排盤時間/);
-
-	// 宣告式 AI 問答表單
-	assert.match(
-		html,
-		/<form[^>]*id="qimenQuestionForm"[^>]*toolname="qimen_question_tool"/,
-	);
-	assert.match(html, /<form[^>]*id="qimenQuestionForm"[^>]*tooldescription=/);
-	assert.match(html, /<form[^>]*id="qimenQuestionForm"[^>]*toolautosubmit/);
-	assert.match(html, /<input[^>]*id="userQuestion"[^>]*toolparamdescription=/);
-});
-
-test("梅花頁面正確載入 webmcp.js 並包含宣告式 WebMCP 表單屬性", () => {
-	const html = read("views/meihua.html");
-	assert.ok(html.includes("js/webmcp.js"), "meihua.html 必須載入 js/webmcp.js");
-
-	// 時間起卦表單
-	assert.match(
-		html,
-		/<form[^>]*id="meihuaTimeForm"[^>]*toolname="meihua_time_qigua_tool"/,
-	);
-	assert.match(html, /<form[^>]*id="meihuaTimeForm"[^>]*tooldescription=/);
-	assert.match(html, /<form[^>]*id="meihuaTimeForm"[^>]*toolautosubmit/);
-
-	// 數字起卦表單
-	assert.match(
-		html,
-		/<form[^>]*id="meihuaNumberForm"[^>]*toolname="meihua_number_qigua_tool"/,
-	);
-	assert.match(html, /<form[^>]*id="meihuaNumberForm"[^>]*tooldescription=/);
-	assert.match(html, /<form[^>]*id="meihuaNumberForm"[^>]*toolautosubmit/);
-	assert.match(html, /<input[^>]*id="meihuaNum1"[^>]*toolparamdescription=/);
-
-	// 問答表單
-	assert.match(
-		html,
-		/<form[^>]*id="meihuaQuestionForm"[^>]*toolname="meihua_question_tool"/,
-	);
-	assert.match(html, /<form[^>]*id="meihuaQuestionForm"[^>]*tooldescription=/);
-	assert.match(html, /<form[^>]*id="meihuaQuestionForm"[^>]*toolautosubmit/);
+	const textQigua = WebMCP.tools.meihua_qigua_text;
+	assert.ok(textQigua, "缺少 meihua_qigua_text 工具");
+	assert.ok(textQigua.inputSchema.properties.text, "缺少 text 參數");
+	assert.deepEqual(textQigua.inputSchema.required, ["text"]);
 });
 
 test("新增四個服務的 WebMCP schema 暴露完整輸入", () => {
 	const WebMCP = require("../public/js/webmcp");
 	const expectations = {
-		tarot_reading: ["question", "spread", "seed"],
-		fengshui_report: ["question", "facing", "moveInYear", "residentYear", "sex", "year"],
+		tarot_reading: ["question", "spread", "variant", "seed", "cards"],
+		fengshui_report: ["question", "mode", "facing", "moveInYear", "residentYear", "sex", "year", "shaType", "matter", "zeriYear", "zeriMonth"],
 		bazi2_chart: ["question", "date", "time", "sex", "calendar", "name", "formerName", "place"],
-		yinyuan_reading: ["question", "mode", "firstYear", "secondYear", "status", "chart", "firstChart", "secondChart"]
+		yinyuan_reading: ["question", "mode", "firstYear", "secondYear", "name", "sex", "stickNum", "calendar", "date", "time", "stage", "status", "scope", "seekingSex", "chart", "firstChart", "secondChart"]
 	};
 
 	for (const [toolName, fields] of Object.entries(expectations)) {

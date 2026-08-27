@@ -89,63 +89,80 @@ async function makeApiRequest(endpoint, payload) {
 const tools = [
   {
     name: "qimen_divination",
-    description: "奇門遁甲專業排盤與大師分析。提供事業、財運、感情、健康等方面的深度解讀。建議提供具體問題與時間。",
+    description: "奇門遁甲專業排盤與大師分析。提供十干克應、三遁吉格、專題用神與主客動靜深度解讀。建議提供具體問題與占問事項。",
     inputSchema: {
       type: "object",
       properties: {
         question: { type: "string", description: "您的具體問題或當前狀況描述" },
         datetime: { type: "string", description: "選擇性的日期時間（ISO 格式，如 2026-03-19T10:00:00），預設為當前時間" },
-        purpose: { type: "string", description: "分析目的，預設為 '綜合'，或是：事業、財運、婚姻、健康、學業", default: "綜合" }
+        purpose: { type: "string", description: "分析目的，如：綜合、求財、事業、感情、考試、健康、出行、官司", default: "綜合" },
+        mode: { type: "string", enum: ["advanced", "traditional"], default: "advanced", description: "時間精度模式" },
+        conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
       required: ["question"]
     }
   },
   {
     name: "meihua_divination",
-    description: "梅花易數快速占卜與決策建議。適合快速獲取卦象啟示。",
+    description: "梅花易數大師解卦。支援時間起卦、數字起卦與漢字起卦，計算本互變錯綜五卦全息盤面與爻辭。",
     inputSchema: {
       type: "object",
       properties: {
         question: { type: "string", description: "您的具體問題" },
-        purpose: { type: "string", description: "分析目的，預設為 '綜合'" }
+        method: { type: "string", enum: ["time", "numbers", "text"], default: "time", description: "起卦方式" },
+        text: { type: "string", description: "漢字起卦字串" },
+        num1: { type: "integer", description: "第一個數字 (1-100)" },
+        num2: { type: "integer", description: "第二個數字 (1-100)" },
+        num3: { type: "integer", description: "第三個數字 (1-100)" },
+        purpose: { type: "string", description: "分析目的，預設為 '綜合'" },
+        conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
       required: ["question"]
     }
   },
   {
     name: "tarot_divination",
-    description: "塔羅六種牌陣抽牌與 AI 反思指引。",
+    description: "韋特塔羅 78 張牌、6 大牌陣抽牌與四維透鏡 AI 深度解讀。",
     inputSchema: {
       type: "object",
       properties: {
         question: { type: "string", description: "您的塔羅問題" },
         spread: { type: "string", enum: ["single", "three", "diamond", "moon", "horseshoe", "celtic"], default: "three", description: "牌陣" },
+        variant: { type: "string", enum: ["timeline", "situation", "relationship"], description: "三牌陣變體解讀維度" },
         seed: { type: "string", description: "可選的可重現抽牌種子" },
-        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" }
+        cards: { type: "array", description: "可選的指定牌組陣列" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
+        conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
       required: ["question"]
     }
   },
   {
     name: "fengshui_consultation",
-    description: "八宅、九運與流年飛星風水報告及生活化建議。",
+    description: "三元玄空飛星、八宅明鏡、形煞化解及協紀辨方擇日風水報告及生活化建議。",
     inputSchema: {
       type: "object",
       properties: {
-        question: { type: "string", description: "您的空間問題" },
+        question: { type: "string", description: "您的空間或擇日問題" },
+        mode: { type: "string", enum: ["yangzhai", "shaqi", "zeri"], default: "yangzhai", description: "風水模式" },
         facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南"], default: "南" },
         moveInYear: { type: "integer", minimum: 1, maximum: 9999 },
         residentYear: { type: "integer", minimum: 1, maximum: 9999 },
         sex: { type: "string", enum: ["男", "女"] },
         year: { type: "integer", minimum: 1, maximum: 9999 },
-        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" }
+        shaType: { type: "string", enum: ["road_rush", "tianzan", "bidau", "fangong", "chuangtang", "beam", "mirror"] },
+        matter: { type: "string", enum: ["movein", "open", "renovate", "marry"] },
+        zeriYear: { type: "integer" },
+        zeriMonth: { type: "integer", minimum: 1, maximum: 12 },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
+        conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
       required: ["question"]
     }
   },
   {
     name: "bazi2_analysis",
-    description: "生辰八字2四柱、十神、五行、大運與 AI 命理解讀。",
+    description: "子平生辰八字四柱、十神藏干、神煞、五行旺衰格局與大運流年 AI 命理解讀。",
     inputSchema: {
       type: "object",
       properties: {
@@ -154,30 +171,46 @@ const tools = [
         time: { type: "string", default: "12:00", description: "出生時間 HH:mm" },
         sex: { type: "string", enum: ["男", "女"], default: "男" },
         calendar: { type: "string", enum: ["solar", "lunar"], default: "solar" },
-        name: { type: "string" },
-        formerName: { type: "string" },
-        place: { type: "string" },
-        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" }
+        name: { type: "string", description: "姓名（可選）" },
+        formerName: { type: "string", description: "曾用名（可選）" },
+        place: { type: "string", description: "出生地（可選）" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
+        conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
       required: ["question", "date"]
     }
   },
   {
     name: "yinyuan_reading",
-    description: "月老籤、生肖合婚、夫妻宮、紅線、八字合婚與桃花指引。",
+    description: "月老靈籤（100籤）、生肖配對、紫微夫妻宮、桃花運勢、八字合婚與紅線測算 AI 指引。",
     inputSchema: {
       type: "object",
       properties: {
         question: { type: "string", description: "您的感情問題" },
-        mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "peach-blossom"], default: "fortune" },
+        mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "ziwei", "ziwei-marriage", "taohua", "peach-blossom"], default: "fortune" },
         firstYear: { type: "integer", minimum: 1, maximum: 9999 },
         secondYear: { type: "integer", minimum: 1, maximum: 9999 },
+        firstZodiac: { type: "string" },
+        secondZodiac: { type: "string" },
+        name: { type: "string" },
+        sex: { type: "string", enum: ["男", "女"] },
+        stickNum: { type: "integer", minimum: 1, maximum: 100 },
+        calendar: { type: "string", enum: ["solar", "lunar"] },
+        date: { type: "string" },
+        time: { type: "string" },
+        first: { type: "object" },
+        second: { type: "object" },
+        stage: { type: "string" },
+        seekingSex: { type: "string", enum: ["男", "女"] },
+        preference: { type: "string" },
         status: { type: "string", default: "單身" },
+        scope: { type: "string" },
         seed: { type: "string" },
         chart: { type: "object" },
         firstChart: { type: "object" },
         secondChart: { type: "object" },
-        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" }
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
+        conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
       required: ["question"]
     }
