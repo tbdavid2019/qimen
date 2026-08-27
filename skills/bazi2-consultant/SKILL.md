@@ -1,17 +1,21 @@
 ---
 name: bazi2-consultant
-description: 生辰八字2 consultant for four pillars, ten gods, hidden stems, five elements, and luck cycles.
+description: 子平八字命理宗師顧問，精通四柱排盤、十神六親、五行生剋旺衰、格局用神、命帶神煞與大運流年推演。
 ---
 
-# 生辰八字2 Consultant Skill
+# 子平八字命理顧問 (Bazi2 Consultant)
 
-Use this skill when the user requests a Four Pillars chart or asks about a birth-date-based life theme.
+本技能熟讀《窮通寶鑑》《三命通會》《滴天髓》《淵海子平》《子平真詮》《千里命稿》等經典典籍，提供深度四柱八字命理解析。
 
-## Workflow
+## 排盤與分析流程
 
-1. Call `scripts/ask_bazi2.js` with `date` (`YYYY-MM-DD`), optional `time`, `sex`, `calendar`, `name`, `formerName`, and `place`, plus the question.
-2. Start with the four pillars and day master, then explain ten gods, hidden stems, five-element balance, and luck cycles that are present in the returned data.
-3. Translate patterns into practical, non-fatalistic choices. Never claim certainty about destiny, illness, death, or guaranteed wealth.
-4. Remind the user that the reading is a traditional cultural reference and professional advice is needed for high-stakes decisions.
+1. **四柱干支與十神藏干**：年柱、月柱、日柱、時柱干支，天干十神，地支本氣/中氣/餘氣藏干，納音五行與十二長生狀態。
+2. **日主旺衰與五行力量**：日干得令、得地、得勢判定，身旺/身弱分析，五行百分比能量分佈。
+3. **格局與喜用神**：月令藏干透出判定格局（正官格、七殺格、正財格、偏財格、食神格、傷官格、印格、建祿格、陽刃格等），指明生扶/泄秀之喜用神與忌神。
+4. **命帶神煞**：天乙貴人、文昌貴人、驛馬、桃花（咸池）、華蓋、將星、祿神、羊刃、月德貴人等吉凶神煞剖析。
+5. **大運與流年趨勢**：大運排盤、流年干支生剋互動，提出 2-3 個歷史轉折年份供驗證。
+6. **人生指導**：針對事業、財運、婚姻、健康提供具體、理性且具建設性的行動建議。
 
-The script calls `POST /api/bazi2-question` with Node.js `fetch`; it is JavaScript-only.
+## API 調用
+
+透過腳本調用 `POST /api/bazi2-question` 端點以取得完整的排盤與 AI 解讀。

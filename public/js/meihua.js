@@ -41,7 +41,7 @@ function toggleCustomTimeInput(show) {
 
 function renderHexagramLines(containerId, binary, dongYao) {
     var container = document.getElementById(containerId);
-    if (!container) {
+    if (!container || !binary) {
         return;
     }
     container.innerHTML = '';
@@ -59,118 +59,108 @@ function renderHexagramLines(containerId, binary, dongYao) {
     }
 }
 
-function setCalcLabelText(id, text) {
-    var label = document.getElementById(id);
-    if (label) {
-        label.textContent = text;
-    }
-}
-
-function setCalcRowVisible(id, visible) {
-    var row = document.getElementById(id);
-    if (row) {
-        row.style.display = visible ? '' : 'none';
-    }
-}
-
 function updateResult(data) {
-    document.getElementById('meihuaResult').style.display = 'block';
+    var resultEl = document.getElementById('meihuaResult');
+    if (!resultEl) return;
+    resultEl.style.display = 'block';
 
+    // 1. 本卦
     document.getElementById('benguaName').textContent = `${data.bengua.num} ${data.bengua.name}`;
     document.getElementById('benguaSymbol').textContent = `${data.bengua.upperGua.symbol} ${data.bengua.lowerGua.symbol}`;
-    document.getElementById('benguaUpper').textContent = `${data.bengua.upperGua.name} ${data.bengua.upperGua.symbol}`;
-    document.getElementById('benguaLower').textContent = `${data.bengua.lowerGua.name} ${data.bengua.lowerGua.symbol}`;
-    document.getElementById('benguaDongYao').textContent = `第${data.bengua.dongYao}爻`;
-    document.getElementById('benguaBinary').textContent = data.bengua.binary;
+    document.getElementById('benguaUpper').textContent = `${data.bengua.upperGua.name}（${data.bengua.upperGua.element} · ${data.bengua.upperGua.symbol}）`;
+    document.getElementById('benguaLower').textContent = `${data.bengua.lowerGua.name}（${data.bengua.lowerGua.element} · ${data.bengua.lowerGua.symbol}）`;
+    document.getElementById('benguaDongYao').textContent = `第 ${data.bengua.dongYao} 爻生變`;
 
+    var dongYaoInfo = data.bengua.dongYaoInfo;
+    var dongYaoTextEl = document.getElementById('benguaDongYaoText');
+    if (dongYaoTextEl && dongYaoInfo) {
+        dongYaoTextEl.innerHTML = `<div style="margin-top: 8px; padding: 6px 10px; background: rgba(220,53,69,0.08); border-left: 3px solid #dc3545; border-radius: 3px;">
+            <strong>爻辭：</strong>${dongYaoInfo.text || '動爻生變'}<br>
+            <small style="color: var(--text-secondary);">${dongYaoInfo.vernacular || ''}</small>
+        </div>`;
+    }
+
+    // 2. 體用分析
     document.getElementById('tiGua').textContent = `${data.tigua.name} (${data.tigua.element})`;
     document.getElementById('yongGua').textContent = `${data.yonggua.name} (${data.yonggua.element})`;
     document.getElementById('wuxingRelation').textContent = data.wuxingRelation;
     document.getElementById('wuxingJudgement').textContent = data.wuxing?.judgement || '';
     document.getElementById('wuxingDetail').textContent = data.wuxing?.detail || '';
 
+    var seasonalEl = document.getElementById('tiYongSeasonal');
+    if (seasonalEl) {
+        seasonalEl.textContent = `${data.wuxing?.tiStatus || ''} · ${data.wuxing?.yongStatus || ''}`;
+    }
+
+    // 3. 應期與計算說明
+    var timingEl = document.getElementById('timingDesc');
+    if (timingEl) {
+        timingEl.textContent = data.timing?.timingDesc || '吉凶相扣，順應時勢而動。';
+    }
+
+    var methodDisplayEl = document.getElementById('calcMethodDisplay');
+    var extraDetailEl = document.getElementById('calcExtraDetail');
+    if (methodDisplayEl) {
+        if (data.method === 'text') {
+            methodDisplayEl.textContent = `漢字占「${data.text}」（總筆劃 ${data.totalStrokes}）`;
+            if (extraDetailEl) extraDetailEl.textContent = `上卦餘數 ${data.calculations?.upperGua} / 下卦餘數 ${data.calculations?.lowerGua} / 動爻 ${data.calculations?.dongYao}`;
+        } else if (data.method === 'numbers' || data.method === 'number') {
+            methodDisplayEl.textContent = `三數起卦（${data.numbers?.num1}, ${data.numbers?.num2}, ${data.numbers?.num3}）`;
+            if (extraDetailEl) extraDetailEl.textContent = `上卦 ${data.calculations?.upperGua} / 下卦 ${data.calculations?.lowerGua} / 動爻 ${data.calculations?.dongYao}`;
+        } else {
+            methodDisplayEl.textContent = `時間起卦（${data.lunar ? `${data.lunar.year}年${data.lunar.month}月${data.lunar.day}日 ${data.shichen?.name || ''}時` : '當前時間'}）`;
+            if (extraDetailEl) extraDetailEl.textContent = `年數${data.calculations?.yearSum}+月${data.calculations?.month}+日${data.calculations?.day}+時${data.calculations?.shichenNum}`;
+        }
+    }
+
+    // 4. 五卦全息（互、變、錯、綜）
     document.getElementById('huguaName').textContent = `${data.hugua.num} ${data.hugua.name}`;
     document.getElementById('bianguaName').textContent = `${data.biangua.num} ${data.biangua.name}`;
+    if (data.cuogua) {
+        var cuoEl = document.getElementById('cuoguaName');
+        if (cuoEl) cuoEl.textContent = `${data.cuogua.num} ${data.cuogua.name}`;
+    }
+    if (data.zonggua) {
+        var zongEl = document.getElementById('zongguaName');
+        if (zongEl) zongEl.textContent = `${data.zonggua.num} ${data.zonggua.name}`;
+    }
 
     renderHexagramLines('benguaLines', data.bengua.binary, data.bengua.dongYao);
     renderHexagramLines('huguaLines', data.hugua.binary, null);
     renderHexagramLines('bianguaLines', data.biangua.binary, null);
+    if (data.cuogua) renderHexagramLines('cuoguaLines', data.cuogua.binary, null);
+    if (data.zonggua) renderHexagramLines('zongguaLines', data.zonggua.binary, null);
 
-    if (data.calculations) {
-        var method = data.method || 'time';
-        var isNumberMethod = method === 'numbers' || method === 'number';
-
-        if (isNumberMethod) {
-            var num1 = data.numbers ? data.numbers.num1 : null;
-            var num2 = data.numbers ? data.numbers.num2 : null;
-            var num3 = data.numbers ? data.numbers.num3 : null;
-
-            setCalcLabelText('calcYearLabel', '數字一');
-            setCalcLabelText('calcMonthLabel', '數字二');
-            setCalcLabelText('calcDayLabel', '數字三');
-            setCalcLabelText('calcUpperLabel', '上卦');
-            setCalcLabelText('calcLowerLabel', '下卦');
-            setCalcLabelText('calcDongLabel', '動爻');
-
-            setCalcRowVisible('calcShichenRow', false);
-
-            document.getElementById('calcYearSum').textContent = num1 !== null ? num1 : '';
-            document.getElementById('calcMonth').textContent = num2 !== null ? num2 : '';
-            document.getElementById('calcDay').textContent = num3 !== null ? num3 : '';
-            document.getElementById('calcUpper').textContent = num1 !== null
-                ? `${num1} mod 8 = ${data.calculations.upperGua}`
-                : (data.calculations.upperGua || '');
-            document.getElementById('calcLower').textContent = num2 !== null
-                ? `${num2} mod 8 = ${data.calculations.lowerGua}`
-                : (data.calculations.lowerGua || '');
-            document.getElementById('calcDongYao').textContent = num3 !== null
-                ? `${num3} mod 6 = ${data.calculations.dongYao}`
-                : (data.calculations.dongYao || '');
-        } else {
-            setCalcLabelText('calcYearLabel', '年數');
-            setCalcLabelText('calcMonthLabel', '月數');
-            setCalcLabelText('calcDayLabel', '日數');
-            setCalcLabelText('calcUpperLabel', '上卦');
-            setCalcLabelText('calcLowerLabel', '下卦');
-            setCalcLabelText('calcDongLabel', '動爻');
-            setCalcLabelText('calcShichenLabel', '時辰');
-
-            setCalcRowVisible('calcShichenRow', true);
-
-            document.getElementById('calcYearSum').textContent = data.calculations.yearSum;
-            document.getElementById('calcMonth').textContent = data.calculations.month;
-            document.getElementById('calcDay').textContent = data.calculations.day;
-            document.getElementById('calcShichen').textContent = `${data.shichen.name} (${data.calculations.shichenNum})`;
-            document.getElementById('calcUpper').textContent = `${data.calculations.upperSum} mod 8 = ${data.calculations.upperGua}`;
-            document.getElementById('calcLower').textContent = `${data.calculations.lowerSum} mod 8 = ${data.calculations.lowerGua}`;
-            document.getElementById('calcDongYao').textContent = `${data.calculations.lowerSum} mod 6 = ${data.calculations.dongYao}`;
-        }
-    }
-
+    // 5. 卦辭與爻辭詳表
     var textPanel = document.getElementById('meihuaTexts');
     if (textPanel && data.texts && data.texts.bengua) {
         var benguaText = data.texts.bengua;
-        document.getElementById('guaCiTitle').textContent = `本卦：${benguaText.num} ${benguaText.name}`;
+        document.getElementById('guaCiTitle').textContent = `本卦卦辭：${benguaText.num} ${benguaText.name}`;
         document.getElementById('guaCi').textContent = benguaText.guaCi || '';
 
         var tbody = document.getElementById('yaoCiTable');
-        tbody.innerHTML = '';
-        benguaText.yaoci.forEach(function(item) {
-            var row = document.createElement('tr');
-            var posCell = document.createElement('td');
-            var textCell = document.createElement('td');
-            var plainCell = document.createElement('td');
+        if (tbody && benguaText.yaoci) {
+            tbody.innerHTML = '';
+            benguaText.yaoci.forEach(function(item) {
+                var row = document.createElement('tr');
+                if (item.index === data.bengua.dongYao) {
+                    row.className = 'warning';
+                    row.style.fontWeight = 'bold';
+                }
+                var posCell = document.createElement('td');
+                var textCell = document.createElement('td');
+                var plainCell = document.createElement('td');
 
-            posCell.textContent = item.position || `第${item.index}爻`;
-            textCell.textContent = item.text || '';
-            plainCell.textContent = item.plain || '';
+                posCell.textContent = item.position || `第${item.index}爻${item.index === data.bengua.dongYao ? ' (動爻)' : ''}`;
+                textCell.textContent = item.text || '';
+                plainCell.textContent = item.plain || '';
 
-            row.appendChild(posCell);
-            row.appendChild(textCell);
-            row.appendChild(plainCell);
-            tbody.appendChild(row);
-        });
-
+                row.appendChild(posCell);
+                row.appendChild(textCell);
+                row.appendChild(plainCell);
+                tbody.appendChild(row);
+            });
+        }
         textPanel.style.display = 'block';
     }
 
@@ -258,6 +248,33 @@ function bindMeihuaEvents() {
         return result.data;
     }
 
+    async function requestTextQiguaData() {
+        var textInput = document.getElementById('meihuaText');
+        var text = textInput ? textInput.value.trim() : '';
+        if (!text) {
+            throw new Error('請輸入占測文字或詞語');
+        }
+
+        var response = await fetch('/api/meihua/qigua', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                method: 'text',
+                text: text,
+                hour: new Date().getHours()
+            })
+        });
+
+        var result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || '未知錯誤');
+        }
+
+        updateResult(result.data);
+        toggleMeihuaLLM(true);
+        return result.data;
+    }
+
     var radios = document.querySelectorAll('input[name="timeMode"]');
     radios.forEach(function(radio) {
         radio.addEventListener('change', function() {
@@ -307,6 +324,23 @@ function bindMeihuaEvents() {
             } finally {
                 numberQiguaBtn.disabled = false;
                 numberQiguaBtn.textContent = '起卦';
+            }
+        });
+    }
+
+    var textQiguaBtn = document.getElementById('textQiguaBtn');
+    if (textQiguaBtn) {
+        textQiguaBtn.addEventListener('click', async function() {
+            textQiguaBtn.disabled = true;
+            textQiguaBtn.textContent = '起卦中...';
+
+            try {
+                await requestTextQiguaData();
+            } catch (error) {
+                alert(`起卦失敗: ${error.message}`);
+            } finally {
+                textQiguaBtn.disabled = false;
+                textQiguaBtn.textContent = '報字起卦';
             }
         });
     }
@@ -368,7 +402,7 @@ function bindMeihuaEvents() {
                 alert(`AI 分析失敗: ${error.message}`);
             } finally {
                 askBtn.disabled = false;
-                askBtn.textContent = 'AI 大師解卦';
+                askBtn.textContent = '🤖 大師解卦';
                 document.getElementById('meihuaClear').disabled = false;
             }
         });

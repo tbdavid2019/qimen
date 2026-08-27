@@ -762,6 +762,30 @@ body.suite-page {
     .answerbook-answer-card { padding: 17px; }
 }
 
+/* Tags and Badges */
+.suite-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--suite-bg);
+    border: 1px solid var(--suite-border);
+    color: var(--suite-text);
+}
+
+.suite-tag.auspicious {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: var(--suite-auspicious);
+}
+
+.suite-tag.inauspicious {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--suite-inauspicious);
+}
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
     .suite-hero h1 { font-size: 22px; }

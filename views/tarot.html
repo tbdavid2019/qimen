@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>塔羅占卜 · 心靈指引</title>
-    <meta name="description" content="免費線上塔羅牌占卜，結合心理占卜學派與 78 張牌陣，提供即時抽牌與 AI 深度解牌指引。">
+    <meta name="description" content="免費線上塔羅牌占卜，結合心理占卜學派與 78 張完整牌陣，提供即時抽牌與 AI 深度解牌指引。">
     <link rel="canonical" href="https://qi.david888.com/tarot">
 
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -75,7 +75,7 @@
             <span class="suite-hero-badge">🔮 心理塔羅 · 照見內心</span>
             <h1>塔羅心靈占卜</h1>
             <p class="suite-hero-subtitle">
-                「塔羅是一面鏡子，反映你的內心與當下狀態。」輸入心中困惑，抽取牌陣並由 AI 塔羅師為您做深度解析與指引。
+                「塔羅是一面鏡子，反映你的內心與當下狀態。」輸入心中困惑，抽取 78 張完整牌陣，由 AI 塔羅心靈顧問進行四維透鏡與行動指引。
             </p>
         </div>
 
@@ -118,6 +118,15 @@
                     </div>
                 </div>
 
+                <div class="suite-form-group" id="threeVariantGroup">
+                    <label for="tarotVariant">三牌陣解讀視角</label>
+                    <select class="form-control" id="tarotVariant" name="variant">
+                        <option value="timeline" selected>時間流向（過去起因 ➔ 現在現狀 ➔ 未來趨勢）</option>
+                        <option value="relationship">感情關係（我的狀態 ➔ 對方狀態 ➔ 雙方關係走向）</option>
+                        <option value="decision">抉擇行動（面臨情境 ➔ 可行方案 ➔ 預期結果）</option>
+                    </select>
+                </div>
+
                 <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
                     <span>✨ 開始占卜並由 AI 深度解析</span>
                 </button>
@@ -134,13 +143,13 @@
 
                 <div id="suiteAiLoading" class="suite-loading-state">
                     <div class="suite-spinner"></div>
-                    <div>大師正在凝視牌陣，為您解讀牌意中…</div>
+                    <div>大師正在凝視牌陣，為您解讀牌面透鏡與牌間關係…</div>
                 </div>
 
                 <div id="suiteConversation" class="suite-conversation-stream"></div>
 
                 <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
-                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向塔羅大師進一步追問（例如：逆位牌具體提醒我什麼？）">
+                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向塔羅顧問進一步追問（例如：逆位牌具體提醒我什麼？）">
                     <button type="submit" class="suite-follow-up-btn">追問</button>
                 </form>
             </div>

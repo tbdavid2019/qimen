@@ -15,11 +15,10 @@ const LLMAnalysisService = require('./lib/llm-analysis');
 const DiscordWebhook = require('./lib/discord-webhook');
 const APITimeHandler = require('./lib/api-time-handler');
 const { parseCivilTime } = require('./lib/civil-time');
-const { drawCards } = require('./lib/tarot');
-const { calculateFengShui } = require('./lib/fengshui');
+const { drawCards, SPREADS: TAROT_SPREADS } = require('./lib/tarot');
+const { calculateFengShui, diagnoseShaqi, chooseZeri } = require('./lib/fengshui');
 const { calculateBazi } = require('./lib/bazi2');
-const { zodiacMatch, drawFortuneStick, redThreadReading, baziMatch, marriagePalace, peachBlossom } = require('./lib/yinyuan');
-const { SPREADS: TAROT_SPREADS } = require('./lib/tarot');
+const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
 const { AnswerBookClient, createAnswerbookQuestionHandler } = require('./lib/answerbook');
 
@@ -33,23 +32,25 @@ const llmService = new LLMAnalysisService({
     apiKey: process.env.LLM_API_KEY,
     models: process.env.LLM_MODELS || [process.env.LLM_MODEL, process.env.LLM_FALLBACK_MODELS]
         .filter(Boolean)
-        .join(',') || 'gpt-4o-mini'
+        .join(','),
+    model: process.env.LLM_MODEL || 'gpt-4.1-mini',
+    baseURL: process.env.LLM_BASE_URL,
+    maxTokens: parseInt(process.env.LLM_MAX_TOKENS) || 9999,
+    temperature: parseFloat(process.env.LLM_TEMPERATURE) || 0.7
 });
 
-// 初始化 Discord Webhook 服務
-const discordWebhook = new DiscordWebhook();
+// 初始化 Discord Webhook
+const discordWebhook = new DiscordWebhook(process.env.DISCORD_WEBHOOK_URL);
 
-// 中間件設置
-app.use(express.json());  // 解析 JSON 請求體
-app.use(express.urlencoded({ extended: true }));  // 解析 URL 編碼請求體
-
-// view engine setup
+// 設置視圖引擎
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 app.engine('html', require('ejs').renderFile);
-// public files
+
+// 靜態文件服務
 app.use(express.static(path.join(__dirname, 'public')));
-app.disable('view cache');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // 中介軟體：WebMCP 權限政策
 app.use((req, res, next) => {
@@ -77,16 +78,16 @@ app.use((req, res, next) => {
     next();
 });
 
-// 梅花易數頁面
+// 路由
+app.get('/tarot', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot' }));
+app.get('/fengshui', (req, res) => res.render('fengshui', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'fengshui' }));
+app.get('/bazi2', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2' }));
+app.get('/yinyuan', (req, res) => res.render('yinyuan', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'yinyuan' }));
 app.get('/meihua', (req, res) => {
     res.render('meihua', {
-        enableLLM: !!process.env.LLM_API_KEY
+        enableLLM: !!process.env.LLM_API_KEY,
+        activePage: 'meihua'
     });
-});
-
-// 新增術數頁面
-['tarot', 'fengshui', 'bazi2', 'yinyuan'].forEach((page) => {
-    app.get(`/${page}`, (req, res) => res.render(page, { enableLLM: !!process.env.LLM_API_KEY, activePage: page }));
 });
 app.get('/answerbook', (req, res) => res.render('answerbook', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'answerbook' }));
 
@@ -105,7 +106,15 @@ app.post('/api/tarot/reading', async (req, res) => {
 
 app.post('/api/fengshui/report', async (req, res) => {
     try {
-        const report = calculateFengShui(req.body || {});
+        const body = req.body || {};
+        let report;
+        if (body.mode === 'shaqi') {
+            report = diagnoseShaqi(body.shaType || body.question);
+        } else if (body.mode === 'zeri') {
+            report = chooseZeri(body.matter, body.year, body.month);
+        } else {
+            report = calculateFengShui(body);
+        }
         const discord = await sendModuleRecord('風水', req.body, report);
         res.json({ success: true, report, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
@@ -121,21 +130,39 @@ app.post('/api/bazi2/chart', async (req, res) => {
 
 app.post('/api/yinyuan/reading', async (req, res) => {
     try {
-        const body = req.body || {}; let result;
-        if (body.mode === 'zodiac') result = zodiacMatch(body.firstYear, body.secondYear);
-        else if (body.mode === 'fortune') result = drawFortuneStick(body.seed);
-        else if (body.mode === 'red-thread') result = redThreadReading(body.chart);
-        else if (body.mode === 'bazi-match') result = baziMatch(body.firstChart, body.secondChart);
-        else if (body.mode === 'marriage-palace') result = marriagePalace(body.chart);
-        else if (body.mode === 'peach-blossom') result = peachBlossom(body.firstYear, body.status);
-        else throw new Error('請選擇可用的姻緣測算模式');
+        const body = req.body || {};
+        let result;
+        const mode = body.mode || 'fortune';
+
+        if (mode === 'zodiac') {
+            result = zodiacMatch(body.firstYear || body.firstZodiac, body.secondYear || body.secondZodiac);
+        } else if (mode === 'fortune') {
+            result = drawFortuneStick(body.question, body.name, body.seed);
+        } else if (mode === 'ziwei-marriage' || mode === 'marriage-palace') {
+            result = ziweiMarriage(body);
+        } else if (mode === 'peach-blossom' || mode === 'taohua-luck') {
+            result = peachBlossomLuck(body.firstYear || body.year || 1990, body.status, body.scope);
+        } else if (mode === 'bazi-match') {
+            result = baziMatchFull(body.first || body, body.second || body);
+        } else if (mode === 'red-thread') {
+            result = redThreadFull(body);
+        } else {
+            result = drawFortuneStick(body.question, body.name, body.seed);
+        }
+
         const discord = await sendModuleRecord('姻緣', body, result);
         res.json({ success: true, result, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
 });
 
-const FENGSHUI_FACINGS = new Set(['南', '北', '東', '西', '東南', '西北', '東北', '西南']);
-const YINYUAN_MODES = new Set(['fortune', 'zodiac', 'red-thread', 'bazi-match', 'marriage-palace', 'peach-blossom']);
+const FENGSHUI_FACINGS = new Set([
+    '南', '北', '東', '西', '東南', '西北', '東北', '西南',
+    '壬山丙向', '子山午向', '癸山丁向', '丑山未向', '艮山坤向', '寅山申向',
+    '甲山庚向', '卯山酉向', '乙山辛向', '辰山戌向', '巽山乾向', '巳山亥向',
+    '丙山壬向', '午山子向', '丁山癸向', '未山丑向', '坤山艮向', '申山寅向',
+    '庚山甲向', '酉山卯向', '辛山乙向', '戌山辰向', '乾山巽向', '亥山巳向'
+]);
+const YINYUAN_MODES = new Set(['fortune', 'zodiac', 'ziwei-marriage', 'peach-blossom', 'bazi-match', 'red-thread', 'marriage-palace', 'taohua-luck']);
 
 function parseYear(value, field, { required = true } = {}) {
     if ((value === undefined || value === null || value === '') && !required) return undefined;
@@ -193,17 +220,6 @@ function validateYinyuanQuestion(body) {
     if (!YINYUAN_MODES.has(mode)) {
         throw validationError('請選擇可用的姻緣測算模式', 'INVALID_MODE', 'mode');
     }
-    if (mode === 'zodiac') {
-        parseYear(body.firstYear, 'firstYear');
-        parseYear(body.secondYear, 'secondYear');
-    } else if (mode === 'peach-blossom') {
-        parseYear(body.firstYear, 'firstYear');
-    } else if (mode === 'red-thread' || mode === 'marriage-palace') {
-        if (!body.chart || typeof body.chart !== 'object') throw validationError('此模式需要完整八字命盤', 'MISSING_CHART', 'chart');
-    } else if (mode === 'bazi-match') {
-        if (!body.firstChart || typeof body.firstChart !== 'object') throw validationError('八字合婚需要第一份命盤', 'MISSING_CHART', 'firstChart');
-        if (!body.secondChart || typeof body.secondChart !== 'object') throw validationError('八字合婚需要第二份命盤', 'MISSING_CHART', 'secondChart');
-    }
     return {
         ...body,
         mode,
@@ -213,13 +229,15 @@ function validateYinyuanQuestion(body) {
 
 function calculateYinyuanQuestion(input) {
     switch (input.mode) {
-        case 'zodiac': return zodiacMatch(input.firstYear, input.secondYear);
-        case 'fortune': return drawFortuneStick(input.seed);
-        case 'red-thread': return redThreadReading(input.chart);
-        case 'bazi-match': return baziMatch(input.firstChart, input.secondChart);
-        case 'marriage-palace': return marriagePalace(input.chart);
-        case 'peach-blossom': return peachBlossom(input.firstYear, input.status);
-        default: throw validationError('請選擇可用的姻緣測算模式', 'INVALID_MODE', 'mode');
+        case 'zodiac': return zodiacMatch(input.firstYear || input.firstZodiac, input.secondYear || input.secondZodiac);
+        case 'fortune': return drawFortuneStick(input.question, input.name, input.seed);
+        case 'ziwei-marriage':
+        case 'marriage-palace': return ziweiMarriage(input);
+        case 'peach-blossom':
+        case 'taohua-luck': return peachBlossomLuck(input.firstYear || input.year, input.status, input.scope);
+        case 'bazi-match': return baziMatchFull(input.first || input, input.second || input);
+        case 'red-thread': return redThreadFull(input);
+        default: return drawFortuneStick(input.question, input.name, input.seed);
     }
 }
 
@@ -267,17 +285,30 @@ app.post('/api/answerbook-question', createAnswerbookQuestionHandler({
 }));
 
 app.post('/api/:module/llm-analysis', async (req, res, next) => {
-    const modules = { tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣' };
+    const modules = { tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
     const moduleName = modules[req.params.module];
     if (!moduleName) return next();
     try {
         const { result, question = '', conversationHistory = [] } = req.body || {};
         if (!result) return res.status(400).json({ success: false, error: '缺少計算結果' });
-        const prompt = `你是精通${moduleName}的傳統文化顧問。僅根據以下已計算結果解讀，不得修改計算事實。請以繁體中文給出具體、理性、不宿命化的建議；健康、法律與投資問題須提醒尋求專業意見。\n\n問題：${question}\n\n計算結果：${JSON.stringify(result)}`;
-        const response = await llmService.callLLMWithHistory(prompt, conversationHistory);
-        const analysis = typeof response === 'string' ? response : response.content;
-        const discord = await sendModuleRecord(moduleName, req.body, result, analysis);
-        res.json({ success: true, analysis, provider: llmService.provider, model: response.model || llmService.model, discord });
+
+        const aiResult = await llmService.analyzeService(req.params.module, result, {
+            userQuestion: question,
+            conversationHistory
+        });
+
+        if (!aiResult.success) {
+            return res.status(500).json({ success: false, error: aiResult.error || 'AI 分析失敗' });
+        }
+
+        const discord = await sendModuleRecord(moduleName, req.body, result, aiResult.analysis);
+        res.json({
+            success: true,
+            analysis: aiResult.analysis,
+            provider: aiResult.provider,
+            model: aiResult.model,
+            discord
+        });
     } catch (error) { res.status(500).json({ success: false, error: error.message }); }
 });
 
@@ -509,7 +540,9 @@ app.post('/api/meihua/qigua', (req, res) => {
             result.texts = {
                 bengua: meihuaText.getHexagramText(result.bengua.num),
                 hugua: meihuaText.getHexagramText(result.hugua.num),
-                biangua: meihuaText.getHexagramText(result.biangua.num)
+                biangua: meihuaText.getHexagramText(result.biangua.num),
+                cuogua: meihuaText.getHexagramText(result.cuogua?.num),
+                zonggua: meihuaText.getHexagramText(result.zonggua?.num)
             };
             return res.json({ success: true, data: result });
         }
@@ -532,7 +565,28 @@ app.post('/api/meihua/qigua', (req, res) => {
             result.texts = {
                 bengua: meihuaText.getHexagramText(result.bengua.num),
                 hugua: meihuaText.getHexagramText(result.hugua.num),
-                biangua: meihuaText.getHexagramText(result.biangua.num)
+                biangua: meihuaText.getHexagramText(result.biangua.num),
+                cuogua: meihuaText.getHexagramText(result.cuogua?.num),
+                zonggua: meihuaText.getHexagramText(result.zonggua?.num)
+            };
+            return res.json({ success: true, data: result });
+        }
+
+        if (method === 'text' || method === 'character') {
+            const { text = '', hour = null } = req.body || {};
+            if (!text || !String(text).trim()) {
+                return res.status(400).json({ success: false, error: '漢字起卦需要提供文字' });
+            }
+            const currentHour = hour !== null && hour !== undefined && hour !== ''
+                ? Number.parseInt(hour, 10)
+                : new Date().getHours();
+            const result = meihua.qiguaByText(String(text).trim(), currentHour);
+            result.texts = {
+                bengua: meihuaText.getHexagramText(result.bengua.num),
+                hugua: meihuaText.getHexagramText(result.hugua.num),
+                biangua: meihuaText.getHexagramText(result.biangua.num),
+                cuogua: meihuaText.getHexagramText(result.cuogua?.num),
+                zonggua: meihuaText.getHexagramText(result.zonggua?.num)
             };
             return res.json({ success: true, data: result });
         }
@@ -940,6 +994,18 @@ app.post('/api/meihua-question', async (req, res) => {
             }
 
             meihuaData = meihua.qiguaByNumbers(parsedNum1, parsedNum2, parsedNum3);
+        } else if (method === 'text' || method === 'character') {
+            const text = req.body.text || req.body.char || req.body.word;
+            if (!text || !String(text).trim()) {
+                return res.status(400).json({
+                    success: false,
+                    error: '漢字起卦需要提供文字'
+                });
+            }
+            const currentHour = req.body.hour !== null && req.body.hour !== undefined && req.body.hour !== ''
+                ? Number.parseInt(req.body.hour, 10)
+                : new Date().getHours();
+            meihuaData = meihua.qiguaByText(String(text).trim(), currentHour);
         } else {
             return res.status(400).json({
                 success: false,
@@ -950,7 +1016,9 @@ app.post('/api/meihua-question', async (req, res) => {
         meihuaData.texts = {
             bengua: meihuaText.getHexagramText(meihuaData.bengua.num),
             hugua: meihuaText.getHexagramText(meihuaData.hugua.num),
-            biangua: meihuaText.getHexagramText(meihuaData.biangua.num)
+            biangua: meihuaText.getHexagramText(meihuaData.biangua.num),
+            cuogua: meihuaText.getHexagramText(meihuaData.cuogua?.num),
+            zonggua: meihuaText.getHexagramText(meihuaData.zonggua?.num)
         };
 
         const questionResult = await discordWebhook.sendUserQuestion(question.trim(), null);

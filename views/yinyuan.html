@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>月老姻緣 · 情感測算</title>
-    <meta name="description" content="線上賽博月老求籤、生肖合婚、桃花方位與八字夫妻宮測算，提供溫暖正向的 AI 情感諮詢與指引。">
+    <meta name="description" content="線上賽博月老求籤、八字合婚、紫微夫妻宮、生肖配對、桃花運勢與紅線正緣畫像測算，提供溫暖智慧的 AI 情感諮詢與指引。">
     <link rel="canonical" href="https://qi.david888.com/yinyuan">
 
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -75,51 +75,192 @@
             <span class="suite-hero-badge">🏮 賽博月老 · 牽引良緣</span>
             <h1>月老姻緣情感測算</h1>
             <p class="suite-hero-subtitle">
-                求月老靈籤、測生肖契合度、查桃花吉方；由賽博月老為您解籤點撥，用真誠與智慧經營美好關係。
+                涵蓋八字合婚、紫微夫妻宮、生肖配對、100籤月老靈籤、桃花運勢與紅線正緣畫像；由賽博月老為您點撥開示，用真誠與智慧經營美好關係。
             </p>
         </div>
 
         <div class="suite-card">
-            <form id="suiteForm" toolname="yinyuan_reading" tooldescription="月老姻緣求籤、生肖合婚與桃花指引" toolautosubmit>
+            <form id="suiteForm" toolname="yinyuan_reading" tooldescription="月老姻緣測算：求籤、生肖配對、紫微夫妻宮、桃花運勢、八字合婚與紅線測算" toolautosubmit>
                 <div class="suite-form-group">
                     <label for="yinyuanMode">選擇測算項目</label>
-                    <select class="form-control input-lg" id="yinyuanMode" name="mode" toolparamdescription="姻緣服務類型：求籤、生肖合婚或桃花方位">
-                        <option value="fortune" selected>🏮 求月老靈籤（感情走向與指引）</option>
-                        <option value="zodiac">🐴 生肖合婚配對（兩人契合度）</option>
-                        <option value="peach-blossom">🌸 桃花方位指引（提升個人魅力）</option>
+                    <select class="form-control input-lg" id="yinyuanMode" name="mode" toolparamdescription="姻緣測算模式：fortune(求籤), zodiac(生肖配對), ziwei-marriage(紫微夫妻宮), peach-blossom(桃花運勢), bazi-match(八字合婚), red-thread(紅線測算)">
+                        <option value="fortune" selected>🏮 求月老靈籤（100籤籤詩系統 · 感情指引）</option>
+                        <option value="zodiac">🐴 生肖配對（生肖六合三合、默契與磨合）</option>
+                        <option value="ziwei-marriage">👑 紫微夫妻宮（命盤婚姻格局 · 配偶特徵）</option>
+                        <option value="peach-blossom">🌸 桃花運勢（本命桃花吉方 · 流年流月日曆）</option>
+                        <option value="bazi-match">📜 八字合婚（雙方四柱生剋 · 五行互補度）</option>
+                        <option value="red-thread">🧵 紅線測算（正緣畫像特徵 · 出現時間節點）</option>
                     </select>
                 </div>
 
-                <div class="suite-form-row">
-                    <div class="suite-form-group">
-                        <label for="firstYear">你的出生西元年</label>
-                        <input type="number" class="form-control input-lg" id="firstYear" name="firstYear" value="1990" toolparamdescription="你的出生西元年份">
+                <!-- 模式1: 求月老靈籤 -->
+                <div id="groupFortune" class="mode-fields-group">
+                    <div class="suite-form-row">
+                        <div class="suite-form-group">
+                            <label for="fortuneName">信士姓名（選填）</label>
+                            <input type="text" class="form-control input-lg" id="fortuneName" name="fortuneName" placeholder="例如：林某某" toolparamdescription="信士姓名">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="fortuneSex">性別</label>
+                            <select class="form-control input-lg" id="fortuneSex" name="fortuneSex">
+                                <option value="男">男</option>
+                                <option value="女" selected>女</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模式2: 生肖配對 -->
+                <div id="groupZodiac" class="mode-fields-group" style="display:none;">
+                    <div class="suite-form-row">
+                        <div class="suite-form-group">
+                            <label for="firstYear">你的出生西元年或生肖</label>
+                            <input type="number" class="form-control input-lg" id="firstYear" name="firstYear" value="1990" placeholder="如 1990 或 屬馬" toolparamdescription="你的出生年份">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="secondYear">對方的出生西元年或生肖</label>
+                            <input type="number" class="form-control input-lg" id="secondYear" name="secondYear" value="1991" placeholder="如 1991 或 屬羊" toolparamdescription="對方的出生年份">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模式3: 紫微夫妻宮 -->
+                <div id="groupZiwei" class="mode-fields-group" style="display:none;">
+                    <div class="suite-form-row">
+                        <div class="suite-form-group">
+                            <label for="ziweiDate">出生日期 <span style="color:#ef4444;">*</span></label>
+                            <input type="date" class="form-control input-lg" id="ziweiDate" name="ziweiDate" value="1995-08-18">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="ziweiTime">出生時間</label>
+                            <input type="time" class="form-control input-lg" id="ziweiTime" name="ziweiTime" value="12:00">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="ziweiSex">性別</label>
+                            <select class="form-control input-lg" id="ziweiSex" name="ziweiSex">
+                                <option value="女" selected>女</option>
+                                <option value="男">男</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模式4: 桃花運勢 -->
+                <div id="groupTaohua" class="mode-fields-group" style="display:none;">
+                    <div class="suite-form-row">
+                        <div class="suite-form-group">
+                            <label for="taohuaYear">出生年份 / 生肖</label>
+                            <input type="number" class="form-control input-lg" id="taohuaYear" name="taohuaYear" value="1995">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="taohuaStatus">目前感情狀態</label>
+                            <select class="form-control input-lg" id="taohuaStatus" name="taohuaStatus">
+                                <option value="單身" selected>單身尋覓中</option>
+                                <option value="曖昧中">曖昧/發展中</option>
+                                <option value="穩定交往">穩定戀愛中</option>
+                                <option value="婚姻中">已婚經營</option>
+                            </select>
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="taohuaScope">查詢範圍</label>
+                            <select class="form-control input-lg" id="taohuaScope" name="taohuaScope">
+                                <option value="2026年度整體" selected>2026 年度整體桃花</option>
+                                <option value="近期數月">近期 3-6 個月動態</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模式5: 八字合婚 -->
+                <div id="groupBaziMatch" class="mode-fields-group" style="display:none;">
+                    <div style="background:var(--suite-bg-card, rgba(255,255,255,0.05)); border:1px solid var(--suite-border); border-radius:8px; padding:12px; margin-bottom:14px;">
+                        <h4 style="margin:0 0 10px 0; font-size:15px; color:var(--suite-primary);">👤 甲方 / 男方資料</h4>
+                        <div class="suite-form-row">
+                            <div class="suite-form-group">
+                                <label>姓名</label>
+                                <input type="text" class="form-control" id="bmName1" name="bmName1" placeholder="甲方姓名" value="男方">
+                            </div>
+                            <div class="suite-form-group">
+                                <label>出生日期</label>
+                                <input type="date" class="form-control" id="bmDate1" name="bmDate1" value="1992-04-10">
+                            </div>
+                            <div class="suite-form-group">
+                                <label>出生時間</label>
+                                <input type="time" class="form-control" id="bmTime1" name="bmTime1" value="10:30">
+                            </div>
+                            <div class="suite-form-group">
+                                <label>性別</label>
+                                <select class="form-control" id="bmSex1" name="bmSex1">
+                                    <option value="男" selected>男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="suite-form-group" id="secondYearGroup" style="display:none;">
-                        <label for="secondYear">對方的出生西元年</label>
-                        <input type="number" class="form-control input-lg" id="secondYear" name="secondYear" value="1991" toolparamdescription="對方的出生西元年份，生肖合婚時使用">
+                    <div style="background:var(--suite-bg-card, rgba(255,255,255,0.05)); border:1px solid var(--suite-border); border-radius:8px; padding:12px; margin-bottom:14px;">
+                        <h4 style="margin:0 0 10px 0; font-size:15px; color:var(--suite-primary);">👤 乙方 / 女方資料</h4>
+                        <div class="suite-form-row">
+                            <div class="suite-form-group">
+                                <label>姓名</label>
+                                <input type="text" class="form-control" id="bmName2" name="bmName2" placeholder="乙方姓名" value="女方">
+                            </div>
+                            <div class="suite-form-group">
+                                <label>出生日期</label>
+                                <input type="date" class="form-control" id="bmDate2" name="bmDate2" value="1994-09-22">
+                            </div>
+                            <div class="suite-form-group">
+                                <label>出生時間</label>
+                                <input type="time" class="form-control" id="bmTime2" name="bmTime2" value="14:15">
+                            </div>
+                            <div class="suite-form-group">
+                                <label>性別</label>
+                                <select class="form-control" id="bmSex2" name="bmSex2">
+                                    <option value="女" selected>女</option>
+                                    <option value="男">男</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="suite-form-group" id="statusGroup" style="display:none;">
-                        <label for="yinyuanStatus">目前感情狀態</label>
-                        <select class="form-control input-lg" id="yinyuanStatus" name="status" toolparamdescription="目前感情狀態">
-                            <option value="單身" selected>單身尋覓中</option>
-                            <option value="曖昧中">曖昧/發展中</option>
-                            <option value="穩定交往">穩定戀愛中</option>
-                            <option value="婚姻中">已婚經營</option>
-                        </select>
+                <!-- 模式6: 紅線測算 -->
+                <div id="groupRedThread" class="mode-fields-group" style="display:none;">
+                    <div class="suite-form-row">
+                        <div class="suite-form-group">
+                            <label for="rtDate">出生日期 <span style="color:#ef4444;">*</span></label>
+                            <input type="date" class="form-control input-lg" id="rtDate" name="rtDate" value="1996-03-12">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="rtTime">出生時間</label>
+                            <input type="time" class="form-control input-lg" id="rtTime" name="rtTime" value="09:00">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="rtSex">性別</label>
+                            <select class="form-control input-lg" id="rtSex" name="rtSex">
+                                <option value="女" selected>女</option>
+                                <option value="男">男</option>
+                            </select>
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="rtStatus">目前狀態</label>
+                            <select class="form-control input-lg" id="rtStatus" name="rtStatus">
+                                <option value="單身尋覓中" selected>單身尋覓中</option>
+                                <option value="有暗戀/曖昧對象">有暗戀/曖昧對象</option>
+                                <option value="戀愛中想看正緣">戀愛中想看正緣</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <div class="suite-form-group">
                     <label for="yinyuanQuestion">想請月老指點的事（選填）</label>
                     <input type="text" class="form-control input-lg" id="yinyuanQuestion" name="question" toolparamdescription="想請月老指點的感情問題"
-                           placeholder="例如：我和他近期常常溝通不良，該如何改善？或何時能遇到正緣？">
+                           placeholder="例如：我和他近期常常溝通不良，該如何改善？或我未來的正緣會在何時以何種方式相遇？">
                 </div>
 
                 <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
-                    <span>🏮 祈請月老指引並由 AI 深度解讀</span>
+                    <span>🏮 祈請賽博月老指引並由 AI 深度解讀</span>
                 </button>
             </form>
 

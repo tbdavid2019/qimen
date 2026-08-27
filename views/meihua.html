@@ -224,67 +224,115 @@
             </div>
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">漢字報字起卦</h3>
+            </div>
+            <div class="panel-body">
+                <p class="text-muted">輸入任意漢字、詞語、姓名或短句（單字、雙字、多字皆可），透過筆畫數演繹卦象動爻。</p>
+                <form id="meihuaTextForm"
+                      toolname="meihua_text_qigua_tool"
+                      tooldescription="輸入漢字進行梅花易數字占起卦"
+                      toolautosubmit
+                      onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="meihuaText">占測文字或詞語</label>
+                        <input type="text" id="meihuaText" name="text" class="form-control" placeholder="例如：天地人、風調雨順、心想事成" toolparamdescription="占測漢字或詞語">
+                    </div>
+                    <button id="textQiguaBtn" type="submit" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-edit"></i> 報字起卦
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <div id="meihuaResult" class="panel panel-default" style="display: none;">
             <div class="panel-heading">
-                <h3 class="panel-title">卦象結果</h3>
+                <h3 class="panel-title">五卦全息象義結果</h3>
             </div>
             <div class="panel-body">
                 <div class="row meihua-result-grid">
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">本卦</div>
+                            <div class="panel-heading">1. 本卦（現狀基礎）</div>
                             <div class="panel-body">
                                 <div id="benguaLines" class="meihua-hexagram"></div>
                                 <div class="meihua-symbol" id="benguaSymbol"></div>
                                 <div class="meihua-section-title" id="benguaName"></div>
                                 <div class="meihua-meta">上卦：<span id="benguaUpper"></span></div>
                                 <div class="meihua-meta">下卦：<span id="benguaLower"></span></div>
-                                <div class="meihua-meta">動爻：<span id="benguaDongYao"></span></div>
-                                <div class="meihua-meta">二進位：<span id="benguaBinary"></span></div>
+                                <div class="meihua-meta">動爻：<span id="benguaDongYao" class="label label-danger"></span></div>
+                                <div class="meihua-meta" id="benguaDongYaoText"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">體用分析</div>
+                            <div class="panel-heading">2. 體用生剋與四季旺衰</div>
                             <div class="panel-body">
-                                <div class="meihua-section-title">體卦：<span id="tiGua"></span></div>
-                                <div class="meihua-section-title">用卦：<span id="yongGua"></span></div>
-                                <div class="meihua-meta">五行生克：<span id="wuxingRelation"></span></div>
-                                <div class="meihua-meta">斷語：<span id="wuxingJudgement"></span></div>
-                                <div class="meihua-meta" id="wuxingDetail"></div>
+                                <div class="meihua-section-title">體卦（主）：<span id="tiGua" class="label label-primary"></span></div>
+                                <div class="meihua-section-title">用卦（客）：<span id="yongGua" class="label label-info"></span></div>
+                                <div class="meihua-meta">五行生剋：<strong id="wuxingRelation" style="color: #c59b27;"></strong></div>
+                                <div class="meihua-meta">旺衰狀態：<span id="tiYongSeasonal"></span></div>
+                                <div class="meihua-meta">體用斷語：<span id="wuxingJudgement"></span></div>
+                                <div class="meihua-meta" id="wuxingDetail" style="margin-top: 6px; font-size: 13px; color: var(--text-secondary);"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-12">
                         <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">互卦 / 變卦</div>
+                            <div class="panel-heading">3. 應期推斷與時空契機</div>
                             <div class="panel-body">
-                                <div class="meihua-subhexagram">
-                                    <div class="meihua-section-title">互卦：<span id="huguaName"></span></div>
-                                    <div id="huguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                                </div>
-                                <div class="meihua-subhexagram">
-                                    <div class="meihua-section-title">變卦：<span id="bianguaName"></span></div>
-                                    <div id="bianguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                                </div>
+                                <div class="meihua-section-title">📅 應期指引</div>
+                                <p class="meihua-meta" id="timingDesc" style="font-size: 14px; line-height: 1.6; color: #2e7d32; font-weight: 500;"></p>
+                                <hr style="margin: 10px 0;">
+                                <div class="meihua-meta">起卦方式：<span id="calcMethodDisplay"></span></div>
+                                <div class="meihua-meta" id="calcExtraDetail"></div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-lg-3 col-md-6">
+                <div class="row" style="margin-top: 15px;">
+                    <div class="col-md-3 col-sm-6">
                         <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">起卦計算</div>
-                            <div class="panel-body">
-                                <p class="meihua-meta" id="calcYearRow"><span id="calcYearLabel">年數</span>：<span id="calcYearSum"></span></p>
-                                <p class="meihua-meta" id="calcMonthRow"><span id="calcMonthLabel">月數</span>：<span id="calcMonth"></span></p>
-                                <p class="meihua-meta" id="calcDayRow"><span id="calcDayLabel">日數</span>：<span id="calcDay"></span></p>
-                                <p class="meihua-meta" id="calcShichenRow"><span id="calcShichenLabel">時辰</span>：<span id="calcShichen"></span></p>
-                                <p class="meihua-meta" id="calcUpperRow"><span id="calcUpperLabel">上卦</span>：<span id="calcUpper"></span></p>
-                                <p class="meihua-meta" id="calcLowerRow"><span id="calcLowerLabel">下卦</span>：<span id="calcLower"></span></p>
-                                <p class="meihua-meta" id="calcDongRow"><span id="calcDongLabel">動爻</span>：<span id="calcDongYao"></span></p>
+                            <div class="panel-heading">互卦（過程演變）</div>
+                            <div class="panel-body text-center">
+                                <div class="meihua-section-title" id="huguaName"></div>
+                                <div id="huguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                                <small class="text-muted">事物中間的互動發展</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="panel panel-default meihua-card">
+                            <div class="panel-heading">變卦（事態結局）</div>
+                            <div class="panel-body text-center">
+                                <div class="meihua-section-title" id="bianguaName"></div>
+                                <div id="bianguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                                <small class="text-muted">事物最終的演化趨勢</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="panel panel-default meihua-card">
+                            <div class="panel-heading">錯卦（反向對立面）</div>
+                            <div class="panel-body text-center">
+                                <div class="meihua-section-title" id="cuoguaName"></div>
+                                <div id="cuoguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                                <small class="text-muted">事物的對立危機與盲點</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="panel panel-default meihua-card">
+                            <div class="panel-heading">綜卦（換位思考）</div>
+                            <div class="panel-body text-center">
+                                <div class="meihua-section-title" id="zongguaName"></div>
+                                <div id="zongguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                                <small class="text-muted">站在對方立場或顛倒角度</small>
                             </div>
                         </div>
                     </div>

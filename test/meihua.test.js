@@ -67,4 +67,20 @@ test('數字起卦固定案例產生預期的本卦、互卦與變卦', () => {
     });
     assert.equal(result.wuxingRelation, '用克體（凶）');
     assert.deepEqual(result.calculations, { upperGua: 6, lowerGua: 8, dongYao: 3 });
+    assert.ok(result.cuogua && result.cuogua.num > 0);
+    assert.ok(result.zonggua && result.zonggua.num > 0);
+    assert.ok(result.timing && result.timing.timingDesc);
+});
+
+test('梅花漢字起卦正確生成五卦全息與動爻爻辭', () => {
+    const result = meihua.qiguaByText('天地人', 12);
+    assert.equal(result.method, 'text');
+    assert.equal(result.text, '天地人');
+    assert.ok(result.bengua.num > 0);
+    assert.ok(result.biangua.num > 0);
+    assert.ok(result.hugua.num > 0);
+    assert.ok(result.cuogua.num > 0);
+    assert.ok(result.zonggua.num > 0);
+    assert.ok(result.dongYaoInfo && result.dongYaoInfo.text);
+    assert.ok(result.timing && result.timing.timingDesc);
 });

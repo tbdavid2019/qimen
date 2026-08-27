@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>風水顧問 · 八宅與九運飛星</title>
-    <meta name="description" content="專業陽宅風水分析工具，結合三元玄空飛星與八宅明鏡，提供科學理性的居家空間規劃與 AI 堪輿建議。">
+    <meta name="description" content="專業陽宅風水分析工具，結合三元玄空飛星、八宅明鏡、常見煞氣化解與擇日吉時，由江南三元派堪輿顧問提供科學人居指引。">
     <link rel="canonical" href="https://qi.david888.com/fengshui">
 
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -73,62 +73,131 @@
     <div class="suite-container">
         <div class="suite-hero">
             <span class="suite-hero-badge">🏡 堪輿智慧 · 科學人居</span>
-            <h1>堪輿風水顧問</h1>
+            <h1>堪輿風水顧問（堪輿子）</h1>
             <p class="suite-hero-subtitle">
-                融匯八宅明鏡與九運玄空飛星；秉持「風水以採光、通風、動線與安全為本」之理念，由 AI 堪輿顧問提供實用的格局調整建議。
+                「巒頭為體，理氣為用。」融匯三元玄空飛星、八宅明鏡、內外形煞化解與協紀辨方擇日；由 AI 堪輿顧問提供實用的格局與動線調整建議。
             </p>
         </div>
 
         <div class="suite-card">
-            <form id="suiteForm" toolname="fengshui_report" tooldescription="八宅與九運飛星風水報告分析" toolautosubmit>
-                <div class="suite-form-row">
-                    <div class="suite-form-group">
-                        <label for="fengshuiFacing">房屋朝向（大門或陽台朝向）</label>
-                        <select class="form-control input-lg" id="fengshuiFacing" name="facing" toolparamdescription="房屋大門或陽台的朝向方位">
-                            <option value="南" selected>朝南（坎宅 · 坐北朝南）</option>
-                            <option value="北">朝北（離宅 · 坐南朝北）</option>
-                            <option value="東">朝東（兌宅 · 坐西朝東）</option>
-                            <option value="西">朝西（震宅 · 坐東朝西）</option>
-                            <option value="東南">朝東南（乾宅 · 坐西北朝東南）</option>
-                            <option value="西北">朝西北（巽宅 · 坐東南朝西北）</option>
-                            <option value="東北">朝東北（坤宅 · 坐西南朝東北）</option>
-                            <option value="西南">朝西南（艮宅 · 坐東北朝西南）</option>
-                        </select>
-                    </div>
-
-                    <div class="suite-form-group">
-                        <label for="residentYear">主要居住者出生年</label>
-                        <input type="number" class="form-control input-lg" id="residentYear" name="residentYear" value="1990" toolparamdescription="主要居住者的出生西元年份">
-                    </div>
-
-                    <div class="suite-form-group">
-                        <label for="residentSex">性別</label>
-                        <select class="form-control input-lg" id="residentSex" name="sex" toolparamdescription="主要居住者性別">
-                            <option value="女" selected>女</option>
-                            <option value="男">男</option>
-                        </select>
-                    </div>
-                </div>
-
+            <form id="suiteForm" toolname="fengshui_report" tooldescription="八宅與九運飛星風水報告、煞氣診斷與擇日分析" toolautosubmit>
                 <div class="suite-form-group">
-                    <label for="fengshuiQuestion">想諮詢的空間或問題（選填）</label>
-                    <input type="text" class="form-control input-lg" id="fengshuiQuestion" name="question" toolparamdescription="想諮詢的空間配置或風水問題"
-                           placeholder="例如：主臥室與書房該如何安排？客廳財位佈置有何建議？">
+                    <label for="fengshuiMode">選擇堪輿項目</label>
+                    <select class="form-control input-lg" id="fengshuiMode" name="mode" toolparamdescription="風水服務模式：yangzhai(陽宅分析), shaqi(煞氣化解), zeri(擇日吉時)">
+                        <option value="yangzhai" selected>🏡 陽宅玄空飛星與八宅分析（旺位凶位 · 空間佈局）</option>
+                        <option value="shaqi">⚠️ 形煞與內外煞診斷（路沖/天斬/壁刀/穿堂風化解）</option>
+                        <option value="zeri">📅 傳統擇日吉時（入宅/開業/動土/裝修吉日）</option>
+                    </select>
                 </div>
 
-                <details class="suite-details">
-                    <summary>⚙️ 進階建造／入住與流年設定</summary>
-                    <div class="suite-details-body suite-form-row">
+                <!-- 模式1: 陽宅分析 -->
+                <div id="fsGroupYangzhai" class="fs-mode-group">
+                    <div class="suite-form-row">
                         <div class="suite-form-group">
-                            <label>入住／建造年份（決定運盤）</label>
-                            <input type="number" class="form-control" name="moveInYear" value="2024" toolparamdescription="房屋入住或建造年份，用於運盤分析">
+                            <label for="fengshuiFacing">房屋朝向（24山或8大方位）</label>
+                            <select class="form-control input-lg" id="fengshuiFacing" name="facing" toolparamdescription="房屋大門或陽台的朝向方位">
+                                <optgroup label="常用 8 大朝向">
+                                    <option value="南" selected>朝南（坎宅 · 坐北朝南）</option>
+                                    <option value="北">朝北（離宅 · 坐南朝北）</option>
+                                    <option value="東">朝東（兌宅 · 坐西朝東）</option>
+                                    <option value="西">朝西（震宅 · 坐東朝西）</option>
+                                    <option value="東南">朝東南（乾宅 · 坐西北朝東南）</option>
+                                    <option value="西北">朝西北（巽宅 · 坐東南朝西北）</option>
+                                    <option value="東北">朝東北（坤宅 · 坐西南朝東北）</option>
+                                    <option value="西南">朝西南（艮宅 · 坐東北朝西南）</option>
+                                </optgroup>
+                                <optgroup label="精確 24 山坐向">
+                                    <option value="子山午向">子山午向（坐正北朝正南）</option>
+                                    <option value="午山子向">午山子向（坐正南朝正北 · 九運旺山旺向）</option>
+                                    <option value="卯山酉向">卯山酉向（坐正東朝正西 · 雙星到向）</option>
+                                    <option value="酉山卯向">酉山卯向（坐正西朝正東 · 雙星到坐）</option>
+                                    <option value="乾山巽向">乾山巽向（坐西北朝東南）</option>
+                                    <option value="巽山乾向">巽山乾向（坐東南朝西北 · 九運旺山旺向）</option>
+                                    <option value="艮山坤向">艮山坤向（坐東北朝西南 · 九運旺山旺向）</option>
+                                    <option value="坤山艮向">坤山艮向（坐西南朝東北）</option>
+                                </optgroup>
+                            </select>
                         </div>
+
                         <div class="suite-form-group">
-                            <label>當前分析流年</label>
-                            <input type="number" class="form-control" name="year" value="2026" toolparamdescription="要分析的流年年份">
+                            <label for="residentYear">主要居住者出生年</label>
+                            <input type="number" class="form-control input-lg" id="residentYear" name="residentYear" value="1990" toolparamdescription="主要居住者的出生西元年份">
+                        </div>
+
+                        <div class="suite-form-group">
+                            <label for="residentSex">性別</label>
+                            <select class="form-control input-lg" id="residentSex" name="sex" toolparamdescription="主要居住者性別">
+                                <option value="男" selected>男</option>
+                                <option value="女">女</option>
+                            </select>
                         </div>
                     </div>
-                </details>
+
+                    <details class="suite-details">
+                        <summary>⚙️ 進階建造／入住元運與分析流年</summary>
+                        <div class="suite-details-body suite-form-row">
+                            <div class="suite-form-group">
+                                <label>入住／建造年份（決定運盤）</label>
+                                <input type="number" class="form-control" id="moveInYear" name="moveInYear" value="2024" toolparamdescription="房屋入住或建造年份，用於運盤分析">
+                            </div>
+                            <div class="suite-form-group">
+                                <label>當前分析流年</label>
+                                <input type="number" class="form-control" id="year" name="year" value="2026" toolparamdescription="要分析的流年年份">
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- 模式2: 煞氣診斷 -->
+                <div id="fsGroupShaqi" class="fs-mode-group" style="display:none;">
+                    <div class="suite-form-group">
+                        <label for="shaType">選擇疑似面臨的煞氣形態</label>
+                        <select class="form-control input-lg" id="shaType" name="shaType">
+                            <option value="路沖煞" selected>路沖煞（大門或陽台正對筆直長路）</option>
+                            <option value="天斬煞">天斬煞（兩棟高樓窄縫正對本宅窗戶）</option>
+                            <option value="壁刀煞">壁刀煞（鄰棟牆角如刀切般切向本宅）</option>
+                            <option value="反弓煞">反弓煞（道路或河流彎道弓背頂著住宅）</option>
+                            <option value="穿堂風">穿堂風（大門一開直對後門或落地陽台）</option>
+                            <option value="廁所衝財位">廁所衝財位（衛生間位於向星旺位或明財位）</option>
+                            <option value="橫梁壓頂">橫梁壓頂（床頭或沙發書桌上方有橫梁壓迫）</option>
+                            <option value="鏡對床">鏡對床（梳妝鏡或衣櫃鏡正對睡床）</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 模式3: 擇日吉時 -->
+                <div id="fsGroupZeri" class="fs-mode-group" style="display:none;">
+                    <div class="suite-form-row">
+                        <div class="suite-form-group">
+                            <label for="zeriMatter">擇日事項類型</label>
+                            <select class="form-control input-lg" id="zeriMatter" name="zeriMatter">
+                                <option value="入宅/喬遷" selected>入宅 / 喬遷搬家</option>
+                                <option value="開業/開市">開業 / 開市迎財</option>
+                                <option value="動土/裝修">動土 / 裝修施工</option>
+                                <option value="婚嫁/嫁娶">婚嫁 / 訂婚嫁娶</option>
+                            </select>
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="zeriYear">計劃年份</label>
+                            <input type="number" class="form-control input-lg" id="zeriYear" name="zeriYear" value="2026">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="zeriMonth">計劃月份</label>
+                            <select class="form-control input-lg" id="zeriMonth" name="zeriMonth">
+                                <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+                                <option value="4">4月</option><option value="5" selected>5月</option><option value="6">6月</option>
+                                <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+                                <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suite-form-group" style="margin-top:12px;">
+                    <label for="fengshuiQuestion">想諮詢的具體空間或問題（選填）</label>
+                    <input type="text" class="form-control input-lg" id="fengshuiQuestion" name="question" toolparamdescription="想諮詢的空間配置或風水問題"
+                           placeholder="例如：主臥室與書房該如何安排？客廳財位佈置有何建議？或如何化解路沖？">
+                </div>
 
                 <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
                     <span>✨ 生成風水格局並請教堪輿顧問</span>
@@ -141,18 +210,18 @@
             <!-- AI Chat & Interpretation Section -->
             <div id="suiteAiSection" class="suite-ai-section" hidden>
                 <div class="suite-ai-header">
-                    <h3 class="suite-ai-title">🏡 堪輿顧問深度分析</h3>
+                    <h3 class="suite-ai-title">🏡 堪輿顧問（堪輿子）深度分析</h3>
                 </div>
 
                 <div id="suiteAiLoading" class="suite-loading-state">
                     <div class="suite-spinner"></div>
-                    <div>顧問正在勘測八宅九星與流年飛星格局…</div>
+                    <div>顧問正在勘測八宅九星、飛星盤面與流年吉凶…</div>
                 </div>
 
                 <div id="suiteConversation" class="suite-conversation-stream"></div>
 
                 <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
-                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向風水顧問追問（例如：床頭與書桌該如何擺放？）">
+                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向堪輿子先生追問（例如：床頭與書桌該如何擺放？如何移形易位？）">
                     <button type="submit" class="suite-follow-up-btn">追問</button>
                 </form>
             </div>
