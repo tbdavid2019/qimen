@@ -28,10 +28,10 @@
     color: #F0A58F;
 }
 
-[data-theme="dark"] .navbar.navbar-inverse.navbar-fixed-top > .container,
-[data-theme="dark"] .navbar.navbar-inverse.navbar-fixed-top > .container-fluid {
-    background-color: rgba(38, 34, 31, 0.94) !important;
-    border-color: #3A342F !important;
+[data-theme="dark"] .navbar.navbar-inverse.navbar-fixed-top {
+    background-color: #26221F !important;
+    border-bottom-color: #3A342F !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
 }
 
 [data-theme="dark"] .navbar-inverse .navbar-brand,
