@@ -61,3 +61,27 @@ test('HTTP 邊界能區分輸入錯誤與內部錯誤', () => {
     assert.equal(qimen.getQimenErrorStatus(validationError), 400);
     assert.equal(qimen.getQimenErrorStatus(new Error('unexpected')), 500);
 });
+
+test('奇門遁甲正確計算十干克應格局與專題用神定位', () => {
+    const result = qimen.calculate(new Date(2026, 0, 20, 15, 0, 0), {
+        method: '時家',
+        timePrecisionMode: 'traditional',
+        purpose: '求財'
+    });
+
+    assert.ok(result.geju);
+    assert.ok(Array.isArray(result.geju.allPatterns));
+    assert.ok(result.yongshen);
+    assert.equal(result.yongshen.category, '求財');
+    assert.match(result.yongshen.mainYongshen, /生門/);
+    assert.ok(result.yongshen.targetGong);
+    assert.ok(result.yongshen.hostGuestDynamic);
+
+    const careerResult = qimen.locateYongshen(result, '事業');
+    assert.equal(careerResult.category, '事業');
+    assert.match(careerResult.mainYongshen, /開門/);
+
+    const loveResult = qimen.locateYongshen(result, '感情');
+    assert.equal(loveResult.category, '感情');
+    assert.match(loveResult.mainYongshen, /六合/);
+});

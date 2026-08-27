@@ -169,6 +169,51 @@ body.suite-page {
     box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
 }
 
+/* Gender Pill Group */
+.gender-pill-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 46px;
+}
+
+.gender-pill {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border: 1.5px solid var(--suite-border);
+    border-radius: 10px;
+    background: var(--suite-card-bg);
+    color: var(--suite-text);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    margin-bottom: 0 !important;
+    user-select: none;
+}
+
+.gender-pill input[type="radio"] {
+    margin-right: 6px;
+    accent-color: var(--suite-primary);
+    cursor: pointer;
+}
+
+.gender-pill:hover {
+    border-color: var(--suite-primary);
+    background: rgba(124, 58, 237, 0.05);
+}
+
+.gender-pill.active, .gender-pill:has(input[type="radio"]:checked) {
+    border-color: var(--suite-primary);
+    background: rgba(124, 58, 237, 0.12);
+    color: var(--suite-primary);
+    font-weight: 600;
+    box-shadow: 0 0 0 1px var(--suite-primary);
+}
+
 /* Collapsible Advanced Options */
 .suite-details {
     margin-top: 14px;

@@ -270,6 +270,22 @@ $(document).ready(function() {
         }
     });
 
+    // 占問類別切換自動提示用神
+    $('#qimenPurpose').change(function() {
+        var p = $(this).val();
+        var tips = {
+            '綜合': '🎯 主用神：值符 / 日干（全盤統攬）',
+            '求財': '🎯 主用神：生門 (主利潤) / 戊 (資金資本)',
+            '事業': '🎯 主用神：開門 (工作平台) / 值符 (主管貴人)',
+            '感情': '🎯 主用神：六合 (姻緣) / 乙(女方) / 庚(男方)',
+            '考試': '🎯 主用神：景門 (試卷考分) / 天輔 (文名)',
+            '健康': '🎯 主用神：天芮 (病灶) / 死門 / 日干',
+            '出行': '🎯 主用神：目標方位宮位 / 開門 / 生門',
+            '官司': '🎯 主用神：驚門 / 開門 (法官合約) / 天心'
+        };
+        $('#yongshenTip').text(tips[p] || '🎯 主用神：值符 / 日干');
+    });
+
     // LLM 問答功能（支援續問）
     $('#askLLMQuestion').click(function() {
         var question = $('#userQuestion').val().trim();
@@ -293,6 +309,8 @@ $(document).ready(function() {
         var qimenData = window.qimenData || {};
         var timeParams = getClientTimeParams();
 
+        var selectedPurpose = $('#qimenPurpose').val() || $('#purpose').val() || '綜合';
+
         // 發送請求到 LLM API（帶上對話歷史）
         $.ajax({
             url: '/api/llm-analysis',
@@ -306,7 +324,7 @@ $(document).ready(function() {
                 timePrecisionMode: timeParams.timePrecisionMode,
                 userQuestion: question,
                 conversationHistory: conversationHistory,
-                purpose: '綜合',
+                purpose: selectedPurpose,
                 lang: $('html').attr('lang') || 'zh-tw'
             }),
             success: function(response) {

@@ -154,6 +154,23 @@
                         </div>
                         
                         <form id="qimenQuestionForm" toolname="qimen_question_tool" tooldescription="向奇門遁甲 AI 大師提出具體問題進行深度解盤" toolautosubmit onsubmit="return false;">
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label style="font-size: 13px; font-weight: 600; color: #555;">🎯 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
+                                <select class="form-control input-sm" id="qimenPurpose" name="purpose" style="max-width: 260px; display: inline-block; margin-bottom: 8px;">
+                                    <option value="綜合" selected>🌐 綜合運勢（全盤統攬）</option>
+                                    <option value="求財">💰 求財投資（主用神：生門 / 戊）</option>
+                                    <option value="事業">💼 工作事業（主用神：開門 / 值符）</option>
+                                    <option value="感情">❤️ 感情婚姻（主用神：六合 / 乙庚）</option>
+                                    <option value="考試">📚 考試升學（主用神：景門 / 天輔）</option>
+                                    <option value="健康">🏥 疾病健康（主用神：天芮 / 死門）</option>
+                                    <option value="出行">🚗 出行方位（主用神：目標方位宮）</option>
+                                    <option value="官司">⚖️ 官司合約（主用神：驚門 / 開門）</option>
+                                </select>
+                                <span id="yongshenTip" class="label label-primary" style="margin-left: 6px; padding: 5px 8px; font-size: 12px;">
+                                    🎯 主用神：值符 / 日干
+                                </span>
+                            </div>
+
                             <div class="form-group">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="userQuestion" name="question"

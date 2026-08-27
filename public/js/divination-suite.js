@@ -448,7 +448,28 @@
 
     // --- Form Payload Builder ---
 
-    const val = (name) => form.elements[name]?.value?.trim() || '';
+    const val = (name) => {
+        const field = form.elements[name];
+        if (field && typeof field.value !== 'undefined') return field.value.trim();
+        const radio = form.querySelector(`input[name="${name}"]:checked`);
+        if (radio) return radio.value.trim();
+        const el = document.getElementById(name);
+        return el ? el.value.trim() : '';
+    };
+
+    document.addEventListener('change', (e) => {
+        if (e.target && e.target.type === 'radio' && e.target.closest('.gender-pill-group')) {
+            const group = e.target.closest('.gender-pill-group');
+            group.querySelectorAll('.gender-pill').forEach(pill => {
+                const input = pill.querySelector('input[type="radio"]');
+                if (input && input.checked) {
+                    pill.classList.add('active');
+                } else {
+                    pill.classList.remove('active');
+                }
+            });
+        }
+    });
 
     function buildPayload() {
         const question = val('question');
