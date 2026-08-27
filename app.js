@@ -135,19 +135,19 @@ app.post('/api/yinyuan/reading', async (req, res) => {
         const mode = body.mode || 'fortune';
 
         if (mode === 'zodiac') {
-            result = zodiacMatch(body.firstYear || body.firstZodiac, body.secondYear || body.secondZodiac);
+            result = zodiacMatch(body.firstZodiac || body.firstYear, body.secondZodiac || body.secondYear);
         } else if (mode === 'fortune') {
-            result = drawFortuneStick(body.question, body.name, body.seed);
+            result = drawFortuneStick(body.question, body.name, body.seed, body.stickNum || body.fortuneStickNum);
         } else if (mode === 'ziwei-marriage' || mode === 'marriage-palace') {
             result = ziweiMarriage(body);
         } else if (mode === 'peach-blossom' || mode === 'taohua-luck') {
-            result = peachBlossomLuck(body.firstYear || body.year || 1990, body.status, body.scope);
+            result = peachBlossomLuck(body.firstYear || body.birthDate || body.taohuaBirthDate || body.year || 1995, body.status, body.scope);
         } else if (mode === 'bazi-match') {
             result = baziMatchFull(body.first || body, body.second || body);
         } else if (mode === 'red-thread') {
             result = redThreadFull(body);
         } else {
-            result = drawFortuneStick(body.question, body.name, body.seed);
+            result = drawFortuneStick(body.question, body.name, body.seed, body.stickNum || body.fortuneStickNum);
         }
 
         const discord = await sendModuleRecord('姻緣', body, result);
@@ -229,15 +229,15 @@ function validateYinyuanQuestion(body) {
 
 function calculateYinyuanQuestion(input) {
     switch (input.mode) {
-        case 'zodiac': return zodiacMatch(input.firstYear || input.firstZodiac, input.secondYear || input.secondZodiac);
-        case 'fortune': return drawFortuneStick(input.question, input.name, input.seed);
+        case 'zodiac': return zodiacMatch(input.firstZodiac || input.firstYear, input.secondZodiac || input.secondYear);
+        case 'fortune': return drawFortuneStick(input.question, input.name, input.seed, input.stickNum || input.fortuneStickNum);
         case 'ziwei-marriage':
         case 'marriage-palace': return ziweiMarriage(input);
         case 'peach-blossom':
-        case 'taohua-luck': return peachBlossomLuck(input.firstYear || input.year, input.status, input.scope);
+        case 'taohua-luck': return peachBlossomLuck(input.firstYear || input.birthDate || input.taohuaBirthDate || input.year, input.status, input.scope);
         case 'bazi-match': return baziMatchFull(input.first || input, input.second || input);
         case 'red-thread': return redThreadFull(input);
-        default: return drawFortuneStick(input.question, input.name, input.seed);
+        default: return drawFortuneStick(input.question, input.name, input.seed, input.stickNum || input.fortuneStickNum);
     }
 }
 

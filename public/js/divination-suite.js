@@ -498,27 +498,84 @@
         if (page === 'yinyuan') {
             const mode = val('mode') || 'fortune';
             if (mode === 'fortune') {
-                return { mode, name: val('fortuneName'), sex: val('fortuneSex'), question };
+                return {
+                    mode,
+                    name: val('fortuneName'),
+                    sex: val('fortuneSex'),
+                    stickNum: val('fortuneStickNum'),
+                    birthDate: val('fortuneBirthDate'),
+                    status: val('fortuneStatus'),
+                    question
+                };
             }
             if (mode === 'zodiac') {
-                return { mode, firstYear: val('firstYear'), secondYear: val('secondYear'), question };
+                return {
+                    mode,
+                    firstZodiac: val('firstZodiac'),
+                    firstYear: val('firstYear'),
+                    secondZodiac: val('secondZodiac'),
+                    secondYear: val('secondYear'),
+                    stage: val('zodiacRelationStage'),
+                    question
+                };
             }
             if (mode === 'ziwei-marriage') {
-                return { mode, date: val('ziweiDate'), time: val('ziweiTime') || '12:00', sex: val('ziweiSex'), question };
+                return {
+                    mode,
+                    name: val('ziweiName'),
+                    sex: val('ziweiSex'),
+                    calendar: val('ziweiCalendar'),
+                    date: val('ziweiDate'),
+                    time: val('ziweiShichen') || '12:00',
+                    status: val('ziweiStatus'),
+                    question
+                };
             }
             if (mode === 'peach-blossom') {
-                return { mode, firstYear: val('taohuaYear'), status: val('taohuaStatus'), scope: val('taohuaScope'), question };
+                return {
+                    mode,
+                    birthDate: val('taohuaBirthDate'),
+                    firstYear: val('taohuaYear') || (val('taohuaBirthDate') ? val('taohuaBirthDate').split('-')[0] : 1995),
+                    sex: val('taohuaSex'),
+                    status: val('taohuaStatus'),
+                    scope: val('taohuaScope'),
+                    question
+                };
             }
             if (mode === 'bazi-match') {
                 return {
                     mode,
-                    first: { name: val('bmName1'), date: val('bmDate1'), time: val('bmTime1'), sex: val('bmSex1') },
-                    second: { name: val('bmName2'), date: val('bmDate2'), time: val('bmTime2'), sex: val('bmSex2') },
+                    first: {
+                        name: val('bmName1'),
+                        sex: val('bmSex1'),
+                        calendar: val('bmCal1'),
+                        date: val('bmDate1'),
+                        time: val('bmTime1')
+                    },
+                    second: {
+                        name: val('bmName2'),
+                        sex: val('bmSex2'),
+                        calendar: val('bmCal2'),
+                        date: val('bmDate2'),
+                        time: val('bmTime2')
+                    },
+                    stage: val('bmStage'),
                     question
                 };
             }
             if (mode === 'red-thread') {
-                return { mode, date: val('rtDate'), time: val('rtTime') || '09:00', sex: val('rtSex'), status: val('rtStatus'), question };
+                return {
+                    mode,
+                    name: val('rtName'),
+                    sex: val('rtSex'),
+                    seekingSex: val('rtSeekingSex'),
+                    calendar: val('rtCalendar'),
+                    date: val('rtDate'),
+                    time: val('rtShichen') || '09:00',
+                    status: val('rtStatus'),
+                    preference: val('rtPreference'),
+                    question
+                };
             }
             return { mode, question };
         }
@@ -656,6 +713,14 @@
 
         modeSelect?.addEventListener('change', updateYinyuanFields);
         updateYinyuanFields();
+
+        const btnRandomStick = document.getElementById('btnRandomStick');
+        btnRandomStick?.addEventListener('click', () => {
+            const stickInput = document.getElementById('fortuneStickNum');
+            if (stickInput) {
+                stickInput.value = Math.floor(Math.random() * 100) + 1;
+            }
+        });
     }
 
     // --- Dynamic Mode Switcher for Fengshui ---
