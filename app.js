@@ -98,25 +98,31 @@ function sendModuleRecord(moduleName, input, result, analysis = '') {
         .catch((error) => ({ success: false, reason: error.message }));
 }
 
-app.post('/api/ziwei/chart', async (req, res) => {
+const handleZiweiChart = async (req, res) => {
     try {
-        const chart = calculateZiweiChart(req.body || {});
-        const discord = await sendModuleRecord('紫微斗數', req.body, chart);
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const chart = calculateZiweiChart(payload);
+        const discord = await sendModuleRecord('紫微斗數', payload, chart);
         res.json({ success: true, chart, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
-});
+};
+app.post('/api/ziwei/chart', handleZiweiChart);
+app.get('/api/ziwei/chart', handleZiweiChart);
 
-app.post('/api/tarot/reading', async (req, res) => {
+const handleTarotReading = async (req, res) => {
     try {
-        const reading = drawCards(req.body || {});
-        const discord = await sendModuleRecord('塔羅', req.body, reading);
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const reading = drawCards(payload);
+        const discord = await sendModuleRecord('塔羅', payload, reading);
         res.json({ success: true, reading, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
-});
+};
+app.post('/api/tarot/reading', handleTarotReading);
+app.get('/api/tarot/reading', handleTarotReading);
 
-app.post('/api/fengshui/report', async (req, res) => {
+const handleFengshuiReport = async (req, res) => {
     try {
-        const body = req.body || {};
+        const body = { ...(req.query || {}), ...(req.body || {}) };
         let report;
         if (body.mode === 'shaqi') {
             report = diagnoseShaqi(body.shaType || body.question);
@@ -125,22 +131,27 @@ app.post('/api/fengshui/report', async (req, res) => {
         } else {
             report = calculateFengShui(body);
         }
-        const discord = await sendModuleRecord('風水', req.body, report);
+        const discord = await sendModuleRecord('風水', body, report);
         res.json({ success: true, report, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
-});
+};
+app.post('/api/fengshui/report', handleFengshuiReport);
+app.get('/api/fengshui/report', handleFengshuiReport);
 
-app.post('/api/bazi2/chart', async (req, res) => {
+const handleBaziChart = async (req, res) => {
     try {
-        const chart = calculateBazi(req.body || {});
-        const discord = await sendModuleRecord('生辰八字2', req.body, chart);
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const chart = calculateBazi(payload);
+        const discord = await sendModuleRecord('生辰八字2', payload, chart);
         res.json({ success: true, chart, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
-});
+};
+app.post('/api/bazi2/chart', handleBaziChart);
+app.get('/api/bazi2/chart', handleBaziChart);
 
-app.post('/api/yinyuan/reading', async (req, res) => {
+const handleYinyuanReading = async (req, res) => {
     try {
-        const body = req.body || {};
+        const body = { ...(req.query || {}), ...(req.body || {}) };
         let result;
         const mode = body.mode || 'fortune';
 
@@ -163,7 +174,9 @@ app.post('/api/yinyuan/reading', async (req, res) => {
         const discord = await sendModuleRecord('姻緣', body, result);
         res.json({ success: true, result, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
-});
+};
+app.post('/api/yinyuan/reading', handleYinyuanReading);
+app.get('/api/yinyuan/reading', handleYinyuanReading);
 
 const FENGSHUI_FACINGS = new Set([
     '南', '北', '東', '西', '東南', '西北', '東北', '西南',
@@ -270,57 +283,69 @@ function validateZiweiQuestion(body) {
     return { ...body, calendar, time: body.time || '12:00', sex: body.sex || '男' };
 }
 
-app.post('/api/ziwei-question', createServiceQuestionHandler({
+const ziweiQuestionHandler = createServiceQuestionHandler({
     moduleName: '紫微斗數',
     resultKey: 'chart',
     validate: validateZiweiQuestion,
     calculate: calculateZiweiChart,
     analyze: llmService.analyzeZiwei.bind(llmService),
     discord: discordWebhook
-}));
+});
+app.post('/api/ziwei-question', ziweiQuestionHandler);
+app.get('/api/ziwei-question', ziweiQuestionHandler);
 
-app.post('/api/tarot-question', createServiceQuestionHandler({
+const tarotQuestionHandler = createServiceQuestionHandler({
     moduleName: '塔羅',
     resultKey: 'reading',
     validate: validateTarotQuestion,
     calculate: drawCards,
     analyze: llmService.analyzeTarot.bind(llmService),
     discord: discordWebhook
-}));
+});
+app.post('/api/tarot-question', tarotQuestionHandler);
+app.get('/api/tarot-question', tarotQuestionHandler);
 
-app.post('/api/fengshui-question', createServiceQuestionHandler({
+const fengshuiQuestionHandler = createServiceQuestionHandler({
     moduleName: '風水',
     resultKey: 'report',
     validate: validateFengShuiQuestion,
     calculate: calculateFengShui,
     analyze: llmService.analyzeFengShui.bind(llmService),
     discord: discordWebhook
-}));
+});
+app.post('/api/fengshui-question', fengshuiQuestionHandler);
+app.get('/api/fengshui-question', fengshuiQuestionHandler);
 
-app.post('/api/bazi2-question', createServiceQuestionHandler({
+const bazi2QuestionHandler = createServiceQuestionHandler({
     moduleName: '生辰八字2',
     resultKey: 'chart',
     validate: validateBaziQuestion,
     calculate: calculateBazi,
     analyze: llmService.analyzeBazi2.bind(llmService),
     discord: discordWebhook
-}));
+});
+app.post('/api/bazi2-question', bazi2QuestionHandler);
+app.get('/api/bazi2-question', bazi2QuestionHandler);
 
-app.post('/api/yinyuan-question', createServiceQuestionHandler({
+const yinyuanQuestionHandler = createServiceQuestionHandler({
     moduleName: '姻緣',
     resultKey: 'result',
     validate: validateYinyuanQuestion,
     calculate: calculateYinyuanQuestion,
     analyze: llmService.analyzeYinyuan.bind(llmService),
     discord: discordWebhook
-}));
+});
+app.post('/api/yinyuan-question', yinyuanQuestionHandler);
+app.get('/api/yinyuan-question', yinyuanQuestionHandler);
 
 const answerBookClient = new AnswerBookClient();
-app.post('/api/answerbook-question', createAnswerbookQuestionHandler({
+const answerbookQuestionHandler = createAnswerbookQuestionHandler({
     client: answerBookClient,
     analyze: llmService.analyzeAnswerbook.bind(llmService),
     discord: discordWebhook
-}));
+});
+app.post('/api/answerbook-question', answerbookQuestionHandler);
+app.get('/api/answerbook-question', answerbookQuestionHandler);
 
 app.post('/api/:module/llm-analysis', async (req, res, next) => {
     const modules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
