@@ -155,17 +155,32 @@ const handleYinyuanReading = async (req, res) => {
         let result;
         const mode = body.mode || 'fortune';
 
-        if (mode === 'zodiac') {
+        if (mode === 'bazi-match') {
+            if (!body.firstDate && !body.secondDate && !body.date && !body.first?.date) {
+                return res.status(400).json({ success: false, error: '請提供雙方出生日期以進行八字合婚' });
+            }
+            result = baziMatchFull(body.first || body, body.second || body);
+        } else if (mode === 'zodiac') {
+            if (!body.firstZodiac && !body.firstYear && !body.secondZodiac && !body.secondYear) {
+                return res.status(400).json({ success: false, error: '請提供雙方生肖或出生年份以進行生肖配對' });
+            }
             result = zodiacMatch(body.firstZodiac || body.firstYear, body.secondZodiac || body.secondYear);
         } else if (mode === 'fortune') {
             result = drawFortuneStick(body.question, body.name, body.seed, body.stickNum || body.fortuneStickNum);
         } else if (mode === 'ziwei-marriage' || mode === 'marriage-palace') {
+            if (!body.birthDate && !body.date) {
+                return res.status(400).json({ success: false, error: '請提供出生日期以分析紫微夫妻宮' });
+            }
             result = ziweiMarriage(body);
         } else if (mode === 'peach-blossom' || mode === 'taohua-luck') {
-            result = peachBlossomLuck(body.firstYear || body.birthDate || body.taohuaBirthDate || body.year || 1995, body.status, body.scope);
-        } else if (mode === 'bazi-match') {
-            result = baziMatchFull(body.first || body, body.second || body);
+            if (!body.firstYear && !body.birthDate && !body.taohuaBirthDate && !body.year && !body.date) {
+                return res.status(400).json({ success: false, error: '請提供出生年份或生日以查詢桃花運勢' });
+            }
+            result = peachBlossomLuck(body.firstYear || body.birthDate || body.taohuaBirthDate || body.year || body.date, body.status, body.scope);
         } else if (mode === 'red-thread') {
+            if (!body.birthDate && !body.date) {
+                return res.status(400).json({ success: false, error: '請提供出生日期以推演紅線正緣畫像' });
+            }
             result = redThreadFull(body);
         } else {
             result = drawFortuneStick(body.question, body.name, body.seed, body.stickNum || body.fortuneStickNum);
