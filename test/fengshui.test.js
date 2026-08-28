@@ -29,3 +29,20 @@ test('八宅遊年星表八宅各具八種星且伏位落在坐山方位', () =>
         assert.equal(new Set(Object.values(directions)).size, 8, house);
     }
 });
+
+test('風水 24 山坐向支援與九運飛星格局判定', () => {
+    const report1 = calculateFengShui({ facing: '午山子向', moveInYear: 2024 });
+    assert.equal(report1.pattern, '旺山旺向');
+    const report2 = calculateFengShui({ facing: '子山午向', moveInYear: 2024 });
+    assert.equal(report2.pattern, '上山下水');
+});
+
+test('協紀辨方擇日動態依建除十二神與神煞推選吉日並避開歲破三煞', () => {
+    const { chooseZeri } = require('../lib/fengshui');
+    const zeri = chooseZeri('入宅/喬遷', 2026, 5);
+    assert.equal(zeri.year, 2026);
+    assert.equal(zeri.month, 5);
+    assert.ok(zeri.suiPoWarning.includes('歲破'));
+    assert.ok(zeri.sanShaWarning.includes('三煞'));
+    assert.ok(zeri.auspiciousDates.length > 0);
+});

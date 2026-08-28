@@ -653,7 +653,7 @@
 			properties: {
 				question: { type: "string", description: "使用者的空間或擇日問題" },
 				mode: { type: "string", enum: ["yangzhai", "shaqi", "zeri"], description: "風水模式：yangzhai 陽宅飛星八宅；shaqi 形煞診斷；zeri 協紀辨方擇日" },
-				facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南"], description: "房屋朝向（陽宅模式）" },
+				facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"], description: "房屋朝向（陽宅模式，支援8大方位與24山精確坐向）" },
 				moveInYear: { type: "integer", minimum: 1, maximum: 9999, description: "入住或建造年份（陽宅模式）" },
 				residentYear: { type: "integer", minimum: 1, maximum: 9999, description: "主要居住者出生年（陽宅模式）" },
 				sex: { type: "string", enum: ["男", "女"], description: "主要居住者性別" },

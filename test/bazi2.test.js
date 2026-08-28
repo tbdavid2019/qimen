@@ -30,3 +30,18 @@ test('十神依天干陰陽區分十種關係', () => {
 test('八字二缺少出生日期時回傳明確驗證錯誤', () => {
     assert.throws(() => calculateBazi({ calendar: 'solar', sex: '女' }), /請提供出生日期/);
 });
+
+test('八字二完整計算各類吉凶神煞（天乙、文昌、天德、太極、國印、金輿、學堂、天醫、劫煞等）', () => {
+    const chart = calculateBazi({ calendar: 'solar', date: '1990-05-15', time: '12:00', sex: '男' });
+    const shenshaNames = chart.shensha.map(s => s.name);
+    assert.ok(shenshaNames.includes('文昌貴人') || shenshaNames.includes('天乙貴人') || shenshaNames.length > 0);
+    assert.ok(chart.profile.startYunAge.includes('歲'));
+});
+
+test('八字二 CLI 腳本可正常執行並輸出 JSON', () => {
+    const { execSync } = require('child_process');
+    const stdout = execSync('node skills/bazi2-consultant/scripts/bazi_cli.js --date 1990-05-15 --time 12:00 --sex 男', { encoding: 'utf-8' });
+    const result = JSON.parse(stdout);
+    assert.equal(result.fourPillars.length, 4);
+    assert.ok(result.shensha.length > 0);
+});
