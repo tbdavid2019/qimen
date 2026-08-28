@@ -2,279 +2,305 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { makeApiRequest, QimenResponse, MeihuaResponse, ServiceResponse } from "../services/api.js";
 
-// Input Schemas using Zod
-export const QimenInputSchema = z.object({
-  question: z.string().describe("The user's question or situation requiring divination."),
-  datetime: z.string().optional().describe("Optional ISO 8601 datetime string (e.g., 2026-03-19T10:00:00). If omitted, the server uses current time."),
-  purpose: z.string().optional().default("綜合").describe("The specific life area to focus on, e.g., '事業' (Career), '財運' (Wealth), '感情' (Romance). Defaults to '綜合' (General).")
-}).strict();
-
-export const MeihuaInputSchema = z.object({
-  question: z.string().describe("The user's question or situation requiring divination."),
-  method: z.enum(["time", "number"]).optional().default("time").describe("The method to generate hexagrams: 'time' (uses current time) or 'number' (if the user provided specific numbers)."),
-  purpose: z.string().optional().default("綜合").describe("The specific life area to focus on.")
-}).strict();
-
 const ConversationHistorySchema = z.array(z.object({
   role: z.enum(["user", "assistant"]),
   content: z.string()
 })).optional().default([]);
 
+// 1. 奇門遁甲
+export const QimenInputSchema = z.object({
+  question: z.string().describe("The user's question or situation requiring divination."),
+  datetime: z.string().optional().describe("Optional ISO 8601 datetime string (e.g., 2026-03-19T10:00:00). If omitted, uses current time."),
+  purpose: z.string().optional().default("綜合").describe("The specific life area: '事業', '財運', '感情', '綜合'. Defaults to '綜合'.")
+}).strict();
+
+// 2. 梅花易數
+export const MeihuaInputSchema = z.object({
+  question: z.string().describe("The user's question or situation requiring divination."),
+  method: z.enum(["time", "number"]).optional().default("time").describe("The method to generate hexagrams: 'time' or 'number'."),
+  purpose: z.string().optional().default("綜合").describe("The specific life area.")
+}).strict();
+
+// 3. 韋特塔羅
 export const TarotInputSchema = z.object({
   question: z.string().describe("The user's Tarot question."),
   spread: z.enum(["single", "three", "diamond", "moon", "horseshoe", "celtic"]).optional().default("three").describe("Tarot spread."),
+  variant: z.enum(["timeline", "relationship", "decision", "situation"]).optional().describe("Spread variant for three-card spread."),
+  time_factor: z.enum(["morning", "afternoon", "night"]).optional().describe("Time factor element weighting."),
+  timeFactor: z.enum(["morning", "afternoon", "night"]).optional(),
   seed: z.string().optional().describe("Optional deterministic draw seed."),
   lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
   conversationHistory: ConversationHistorySchema
 }).strict();
 
+// 4. 易經風水 (24 山玄空飛星 / 煞氣化解 / 協紀辨方擇日)
 export const FengShuiInputSchema = z.object({
   question: z.string().describe("The user's Feng Shui question."),
-  facing: z.enum(["南", "北", "東", "西", "東南", "西北", "東北", "西南"]).optional().default("南"),
+  mode: z.enum(["yangzhai", "shaqi", "zeri"]).optional().default("yangzhai").describe("Analysis mode: yangzhai (陽宅飛星), shaqi (形煞化解), zeri (擇日)."),
+  facing: z.enum([
+    "南", "北", "東", "西", "東南", "西北", "東北", "西南",
+    "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向",
+    "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向",
+    "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向",
+    "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"
+  ]).optional().default("南").describe("24 mountains or 8 main directions facing."),
   moveInYear: z.number().int().min(1).max(9999).optional(),
   residentYear: z.number().int().min(1).max(9999).optional(),
   sex: z.enum(["男", "女"]).optional(),
   year: z.number().int().min(1).max(9999).optional(),
+  shaType: z.string().optional().describe("Specific sha type for shaqi mode (e.g., 天斬煞, 路衝煞, 穿堂煞)."),
+  matter: z.string().optional().describe("Matter for zeri mode (e.g., 入宅/喬遷, 開市/開業, 動土修造)."),
+  zeriYear: z.number().int().optional(),
+  zeriMonth: z.number().int().min(1).max(12).optional(),
   lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
   conversationHistory: ConversationHistorySchema
 }).strict();
 
+// 5. 生辰八字2 (完整神煞、精確起運歲月、未知時辰)
 export const Bazi2InputSchema = z.object({
-  question: z.string().describe("The user's 生辰八字2 question."),
+  question: z.string().describe("The user's 八字命理 question."),
   date: z.string().describe("Birth date in YYYY-MM-DD format."),
-  time: z.string().optional().default("12:00"),
+  time: z.string().optional().default("12:00").describe("Birth time in HH:mm format."),
+  shichen: z.enum(["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]).optional().describe("Traditional Chinese birth shichen (時辰)."),
+  hour: z.number().int().min(0).max(23).optional(),
   sex: z.enum(["男", "女"]).optional().default("男"),
   calendar: z.enum(["solar", "lunar"]).optional().default("solar"),
+  deceasedYear: z.number().int().optional().describe("Optional filter year limit for deceased profiles."),
+  allowUnknownHour: z.boolean().optional(),
   name: z.string().optional(),
-  formerName: z.string().optional(),
   place: z.string().optional(),
   lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
   conversationHistory: ConversationHistorySchema
 }).strict();
 
-export const YinyuanInputSchema = z.object({
-  question: z.string().describe("The user's relationship question."),
-  mode: z.enum(["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "peach-blossom"]).optional().default("fortune"),
-  firstYear: z.number().int().min(1).max(9999).optional(),
-  secondYear: z.number().int().min(1).max(9999).optional(),
-  status: z.string().optional().default("單身"),
-  seed: z.string().optional(),
-  chart: z.record(z.any()).optional(),
-  firstChart: z.record(z.any()).optional(),
-  secondChart: z.record(z.any()).optional(),
+// 6. 紫微斗數 (12宮命盤、18經典格局、生年四化、大限流年)
+export const ZiweiInputSchema = z.object({
+  question: z.string().describe("The user's 紫微斗數 question."),
+  date: z.string().describe("Birth date in YYYY-MM-DD format."),
+  time: z.string().optional().default("12:00").describe("Birth time in HH:mm format."),
+  shichen: z.enum(["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]).optional().describe("Traditional birth shichen."),
+  sex: z.enum(["男", "女"]).optional().default("男"),
+  calendar: z.enum(["solar", "lunar"]).optional().default("solar"),
+  leap: z.boolean().optional().default(false),
   lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
   conversationHistory: ConversationHistorySchema
 }).strict();
 
+// 7. 月老姻緣 (6大正統模式)
+export const YinyuanInputSchema = z.object({
+  question: z.string().describe("The user's relationship question."),
+  mode: z.enum(["fortune", "zodiac", "red-thread", "bazi-match", "ziwei-marriage", "marriage-palace", "peach-blossom", "taohua-luck"]).optional().default("fortune"),
+  firstZodiac: z.string().optional(),
+  secondZodiac: z.string().optional(),
+  firstYear: z.number().int().min(1).max(9999).optional(),
+  secondYear: z.number().int().min(1).max(9999).optional(),
+  stickNum: z.number().int().min(1).max(100).optional().describe("1-100 fortune stick number."),
+  date: z.string().optional(),
+  birthDate: z.string().optional(),
+  first: z.record(z.any()).optional().describe("First person's birth info for bazi-match."),
+  second: z.record(z.any()).optional().describe("Second person's birth info for bazi-match."),
+  status: z.string().optional().default("單身"),
+  stage: z.string().optional(),
+  seekingSex: z.string().optional(),
+  preference: z.string().optional(),
+  scope: z.string().optional(),
+  seed: z.string().optional(),
+  lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
+  conversationHistory: ConversationHistorySchema
+}).strict();
+
+// 8. 解答之書
 export const AnswerbookInputSchema = z.object({
-  mode: z.enum(["direct", "question"]).optional().default("direct").describe("direct 直接默念；question 輸入問題並由 AI 解讀"),
+  mode: z.enum(["direct", "question"]).optional().default("direct").describe("direct 直接默念；question 輸入問題由 AI 解讀"),
   question: z.string().optional().describe("問題模式使用的具體問題；直接模式可省略"),
   lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
   conversationHistory: ConversationHistorySchema
 }).strict();
 
-type QimenInput = z.infer<typeof QimenInputSchema>;
-type MeihuaInput = z.infer<typeof MeihuaInputSchema>;
-type TarotInput = z.infer<typeof TarotInputSchema>;
-type FengShuiInput = z.infer<typeof FengShuiInputSchema>;
-type Bazi2Input = z.infer<typeof Bazi2InputSchema>;
-type YinyuanInput = z.infer<typeof YinyuanInputSchema>;
-type AnswerbookInput = z.infer<typeof AnswerbookInputSchema>;
-
-/**
- * Registers all divination tools onto the given server instance.
- */
 export function registerDivinationTools(server: McpServer) {
-
-  // Tool 1: Qimen Divination
+  // 1. Qimen
   server.registerTool(
     "qimen_divination",
     {
       title: "Qimen Dunjia Professional Divination",
-      description: `Get a professional Qimen Dunjia (奇門遁甲) chart calculation and analysis based on the current time or a provided datetime. 
-Use this when the user asks for a high-precision divination, fortune-telling reading, or strategy regarding their career, romance, health, etc.
-It returns a detailed analysis including the Day Stem, Hour Stem, and specific advice.`,
+      description: "Get professional Qimen Dunjia (奇門遁甲) chart calculation and analysis.",
       inputSchema: QimenInputSchema,
-      annotations: {
-        readOnlyHint: true,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: true
-      }
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
     },
-    async (params: QimenInput) => {
-      try {
-        const payload = {
-          question: params.question,
-          datetime: params.datetime || null,
-          purpose: params.purpose,
-          mode: 'advanced'
-        };
-
-        const result = await makeApiRequest<QimenResponse>("qimen-question", payload);
-
-        if (!result.success) {
-          return {
-            content: [{ type: "text", text: `API Error: ${result.error || result.message || "Unknown error"}` }]
-          };
-        }
-
-        const answer = result.answer || result.fallback || "No reading generated.";
-        
-        return {
-          content: [{ type: "text", text: `## Qimen Dunjia Reading\n\n${answer}` }]
-        };
-
-      } catch (error) {
-        return {
-          content: [{ type: "text", text: `Error executing Qimen Divination: ${error instanceof Error ? error.message : String(error)}` }]
-        };
-      }
+    async (params) => {
+      const response = await makeApiRequest<QimenResponse>("ask", {
+        question: params.question,
+        datetime: params.datetime,
+        purpose: params.purpose
+      });
+      return {
+        content: [{ type: "text", text: response.answer || response.fallback || response.error || "No response received." }]
+      };
     }
   );
 
-  // Tool 2: Meihua Divination
+  // 2. Meihua
   server.registerTool(
     "meihua_divination",
     {
-      title: "Meihua Yishu Quick Decision Divination",
-      description: `Get a Meihua Yishu (梅花易數) hexagram calculation and reading.
-Use this for quick insights or decision-making. Can be triggered by exact time or random numbers.`,
+      title: "Meihua Yishu Divination",
+      description: "Get Meihua Yishu (梅花易數) calculation and analysis.",
       inputSchema: MeihuaInputSchema,
-      annotations: {
-        readOnlyHint: true,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: true
-      }
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
     },
-    async (params: MeihuaInput) => {
-      try {
-        const payload = {
-          question: params.question,
-          method: params.method,
-          purpose: params.purpose
-        };
-
-        const result = await makeApiRequest<MeihuaResponse>("meihua-question", payload);
-
-        if (!result.success) {
-          return {
-            content: [{ type: "text", text: `API Error: ${result.error || result.message || "Unknown error"}` }]
-          };
-        }
-
-        return {
-          content: [{ type: "text", text: `## Meihua Yishu Reading\n\n${result.answer || "No reading generated."}` }]
-        };
-
-      } catch (error) {
-        return {
-          content: [{ type: "text", text: `Error executing Meihua Divination: ${error instanceof Error ? error.message : String(error)}` }]
-        };
-      }
+    async (params) => {
+      const response = await makeApiRequest<MeihuaResponse>("meihua-question", {
+        question: params.question,
+        method: params.method,
+        purpose: params.purpose
+      });
+      return {
+        content: [{ type: "text", text: response.answer || response.error || "No response received." }]
+      };
     }
   );
 
-  // Tool 3: Tarot one-shot reading
+  // 3. Tarot
   server.registerTool(
     "tarot_divination",
     {
-      title: "Tarot Reflective Reading",
-      description: "Draw a supported Tarot spread and receive an AI interpretation with practical, non-fatalistic guidance.",
+      title: "Tarot Professional Reading",
+      description: "Draw authentic 78-card Tarot spread with weighted position mechanics.",
       inputSchema: TarotInputSchema,
-      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true }
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
     },
-    async (params: TarotInput) => {
-      try {
-        const result = await makeApiRequest<ServiceResponse>("tarot-question", params);
-        if (!result.success) return { content: [{ type: "text", text: `API Error: ${result.error || result.message || "Unknown error"}` }] };
-        return { content: [{ type: "text", text: `## Tarot Reading\n\n${result.answer || "No reading generated."}\n\n${JSON.stringify(result.reading || result.result || null, null, 2)}` }] };
-      } catch (error) {
-        return { content: [{ type: "text", text: `Error executing Tarot Reading: ${error instanceof Error ? error.message : String(error)}` }] };
-      }
+    async (params) => {
+      const response = await makeApiRequest<ServiceResponse>("tarot-question", params);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            analysis: response.answer || response.analysis || null,
+            reading: response.reading || response.result || null,
+            error: response.error || null
+          }, null, 2)
+        }]
+      };
     }
   );
 
-  // Tool 4: Feng Shui consultation
+  // 4. Fengshui
   server.registerTool(
     "fengshui_consultation",
     {
-      title: "Feng Shui Consultation",
-      description: "Generate an Eight Mansions and Period 9 flying-star report with practical home-layout advice.",
+      title: "Feng Shui Professional Analysis",
+      description: "San-Yuan Xuan-Kong 24-mountain flying stars, shaqi remedies, and zeri.",
       inputSchema: FengShuiInputSchema,
-      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true }
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
     },
-    async (params: FengShuiInput) => {
-      try {
-        const result = await makeApiRequest<ServiceResponse>("fengshui-question", params);
-        if (!result.success) return { content: [{ type: "text", text: `API Error: ${result.error || result.message || "Unknown error"}` }] };
-        return { content: [{ type: "text", text: `## Feng Shui Consultation\n\n${result.answer || "No consultation generated."}\n\n${JSON.stringify(result.report || result.result || null, null, 2)}` }] };
-      } catch (error) {
-        return { content: [{ type: "text", text: `Error executing Feng Shui Consultation: ${error instanceof Error ? error.message : String(error)}` }] };
-      }
+    async (params) => {
+      const response = await makeApiRequest<ServiceResponse>("fengshui-question", params);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            analysis: response.answer || response.analysis || null,
+            report: response.report || response.result || null,
+            error: response.error || null
+          }, null, 2)
+        }]
+      };
     }
   );
 
-  // Tool 5: 生辰八字2 analysis
+  // 5. Bazi2
   server.registerTool(
     "bazi2_analysis",
     {
-      title: "生辰八字2 Analysis",
-      description: "Calculate the four pillars, ten gods, five elements, and luck cycles, then receive an AI interpretation.",
+      title: "Bazi Professional Analysis",
+      description: "Authentic Four Pillars of Destiny calculation with complete 20+ shensha and luck cycles.",
       inputSchema: Bazi2InputSchema,
-      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true }
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
     },
-    async (params: Bazi2Input) => {
-      try {
-        const result = await makeApiRequest<ServiceResponse>("bazi2-question", params);
-        if (!result.success) return { content: [{ type: "text", text: `API Error: ${result.error || result.message || "Unknown error"}` }] };
-        return { content: [{ type: "text", text: `## 生辰八字2 Analysis\n\n${result.answer || "No analysis generated."}\n\n${JSON.stringify(result.chart || result.result || null, null, 2)}` }] };
-      } catch (error) {
-        return { content: [{ type: "text", text: `Error executing 生辰八字2 Analysis: ${error instanceof Error ? error.message : String(error)}` }] };
-      }
+    async (params) => {
+      const response = await makeApiRequest<ServiceResponse>("bazi2-question", params);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            analysis: response.answer || response.analysis || null,
+            chart: response.chart || response.result || null,
+            error: response.error || null
+          }, null, 2)
+        }]
+      };
     }
   );
 
-  // Tool 6: 姻緣 reading
+  // 6. Ziwei
+  server.registerTool(
+    "ziwei_analysis",
+    {
+      title: "Ziwei Doushu Professional Analysis",
+      description: "Authentic Ziwei Doushu 12-palace astrological chart with 18 classical patterns and sihua.",
+      inputSchema: ZiweiInputSchema,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
+    },
+    async (params) => {
+      const response = await makeApiRequest<ServiceResponse>("ziwei-question", params);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            analysis: response.answer || response.analysis || null,
+            chart: response.chart || response.result || null,
+            error: response.error || null
+          }, null, 2)
+        }]
+      };
+    }
+  );
+
+  // 7. Yinyuan
   server.registerTool(
     "yinyuan_reading",
     {
-      title: "姻緣 Relationship Reading",
-      description: "Use fortune sticks, zodiac matching, Bazi relationship patterns, spouse palace, or peach-blossom guidance with practical communication advice.",
+      title: "Yinyuan Relationship Analysis",
+      description: "Authentic Moon Old relationship divination with 6 specialized modes.",
       inputSchema: YinyuanInputSchema,
-      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true }
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
     },
-    async (params: YinyuanInput) => {
-      try {
-        const result = await makeApiRequest<ServiceResponse>("yinyuan-question", params);
-        if (!result.success) return { content: [{ type: "text", text: `API Error: ${result.error || result.message || "Unknown error"}` }] };
-        return { content: [{ type: "text", text: `## 姻緣 Reading\n\n${result.answer || "No reading generated."}\n\n${JSON.stringify(result.result || null, null, 2)}` }] };
-      } catch (error) {
-        return { content: [{ type: "text", text: `Error executing 姻緣 Reading: ${error instanceof Error ? error.message : String(error)}` }] };
-      }
+    async (params) => {
+      const response = await makeApiRequest<ServiceResponse>("yinyuan-question", params);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            analysis: response.answer || response.analysis || null,
+            result: response.result || null,
+            error: response.error || null
+          }, null, 2)
+        }]
+      };
     }
   );
 
-  // Tool 7: 解答之書 reading
+  // 8. Answerbook
   server.registerTool(
     "answerbook_reading",
     {
-      title: "解答之書 Reading",
-      description: "直接默念取得解答之書提醒，或輸入問題後取得答案並交由 AI 進行理性解讀。",
+      title: "Book of Answers Oracle",
+      description: "333 classic answers book oracle for instant intuitive clarity.",
       inputSchema: AnswerbookInputSchema,
-      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true }
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
     },
-    async (params: AnswerbookInput) => {
-      try {
-        const result = await makeApiRequest<ServiceResponse>("answerbook-question", params);
-        if (!result.success) return { content: [{ type: "text", text: `API Error: ${result.error || result.message || "Unknown error"}` }] };
-        const analysis = result.analysis ? `\n\n## AI 解讀\n\n${result.analysis}` : "";
-        return { content: [{ type: "text", text: `## 解答之書\n\n${result.answer || "No answer generated."}${analysis}\n\n${JSON.stringify(result.result || null, null, 2)}` }] };
-      } catch (error) {
-        return { content: [{ type: "text", text: `Error executing Answerbook Reading: ${error instanceof Error ? error.message : String(error)}` }] };
-      }
+    async (params) => {
+      const response = await makeApiRequest<ServiceResponse>("answerbook-question", params);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            analysis: response.answer || response.analysis || null,
+            rawAnswer: response.rawAnswer || response.result || null,
+            error: response.error || null
+          }, null, 2)
+        }]
+      };
     }
   );
-
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 八字命理標準排盤 CLI 工具 (純 Node.js 零依賴實作)
- * 支援 --date/--solar, --lunar, --time/--hour, --shichen, --sex, --place, --deceased-year
+ * 支援 --date/--solar, --lunar, --time, --hour, --shichen, --sex, --place, --deceased-year, --allow-unknown-hour
  */
 
 const fs = require('fs');
@@ -12,8 +12,7 @@ function parseArgs() {
     const args = process.argv.slice(2);
     const params = {
         calendar: 'solar',
-        sex: '男',
-        time: '12:00'
+        sex: '男'
     };
 
     for (let i = 0; i < args.length; i++) {
@@ -26,8 +25,10 @@ function parseArgs() {
             params.calendar = 'lunar';
         } else if (arg === '--leap') {
             params.leap = true;
-        } else if ((arg === '--hour' || arg === '--time') && args[i + 1]) {
+        } else if (arg === '--time' && args[i + 1]) {
             params.time = args[++i];
+        } else if (arg === '--hour' && args[i + 1]) {
+            params.hour = args[++i];
         } else if (arg === '--shichen' && args[i + 1]) {
             params.shichen = args[++i];
         } else if (arg === '--sex' && args[i + 1]) {
@@ -36,6 +37,8 @@ function parseArgs() {
             params.place = args[++i];
         } else if (arg === '--deceased-year' && args[i + 1]) {
             params.deceasedYear = args[++i];
+        } else if (arg === '--allow-unknown-hour') {
+            params.allowUnknownHour = true;
         } else if (arg === '--input' && args[i + 1]) {
             const raw = args[++i];
             try {

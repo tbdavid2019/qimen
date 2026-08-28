@@ -4,7 +4,32 @@
 
 ## [2026-08-28]
 
-### 🔮 新增正統紫微斗數獨立模組與排盤引擎（拒絕取巧與假數據）
+### 🔮 正統術數核心與上游算法 100% Golden Parity 等價移植
+
+- **🃏 韋特塔羅 100% 對齊原作者 Python `draw.py` (`lib/tarot.js`, `skills/tarot-consultant/`)**：
+  - 完整實作 Python MT19937 (`PythonRandom`) 隨機數生成器與累積權重選擇機制（`rng.choices`）。
+  - 在相同 `seed=12345, time_factor=night, spread=three` 條件下，抽出的牌陣為 `權杖十 (正位) / 寶劍十 (正位) / 權杖五 (正位)`，與上游 Python `draw.py` 輸出 100% 逐字逐卡精確對齊。
+  - 支援 `relationship`, `decision`, `situation`, `timeline` 變體牌陣與自選時間因子加權。
+
+- **📜 八字命理全面對齊上游 `references/shensha-table.md` (`lib/bazi2.js`, `skills/bazi2-consultant/`)**：
+  - 補齊完整神煞體系：天乙貴人、天德、月德、文昌、學堂（長生位）、詞館（臨官位）、將星、華蓋、驛馬、天醫、祿神、金輿、羊刃、劫煞、災煞、亡神、咸池桃花、孤辰、寡宿、空亡/旬空、元辰（大耗，分陰陽年男女）、血刃。
+  - 修復 `--shichen` 被預設 12:00 覆蓋之問題，傳入 `shichen: '子'` 時精確排定子時（`00:00`，如五鼠遁 `丙子` 時）。
+  - 支援未知時辰模式（`allowUnknownHour`，時柱保持未知只排六字）與已故年份上限過濾（`deceasedYear`）。
+
+- **⛩️ 月老姻緣嚴格輸入驗證與防偽機制 (`lib/yinyuan.js`, `app.js`)**：
+  - 所有模式（`zodiac`, `bazi-match`, `peach-blossom`, `red-thread`, `ziwei-marriage`, `fortune`）缺少必要資料時均嚴格回傳 400 驗證錯誤，徹底根除靜默 fallback 與虛假合婚。
+
+- **🧭 易經風水完整 24 山三元玄空飛星排盤 (`lib/fengshui.js`, `app.js`)**：
+  - 實作完整三元玄空 1-9 運 24 山運盤、山星盤、向星盤動態排盤與順逆飛星（天元/地元/人元龍性與五黃寄宮）。
+  - 動態判定四大格局：旺山旺向（如九運壬山丙向、丙山壬向）、雙星到向（如九運丑山未向、坤山艮向）、雙星到坐（如九運艮山坤向、未山丑向）、上山下水（如九運子山午向、午山子向）。
+  - 協紀辨方擇日依當日天干以五鼠遁動態推算黃道吉時，`/api/fengshui-question` 依 `mode` (`yangzhai`/`shaqi`/`zeri`) 正確分流計算。
+
+- **✨ 奇門遁甲 Consultant CLI 全動態化 (`skills/qimen-consultant/scripts/qimen_cli.js`)**：
+  - 依日支三合動態查驛馬星、時干為甲時改用旬首隱儀定位落宮、輸出動態星門宮五行生剋關係（`star_palace_relation`, `door_palace_relation`）。
+
+- **🌐 MCP 五層（TypeScript MCP Server / dist / MCP Bridge / WebMCP / API）100% 逐欄同步**：
+  - `mcp/src/tools/divination.ts` 與 `mcp/dist/` 新增 `ziwei_analysis`，並全數補齊塔羅 `variant`/`time_factor`、風水 24 山坐向與 `mode`/`shaType`/`matter`、八字 `shichen`/`hour`/`deceasedYear`、姻緣所有模式。
+  - `test/parity-golden.test.js` 建立逐案例 Golden 對照測試，全系統 127 項測試 100% 通過。
 
 - **🏛️ 純 JavaScript 正統三合派安星排盤引擎 (`lib/ziwei.js`)**：
   - **定命身宮與十二宮天干**：以生月及生時由寅宮起算定命宮與身宮地支；起寅首天干定十二宮干支。

@@ -205,19 +205,43 @@ function validateTarotQuestion(body) {
 }
 
 function validateFengShuiQuestion(body) {
-    const facing = body.facing || '南';
-    if (!FENGSHUI_FACINGS.has(facing)) {
-        throw validationError('請提供有效的房屋朝向', 'INVALID_FACING', 'facing');
+    const mode = body.mode || 'yangzhai';
+    if (mode === 'yangzhai') {
+        const facing = body.facing || '南';
+        if (!FENGSHUI_FACINGS.has(facing)) {
+            throw validationError('請提供有效的房屋朝向', 'INVALID_FACING', 'facing');
+        }
+        return {
+            ...body,
+            mode,
+            facing,
+            moveInYear: parseYear(body.moveInYear, 'moveInYear', { required: false }) || new Date().getFullYear(),
+            residentYear: parseYear(body.residentYear, 'residentYear', { required: false }) || 1990,
+            sex: body.sex === '男' ? '男' : '女',
+            year: parseYear(body.year, 'year', { required: false }) || new Date().getFullYear()
+        };
     }
     return {
         ...body,
-        facing,
-        moveInYear: parseYear(body.moveInYear, 'moveInYear', { required: false }) || new Date().getFullYear(),
-        residentYear: parseYear(body.residentYear, 'residentYear', { required: false }) || 1990,
-        sex: body.sex === '男' ? '男' : '女',
-        year: parseYear(body.year, 'year', { required: false }) || new Date().getFullYear()
+        mode,
+        year: parseYear(body.year || body.zeriYear, 'year', { required: false }) || new Date().getFullYear()
     };
 }
+
+function calculateFengshuiQuestion(input) {
+    if (input.mode === 'shaqi') {
+        return diagnoseShaqi(input.shaType || input.question);
+    }
+    if (input.mode === 'zeri') {
+        return chooseZeri(input.matter, input.zeriYear || input.year, input.zeriMonth || input.month);
+    }
+    return calculateFengShui(input);
+}
+
+const SHICHEN_TIME_MAP = {
+    子: '00:00', 丑: '02:00', 寅: '04:00', 卯: '06:00', 辰: '08:00', 巳: '10:00',
+    午: '12:00', 未: '14:00', 申: '16:00', 酉: '18:00', 戌: '20:00', 亥: '22:00'
+};
 
 function validateBaziQuestion(body) {
     if (typeof body.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(body.date)) {
@@ -235,7 +259,8 @@ function validateBaziQuestion(body) {
     if (body.sex !== undefined && !['男', '女'].includes(body.sex)) {
         throw validationError('請選擇性別', 'INVALID_SEX', 'sex');
     }
-    return { ...body, calendar, time: body.time || '12:00', sex: body.sex || '男' };
+    const time = body.time || (body.shichen ? SHICHEN_TIME_MAP[body.shichen] : '12:00');
+    return { ...body, calendar, time, sex: body.sex || '男' };
 }
 
 function validateYinyuanQuestion(body) {
@@ -252,6 +277,22 @@ function validateYinyuanQuestion(body) {
             throw validationError('靈籤號碼需介於 1 到 100 之間', 'INVALID_STICK_NUM', 'stickNum');
         }
     }
+    if (mode === 'zodiac' && (!body.firstZodiac && !body.firstYear) && (!body.secondZodiac && !body.secondYear)) {
+        throw validationError('請提供雙方生肖或出生年份以進行生肖配對', 'MISSING_ZODIAC_INFO', 'firstZodiac');
+    }
+    if (mode === 'bazi-match') {
+        const d1 = body.first?.date || body.date1 || body.firstDate;
+        const d2 = body.second?.date || body.date2 || body.secondDate;
+        if (!d1 || !d2) {
+            throw validationError('請提供雙方出生日期以進行八字合婚', 'MISSING_BAZI_MATCH_INFO', 'first');
+        }
+    }
+    if (mode === 'peach-blossom' && !body.firstYear && !body.birthDate && !body.date && !body.year) {
+        throw validationError('請提供出生年份或生日以查詢桃花運勢', 'MISSING_PEACH_INFO', 'date');
+    }
+    if (mode === 'red-thread' && !body.date && !body.birthDate) {
+        throw validationError('請提供出生日期以推演紅線正緣畫像', 'MISSING_RED_THREAD_INFO', 'date');
+    }
     return {
         ...body,
         mode,
@@ -266,8 +307,8 @@ function calculateYinyuanQuestion(input) {
         case 'ziwei-marriage':
         case 'marriage-palace': return ziweiMarriage(input);
         case 'peach-blossom':
-        case 'taohua-luck': return peachBlossomLuck(input.firstYear || input.birthDate || input.taohuaBirthDate || input.year, input.status, input.scope);
-        case 'bazi-match': return baziMatchFull(input.first || input, input.second || input);
+        case 'taohua-luck': return peachBlossomLuck(input.firstYear || input.birthDate || input.taohuaBirthDate || input.year || input.date, input.status, input.scope);
+        case 'bazi-match': return baziMatchFull(input.first || { date: input.date1 || input.firstDate }, input.second || { date: input.date2 || input.secondDate });
         case 'red-thread': return redThreadFull(input);
         default: return drawFortuneStick(input.question, input.name, input.seed, input.stickNum || input.fortuneStickNum);
     }
@@ -289,7 +330,8 @@ function validateZiweiQuestion(body) {
     if (body.sex !== undefined && !['男', '女'].includes(body.sex)) {
         throw validationError('請選擇性別', 'INVALID_SEX', 'sex');
     }
-    return { ...body, calendar, time: body.time || '12:00', sex: body.sex || '男' };
+    const time = body.time || (body.shichen ? SHICHEN_TIME_MAP[body.shichen] : '12:00');
+    return { ...body, calendar, time, sex: body.sex || '男' };
 }
 
 const ziweiQuestionHandler = createServiceQuestionHandler({
@@ -318,7 +360,7 @@ const fengshuiQuestionHandler = createServiceQuestionHandler({
     moduleName: '風水',
     resultKey: 'report',
     validate: validateFengShuiQuestion,
-    calculate: calculateFengShui,
+    calculate: calculateFengshuiQuestion,
     analyze: llmService.analyzeFengShui.bind(llmService),
     discord: discordWebhook
 });

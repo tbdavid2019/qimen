@@ -31,7 +31,7 @@ test('八宅遊年星表八宅各具八種星且伏位落在坐山方位', () =>
 });
 
 test('風水 24 山坐向支援與九運飛星格局判定', () => {
-    const report1 = calculateFengShui({ facing: '午山子向', moveInYear: 2024 });
+    const report1 = calculateFengShui({ facing: '壬山丙向', moveInYear: 2024 });
     assert.equal(report1.pattern, '旺山旺向');
     const report2 = calculateFengShui({ facing: '子山午向', moveInYear: 2024 });
     assert.equal(report2.pattern, '上山下水');
