@@ -877,6 +877,141 @@ body.suite-page {
     .fortune-scroll-poem { font-size: 17px; }
 }
 
+/* Ziwei 12-Palace Layout */
+.ziwei-board-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, auto);
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.ziwei-palace-cell {
+    background: var(--suite-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 120px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ziwei-palace-cell.is-ming {
+    border: 2px solid var(--suite-primary);
+    background: rgba(204, 107, 73, 0.08);
+}
+
+.ziwei-palace-cell.is-shen {
+    box-shadow: inset 0 0 0 1px var(--suite-accent);
+}
+
+.ziwei-cell-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--suite-border);
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+}
+
+.ziwei-palace-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--suite-primary);
+}
+
+.ziwei-palace-ganzhi {
+    font-size: 11px;
+    color: var(--suite-text-muted);
+}
+
+.ziwei-cell-stars {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.ziwei-star-item {
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ziwei-star-item.major {
+    color: #b91c1c;
+}
+[data-theme="dark"] .ziwei-star-item.major {
+    color: #f87171;
+}
+
+.ziwei-star-item.lucky {
+    color: #15803d;
+}
+[data-theme="dark"] .ziwei-star-item.lucky {
+    color: #4ade80;
+}
+
+.ziwei-star-item.bad {
+    color: #c2410c;
+}
+[data-theme="dark"] .ziwei-star-item.bad {
+    color: #fb923c;
+}
+
+.ziwei-star-item.peach {
+    color: #ec4899;
+}
+
+.ziwei-brightness {
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    background: var(--suite-border);
+    color: var(--suite-text-muted);
+    font-weight: normal;
+}
+
+.ziwei-sihua-badge {
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #fff;
+}
+.ziwei-sihua-badge.lu { background: #16a34a; }
+.ziwei-sihua-badge.quan { background: #ea580c; }
+.ziwei-sihua-badge.ke { background: #2563eb; }
+.ziwei-sihua-badge.ji { background: #dc2626; }
+
+.ziwei-cell-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: var(--suite-text-muted);
+    margin-top: 6px;
+    padding-top: 4px;
+    border-top: 1px dashed var(--suite-border);
+}
+
+.ziwei-center-info {
+    grid-column: 2 / 4;
+    grid-row: 2 / 4;
+    background: var(--suite-card-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
 /* Site Footer */
 .footer.site-footer {
     width: 100%;
@@ -899,3 +1034,4 @@ body.suite-page {
     text-decoration: underline;
     text-underline-offset: 2px;
 }
+

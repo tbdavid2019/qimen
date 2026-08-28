@@ -18,6 +18,7 @@ const { parseCivilTime } = require('./lib/civil-time');
 const { drawCards, SPREADS: TAROT_SPREADS } = require('./lib/tarot');
 const { calculateFengShui, diagnoseShaqi, chooseZeri } = require('./lib/fengshui');
 const { calculateBazi } = require('./lib/bazi2');
+const { calculateZiweiChart } = require('./lib/ziwei');
 const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
 const { AnswerBookClient, createAnswerbookQuestionHandler } = require('./lib/answerbook');
@@ -79,6 +80,7 @@ app.use((req, res, next) => {
 });
 
 // 路由
+app.get('/ziwei', (req, res) => res.render('ziwei', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'ziwei' }));
 app.get('/tarot', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot' }));
 app.get('/fengshui', (req, res) => res.render('fengshui', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'fengshui' }));
 app.get('/bazi2', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2' }));
@@ -95,6 +97,14 @@ function sendModuleRecord(moduleName, input, result, analysis = '') {
     return discordWebhook.sendDivinationRecord(moduleName, input, result, analysis)
         .catch((error) => ({ success: false, reason: error.message }));
 }
+
+app.post('/api/ziwei/chart', async (req, res) => {
+    try {
+        const chart = calculateZiweiChart(req.body || {});
+        const discord = await sendModuleRecord('紫微斗數', req.body, chart);
+        res.json({ success: true, chart, discord });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+});
 
 app.post('/api/tarot/reading', async (req, res) => {
     try {
@@ -241,6 +251,34 @@ function calculateYinyuanQuestion(input) {
     }
 }
 
+function validateZiweiQuestion(body) {
+    if (typeof body.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(body.date)) {
+        throw validationError('請提供出生日期（YYYY-MM-DD）', 'MISSING_BIRTH_DATE', 'date');
+    }
+    const [year, month, day] = body.date.split('-').map(Number);
+    const check = new Date(Date.UTC(year, month - 1, day));
+    if (check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1 || check.getUTCDate() !== day) {
+        throw validationError('出生日期無效', 'INVALID_BIRTH_DATE', 'date');
+    }
+    const calendar = body.calendar || 'solar';
+    if (!['solar', 'lunar'].includes(calendar)) {
+        throw validationError('不支援的曆法', 'INVALID_CALENDAR', 'calendar');
+    }
+    if (body.sex !== undefined && !['男', '女'].includes(body.sex)) {
+        throw validationError('請選擇性別', 'INVALID_SEX', 'sex');
+    }
+    return { ...body, calendar, time: body.time || '12:00', sex: body.sex || '男' };
+}
+
+app.post('/api/ziwei-question', createServiceQuestionHandler({
+    moduleName: '紫微斗數',
+    resultKey: 'chart',
+    validate: validateZiweiQuestion,
+    calculate: calculateZiweiChart,
+    analyze: llmService.analyzeZiwei.bind(llmService),
+    discord: discordWebhook
+}));
+
 app.post('/api/tarot-question', createServiceQuestionHandler({
     moduleName: '塔羅',
     resultKey: 'reading',
@@ -285,7 +323,7 @@ app.post('/api/answerbook-question', createAnswerbookQuestionHandler({
 }));
 
 app.post('/api/:module/llm-analysis', async (req, res, next) => {
-    const modules = { tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
+    const modules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
     const moduleName = modules[req.params.module];
     if (!moduleName) return next();
     try {

@@ -24,6 +24,7 @@
 ### API 接口
 - `POST /api/llm-analysis`：LLM 解盤分析
 - `POST /api/qimen-question`：奇門問答與占卜大師接口
+- `POST /api/ziwei-question`：紫微斗數排盤與 AI 解讀
 - `POST /api/meihua-question`：梅花問答與占卜大師接口
 - `POST /api/tarot-question`：塔羅抽牌與 AI 解讀
 - `POST /api/fengshui-question`：風水報告與 AI 建議
@@ -35,13 +36,14 @@
 
 ### WebMCP & MCP 支援
 - **WebMCP（瀏覽器端）**：基於 Chrome WebMCP 規範，提供 `document.modelContext.registerTool` 命令式與 HTML 宣告式工具，支援 AI 瀏覽器代理直接互動。
-- **Stdio MCP Bridge**：`mcp-bridge.js`，零依賴提供七個服務的 standard MCP 協議工具。
+- **Stdio MCP Bridge**：`mcp-bridge.js`，零依賴提供八大服務的 standard MCP 協議工具。
 
 所有服務使用同一組 `LLM_API_KEY`、模型 fallback 與 Discord Webhook；新增服務透過 `analyzeService` 使用各自的角色與分析焦點。Discord 會以易讀 Embed 顯示問題、參數、計算摘要與 AI 回覆，並附上完整 JSON 檔案保存原始資料。解答之書的 direct 模式只取回原始答案，question 模式才呼叫 LLM。
 
 ### Skill 路徑
 
 - `skills/qimen-consultant/`
+- `skills/ziwei-consultant/`
 - `skills/meihua-consultant/`
 - `skills/tarot-consultant/`
 - `skills/fengshui-consultant/`

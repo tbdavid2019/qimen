@@ -25,6 +25,7 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 		"meihua_qigua_numbers",
 		"meihua_qigua_text",
 		"meihua_divination",
+		"ziwei_chart",
 		"tarot_reading",
 		"fengshui_report",
 		"bazi2_chart",
@@ -142,8 +143,9 @@ test("解答之書頁面包含宣告式 WebMCP 表單與兩種操作", () => {
 	assert.match(html, /toolparamdescription=/);
 });
 
-test("四個術數套件頁面都提供宣告式 WebMCP 表單欄位", () => {
+test("術數套件頁面都提供宣告式 WebMCP 表單欄位", () => {
 	const pages = {
+		ziwei: ["ziweiQuestion", "ziweiDate"],
 		tarot: ["tarotQuestion"],
 		fengshui: ["fengshuiQuestion", "fengshuiFacing"],
 		bazi2: ["baziQuestion", "baziDate"],

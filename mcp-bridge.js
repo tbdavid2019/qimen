@@ -216,6 +216,26 @@ const tools = [
     }
   },
   {
+    name: "ziwei_analysis",
+    description: "紫微斗數安星排盤、十二宮位、十四主星廟旺、生年四化、大限流年與 AI 命理解讀。",
+    inputSchema: {
+      type: "object",
+      properties: {
+        question: { type: "string", description: "使用者的命理諮詢問題" },
+        date: { type: "string", description: "出生日期 YYYY-MM-DD" },
+        time: { type: "string", description: "出生時間 HH:mm" },
+        shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+        sex: { type: "string", enum: ["男", "女"], default: "男", description: "性別" },
+        calendar: { type: "string", enum: ["solar", "lunar"], default: "solar", description: "曆法" },
+        leap: { type: "boolean", default: false, description: "農曆是否閏月" },
+        name: { type: "string", description: "姓名或稱謂（可選）" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
+        conversationHistory: { type: "array", description: "可選的續問對話歷史" }
+      },
+      required: ["question", "date"]
+    }
+  },
+  {
     name: "answerbook_reading",
     description: "解答之書直接默念取得提醒，或輸入問題後取得答案並由 AI 解讀。",
     inputSchema: {
@@ -292,6 +312,7 @@ rl.on('line', async (line) => {
       }
 
       const suiteEndpoints = {
+        ziwei_analysis: 'ziwei-question',
         tarot_divination: 'tarot-question',
         fengshui_consultation: 'fengshui-question',
         bazi2_analysis: 'bazi2-question',

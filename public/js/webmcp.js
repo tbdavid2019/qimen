@@ -619,6 +619,22 @@
 	}
 
 	Object.assign(toolDefinitions, {
+		ziwei_chart: createSuiteTool("ziwei_chart", "紫微斗數安星排盤、十二宮位、十四主星廟旺、生年四化、大限流年與 AI 命理解讀。", "/api/ziwei-question", {
+			type: "object",
+			properties: {
+				question: { type: "string", description: "使用者的命理諮詢問題" },
+				date: { type: "string", description: "出生日期 YYYY-MM-DD" },
+				time: { type: "string", description: "出生時間 HH:mm" },
+				shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+				sex: { type: "string", enum: ["男", "女"], description: "性別" },
+				calendar: { type: "string", enum: ["solar", "lunar"], description: "曆法" },
+				leap: { type: "boolean", description: "農曆是否閏月" },
+				name: { type: "string", description: "姓名或稱謂（可選）" },
+				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
+			},
+			required: ["question", "date"]
+		}),
 		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與 AI 深度解讀（78張牌、6大牌陣與四維透鏡）。", "/api/tarot-question", {
 			type: "object",
 			properties: {
@@ -735,8 +751,8 @@
 				toolDefinitions.meihua_divination,
 				toolDefinitions.switch_theme,
 			];
-		} else if (["/tarot", "/fengshui", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
-			const suiteTool = { "/tarot": "tarot_reading", "/fengshui": "fengshui_report", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
+		} else if (["/ziwei", "/tarot", "/fengshui", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
+			const suiteTool = { "/ziwei": "ziwei_chart", "/tarot": "tarot_reading", "/fengshui": "fengshui_report", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
 			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme];
 		} else {
 			// Default / or /custom

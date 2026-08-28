@@ -425,8 +425,106 @@
         visualBoard.hidden = false;
     }
 
+    function renderZiwei(chart) {
+        if (!chart || !chart.palaces) return;
+
+        const branchPalaceMap = {};
+        chart.palaces.forEach((p) => {
+            branchPalaceMap[p.branch] = p;
+        });
+
+        const centerHtml = `
+            <div class="ziwei-center-info">
+                <div style="font-size:16px; font-weight:700; color:var(--suite-primary); margin-bottom:6px;">紫微斗數命盤</div>
+                <div style="font-size:13px; margin-bottom:4px;"><strong>${escapeHtml(chart.bureau)}</strong> · ${escapeHtml(chart.lunar?.ganzhi || '')}</div>
+                <div style="font-size:12px; color:var(--suite-text-muted); margin-bottom:6px;">
+                    命宮【${escapeHtml(chart.mingPalaceBranch)}】· 身宮【${escapeHtml(chart.shenPalaceBranch)}】
+                </div>
+                <div style="font-size:12px; margin-bottom:6px;">
+                    命主：<strong>${escapeHtml(chart.mingzhu)}</strong> | 身主：<strong>${escapeHtml(chart.shenzhu)}</strong>
+                </div>
+                <div style="display:flex; gap:4px; justify-content:center; flex-wrap:wrap; margin-top:4px;">
+                    <span class="ziwei-sihua-badge lu">祿: ${escapeHtml(chart.sihua?.lu)}</span>
+                    <span class="ziwei-sihua-badge quan">權: ${escapeHtml(chart.sihua?.quan)}</span>
+                    <span class="ziwei-sihua-badge ke">科: ${escapeHtml(chart.sihua?.ke)}</span>
+                    <span class="ziwei-sihua-badge ji">忌: ${escapeHtml(chart.sihua?.ji)}</span>
+                </div>
+                ${(chart.patterns || []).length > 0 ? `
+                    <div style="margin-top:8px; font-size:11px; color:var(--suite-accent);">
+                        ★ 格局：${chart.patterns.map((p) => escapeHtml(p.name)).join('、')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+
+        function renderPalaceCell(branch) {
+            const p = branchPalaceMap[branch];
+            if (!p) return `<div class="ziwei-palace-cell"></div>`;
+
+            const starsHtml = (p.stars || []).map((s) => {
+                let cls = 'major';
+                if (s.type === 'lucky') cls = 'lucky';
+                else if (s.type === 'bad') cls = 'bad';
+                else if (s.type === 'peach') cls = 'peach';
+
+                const sihuaBadge = s.sihua
+                    ? `<span class="ziwei-sihua-badge ${s.sihua === '祿' ? 'lu' : s.sihua === '權' ? 'quan' : s.sihua === '科' ? 'ke' : 'ji'}">${escapeHtml(s.sihua)}</span>`
+                    : '';
+
+                const brightnessSpan = s.brightness
+                    ? `<span class="ziwei-brightness">${escapeHtml(s.brightness)}</span>`
+                    : '';
+
+                return `
+                    <div class="ziwei-star-item ${cls}">
+                        ${escapeHtml(s.name)} ${brightnessSpan} ${sihuaBadge}
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="ziwei-palace-cell ${p.isMing ? 'is-ming' : ''} ${p.isShen ? 'is-shen' : ''}">
+                    <div class="ziwei-cell-header">
+                        <span class="ziwei-palace-name">${escapeHtml(p.name)}${p.isMing ? ' (命)' : ''}${p.isShen ? ' (身)' : ''}</span>
+                        <span class="ziwei-palace-ganzhi">${escapeHtml(p.ganzhi)}</span>
+                    </div>
+                    <div class="ziwei-cell-stars">${starsHtml || '<span style="font-size:11px; color:var(--suite-text-muted);">無主星 (借對宮)</span>'}</div>
+                    <div class="ziwei-cell-footer">
+                        <span>大限 ${escapeHtml(p.dayun)}</span>
+                        <span>對: ${escapeHtml(p.aspects?.opposite || '')}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        const row1 = ['巳', '午', '未', '申'].map(renderPalaceCell).join('');
+        const row2 = `${renderPalaceCell('辰')}${centerHtml}${renderPalaceCell('酉')}`;
+        const row3 = `${renderPalaceCell('卯')}${renderPalaceCell('戌')}`;
+        const row4 = ['寅', '丑', '子', '亥'].map(renderPalaceCell).join('');
+
+        const patternsHtml = (chart.patterns || []).map((pat) => `
+            <div style="background:var(--suite-bg); border:1px solid var(--suite-border); border-radius:8px; padding:10px; margin-bottom:8px;">
+                <div style="font-weight:700; color:var(--suite-primary); font-size:13px; margin-bottom:4px;">✨ ${escapeHtml(pat.name)}（${escapeHtml(pat.type)}）</div>
+                <div style="font-size:12px; color:var(--suite-text-muted);">${escapeHtml(pat.desc)}</div>
+            </div>
+        `).join('');
+
+        visualBoard.innerHTML = `
+            <div class="suite-board-title">🔮 紫微斗數十二宮命盤（${escapeHtml(chart.normalized_input?.date || '')} ${escapeHtml(chart.normalized_input?.time || '')} · ${escapeHtml(chart.normalized_input?.sex || '')}）</div>
+            <div class="ziwei-board-grid">
+                ${row1}
+                ${row2}
+                ${row3}
+                ${row4}
+            </div>
+            ${patternsHtml ? `<div style="margin-top:16px;"><div style="font-size:14px; font-weight:700; margin-bottom:8px; color:var(--suite-text);">🌟 命盤特殊格局剖析</div>${patternsHtml}</div>` : ''}
+        `;
+        visualBoard.hidden = false;
+    }
+
     function renderVisual(data, payload) {
-        if (page === 'tarot') renderTarot(data);
+        if (page === 'ziwei') renderZiwei(data);
+        else if (page === 'tarot') renderTarot(data);
         else if (page === 'bazi2') renderBazi(data);
         else if (page === 'fengshui') renderFengShui(data);
         else if (page === 'yinyuan') renderYinyuan(data, payload?.mode);
@@ -540,6 +638,18 @@
 
     function buildPayload() {
         const question = val('question');
+        if (page === 'ziwei') {
+            return {
+                name: val('name'),
+                calendar: val('calendar') || 'solar',
+                date: val('date'),
+                time: val('time') || '12:00',
+                shichen: val('shichen') || '午',
+                sex: val('sex') || '男',
+                leap: val('leap') === 'true' || val('leap') === true,
+                question
+            };
+        }
         if (page === 'tarot') {
             return {
                 spread: form.elements['spread']?.value || 'three',
@@ -673,6 +783,7 @@
     // --- One-Click Main Flow ---
 
     const endpointMap = {
+        ziwei: '/api/ziwei/chart',
         tarot: '/api/tarot/reading',
         fengshui: '/api/fengshui/report',
         bazi2: '/api/bazi2/chart',
@@ -683,8 +794,8 @@
         e.preventDefault();
         const payload = buildPayload();
 
-        // Basic date validation for bazi2
-        if (page === 'bazi2' && !payload.date) {
+        // Basic date validation for bazi2 and ziwei
+        if ((page === 'bazi2' || page === 'ziwei') && !payload.date) {
             alert('請選擇出生日期');
             return;
         }

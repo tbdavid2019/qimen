@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>紫微斗數排盤 · 三合飛星命理顧問</title>
+    <meta name="description" content="專業線上紫微斗數排盤系統，支援十二宮、十四主星廟旺、生年四化、大限流年、三方四正格局與 AI 智能命理顧問深度解盤。">
+    <link rel="canonical" href="https://qi.david888.com/ziwei">
+
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#111a20">
+
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) {
+                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {}
+        })();
+    </script>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style-new.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/divination-suite.css">
+</head>
+
+<body class="suite-page" data-suite="ziwei">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切換導航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">333 一句提醒·照見當下</a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">奇門遁甲</a></li>
+                <li class="active"><a href="/ziwei">紫微斗數</a></li>
+                <li><a href="/meihua">梅花易數</a></li>
+                <li><a href="/bazi2">八字命理</a></li>
+                <li><a href="/fengshui">易經風水</a></li>
+                <li><a href="/tarot">韋特塔羅</a></li>
+                <li><a href="/yinyuan">月老姻緣</a></li>
+                <li><a href="/answerbook">解答之書</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <button id="themeToggle" class="btn btn-link navbar-btn" title="切換主題" style="color: #fff; font-size: 16px; padding: 6px 12px;">🌓</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="suite-container">
+        <!-- Hero Header -->
+        <div class="suite-hero">
+            <span class="suite-hero-badge">🔮 正統三合 · 飛星四化</span>
+            <h1>紫微斗數命盤解析</h1>
+            <p class="suite-hero-subtitle">
+                經典安星訣排定十二宮位、十四主星廟旺平陷、六吉六煞與十干生年四化，以三方四正洞悉人生格局與大限流年機遇。
+            </p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="suite-card">
+            <form id="suiteForm" class="suite-form" toolname="ziwei_chart" tooldescription="紫微斗數排盤與大師命理解析" toolautosubmit data-webmcp-tool="analyze_ziwei">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 mb-3">
+                        <label class="suite-form-label" for="ziweiName">姓名 / 稱謂（選填）</label>
+                        <input type="text" class="form-control suite-input" id="ziweiName" name="name" placeholder="例如：張先生" data-webmcp-field="name" toolparamdescription="姓名或稱謂">
+                    </div>
+                    <div class="col-md-4 col-sm-6 mb-3">
+                        <label class="suite-form-label">性別</label>
+                        <div class="gender-pill-group">
+                            <label class="gender-pill active">
+                                <input type="radio" name="sex" value="男" checked data-webmcp-field="sex"> 👨 乾造 (男)
+                            </label>
+                            <label class="gender-pill">
+                                <input type="radio" name="sex" value="女" data-webmcp-field="sex"> 👩 坤造 (女)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6 mb-3">
+                        <label class="suite-form-label" for="ziweiCalendar">曆法類型</label>
+                        <select class="form-control suite-input" id="ziweiCalendar" name="calendar" data-webmcp-field="calendar" toolparamdescription="曆法類型，solar 或 lunar">
+                            <option value="solar" selected>公曆 (陽曆)</option>
+                            <option value="lunar">農曆 (陰曆)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 mb-3">
+                        <label class="suite-form-label" for="ziweiDate">出生日期 <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control suite-input" id="ziweiDate" name="date" required value="1990-05-15" data-webmcp-field="date" toolparamdescription="出生日期，格式 YYYY-MM-DD">
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="suite-form-label" for="ziweiShichen">出生時辰</label>
+                        <select class="form-control suite-input" id="ziweiShichen" name="shichen" data-webmcp-field="shichen" toolparamdescription="出生時辰地支">
+                            <option value="子">子時 (23:00-00:59)</option>
+                            <option value="丑">丑時 (01:00-02:59)</option>
+                            <option value="寅">寅時 (03:00-04:59)</option>
+                            <option value="卯">卯時 (05:00-06:59)</option>
+                            <option value="辰">辰時 (07:00-08:59)</option>
+                            <option value="巳">巳時 (09:00-10:59)</option>
+                            <option value="午" selected>午時 (11:00-12:59)</option>
+                            <option value="未">未時 (13:00-14:59)</option>
+                            <option value="申">申時 (15:00-16:59)</option>
+                            <option value="酉">酉時 (17:00-18:59)</option>
+                            <option value="戌">戌時 (19:00-20:59)</option>
+                            <option value="亥">亥時 (21:00-22:59)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="suite-form-label" for="ziweiTime">精確時間 (選填)</label>
+                        <input type="time" class="form-control suite-input" id="ziweiTime" name="time" value="12:00" data-webmcp-field="time" toolparamdescription="出生時間，格式 HH:MM">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="suite-form-label" for="ziweiQuestion">想請教大師的問題或諮詢重點</label>
+                    <textarea class="form-control suite-textarea" id="ziweiQuestion" name="question" rows="2" placeholder="例如：請幫我看看本命事業格局、適合創業還是公職？未來的財帛與婚姻運勢如何？" data-webmcp-field="question" toolparamdescription="想請教紫微大師的問題"></textarea>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" id="suiteSubmitBtn" class="btn suite-btn-primary btn-lg">
+                        ✨ 一鍵排盤與 AI 深度解讀
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Visual Board Result -->
+        <div id="suiteVisualBoard" class="suite-card" hidden></div>
+
+        <!-- AI Conversation Stream -->
+        <div id="suiteAiSection" class="suite-card" hidden>
+            <div class="suite-board-title" style="margin-bottom: 16px;">🏮 紫微命理顧問深度開示</div>
+            
+            <div id="suiteAiLoading" class="suite-loading-box" hidden>
+                <div class="suite-spinner"></div>
+                <p style="margin-top: 12px; font-weight: 500;">大師正在依據安星訣、三方四正與生年四化為您深度推演命盤…</p>
+            </div>
+
+            <div id="suiteConversation" class="suite-conversation-list"></div>
+
+            <form id="suiteFollowUpForm" class="suite-followup-form mt-4" hidden>
+                <div class="input-group">
+                    <input type="text" id="suiteFollowUpInput" class="form-control suite-input" placeholder="對命盤有任何疑問？繼續向紫微大師追問…">
+                    <span class="input-group-btn">
+                        <button class="btn suite-btn-secondary" type="submit">發送追問</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Site Footer -->
+    <footer class="footer site-footer">
+        <div class="container text-center">
+            <p class="site-footer-provider">
+                333 一句提醒·照見當下 · 傳統智慧，理性解讀；照見當下，指引行動
+            </p>
+        </div>
+    </footer>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/divination-suite.js"></script>
+    <script src="/js/webmcp.js"></script>
+</body>
+</html>

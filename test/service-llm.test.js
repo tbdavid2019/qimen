@@ -32,7 +32,7 @@ test('解答之書 LLM 分析使用專用角色與原始答案', async () => {
         captured = { prompt, history, systemMessage };
         return { content: '解答之書專用分析', model: 'test-model' };
     };
-    const response = await service.analyzeAnswerbook({ mode: 'question', answer: '準時\\nBE ON TIME' }, {
+    const response = await service.analyzeAnswerbook({ mode: 'question', answer: '準時\nBE ON TIME' }, {
         userQuestion: '我該準時赴約嗎？',
         language: 'zh-tw'
     });
@@ -41,4 +41,22 @@ test('解答之書 LLM 分析使用專用角色與原始答案', async () => {
     assert.match(captured.systemMessage, /解答之書/);
     assert.match(captured.prompt, /準時/);
     assert.match(captured.prompt, /準時赴約/);
+});
+
+test('紫微斗數 LLM 分析使用專用角色與命身宮位', async () => {
+    const service = new LLMAnalysisService({ provider: 'openai', model: 'test-model' });
+    let captured;
+    service.callLLMWithHistory = async (prompt, history, systemMessage) => {
+        captured = { prompt, history, systemMessage };
+        return { content: '紫微斗數深度解析', model: 'test-model' };
+    };
+    const response = await service.analyzeZiwei({ bureau: '水二局', mingPalaceBranch: '辰', shenPalaceBranch: '戌' }, {
+        userQuestion: '我的事業發展如何？',
+        language: 'zh-tw'
+    });
+    assert.equal(response.success, true);
+    assert.equal(response.analysis, '紫微斗數深度解析');
+    assert.match(captured.systemMessage, /紫微/);
+    assert.match(captured.prompt, /水二局/);
+    assert.match(captured.prompt, /事業發展/);
 });

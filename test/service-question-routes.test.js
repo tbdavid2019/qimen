@@ -26,8 +26,8 @@ after(async () => {
     await new Promise((resolve) => server.close(resolve));
 });
 
-test('四個一站式服務 API 都拒絕空白問題', async () => {
-    for (const endpoint of ['/api/tarot-question', '/api/fengshui-question', '/api/bazi2-question', '/api/yinyuan-question']) {
+test('一站式服務 API 都拒絕空白問題', async () => {
+    for (const endpoint of ['/api/ziwei-question', '/api/tarot-question', '/api/fengshui-question', '/api/bazi2-question', '/api/yinyuan-question']) {
         const response = await postJson(endpoint, {});
         const body = await response.json();
 
@@ -35,6 +35,15 @@ test('四個一站式服務 API 都拒絕空白問題', async () => {
         assert.equal(body.success, false, endpoint);
         assert.match(body.message || body.error, /question|問題|必需/i, endpoint);
     }
+});
+
+test('紫微斗數一站式 API 拒絕缺少出生日期', async () => {
+    const response = await postJson('/api/ziwei-question', { question: '測試' });
+    const body = await response.json();
+
+    assert.equal(response.status, 400);
+    assert.equal(body.success, false);
+    assert.match(body.message || body.error, /出生日期|date/i);
 });
 
 test('塔羅一站式 API 拒絕未知牌陣', async () => {
@@ -73,13 +82,14 @@ test('姻緣一站式 API 拒絕未知模式', async () => {
     assert.match(body.message || body.error, /模式|mode/i);
 });
 
-test('四個一站式服務 API 都能完成計算、AI 回答與統一回應', async () => {
+test('所有一站式服務 API 都能完成計算、AI 回答與統一回應', async () => {
     const originalPost = axios.post;
     axios.post = async (_url, payload) => payload.input
         ? { data: { output: { text: '測試 AI 回答', finish_reason: 'stop' } } }
         : { data: { choices: [{ message: { content: '測試 AI 回答' }, finish_reason: 'stop' }] } };
 
     const requests = [
+        ['/api/ziwei-question', { question: '紫微測試', date: '1990-05-15', time: '12:00', sex: '男' }, 'chart'],
         ['/api/tarot-question', { question: '塔羅測試', spread: 'single', seed: 'route-test' }, 'reading'],
         ['/api/fengshui-question', { question: '風水測試', facing: '南', residentYear: 1990, sex: '女', year: 2026 }, 'report'],
         ['/api/bazi2-question', { question: '八字測試', date: '1990-01-01', time: '12:00', sex: '男' }, 'chart'],

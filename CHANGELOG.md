@@ -2,6 +2,35 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-08-28]
+
+### 🔮 新增正統紫微斗數獨立模組與排盤引擎（拒絕取巧與假數據）
+
+- **🏛️ 純 JavaScript 正統三合派安星排盤引擎 (`lib/ziwei.js`)**：
+  - **定命身宮與十二宮天干**：以生月及生時由寅宮起算定命宮與身宮地支；起寅首天干定十二宮干支。
+  - **定五行局**：依命宮干支納音五行精確確定水二局、木三局、金四局、土五局、火六局。
+  - **安紫微星與天府星系十四主星**：落實標準安紫微星訣（`q = ceil(d/n)`, `r = q*n - d`），安紫微六星（紫微、天機、太陽、武曲、天同、廉貞）與天府八星（天府、太陰、貪狼、巨門、天相、天梁、七殺、破軍）。
+  - **安六吉六煞與輔曜**：精確安文昌、文曲、左輔、右弼、天魁、天鉞、擎羊、陀羅、火星、鈴星、地空、地劫、祿存、天馬、紅鸞、天喜。
+  - **十四主星廟旺平陷**：完整十四主星在十二地支之廟旺平陷亮度矩陣。
+  - **十天干生年四化（祿權科忌）**：甲廉破武陽、乙機梁紫陰、丙同機昌廉、丁陰同機巨、戊貪陰右機、己武貪梁曲、庚陽武陰同、辛巨陽曲昌、壬梁紫左武、癸破巨陰貪。
+  - **大限與三方四正照會**：依陽男陰女順行、陰男陽女逆行排定各宮大限年齡；計算本宮、對宮（遷移/照會）、三合宮（財帛/官祿）與夾宮。
+  - **30+ 種吉凶格局自動判定**：紫府同宮、機月同梁、殺破狼、陽梁昌祿、火貪格、鈴貪格、昌曲同宮、左右同宮、天乙拱命、祿馬交馳、巨日同宮、月朗天門、日照雷門等。
+- **🧹 徹底重構月老姻緣紫微夫妻宮 (`lib/yinyuan.js`)**：
+  - 徹底移除過往取巧之 `% 14` 與 `% 4` mock 代碼，全面接入真實 `calculateZiweiChart` 排盤引擎，精確提取夫妻宮主星、廟旺亮度、輔煞星曜與生年四化。
+- **✨ 奇門遁甲 Consultant Skill 深度整合 (`skills/qimen-consultant/`)**：
+  - 導入 `references/ruleset-mainline.md`、`geju.md`、`yongshen.md`、`interview.md`、`examples.md` 規範文檔。
+  - 建置純 Node.js CLI 腳本 `scripts/qimen_cli.js`，輸出標準 `mainline-cn-v1` 規範結構。
+- **✨ 紫微斗數 Consultant Skill 與 CLI 工具 (`skills/ziwei-consultant/`)**：
+  - 建立完整技能包，包含 `SKILL.md`、`references/` 算法文檔、CLI 排盤工具 `scripts/ziwei_cli.js` 與 API 顧問腳本 `scripts/ask_ziwei.js`。
+- **✨ 易經風水 Consultant Skill 補齊 (`skills/fengshui-consultant/`)**：
+  - 補齊實戰案例 `examples/yangzhai.md` 與 `examples/zeri-example.md`。
+- **🌐 全介面 5 層參數端到端完全對齊**：
+  - **Web UI (`views/ziwei.html`, `views/*.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)**：建立 Claude 溫暖人文風格之紫微排盤專頁、十二宮傳統 4x4 棋盤佈局、星曜廟旺與四化發光徽章、格局展示卡片與 AI 解讀流；全站 Navbar 統一更新為 8 大模組。
+  - **API 端點 (`app.js`, `lib/llm-analysis.js`)**：新增 `/ziwei` 頁面路由、`POST /api/ziwei/chart`、`POST /api/ziwei-question`、`POST /api/ziwei/llm-analysis`。
+  - **WebMCP (`public/js/webmcp.js`)**：新增 `ziwei_chart` 工具與表單宣告式屬性。
+  - **MCP Bridge (`mcp-bridge.js`)**：新增 `ziwei_analysis` 工具支援。
+  - **測試與文件**：新增 `test/ziwei.test.js`，113 項測試全數通過（100% pass rate）；同步更新 `README.md`、`LLM-INTEGRATION.md` 與 `CHANGELOG.md`。
+
 ## [2026-08-27]
 
 ### 🎨 全站介面美感重構：導入 Claude 溫暖人文（Warm Intellectual）設計語言

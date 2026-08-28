@@ -10,6 +10,7 @@ const skills = [
     ['tarot-consultant', 'ask_tarot.js'],
     ['fengshui-consultant', 'ask_fengshui.js'],
     ['bazi2-consultant', 'ask_bazi2.js'],
+    ['ziwei-consultant', 'ask_ziwei.js'],
     ['yinyuan-consultant', 'ask_yinyuan.js'],
     ['answerbook-consultant', 'ask_answerbook.js']
 ];

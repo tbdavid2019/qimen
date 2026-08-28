@@ -8,17 +8,18 @@ function read(file) { return fs.readFileSync(path.join(root, file), 'utf8'); }
 
 test('README 與 LLM 文件列出解答之書一站式 API', () => {
     const text = `${read('README.md')}\n${read('LLM-INTEGRATION.md')}`;
-    for (const endpoint of ['tarot-question', 'fengshui-question', 'bazi2-question', 'yinyuan-question', 'answerbook-question']) {
+    for (const endpoint of ['ziwei-question', 'tarot-question', 'fengshui-question', 'bazi2-question', 'yinyuan-question', 'answerbook-question']) {
         assert.match(text, new RegExp(endpoint), endpoint);
     }
-    for (const skill of ['tarot-consultant', 'fengshui-consultant', 'bazi2-consultant', 'yinyuan-consultant', 'answerbook-consultant']) {
+    for (const skill of ['ziwei-consultant', 'tarot-consultant', 'fengshui-consultant', 'bazi2-consultant', 'yinyuan-consultant', 'answerbook-consultant']) {
         assert.match(text, new RegExp(skill), skill);
     }
 });
 
-test('所有主要頁面導覽都包含解答之書', () => {
-    for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
+test('所有主要頁面導覽都包含解答之書與紫微斗數', () => {
+    for (const file of ['views/index.html', 'views/meihua.html', 'views/ziwei.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
         assert.match(read(file), /href="\/answerbook"[^>]*>解答之書/, file);
+        assert.match(read(file), /href="\/ziwei"[^>]*>紫微斗數/, file);
     }
 });
 
