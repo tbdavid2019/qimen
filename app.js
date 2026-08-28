@@ -161,10 +161,12 @@ const handleYinyuanReading = async (req, res) => {
             }
             result = baziMatchFull(body.first || body, body.second || body);
         } else if (mode === 'zodiac') {
-            if (!body.firstZodiac && !body.firstYear && !body.secondZodiac && !body.secondYear) {
+            const first = body.firstZodiac || body.firstYear || body.first;
+            const second = body.secondZodiac || body.secondYear || body.second;
+            if (!first || !second) {
                 return res.status(400).json({ success: false, error: '請提供雙方生肖或出生年份以進行生肖配對' });
             }
-            result = zodiacMatch(body.firstZodiac || body.firstYear, body.secondZodiac || body.secondYear);
+            result = zodiacMatch(first, second);
         } else if (mode === 'fortune') {
             result = drawFortuneStick(body.question, body.name, body.seed, body.stickNum || body.fortuneStickNum);
         } else if (mode === 'ziwei-marriage' || mode === 'marriage-palace') {
@@ -1461,6 +1463,34 @@ app.get('/api/docs', (req, res) => {
                     conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
                 }
             },
+            ziweiQuestion: {
+                method: "POST",
+                path: "/api/ziwei-question",
+                description: "計算紫微斗數十二宮命盤、18經典格局與十干四化，並獲得專業 AI 命理解讀",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "要詢問的命理問題" },
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, default: "12:00", description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "命主性別" },
+                    calendar: { type: "string", required: false, default: "solar", enum: ["solar", "lunar"], description: "曆法" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
+                }
+            },
+            ziweiChart: {
+                method: "GET / POST",
+                path: "/api/ziwei/chart",
+                description: "獲取正統三合派紫微斗數排盤數據（十二宮、14主星、6吉6煞、四化、格局）",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, description: "傳統時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" }
+                }
+            },
             bazi2Question: {
                 method: "POST",
                 path: "/api/bazi2-question",
@@ -1470,6 +1500,7 @@ app.get('/api/docs', (req, res) => {
                     question: { type: "string", required: true, description: "要詢問的問題" },
                     date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
                     time: { type: "string", required: false, default: "12:00", description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
                     sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
                     calendar: { type: "string", required: false, default: "solar", enum: ["solar", "lunar"], description: "曆法" },
                     name: { type: "string", required: false, description: "姓名（可選）" },

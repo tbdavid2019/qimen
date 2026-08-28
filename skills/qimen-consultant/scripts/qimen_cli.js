@@ -64,36 +64,64 @@ function parseArgs() {
     const args = process.argv.slice(2);
     let inputFile = null;
     let outputFile = null;
+    let rawInline = null;
 
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--input' && args[i + 1]) {
             inputFile = args[++i];
         } else if (args[i] === '--output' && args[i + 1]) {
             outputFile = args[++i];
+        } else if (!args[i].startsWith('--')) {
+            rawInline = args[i];
         }
     }
 
-    return { inputFile, outputFile };
+    return { inputFile, outputFile, rawInline };
 }
 
-function readInput(inputFile) {
-    if (inputFile && fs.existsSync(inputFile)) {
-        return JSON.parse(fs.readFileSync(inputFile, 'utf-8'));
-    }
-    return {
+function readInput(inputFile, rawInline) {
+    const defaultData = {
         question: '綜合運勢分析',
         question_type: '綜合',
         time_input: null,
-        calendar_type: 'now',
+        calendar_type: 'solar',
         ruleset: 'mainline-cn-v1'
     };
+
+    if (inputFile) {
+        if (fs.existsSync(inputFile)) {
+            try {
+                return Object.assign(defaultData, JSON.parse(fs.readFileSync(inputFile, 'utf-8')));
+            } catch {}
+        }
+        try {
+            return Object.assign(defaultData, JSON.parse(inputFile));
+        } catch {}
+    }
+
+    if (rawInline) {
+        try {
+            return Object.assign(defaultData, JSON.parse(rawInline));
+        } catch {}
+    }
+
+    // Try reading from stdin if available synchronously
+    try {
+        const stdinBuf = fs.readFileSync(0, 'utf-8');
+        if (stdinBuf && stdinBuf.trim().startsWith('{')) {
+            return Object.assign(defaultData, JSON.parse(stdinBuf.trim()));
+        }
+    } catch {}
+
+    return defaultData;
 }
 
 function parseTargetDate(inputData) {
-    if (!inputData.time_input) return new Date();
+    const timeStr = inputData.time_input || inputData.datetime || inputData.date;
+    if (!timeStr) return new Date();
 
-    if (inputData.calendar_type === 'lunar' && typeof inputData.time_input === 'string') {
-        const parts = inputData.time_input.split(/[- :]/).map(Number);
+    if (inputData.calendar_type === 'lunar' && typeof timeStr === 'string') {
+        const parts = timeStr.split(/[- :T]/).map(Number);
         if (parts.length >= 3) {
             const lunar = Lunar.fromYmd(parts[0], parts[1], parts[2]);
             const solar = lunar.getSolar();
@@ -101,13 +129,13 @@ function parseTargetDate(inputData) {
         }
     }
 
-    return new Date(inputData.time_input);
+    return new Date(timeStr);
 }
 
 function run() {
     try {
-        const { inputFile, outputFile } = parseArgs();
-        const inputData = readInput(inputFile);
+        const { inputFile, outputFile, rawInline } = parseArgs();
+        const inputData = readInput(inputFile, rawInline);
         const targetDate = parseTargetDate(inputData);
 
         // 呼叫本地完整奇門排盤核心
@@ -181,7 +209,7 @@ function run() {
 
         const dayXun = getXun(panResult.siZhu?.day);
         const timeXun = getXun(panResult.siZhu?.time);
-        const hiddenYi = XUN_YI[panResult.xunShou] || '戊';
+        const hiddenYi = XUN_YI[timeXun] || XUN_YI[panResult.xunShou] || '戊';
 
         // 時干為甲時改用旬首隱儀定位落宮
         const effectiveTimeStem = timeStemChar === '甲' ? hiddenYi : timeStemChar;
