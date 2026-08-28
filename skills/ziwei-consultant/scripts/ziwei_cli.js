@@ -12,51 +12,79 @@ function parseArgs() {
     const args = process.argv.slice(2);
     let inputFile = null;
     let outputFile = null;
-
-    for (let i = 0; i < args.length; i++) {
-        if (args[i] === '--input' && args[i + 1]) {
-            inputFile = args[++i];
-        } else if (args[i] === '--output' && args[i + 1]) {
-            outputFile = args[++i];
-        }
-    }
-
-    return { inputFile, outputFile };
-}
-
-function readInput(inputFile) {
-    if (inputFile) {
-        if (fs.existsSync(inputFile)) {
-            return JSON.parse(fs.readFileSync(inputFile, 'utf-8'));
-        }
-        try {
-            return JSON.parse(inputFile);
-        } catch {
-            throw new Error(`無法讀取輸入檔案或 JSON: ${inputFile}`);
-        }
-    }
-
-    try {
-        const stdinBuffer = fs.readFileSync(0, 'utf-8');
-        if (stdinBuffer.trim()) {
-            return JSON.parse(stdinBuffer);
-        }
-    } catch {
-        // Fallback
-    }
-
-    return {
+    const params = {
         date: '1990-05-15',
         time: '12:00',
         sex: '男',
         calendar: 'solar'
     };
+
+    let rawInline = null;
+
+    for (let i = 0; i < args.length; i++) {
+        const arg = args[i];
+        if (arg === '--input' && args[i + 1]) {
+            inputFile = args[++i];
+        } else if (arg === '--output' && args[i + 1]) {
+            outputFile = args[++i];
+        } else if ((arg === '--date' || arg === '--solar') && args[i + 1]) {
+            params.date = args[++i];
+            params.calendar = 'solar';
+        } else if (arg === '--lunar' && args[i + 1]) {
+            params.date = args[++i];
+            params.calendar = 'lunar';
+        } else if (arg === '--time' && args[i + 1]) {
+            params.time = args[++i];
+        } else if (arg === '--hour' && args[i + 1]) {
+            params.hour = args[++i];
+        } else if (arg === '--shichen' && args[i + 1]) {
+            params.shichen = args[++i];
+        } else if (arg === '--sex' && args[i + 1]) {
+            params.sex = args[++i];
+        } else if (arg === '--place' && args[i + 1]) {
+            params.place = args[++i];
+        } else if (arg === '--longitude' && args[i + 1]) {
+            params.longitude = Number(args[++i]);
+        } else if (arg === '--latitude' && args[i + 1]) {
+            params.latitude = Number(args[++i]);
+        } else if (!arg.startsWith('--')) {
+            rawInline = arg;
+        }
+    }
+
+    return { inputFile, outputFile, rawInline, params };
+}
+
+function readInput(inputFile, rawInline, defaultParams) {
+    if (inputFile) {
+        if (fs.existsSync(inputFile)) {
+            return Object.assign({}, defaultParams, JSON.parse(fs.readFileSync(inputFile, 'utf-8')));
+        }
+        try {
+            return Object.assign({}, defaultParams, JSON.parse(inputFile));
+        } catch {}
+    }
+
+    if (rawInline) {
+        try {
+            return Object.assign({}, defaultParams, JSON.parse(rawInline));
+        } catch {}
+    }
+
+    try {
+        const stdinBuffer = fs.readFileSync(0, 'utf-8');
+        if (stdinBuffer.trim().startsWith('{')) {
+            return Object.assign({}, defaultParams, JSON.parse(stdinBuffer.trim()));
+        }
+    } catch {}
+
+    return defaultParams;
 }
 
 function run() {
     try {
-        const { inputFile, outputFile } = parseArgs();
-        const inputData = readInput(inputFile);
+        const { inputFile, outputFile, rawInline, params } = parseArgs();
+        const inputData = readInput(inputFile, rawInline, params);
 
         const chart = calculateZiweiChart(inputData);
         const jsonString = JSON.stringify(chart, null, 2);

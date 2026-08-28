@@ -111,3 +111,23 @@ test('所有一站式服務 API 都能完成計算、AI 回答與統一回應', 
         axios.post = originalPost;
     }
 });
+
+test('新 API 端點 /api/solar-time, /api/fengshui/shaqi-list, /api/fengshui/luantou 正常運作', async () => {
+    const resSolar = await fetch(`${baseUrl}/api/solar-time?date=2026-05-15&hour=12&minute=0&place=台北市`);
+    const dataSolar = await resSolar.json();
+    assert.equal(resSolar.status, 200);
+    assert.equal(dataSolar.success, true);
+    assert.ok(dataSolar.result.solarTimeFormatted);
+
+    const resShaqiList = await fetch(`${baseUrl}/api/fengshui/shaqi-list`);
+    const dataShaqiList = await resShaqiList.json();
+    assert.equal(resShaqiList.status, 200);
+    assert.equal(dataShaqiList.success, true);
+    assert.ok(dataShaqiList.list.length >= 20);
+
+    const resLuantou = await fetch(`${baseUrl}/api/fengshui/luantou?shaList=天斬煞,穿堂煞`);
+    const dataLuantou = await resLuantou.json();
+    assert.equal(resLuantou.status, 200);
+    assert.equal(dataLuantou.success, true);
+    assert.equal(dataLuantou.result.totalIssues, 2);
+});

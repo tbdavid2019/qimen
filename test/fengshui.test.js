@@ -46,3 +46,23 @@ test('協紀辨方擇日動態依建除十二神與神煞推選吉日並避開�
     assert.ok(zeri.sanShaWarning.includes('三煞'));
     assert.ok(zeri.auspiciousDates.length > 0);
 });
+
+test('形勢巒頭與空間六事 24 種煞氣庫與多重診斷完整支援', () => {
+    const { getAllShaQiLibrary, diagnoseShaqi, diagnoseLuantou } = require('../lib/fengshui');
+    const lib = getAllShaQiLibrary();
+    assert.ok(lib.length >= 20);
+    assert.ok(lib.some(s => s.name === '天斬煞'));
+    assert.ok(lib.some(s => s.name === '穿堂煞'));
+    assert.ok(lib.some(s => s.name === '樑壓床'));
+
+    const diag = diagnoseShaqi('天斬煞');
+    assert.equal(diag.shaType, '天斬煞');
+    assert.equal(diag.category, '外局形煞');
+    assert.ok(diag.remedy.length > 0);
+
+    const multi = diagnoseLuantou(['路沖煞', '穿堂煞', '樑壓灶']);
+    assert.equal(multi.totalIssues, 3);
+    assert.equal(multi.items.length, 3);
+    assert.ok(multi.summary.includes('外局形煞'));
+    assert.ok(multi.summary.includes('內局空間六事'));
+});

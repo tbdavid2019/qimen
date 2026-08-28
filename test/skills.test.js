@@ -37,3 +37,32 @@ test('Skill 腳本只使用 Node.js JavaScript，不依賴 Python', () => {
         assert.match(content, /fetch\(/, skillName);
     }
 });
+
+test('所有獨立 CLI 腳本（bazi, qimen, ziwei, fengshui, yinyuan, tarot）均可正常獨立執行', () => {
+    const { execSync } = require('child_process');
+
+    const fsStdout = execSync('node skills/fengshui-consultant/scripts/fengshui_cli.js --mode yangzhai --facing 南', { encoding: 'utf-8' });
+    const fsRes = JSON.parse(fsStdout);
+    assert.equal(fsRes.eightMansions.house, '坎宅');
+
+    const yyStdout = execSync('node skills/yinyuan-consultant/scripts/yinyuan_cli.js --mode fortune --seed 12345', { encoding: 'utf-8' });
+    const yyRes = JSON.parse(yyStdout);
+    assert.ok(yyRes.poem);
+
+    const zwStdout = execSync('node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --time 12:00', { encoding: 'utf-8' });
+    const zwRes = JSON.parse(zwStdout);
+    assert.equal(zwRes.bureau, '土五局');
+
+    const bzStdout = execSync('node skills/bazi2-consultant/scripts/bazi_cli.js --date 1990-05-15 --time 12:00', { encoding: 'utf-8' });
+    const bzRes = JSON.parse(bzStdout);
+    assert.equal(bzRes.fourPillars.length, 4);
+
+    const qmStdout = execSync('node skills/qimen-consultant/scripts/qimen_cli.js --time-input "2026-08-28 15:00:00"', { encoding: 'utf-8' });
+    const qmRes = JSON.parse(qmStdout);
+    assert.equal(qmRes.schema_version, 'mainline-cn-v1');
+    assert.ok(qmRes.chart.palaces.length === 9);
+
+    const trStdout = execSync('node skills/tarot-consultant/scripts/tarot_cli.js --spread three --seed 999', { encoding: 'utf-8' });
+    const trRes = JSON.parse(trStdout);
+    assert.equal(trRes.cards.length, 3);
+});

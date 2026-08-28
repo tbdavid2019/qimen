@@ -45,3 +45,33 @@ test('八字二 CLI 腳本可正常執行並輸出 JSON', () => {
     assert.equal(result.fourPillars.length, 4);
     assert.ok(result.shensha.length > 0);
 });
+
+test('天文經緯度真太陽時與均時差 (EOT) 校正精確性', () => {
+    const { calculateTrueSolarTime, CITY_COORDINATES } = require('../lib/solar-time');
+    assert.ok(CITY_COORDINATES['台北市']);
+    assert.ok(CITY_COORDINATES['北京']);
+    assert.ok(CITY_COORDINATES['香港']);
+
+    // 台北市（東經 121.5654）在 2026-05-15 12:00 的真太陽時
+    const tstTaipei = calculateTrueSolarTime({
+        date: '2026-05-15',
+        hour: 12,
+        minute: 0,
+        place: '台北市'
+    });
+    assert.equal(tstTaipei.place, '台北市');
+    assert.ok(tstTaipei.longitudeDiffMinutes > 6); // (121.5654 - 120) * 4 = +6.26 min
+    assert.ok(tstTaipei.solarTimeFormatted.includes(':'));
+
+    // 整合入八字排盤輸出
+    const chart = calculateBazi({
+        calendar: 'solar',
+        date: '1990-05-15',
+        time: '12:00',
+        sex: '男',
+        place: '台北市',
+        useSolarTime: true
+    });
+    assert.ok(chart.profile.solarTimeInfo);
+    assert.equal(chart.profile.solarTimeInfo.place, '台北市');
+});

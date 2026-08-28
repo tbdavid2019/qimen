@@ -346,20 +346,34 @@
                     </div>
                 </div>
             `;
-        } else if (result.favorableDirection && result.bestMonths) {
+        } else if (result.peachDirection || result.favorableDirection) {
             // 4. 桃花運勢
-            const bestMonthsHtml = (result.bestMonths || []).map((m) => `<span class="suite-tag auspicious">${escapeHtml(m)}</span>`).join(' ');
+            const pDir = result.peachDirection || result.favorableDirection;
+            const peakMonthsHtml = (result.peakMonths || result.bestMonths || []).map((m) => `<span class="suite-tag auspicious">${escapeHtml(m)}</span>`).join(' ');
+            const monthlyFlowHtml = (result.monthlyFlow || []).map((m) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:6px; padding:6px 10px; margin-bottom:4px; font-size:12px;">
+                    <span style="font-weight:700; color:var(--suite-text);">${escapeHtml(m.month)}</span>
+                    <span style="color:var(--suite-text-muted);">${escapeHtml(m.theme)}</span>
+                    <span class="suite-tag ${m.score >= 88 ? 'auspicious' : ''}">${escapeHtml(m.score)}分</span>
+                </div>
+            `).join('');
+
             contentHtml = `
                 <div class="zodiac-match-box">
-                    <div style="font-size:18px; font-weight:700; margin-bottom:8px; color:var(--suite-primary);">🌸 ${escapeHtml(result.zodiac || '')}年 · 桃花運勢預報</div>
-                    <div style="font-size:14px; margin-bottom:8px;">吉利桃花方位：<strong>${escapeHtml(result.favorableDirection)}</strong></div>
+                    <div style="font-size:18px; font-weight:700; margin-bottom:8px; color:var(--suite-primary);">🌸 ${escapeHtml(result.zodiac || '')}年生人 · 2026丙午年桃花運勢預報</div>
+                    <div style="font-size:14px; margin-bottom:8px;">正緣桃花方位：<strong>${escapeHtml(pDir)}</strong>（${escapeHtml(result.peachDesc || '')}）</div>
                     <div style="margin:10px 0;">
-                        <div style="font-size:12px; color:var(--suite-text-muted); margin-bottom:4px;">最旺桃花月份：</div>
-                        <div style="display:flex; flex-wrap:wrap; gap:6px;">${bestMonthsHtml}</div>
+                        <div style="font-size:12px; color:var(--suite-text-muted); margin-bottom:4px;">最佳結緣高峰月份：</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px;">${peakMonthsHtml}</div>
                     </div>
-                    <div style="font-size:12px; color:#ef4444; margin-bottom:10px;">需安靜沉澱月份：<strong>${escapeHtml(result.cautionMonth || '')}</strong></div>
+                    ${monthlyFlowHtml ? `
+                        <div style="margin:12px 0;">
+                            <div style="font-size:12px; font-weight:700; color:var(--suite-text-muted); margin-bottom:6px;">12個月桃花起伏曲線</div>
+                            <div style="max-height:160px; overflow-y:auto; padding-right:4px;">${monthlyFlowHtml}</div>
+                        </div>
+                    ` : ''}
                     <div style="background:rgba(255,255,255,0.03); border-radius:6px; padding:10px; font-size:13px; margin-top:6px;">
-                        <strong>💡 開運攻略：</strong>${escapeHtml(result.luckyTips || '')}
+                        <strong>💡 開運攻略：</strong>${escapeHtml(result.advice || result.luckyTips || '')}
                     </div>
                 </div>
             `;
@@ -386,15 +400,29 @@
                     <div style="font-size:13px; color:var(--suite-primary);">五行互補度：<strong>${escapeHtml(result.complementScore || '80%')}</strong></div>
                 </div>
             `;
-        } else if (result.profile && result.timeWindows) {
+        } else if (result.profile && (result.timeWindows || result.oracle)) {
             // 6. 紅線測算
             const p = result.profile || {};
-            const tw = result.timeWindows || {};
+            const oracle = result.oracle || {};
+            const timeWindowsList = Array.isArray(result.timeWindows) ? result.timeWindows : [];
+            const timeWindowsHtml = timeWindowsList.map((tw) => `
+                <div style="background:rgba(236,72,153,0.08); border-left:3px solid #ec4899; padding:8px 10px; border-radius:4px; margin-bottom:6px; font-size:12px;">
+                    <strong>📅 ${escapeHtml(tw.period)}</strong>（${escapeHtml(tw.trigger)}）：${escapeHtml(tw.advice)}
+                </div>
+            `).join('');
+
             contentHtml = `
                 <div class="zodiac-match-box">
                     <div style="font-size:18px; font-weight:700; color:var(--suite-primary); margin-bottom:10px;">
-                        🧵 紅線測算 · 你的正緣畫像
+                        🧵 紅線測算 · 你的正緣畫像與黃金時空
                     </div>
+                    ${oracle.poem ? `
+                        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:6px; padding:10px; margin-bottom:12px; font-size:13px; text-align:center;">
+                            <div style="color:#ec4899; font-weight:700; margin-bottom:4px;">🏮 月老籤詩神諭【第${escapeHtml(oracle.stickNumber || 1)}籤 · ${escapeHtml(oracle.type || '上吉')}】</div>
+                            <div style="font-size:15px; font-weight:700; color:var(--suite-text); margin-bottom:4px;">${escapeHtml(oracle.poem)}</div>
+                            <div style="font-size:12px; color:var(--suite-text-muted);">${escapeHtml(oracle.explanation || '')}</div>
+                        </div>
+                    ` : ''}
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; font-size:13px;">
                         <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px;">
                             <strong>性格特質：</strong>${escapeHtml(p.trait || '')}
@@ -409,11 +437,13 @@
                             <strong>相遇場景：</strong>${escapeHtml(p.scenario || '')}
                         </div>
                     </div>
-                    <div style="background:rgba(236,72,153,0.1); border-left:4px solid #ec4899; padding:10px; border-radius:4px; font-size:13px; margin-bottom:10px;">
-                        <strong>📅 最近紅線時機：</strong>${escapeHtml(tw.nearestRedThread || '')}<br>
-                        <strong>💍 最佳婚戀年份：</strong>${escapeHtml(tw.goldenMarriageYears || '')}
-                    </div>
-                    <div style="font-size:12px; color:var(--suite-text-muted);">💡 <strong>月老錦囊：</strong>${escapeHtml(result.advice || '')}</div>
+                    ${timeWindowsHtml ? `
+                        <div style="margin-bottom:10px;">
+                            <div style="font-size:12px; font-weight:700; color:var(--suite-text-muted); margin-bottom:6px;">三大黃金良緣時空窗口</div>
+                            ${timeWindowsHtml}
+                        </div>
+                    ` : ''}
+                    <div style="font-size:12px; color:var(--suite-text-muted); margin-top:8px;">💡 <strong>月老錦囊：</strong>${escapeHtml(result.advice || '')}</div>
                 </div>
             `;
         }

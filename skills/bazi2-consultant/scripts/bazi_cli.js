@@ -15,6 +15,8 @@ function parseArgs() {
         sex: '男'
     };
 
+    let rawInline = null;
+
     for (let i = 0; i < args.length; i++) {
         const arg = args[i];
         if ((arg === '--solar' || arg === '--date') && args[i + 1]) {
@@ -35,6 +37,12 @@ function parseArgs() {
             params.sex = args[++i];
         } else if (arg === '--place' && args[i + 1]) {
             params.place = args[++i];
+        } else if (arg === '--longitude' && args[i + 1]) {
+            params.longitude = Number(args[++i]);
+        } else if (arg === '--latitude' && args[i + 1]) {
+            params.latitude = Number(args[++i]);
+        } else if (arg === '--zi-mode' && args[i + 1]) {
+            params.ziMode = args[++i];
         } else if (arg === '--deceased-year' && args[i + 1]) {
             params.deceasedYear = args[++i];
         } else if (arg === '--allow-unknown-hour') {
@@ -49,8 +57,24 @@ function parseArgs() {
                     Object.assign(params, JSON.parse(fs.readFileSync(raw, 'utf-8')));
                 }
             }
+        } else if (!arg.startsWith('--')) {
+            rawInline = arg;
         }
     }
+
+    if (rawInline) {
+        try {
+            Object.assign(params, JSON.parse(rawInline));
+        } catch {}
+    }
+
+    // Try reading from stdin if available synchronously
+    try {
+        const stdinBuf = fs.readFileSync(0, 'utf-8');
+        if (stdinBuf && stdinBuf.trim().startsWith('{')) {
+            Object.assign(params, JSON.parse(stdinBuf.trim()));
+        }
+    } catch {}
 
     if (!params.date) {
         params.date = '1990-05-15';

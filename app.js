@@ -16,10 +16,11 @@ const DiscordWebhook = require('./lib/discord-webhook');
 const APITimeHandler = require('./lib/api-time-handler');
 const { parseCivilTime } = require('./lib/civil-time');
 const { drawCards, SPREADS: TAROT_SPREADS } = require('./lib/tarot');
-const { calculateFengShui, diagnoseShaqi, chooseZeri } = require('./lib/fengshui');
+const { calculateFengShui, diagnoseShaqi, diagnoseLuantou, getAllShaQiLibrary, chooseZeri } = require('./lib/fengshui');
 const { calculateBazi } = require('./lib/bazi2');
 const { calculateZiweiChart } = require('./lib/ziwei');
 const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
+const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time');
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
 const { AnswerBookClient, createAnswerbookQuestionHandler } = require('./lib/answerbook');
 
@@ -137,6 +138,40 @@ const handleFengshuiReport = async (req, res) => {
 };
 app.post('/api/fengshui/report', handleFengshuiReport);
 app.get('/api/fengshui/report', handleFengshuiReport);
+app.get('/api/fengshui/shaqi-list', (req, res) => res.json({ success: true, list: getAllShaQiLibrary() }));
+app.get('/api/fengshui/luantou', (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const list = payload.shaList ? (Array.isArray(payload.shaList) ? payload.shaList : String(payload.shaList).split(',')) : [payload.shaType || '天斬煞'];
+        const result = diagnoseLuantou(list);
+        res.json({ success: true, result });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+});
+app.post('/api/fengshui/luantou', (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const list = payload.shaList ? (Array.isArray(payload.shaList) ? payload.shaList : String(payload.shaList).split(',')) : [payload.shaType || '天斬煞'];
+        const result = diagnoseLuantou(list);
+        res.json({ success: true, result });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+});
+
+app.get('/api/solar-time', (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        if (!payload.date) return res.status(400).json({ success: false, error: '請提供 date (YYYY-MM-DD)' });
+        const result = calculateTrueSolarTime({
+            date: payload.date,
+            hour: Number(payload.hour) || 12,
+            minute: Number(payload.minute) || 0,
+            place: payload.place,
+            longitude: payload.longitude,
+            latitude: payload.latitude,
+            ziMode: payload.ziMode || 'early_late'
+        });
+        res.json({ success: true, result });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+});
 
 const handleBaziChart = async (req, res) => {
     try {

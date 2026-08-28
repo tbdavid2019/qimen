@@ -152,16 +152,33 @@
                 <!-- 模式2: 煞氣診斷 -->
                 <div id="fsGroupShaqi" class="fs-mode-group" style="display:none;">
                     <div class="suite-form-group">
-                        <label for="shaType">選擇疑似面臨的煞氣形態</label>
+                        <label for="shaType">選擇疑似面臨的煞氣形態（外局形煞 / 內局空間六事）</label>
                         <select class="form-control input-lg" id="shaType" name="shaType">
-                            <option value="路沖煞" selected>路沖煞（大門或陽台正對筆直長路）</option>
-                            <option value="天斬煞">天斬煞（兩棟高樓窄縫正對本宅窗戶）</option>
-                            <option value="壁刀煞">壁刀煞（鄰棟牆角如刀切般切向本宅）</option>
-                            <option value="反弓煞">反弓煞（道路或河流彎道弓背頂著住宅）</option>
-                            <option value="穿堂風">穿堂風（大門一開直對後門或落地陽台）</option>
-                            <option value="廁所衝財位">廁所衝財位（衛生間位於向星旺位或明財位）</option>
-                            <option value="橫梁壓頂">橫梁壓頂（床頭或沙發書桌上方有橫梁壓迫）</option>
-                            <option value="鏡對床">鏡對床（梳妝鏡或衣櫃鏡正對睡床）</option>
+                            <optgroup label="🏛️ 外局形煞 (建築與道路環境)">
+                                <option value="天斬煞" selected>天斬煞（兩棟高樓窄縫如刀劈正對窗戶）</option>
+                                <option value="路沖煞">路沖煞 / 槍煞（大門或陽台正對筆直長路或長廊）</option>
+                                <option value="壁刀煞">壁刀煞（鄰棟建築外牆邊角如刀切入本宅）</option>
+                                <option value="反弓煞">反弓煞 / 反弓水（道路或河流弧形彎道弓背頂宅）</option>
+                                <option value="鐮刀煞">鐮刀煞（高架橋或陸橋弧形彎道橫切中低樓層）</option>
+                                <option value="穿心煞">穿心煞（大樓下方有捷運地下道或大門直對立柱）</option>
+                                <option value="白虎煞">白虎煞（右側建築動土施工或右高左低欺青龍）</option>
+                                <option value="孤陽煞">孤陽煞（緊鄰廟宇/變電所/加油站，陽火燥烈）</option>
+                                <option value="獨陰煞">獨陰煞（緊鄰醫院/殯儀館/公墓/老舊廢墟）</option>
+                                <option value="探頭煞">探頭煞（前方建築後方露出更高建物一角如窺伺）</option>
+                                <option value="頂心煞">頂心煞（門前正對路燈桿、電線桿或大樹幹）</option>
+                                <option value="火形煞">火形煞（屋外正對高壓電塔、尖角屋頂或變壓器）</option>
+                            </optgroup>
+                            <optgroup label="🚪 內局空間六事 (格局與動線)">
+                                <option value="穿堂煞">穿堂煞（大門直對客廳落地窗/陽台，第一漏財格）</option>
+                                <option value="門沖床">門沖床（臥房房門直沖床頭或床身擾亂睡眠）</option>
+                                <option value="樑壓床">樑壓床（臥房床頭上方有橫樑壓頂）</option>
+                                <option value="橫樑壓頂">橫樑壓頂（沙發、書桌或辦公椅正上方有樑）</option>
+                                <option value="樑壓灶">樑壓灶 / 門沖灶（瓦斯爐上方有橫樑或與門直沖）</option>
+                                <option value="水火相沖">水火相沖（瓦斯爐與水槽緊鄰或正對冰箱）</option>
+                                <option value="廁居中宮">廁居中宮（衛生間浴廁位於房屋九宮正中心）</option>
+                                <option value="開門見灶">開門見灶（一進大門視線直見瓦斯爐灶）</option>
+                                <option value="開門見廁">開門見廁（一進大門正對洗手間衛生間門）</option>
+                            </optgroup>
                         </select>
                     </div>
                 </div>
