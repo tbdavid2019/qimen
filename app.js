@@ -243,6 +243,15 @@ function validateYinyuanQuestion(body) {
     if (!YINYUAN_MODES.has(mode)) {
         throw validationError('請選擇可用的姻緣測算模式', 'INVALID_MODE', 'mode');
     }
+    if ((mode === 'ziwei-marriage' || mode === 'marriage-palace') && !body.date && !body.birthDate) {
+        throw validationError('請提供出生日期（YYYY-MM-DD）以排定紫微夫妻宮', 'MISSING_BIRTH_DATE', 'date');
+    }
+    if (mode === 'fortune' && (body.stickNum || body.fortuneStickNum)) {
+        const num = Number(body.stickNum || body.fortuneStickNum);
+        if (!Number.isInteger(num) || num < 1 || num > 100) {
+            throw validationError('靈籤號碼需介於 1 到 100 之間', 'INVALID_STICK_NUM', 'stickNum');
+        }
+    }
     return {
         ...body,
         mode,

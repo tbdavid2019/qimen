@@ -8,6 +8,34 @@ const fs = require('fs');
 const path = require('path');
 const qimen = require(path.join(__dirname, '../../../lib/qimen.js'));
 
+const STAR_ELEMENTS = {
+    天蓬: '水', 天任: '土', 天沖: '木', 天輔: '木', 天禽: '土', 天英: '火', 天芮: '土', 天柱: '金', 天心: '金'
+};
+const DOOR_ELEMENTS = {
+    休門: '水', 生門: '土', 傷門: '木', 杜門: '木', 景門: '火', 死門: '土', 驚門: '金', 開門: '金'
+};
+const XUN_YI = {
+    甲子: '戊', 甲戌: '己', 甲申: '庚', 甲午: '辛', 甲辰: '壬', 甲寅: '癸'
+};
+const YIMA_MAP = {
+    申: { branch: '寅', palace: 8 }, 子: { branch: '寅', palace: 8 }, 辰: { branch: '寅', palace: 8 },
+    寅: { branch: '申', palace: 2 }, 午: { branch: '申', palace: 2 }, 戌: { branch: '申', palace: 2 },
+    巳: { branch: '亥', palace: 6 }, 酉: { branch: '亥', palace: 6 }, 丑: { branch: '亥', palace: 6 },
+    亥: { branch: '巳', palace: 4 }, 卯: { branch: '巳', palace: 4 }, 未: { branch: '巳', palace: 4 }
+};
+
+function getXun(ganzhi) {
+    if (!ganzhi || ganzhi.length < 2) return '甲子';
+    const stems = '甲乙丙丁戊己庚辛壬癸';
+    const branches = '子丑寅卯辰巳午未申酉戌亥';
+    const sIdx = stems.indexOf(ganzhi[0]);
+    const bIdx = branches.indexOf(ganzhi[1]);
+    if (sIdx === -1 || bIdx === -1) return '甲子';
+    const diff = (bIdx - sIdx + 12) % 12;
+    const xunBranches = { 0: '甲子', 10: '甲戌', 8: '甲申', 6: '甲午', 4: '甲辰', 2: '甲寅' };
+    return xunBranches[diff] || '甲子';
+}
+
 function parseArgs() {
     const args = process.argv.slice(2);
     let inputFile = null;
@@ -96,16 +124,38 @@ function run() {
                 element: gongElements[k] || '',
                 earth_stem: earthStem,
                 sky_stem: skyStem,
-                stem_relation: '比和',
+                stem_relation: skyStem && earthStem ? (skyStem === earthStem ? '比和' : '克應') : '常態',
                 star: star,
-                star_element: '',
+                star_element: star ? (STAR_ELEMENTS[star] || '土') : '',
                 door: i === 5 ? null : door,
-                door_element: '',
+                door_element: door ? (DOOR_ELEMENTS[door] || '木') : '',
                 god: i === 5 ? null : god,
                 is_center: i === 5,
                 hosts_center: i === 2
             });
         }
+
+        function findStemPalace(stem) {
+            if (!stem) return 1;
+            for (let i = 1; i <= 9; i++) {
+                if (panResult.sanQiLiuYi?.[String(i)] === stem) return i;
+            }
+            for (let i = 1; i <= 9; i++) {
+                if (panResult.diPan?.[String(i)] === stem) return i;
+            }
+            return 1;
+        }
+
+        const dayStemChar = panResult.siZhu?.day?.[0] || '';
+        const yearStemChar = panResult.siZhu?.year?.[0] || '';
+        const monthStemChar = panResult.siZhu?.month?.[0] || '';
+        const timeStemChar = panResult.siZhu?.time?.[0] || '';
+        const timeBranchChar = panResult.siZhu?.time?.[1] || panResult.siZhu?.day?.[1] || '子';
+
+        const dayXun = getXun(panResult.siZhu?.day);
+        const timeXun = getXun(panResult.siZhu?.time);
+        const hiddenYi = XUN_YI[panResult.xunShou] || '戊';
+        const yima = YIMA_MAP[timeBranchChar] || { branch: '寅', palace: 8 };
 
         const standardOutput = {
             schema_version: 'mainline-cn-v1',
@@ -126,36 +176,36 @@ function run() {
                 month: panResult.siZhu?.month || '',
                 day: panResult.siZhu?.day || '',
                 time: panResult.siZhu?.time || '',
-                day_xun: '',
-                time_xun: ''
+                day_xun: dayXun,
+                time_xun: timeXun
             },
             chart: {
                 dun_type: panResult.juShu?.type === 'yin' ? '陰遁' : '陽遁',
                 yuan: panResult.juShu?.yuan || '上元',
                 ju_number: Number(panResult.juShu?.number || 1),
                 xunshou: panResult.xunShou || '甲子',
-                hidden_yi: '戊',
+                hidden_yi: hiddenYi,
                 kongwang: panResult.kongWangZhi || [],
                 kongwang_palaces: panResult.kongWangGong || [],
-                day_kongwang: [],
-                day_kongwang_palaces: [],
-                time_stem_visible: panResult.siZhu?.time?.[0] || '',
+                day_kongwang: panResult.dayKongWangZhi || [],
+                day_kongwang_palaces: panResult.dayKongWangGong || [],
+                time_stem_visible: timeStemChar,
                 day_stem: {
-                    stem: panResult.siZhu?.day?.[0] || '',
-                    palace: 1,
+                    stem: dayStemChar,
+                    palace: findStemPalace(dayStemChar),
                     note: '求測者本人落宮'
                 },
                 year_stem: {
-                    stem: panResult.siZhu?.year?.[0] || '',
-                    palace: 9,
+                    stem: yearStemChar,
+                    palace: findStemPalace(yearStemChar),
                     note: '太歲/主管/大環境落宮'
                 },
                 month_stem: {
-                    stem: panResult.siZhu?.month?.[0] || '',
-                    palace: 3,
+                    stem: monthStemChar,
+                    palace: findStemPalace(monthStemChar),
                     note: '同輩/競爭對手落宮'
                 },
-                yima: { branch: '申', palace: 2 },
+                yima: yima,
                 zhifu: { palace: Number(panResult.zhiFuGong || 1), star: panResult.zhiFuXing || '天蓬' },
                 zhishi: { palace: Number(panResult.zhiShiGong || 1), door: panResult.zhiShiMen || '休門' },
                 door_index: doorIndex,
