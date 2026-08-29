@@ -55,7 +55,7 @@
 		qimen_divination: {
 			name: "qimen_divination",
 			description:
-				"奇門遁甲即時起盤與 AI 大師深度解讀。請提供具體問題與分析目的（如事業、財運、婚姻、健康、學業），將為您排盤並透過大師深度分析。",
+				"奇門遁甲即時起盤與解讀。請提供具體問題與分析目的（如事業、財運、婚姻、健康、學業），取得盤面與可執行建議。",
 			inputSchema: {
 				type: "object",
 				properties: {
@@ -149,7 +149,43 @@
 			},
 		},
 
-		// 2. 奇門遁甲自定義排盤
+		// 2. 奇門遁甲針對目前盤面追問
+		qimen_question: {
+			name: "qimen_question",
+			description: "針對目前頁面上的奇門遁甲盤面提出問題，取得直接解讀與行動建議。",
+			inputSchema: {
+				type: "object",
+				properties: {
+					question: { type: "string", description: "想針對目前盤面詢問的具體問題" },
+					purpose: { type: "string", enum: ["綜合", "求財", "事業", "感情", "考試", "健康", "出行", "官司"], description: "占問事項類別" },
+					conversationHistory: { type: "array", description: "可選的續問對話歷史" },
+					lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" }
+				},
+				required: ["question"]
+			},
+			annotations: { readOnlyHint: false, untrustedContentHint: false },
+			execute: async (args) => {
+				const question = args?.question ? String(args.question).trim() : "";
+				if (!question) throw new Error("請提供問題內容 (question)");
+				const payload = {
+					qimenData: typeof window !== "undefined" ? window.qimenData || {} : {},
+					userQuestion: question,
+					purpose: args?.purpose || "綜合",
+					conversationHistory: args?.conversationHistory || [],
+					lang: args?.lang || "zh-tw"
+				};
+				const res = await fetch("/api/llm-analysis", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload)
+				});
+				const data = await res.json();
+				if (!data.success) throw new Error(data.message || data.error || "奇門解讀失敗");
+				return data.analysis || data.answer || "";
+			}
+		},
+
+		// 3. 奇門遁甲自定義排盤
 		qimen_custom_paipan: {
 			name: "qimen_custom_paipan",
 			description:
@@ -328,7 +364,7 @@
 			},
 		},
 
-		// 6. 梅花易數時間起卦
+		// 7. 梅花易數時間起卦
 		meihua_qigua_time: {
 			name: "meihua_qigua_time",
 			description:
@@ -347,7 +383,7 @@
 				readOnlyHint: false,
 				untrustedContentHint: false,
 			},
-			execute: async (args) => {
+				execute: async (args) => {
 				const customDateTime = args?.datetime ? args.datetime : null;
 				showAgentFeedback("梅花易數時間起卦中...");
 
@@ -355,7 +391,8 @@
 				if (customDateTime) {
 					const parsed = new Date(customDateTime);
 					payload = {
-						method: "custom_time",
+						method: "time",
+						datetime: customDateTime,
 						customDateTime: customDateTime,
 						userDateTime: customDateTime,
 						timestamp: parsed.getTime(),
@@ -388,7 +425,7 @@
 					throw new Error(data.message || "梅花起卦失敗");
 				}
 
-				if (typeof window.updateResult === "function") {
+				if (typeof window !== "undefined" && typeof window.updateResult === "function") {
 					window.updateResult(data.data);
 				}
 
@@ -397,7 +434,7 @@
 			},
 		},
 
-		// 7. 梅花易數數字起卦
+		// 8. 梅花易數數字起卦
 		meihua_qigua_numbers: {
 			name: "meihua_qigua_numbers",
 			description:
@@ -441,7 +478,7 @@
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-						method: "numbers",
+						method: "number",
 						num1,
 						num2,
 						num3,
@@ -452,7 +489,7 @@
 					throw new Error(data.message || "梅花數字起卦失敗");
 				}
 
-				if (typeof window.updateResult === "function") {
+				if (typeof window !== "undefined" && typeof window.updateResult === "function") {
 					window.updateResult(data.data);
 				}
 
@@ -502,7 +539,7 @@
 					throw new Error(data.message || "梅花漢字起卦失敗");
 				}
 
-				if (typeof window.updateResult === "function") {
+				if (typeof window !== "undefined" && typeof window.updateResult === "function") {
 					window.updateResult(data.data);
 				}
 
@@ -511,11 +548,61 @@
 			},
 		},
 
-		// 9. 梅花易數大師解卦
+		// 10. 梅花易數目前卦象追問
+		meihua_question: {
+			name: "meihua_question",
+			description: "針對目前梅花易數卦象提出問題，取得卦象解讀與行動建議。",
+			inputSchema: {
+				type: "object",
+				properties: {
+					question: { type: "string", description: "想針對目前卦象詢問的具體問題" },
+					purpose: { type: "string", enum: ["綜合", "求財", "事業", "感情", "考試", "健康", "出行", "官司"], description: "占問事項類別" },
+					conversationHistory: { type: "array", description: "可選的續問對話歷史" },
+					lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" }
+				},
+				required: ["question"]
+			},
+			annotations: { readOnlyHint: false, untrustedContentHint: false },
+			execute: async (args) => {
+				const question = args?.question ? String(args.question).trim() : "";
+				if (!question) throw new Error("請提供問題內容 (question)");
+				let meihuaData = typeof window !== "undefined" ? window.currentMeihuaData : null;
+				if (!meihuaData) {
+					const qiguaRes = await fetch("/api/meihua/qigua", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ method: "time", userDateTime: new Date().toISOString() })
+					});
+					const qiguaData = await qiguaRes.json();
+					if (!qiguaData.success) throw new Error(qiguaData.error || "梅花起卦失敗");
+					meihuaData = qiguaData.data;
+					if (typeof window !== "undefined") {
+						window.currentMeihuaData = meihuaData;
+						if (typeof window.updateResult === "function") window.updateResult(meihuaData);
+					}
+				}
+				const res = await fetch("/api/meihua/llm-analysis", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						meihuaData,
+						userQuestion: question,
+						purpose: args?.purpose || "綜合",
+						conversationHistory: args?.conversationHistory || [],
+						lang: args?.lang || "zh-tw"
+					})
+				});
+				const data = await res.json();
+				if (!data.success) throw new Error(data.message || data.error || "梅花解讀失敗");
+				return data.analysis || data.answer || "";
+			}
+		},
+
+		// 11. 梅花易數完整解卦
 		meihua_divination: {
 			name: "meihua_divination",
 			description:
-				"梅花易數大師解卦。輸入問題與占卜目的（支援時間起卦、數字起卦、漢字起卦），結合五卦全息象數進行深度解答與吉凶決策建議。",
+				"梅花易數解卦。輸入問題與占卜目的（支援時間起卦、數字起卦、漢字起卦），結合五卦全息象數提供解答與行動建議。",
 			inputSchema: {
 				type: "object",
 				properties: {
@@ -525,8 +612,8 @@
 					},
 					method: {
 						type: "string",
-						enum: ["time", "numbers", "text"],
-						description: "起卦方式（time 時間起卦, numbers 數字起卦, text 漢字起卦，預設 time）",
+						enum: ["time", "number", "text"],
+						description: "起卦方式（time 時間起卦, number 數字起卦, text 漢字起卦，預設 time）",
 					},
 					text: {
 						type: "string",
@@ -567,7 +654,7 @@
 				}
 				const purpose = args?.purpose || "綜合";
 
-				showAgentFeedback(`梅花大師解卦中：「${question}」`);
+				showAgentFeedback(`梅花解卦中：「${question}」`);
 
 				const res = await fetch("/api/meihua-question", {
 					method: "POST",
@@ -590,7 +677,7 @@
 					return `解卦失敗：${errMsg}`;
 				}
 
-				showAgentFeedback("梅花大師解卦完成！");
+				showAgentFeedback("梅花解卦完成！");
 				return data.answer;
 			},
 		},
@@ -619,7 +706,7 @@
 	}
 
 	Object.assign(toolDefinitions, {
-		ziwei_chart: createSuiteTool("ziwei_chart", "紫微斗數安星排盤、十二宮位、十四主星廟旺、生年四化、大限流年與 AI 命理解讀。", "/api/ziwei-question", {
+		ziwei_chart: createSuiteTool("ziwei_chart", "紫微斗數安星排盤、十二宮位、十四主星廟旺、生年四化、大限流年與命理解讀。", "/api/ziwei-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的命理諮詢問題" },
@@ -635,7 +722,7 @@
 			},
 			required: ["question", "date"]
 		}),
-		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與 AI 深度解讀（78張牌、6大牌陣與四維透鏡）。", "/api/tarot-question", {
+		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與解讀（78張牌、6大牌陣與四維透鏡）。", "/api/tarot-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的問題" },
@@ -644,13 +731,13 @@
 				time_factor: { type: "string", enum: ["morning", "afternoon", "night"], description: "時間能量因子加權" },
 				timeFactor: { type: "string", enum: ["morning", "afternoon", "night"] },
 				seed: { type: "string", description: "可選的可重現抽牌種子" },
-				cards: { type: "array", description: "可選的自選指定牌組陣列" },
+				cards: { type: "array", description: "手動指定牌組（可選）" },
 				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
 				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
 			},
 			required: ["question"]
 		}),
-		fengshui_report: createSuiteTool("fengshui_report", "八宅、九運與流年飛星、形煞化解及協紀辨方擇日風水報告與 AI 建議。", "/api/fengshui-question", {
+		fengshui_report: createSuiteTool("fengshui_report", "八宅、九運與流年飛星、形煞化解及協紀辨方擇日風水報告與行動建議。", "/api/fengshui-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的空間或擇日問題" },
@@ -660,8 +747,8 @@
 				residentYear: { type: "integer", minimum: 1, maximum: 9999, description: "主要居住者出生年（陽宅模式）" },
 				sex: { type: "string", enum: ["男", "女"], description: "主要居住者性別" },
 				year: { type: "integer", minimum: 1, maximum: 9999, description: "分析流年" },
-				shaType: { type: "string", enum: ["road_rush", "tianzan", "bidau", "fangong", "chuangtang", "beam", "mirror"], description: "形煞類型（形煞模式）" },
-				matter: { type: "string", enum: ["movein", "open", "renovate", "marry"], description: "擇日事項（擇日模式）" },
+				shaType: { type: "string", enum: ["天斬煞", "路沖煞", "槍煞", "壁刀煞", "反弓煞", "反弓水", "鐮刀煞", "穿心煞", "白虎煞", "孤陽煞", "獨陰煞", "探頭煞", "頂心煞", "火形煞", "穿堂煞", "門沖床", "樑壓床", "橫樑壓頂", "樑壓灶", "門沖灶", "水火相沖", "廁居中宮", "開門見灶", "開門見廁"], description: "形煞類型（形煞模式）" },
+				matter: { type: "string", enum: ["入宅/喬遷", "開業/開市", "動土/修造", "嫁娶/結婚", "open", "renovate", "marry"], description: "擇日事項（擇日模式）" },
 				zeriYear: { type: "integer", description: "擇日目標年份（擇日模式）" },
 				zeriMonth: { type: "integer", minimum: 1, maximum: 12, description: "擇日目標月份（擇日模式）" },
 				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
@@ -669,7 +756,7 @@
 			},
 			required: ["question"]
 		}),
-		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、十神藏干、神煞、旺衰格局與 AI 命理解讀。", "/api/bazi2-question", {
+		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、十神藏干、神煞、旺衰格局與命理解讀。", "/api/bazi2-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的命理問題" },
@@ -689,11 +776,11 @@
 			},
 			required: ["question", "date"]
 		}),
-		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣籤（100籤）、生肖配對、紫微夫妻宮、桃花運勢、八字合婚與紅線測算 AI 指引。", "/api/yinyuan-question", {
+		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣籤（100籤）、生肖配對、紫微夫妻宮、桃花運勢、八字合婚與紅線測算指引。", "/api/yinyuan-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的感情問題" },
-				mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "ziwei", "ziwei-marriage", "taohua", "peach-blossom"], description: "姻緣測算模式" },
+				mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "ziwei-marriage", "peach-blossom", "taohua-luck"], description: "姻緣測算模式" },
 				firstYear: { type: "integer", minimum: 1, maximum: 9999, description: "第一人的出生年" },
 				secondYear: { type: "integer", minimum: 1, maximum: 9999, description: "第二人的出生年" },
 				firstZodiac: { type: "string", description: "第一人的生肖" },
@@ -754,6 +841,7 @@
 				toolDefinitions.meihua_qigua_time,
 				toolDefinitions.meihua_qigua_numbers,
 				toolDefinitions.meihua_qigua_text,
+				toolDefinitions.meihua_question,
 				toolDefinitions.meihua_divination,
 				toolDefinitions.switch_theme,
 			];
@@ -764,11 +852,13 @@
 			// Default / or /custom
 			toolsToRegister = [
 				toolDefinitions.qimen_divination,
+				toolDefinitions.qimen_question,
 				toolDefinitions.qimen_custom_paipan,
 				toolDefinitions.get_current_pan,
 				toolDefinitions.switch_time_mode,
 				toolDefinitions.switch_theme,
 				toolDefinitions.meihua_qigua_time,
+				toolDefinitions.meihua_qigua_numbers,
 				toolDefinitions.meihua_qigua_text,
 				toolDefinitions.meihua_divination,
 			];
@@ -797,6 +887,52 @@
 	/**
 	 * Setup Declarative WebMCP Form Listeners and Window Tool Events
 	 */
+	function readDeclarativeForm(form) {
+		const values = {};
+		for (const [key, value] of new FormData(form).entries()) {
+			if (Object.prototype.hasOwnProperty.call(values, key)) {
+				values[key] = Array.isArray(values[key]) ? [...values[key], value] : [values[key], value];
+			} else {
+				values[key] = value;
+			}
+		}
+
+		const toolName = form.getAttribute("toolname");
+		if (toolName === "meihua_qigua_time") {
+			if (values.timeMode !== "custom") delete values.customDateTime;
+			delete values.timeMode;
+		}
+		if (toolName === "fengshui_report" && values.zeriMatter) values.matter = values.zeriMatter;
+		if (toolName === "yinyuan_reading") {
+			const aliases = {
+				fortuneName: "name", fortuneSex: "sex", fortuneStickNum: "stickNum", fortuneBirthDate: "birthDate", fortuneStatus: "status",
+				ziweiName: "name", ziweiSex: "sex", ziweiCalendar: "calendar", ziweiDate: "date", ziweiShichen: "shichen", ziweiStatus: "status",
+				taohuaBirthDate: "birthDate", taohuaYear: "firstYear", taohuaSex: "sex", taohuaStatus: "status", taohuaScope: "scope",
+				zodiacRelationStage: "stage"
+			};
+			for (const [source, target] of Object.entries(aliases)) {
+				if (values[source] !== undefined && values[source] !== "") values[target] = values[source];
+				delete values[source];
+			}
+			if (values.mode === "bazi-match") {
+				values.first = { name: values.bmName1, sex: values.bmSex1, calendar: values.bmCal1, date: values.bmDate1, time: values.bmTime1 };
+				values.second = { name: values.bmName2, sex: values.bmSex2, calendar: values.bmCal2, date: values.bmDate2, time: values.bmTime2 };
+				values.stage = values.bmStage;
+			} else if (values.mode === "red-thread") {
+				values.time = values.rtShichen;
+				values.calendar = values.rtCalendar;
+				values.date = values.rtDate;
+				values.name = values.rtName;
+				values.sex = values.rtSex;
+				values.seekingSex = values.rtSeekingSex;
+				values.status = values.rtStatus;
+				values.preference = values.rtPreference;
+			}
+			for (const key of Object.keys(values)) if (/^(bm|rt)/.test(key)) delete values[key];
+		}
+		return values;
+	}
+
 	function setupDeclarativeListeners() {
 		if (typeof window === "undefined" || typeof document === "undefined")
 			return;
@@ -828,12 +964,12 @@
 						"[WebMCP] Declarative form submitted by AI Agent:",
 						toolName,
 					);
-					if (typeof event.respondWith === "function") {
-						const responsePromise = Promise.resolve(
-							`Form ${toolName} processed successfully`,
-						);
-						event.respondWith(responsePromise);
-					}
+					event.preventDefault();
+					const tool = toolDefinitions[toolName];
+					const responsePromise = tool
+						? tool.execute(readDeclarativeForm(form))
+						: Promise.reject(new Error(`找不到 WebMCP 工具：${toolName}`));
+					if (typeof event.respondWith === "function") event.respondWith(responsePromise);
 				}
 			},
 			true,

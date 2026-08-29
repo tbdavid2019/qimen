@@ -386,7 +386,7 @@ body.suite-page {
 
 .tarot-pos-badge {
     display: inline-block;
-    font-size: 12px;
+    font-size: var(--type-caption);
     font-weight: 600;
     padding: 2px 8px;
     border-radius: 10px;
@@ -396,7 +396,7 @@ body.suite-page {
 }
 
 .tarot-card-name {
-    font-size: 18px;
+    font-size: var(--type-display);
     font-weight: 700;
     margin: 6px 0;
     color: var(--suite-text);
@@ -404,7 +404,7 @@ body.suite-page {
 
 .tarot-orientation {
     display: inline-block;
-    font-size: 12px;
+    font-size: var(--type-caption);
     font-weight: 600;
     padding: 2px 10px;
     border-radius: 12px;
@@ -589,7 +589,7 @@ body.suite-page {
 }
 
 .fengshui-flying-star {
-    font-size: 12px;
+    font-size: var(--type-meta);
     color: var(--suite-text-muted);
 }
 
@@ -842,7 +842,7 @@ body.suite-page {
 .answerbook-mode-btn span {
     margin-top: 4px;
     color: var(--suite-text-muted);
-    font-size: 12px;
+    font-size: var(--type-caption);
 }
 
 .answerbook-answer-card {
@@ -856,7 +856,7 @@ body.suite-page {
 
 .answerbook-answer-label {
     color: var(--suite-text-muted);
-    font-size: 12px;
+    font-size: var(--type-caption);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -975,13 +975,13 @@ body.suite-page {
 }
 
 .ziwei-palace-name {
-    font-size: 13px;
+    font-size: var(--type-label);
     font-weight: 700;
     color: var(--suite-primary);
 }
 
 .ziwei-palace-ganzhi {
-    font-size: 12px;
+    font-size: var(--type-caption);
     color: var(--suite-text-muted);
 }
 
@@ -993,7 +993,7 @@ body.suite-page {
 }
 
 .ziwei-star-item {
-    font-size: 13px;
+    font-size: var(--type-meta);
     font-weight: 600;
     display: flex;
     align-items: center;

@@ -35,18 +35,18 @@
     --claude-shadow-md: 0 8px 24px rgba(74, 58, 42, 0.07), 0 2px 6px rgba(74, 58, 42, 0.03);
     --claude-shadow-lg: 0 16px 40px rgba(74, 58, 42, 0.09), 0 4px 12px rgba(74, 58, 42, 0.04);
 
-    /* 共用字級 token：元件只引用語意，層次協調、不再呼大呼小。 */
-    --type-body: 15px;
-    --type-reading: 16px;
-    --type-label: 15px;
-    --type-meta: 14px;
-    --type-caption: 13px;
-    --type-micro: 12px;
-    --type-display: 16px;
-    --type-panel-title: 17px;
-    --type-hero-title: 28px;
-    --leading-body: 1.6;
-    --leading-reading: 1.75;
+    /* 共用字級 token：大字清晰、舒適閱讀、全站統一 */
+    --type-hero-title: 32px;
+    --type-panel-title: 20px;
+    --type-display: 18px;
+    --type-body: 18px;
+    --type-reading: 17px;
+    --type-label: 16px;
+    --type-meta: 15px;
+    --type-caption: 14px;
+    --type-micro: 13px;
+    --leading-body: 1.7;
+    --leading-reading: 1.8;
 }
 
 body {
@@ -1429,24 +1429,24 @@ body {
     padding: 10px;
 }
 .gong-details .col-md-4 {
-    padding-left: 6px;
-    padding-right: 6px;
-    margin-bottom: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-bottom: 16px;
 }
 .gong-details .panel {
-    border-radius: 12px;
+    border-radius: 14px;
     border: 1px solid var(--claude-border, #E8E0D6);
     background: var(--claude-card, #fff);
     box-shadow: var(--claude-shadow-xs);
     overflow: hidden;
 }
 .gong-details .panel-heading {
-    padding: 9px 12px;
+    padding: 12px 16px;
     background: var(--claude-bg-subtle, #FAF7F2);
     border-bottom: 1px solid var(--claude-border, #E8E0D6);
 }
 .gong-details .panel-title {
-    font-size: 15px !important;
+    font-size: var(--type-display) !important;
     font-weight: 700 !important;
     line-height: 1.4 !important;
     margin: 0 !important;
@@ -1456,20 +1456,20 @@ body {
     color: var(--claude-text-main, #2C221E) !important;
 }
 .gong-details .panel-title .label {
-    font-size: 12px !important;
+    font-size: var(--type-caption) !important;
     font-weight: 600 !important;
-    padding: 2px 7px !important;
+    padding: 3px 8px !important;
     border-radius: 6px !important;
 }
 .gong-details .panel-body {
-    padding: 10px 12px !important;
-    font-size: 14px !important;
-    line-height: 1.55 !important;
+    padding: 14px 16px !important;
+    font-size: var(--type-reading) !important;
+    line-height: var(--leading-body) !important;
 }
 .gong-details .panel-body p {
-    margin-bottom: 5px !important;
-    font-size: 14px !important;
-    line-height: 1.55 !important;
+    margin-bottom: 6px !important;
+    font-size: var(--type-reading) !important;
+    line-height: var(--leading-body) !important;
     color: var(--claude-text-body, #4A3F39);
 }
 .gong-details .panel-body p strong {
@@ -1477,10 +1477,10 @@ body {
     color: var(--claude-text-main, #2C221E);
 }
 .gong-explain {
-    font-size: 13.5px !important;
-    line-height: 1.6 !important;
-    margin-top: 8px !important;
-    padding-top: 8px !important;
+    font-size: var(--type-reading) !important;
+    line-height: var(--leading-reading) !important;
+    margin-top: 10px !important;
+    padding-top: 10px !important;
     border-top: 1px dashed var(--claude-border, #E8E0D6);
     color: var(--claude-text-body, #4A3F39) !important;
 }
