@@ -4,6 +4,11 @@
 
 ## [2026-08-29]
 
+### 🧩 WebMCP 宣告式表單避免重複註冊
+
+- 修正首頁 `qimen_question` 與 `qimen_custom_paipan` 同時被 HTML 宣告式表單和 JavaScript imperative API 註冊，造成 Chrome `Duplicate tool name` 的問題。
+- 註冊器現在會辨識頁面上的 `form[toolname]`，交由 Chrome 處理宣告式工具，JavaScript 僅註冊沒有宣告式表單的工具；重複呼叫註冊流程也不會再次註冊已成功的工具。
+
 ### 📱 手機版導覽改為直接可滑動功能列
 
 - 移除手機版漢堡選單的可見入口，改為品牌列下方的橫向滑動導覽列，主要模組與右側工具仍可直接觸達。

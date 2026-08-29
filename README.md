@@ -133,6 +133,7 @@
 本系統支援 Chrome WebMCP 規範：
 - 開啟支援 WebMCP 的瀏覽器（如 Chrome 150+ 或啟用 `chrome://flags/#enable-webmcp-testing`）
 - 瀏覽器內建代理或擴充套件即可透過 `document.modelContext` 自動探索並執行網頁工具；工具 schema 與 API 使用同一組 canonical enum。
+- 頁面上的 `toolname` 宣告式表單由瀏覽器直接註冊；共用 JavaScript 註冊器會自動跳過同名工具，避免重複註冊錯誤。
 
 ### 2. 零依賴 MCP Bridge (JSON-RPC stdio)
 供 Claude Desktop、Cursor 或任意 MCP Client 使用：

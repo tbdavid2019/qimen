@@ -186,6 +186,13 @@ test("宣告式 WebMCP 事件會執行工具而非回傳假成功訊息", () => 
 	assert.doesNotMatch(source, /Form \$\{toolName\} processed successfully/);
 });
 
+test("WebMCP 註冊器會跳過已有宣告式表單的同名工具", () => {
+	const source = read("public/js/webmcp.js");
+	assert.match(source, /document\.querySelectorAll\("form\[toolname\]"\)/);
+	assert.match(source, /declarativeToolNames\.has\(tool\.name\)/);
+	assert.match(source, /InvalidStateError: Duplicate tool name/);
+});
+
 test("術數套件頁面都提供宣告式 WebMCP 表單欄位", () => {
 	const pages = {
 		ziwei: ["ziweiQuestion", "ziweiDate"],

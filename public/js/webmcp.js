@@ -839,6 +839,17 @@
 	let registeredTools = [];
 	const abortControllers = [];
 
+	function getDeclarativeToolNames() {
+		if (typeof document === "undefined" || typeof document.querySelectorAll !== "function") {
+			return new Set();
+		}
+		return new Set(
+			Array.from(document.querySelectorAll("form[toolname]"))
+				.map((form) => form.getAttribute("toolname"))
+				.filter(Boolean),
+		);
+	}
+
 	async function registerAllTools() {
 		const mc = getModelContext();
 		if (!mc || typeof mc.registerTool !== "function") {
@@ -878,9 +889,17 @@
 			];
 		}
 
-		registeredTools = [];
+		const declarativeToolNames = getDeclarativeToolNames();
+		const declarativeTools = [];
 		for (let i = 0; i < toolsToRegister.length; i++) {
 			const tool = toolsToRegister[i];
+			if (declarativeToolNames.has(tool.name)) {
+				// Chrome registers forms with toolname declaratively. Registering the
+				// same name imperatively causes InvalidStateError: Duplicate tool name.
+				declarativeTools.push(tool.name);
+				continue;
+			}
+			if (registeredTools.includes(tool.name)) continue;
 			try {
 				const controller = new AbortController();
 				abortControllers.push(controller);
@@ -892,8 +911,9 @@
 		}
 
 		console.log(
-			`[WebMCP] Successfully registered ${registeredTools.length} tools:`,
-			registeredTools,
+			`[WebMCP] Successfully registered ${registeredTools.length} imperative tools; ` +
+			`${declarativeTools.length} declarative form tools left to Chrome:`,
+			{ imperative: registeredTools, declarative: declarativeTools },
 		);
 		return true;
 	}
