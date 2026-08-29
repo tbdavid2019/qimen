@@ -43,7 +43,8 @@ body.suite-page {
     color: var(--suite-text);
     padding-top: 72px;
     padding-bottom: 60px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    font-size: 16px;
+    font-family: "LXGW WenKai Mono TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
 }
@@ -65,7 +66,7 @@ body.suite-page {
     display: inline-block;
     padding: 4px 14px;
     border-radius: 20px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     background: rgba(204, 107, 73, 0.12);
     color: var(--suite-primary);
@@ -74,14 +75,14 @@ body.suite-page {
 }
 
 .suite-hero h1 {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 700;
     margin: 0 0 8px;
     color: var(--suite-text);
 }
 
 .suite-hero-subtitle {
-    font-size: 14.5px;
+    font-size: 16px;
     color: var(--suite-text-muted);
     max-width: 680px;
     margin: 0 auto;
@@ -106,7 +107,7 @@ body.suite-page {
 
 .suite-form-group label {
     display: block;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     margin-bottom: 6px;
     color: var(--suite-text);
@@ -121,7 +122,7 @@ body.suite-page {
     height: 42px !important;
     min-height: 42px !important;
     line-height: 1.5 !important;
-    font-size: 15px;
+    font-size: 16px;
     box-shadow: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
@@ -190,21 +191,71 @@ body.suite-page {
 }
 
 .gender-pill {
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 14px;
+    padding: 10px 8px;
     border: 1.5px solid var(--suite-border);
     border-radius: 10px;
     background: var(--suite-card-bg);
     color: var(--suite-text);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s ease-in-out;
     margin-bottom: 0 !important;
     user-select: none;
+    white-space: nowrap;
+}
+
+/* 新式模組表單共用的閱讀層級。 */
+.suite-form-label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--suite-text);
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.suite-input,
+.suite-textarea {
+    font-size: 16px !important;
+}
+
+.suite-btn-primary,
+.suite-btn-secondary {
+    min-height: 46px;
+    font-size: 16px !important;
+}
+
+.suite-btn-primary {
+    background: linear-gradient(135deg, #D97757 0%, #C15F3D 100%) !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    font-weight: 650 !important;
+    padding: 11px 24px !important;
+    box-shadow: 0 4px 14px rgba(204, 107, 73, 0.28);
+}
+
+.suite-btn-primary:hover,
+.suite-btn-primary:focus {
+    color: #ffffff !important;
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(204, 107, 73, 0.36);
+}
+
+.suite-btn-secondary {
+    background: var(--suite-card-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 10px;
+    color: var(--suite-text);
+    font-weight: 600;
+    padding: 10px 18px;
 }
 
 .gender-pill input[type="radio"] {
@@ -330,7 +381,7 @@ body.suite-page {
 
 .tarot-pos-badge {
     display: inline-block;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     padding: 2px 8px;
     border-radius: 10px;
@@ -390,13 +441,13 @@ body.suite-page {
 }
 
 .bazi-pillar-head {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--suite-text-muted);
 }
 
 .bazi-god-cell {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--suite-primary);
 }
@@ -417,7 +468,7 @@ body.suite-page {
 }
 
 .bazi-hidden-cell {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--suite-text-muted);
     line-height: 1.4;
 }
@@ -533,7 +584,7 @@ body.suite-page {
 }
 
 .fengshui-flying-star {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--suite-text-muted);
 }
 
@@ -848,7 +899,7 @@ body.suite-page {
     display: inline-block;
     padding: 3px 8px;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     background: var(--suite-bg);
     border: 1px solid var(--suite-border);
@@ -869,12 +920,14 @@ body.suite-page {
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
-    .suite-hero h1 { font-size: 22px; }
+    .suite-hero h1 { font-size: 25px; }
+    .suite-hero-subtitle { font-size: 15px; }
     .suite-card { padding: 16px; border-radius: 12px; }
     .tarot-cards-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
     .bazi-char-cell { font-size: 18px; }
     .fengshui-grid { gap: 6px; }
     .fortune-scroll-poem { font-size: 17px; }
+    .gender-pill { font-size: 14px; padding-left: 6px; padding-right: 6px; }
 }
 
 /* Ziwei 12-Palace Layout */
@@ -923,7 +976,7 @@ body.suite-page {
 }
 
 .ziwei-palace-ganzhi {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--suite-text-muted);
 }
 
@@ -935,7 +988,7 @@ body.suite-page {
 }
 
 .ziwei-star-item {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -968,7 +1021,7 @@ body.suite-page {
 }
 
 .ziwei-brightness {
-    font-size: 10px;
+    font-size: 11px;
     padding: 1px 4px;
     border-radius: 3px;
     background: var(--suite-border);
@@ -977,7 +1030,7 @@ body.suite-page {
 }
 
 .ziwei-sihua-badge {
-    font-size: 10px;
+    font-size: 11px;
     padding: 1px 4px;
     border-radius: 3px;
     font-weight: bold;
@@ -992,7 +1045,7 @@ body.suite-page {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 10px;
+    font-size: 11px;
     color: var(--suite-text-muted);
     margin-top: 6px;
     padding-top: 4px;
@@ -1025,7 +1078,7 @@ body.suite-page {
 
 .site-footer-provider {
     margin: 0 !important;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--suite-text-muted);
 }
 
@@ -1035,3 +1088,23 @@ body.suite-page {
     text-underline-offset: 2px;
 }
 
+/* 動態結果模板仍有少量內嵌字級，統一拉回可閱讀範圍。 */
+body.suite-page [style*="font-size: 10px"],
+body.suite-page [style*="font-size:10px"] {
+    font-size: 12px !important;
+}
+
+body.suite-page [style*="font-size: 11px"],
+body.suite-page [style*="font-size:11px"] {
+    font-size: 13px !important;
+}
+
+body.suite-page [style*="font-size: 12px"],
+body.suite-page [style*="font-size:12px"] {
+    font-size: 14px !important;
+}
+
+body.suite-page [style*="font-size: 13px"],
+body.suite-page [style*="font-size:13px"] {
+    font-size: 15px !important;
+}

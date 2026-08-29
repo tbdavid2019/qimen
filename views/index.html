@@ -6,13 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= t('title') %></title>
-    <meta name="description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤、AI 解讀與多輪問答，提供工作、感情、財運與居家布局的實用線索，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
+    <meta name="description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://qi.david888.com/">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="<%= t('title') %>">
-    <meta property="og:description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤、AI 解讀與多輪問答，提供工作、感情、財運與居家布局的實用線索，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
+    <meta property="og:description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
     <meta property="og:url" content="https://qi.david888.com/">
     <meta property="og:site_name" content="333 一句提醒·照見當下">
     <meta property="og:locale" content="zh_TW">
@@ -26,7 +26,7 @@
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<%= t('title') %>">
-    <meta name="twitter:description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤、AI 解讀與多輪問答，提供工作、感情、財運與居家布局的實用線索，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
+    <meta name="twitter:description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
     <meta name="twitter:image" content="https://qi.david888.com/og-image.png">
     <meta name="twitter:image:alt" content="333 一句提醒·照見當下奇門命理服務預覽圖">
     <meta name="twitter:site" content="@david888">
@@ -37,7 +37,7 @@
         "@type": "WebApplication",
         "name": "333 一句提醒·照見當下",
         "url": "https://qi.david888.com/",
-        "description": "免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤、AI 解讀與多輪問答，提供工作、感情、財運與居家布局的實用線索，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。",
+        "description": "免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。",
         "applicationCategory": "LifestyleApplication",
         "operatingSystem": "Web"
     }
@@ -78,7 +78,7 @@
     <![endif]-->
 </head>
 
-<body>
+<body class="qimen-page">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -134,7 +134,7 @@
     </nav>
 
     <div class="container">
-        <!-- AI 問答區域（永遠顯示） -->
+        <!-- 問答區域（永遠顯示） -->
         <% if (enableLLM) { %>
         <div class="row" style="margin-bottom: 30px;">
             <div class="col-md-12">
@@ -143,9 +143,6 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <i class="glyphicon glyphicon-comment"></i> 有特定問題想問？
-                            <small class="pull-right">
-                                <span class="label label-info">AI 智能問答</span>
-                            </small>
                         </h3>
                     </div>
                     <div class="panel-body">
@@ -154,7 +151,7 @@
                             <!-- 對話記錄將動態插入這裡 -->
                         </div>
                         
-                        <form id="qimenQuestionForm" toolname="qimen_question_tool" tooldescription="向奇門遁甲 AI 大師提出具體問題進行深度解盤" toolautosubmit onsubmit="return false;">
+                        <form id="qimenQuestionForm" toolname="qimen_question_tool" tooldescription="向奇門遁甲提出具體問題並取得解盤" toolautosubmit onsubmit="return false;">
                             <div class="form-group" style="margin-bottom: 12px;">
                                 <label style="font-size: 13px; font-weight: 600; color: #555;">🎯 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
                                 <select class="form-control" id="qimenPurpose" name="purpose" style="max-width: 320px; display: inline-block; margin-bottom: 8px;">
@@ -196,7 +193,7 @@
                         
                         <div class="text-muted" style="margin-top: 10px; font-size: 12px;">
                             <i class="glyphicon glyphicon-info-sign"></i> 
-                            您可以直接詢問關於當前奇門盤的任何問題，AI 會基於排盤結果給出建議。<strong>支援續問功能</strong>，AI 會記住對話脈絡。
+                            您可以直接詢問關於當前奇門盤的任何問題，系統會基於排盤結果給出建議。<strong>支援續問功能</strong>，會延續對話脈絡。
                         </div>
                     </div>
                 </div>
@@ -219,28 +216,25 @@
             </div>
         </div>
         
-        <!-- AI 解盤區域（可選展開） -->
+        <!-- 解盤區域（可選展開） -->
         <div class="row" style="margin-bottom: 30px;">
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <i class="glyphicon glyphicon-star"></i> 奇門遁甲大師解盤
-                            <small class="pull-right">
-                                <span class="label label-info">智能分析</span>
-                            </small>
+                            <i class="glyphicon glyphicon-star"></i> 奇門遁甲解盤
                         </h3>
                     </div>
                     <div class="panel-body">
-                        <!-- 初始狀態：顯示 AI 解盤按鈕 -->
+                        <!-- 初始狀態：顯示解盤按鈕 -->
                         <div id="llmInitialPanel" class="text-center">
-                            <p class="text-muted">點擊下方按鈕，讓 AI 大師為您深度解讀這個奇門盤</p>
+                            <p class="text-muted">點擊下方按鈕，查看這個奇門盤的解讀</p>
                             <button id="startLLMAnalysis" class="btn btn-primary btn-lg">
-                                <i class="glyphicon glyphicon-star"></i> 開始 AI 解盤
+                                <i class="glyphicon glyphicon-star"></i> 開始解盤
                             </button>
                             <div class="text-muted" style="margin-top: 10px; font-size: 12px;">
                                 <i class="glyphicon glyphicon-info-sign"></i> 
-                                AI 將根據當前排盤提供個性化的運勢分析和建議
+                                系統將根據當前排盤提供個人化的運勢分析和建議
                             </div>
                         </div>
 
@@ -252,7 +246,7 @@
                                         <span class="sr-only">解盤中...</span>
                                     </div>
                                 </div>
-                                <p><i class="glyphicon glyphicon-hourglass"></i> AI 大師正在仔細分析您的奇門盤...</p>
+                                <p><i class="glyphicon glyphicon-hourglass"></i> 正在分析您的奇門盤…</p>
                                 <p class="text-muted">這可能需要幾秒鐘時間，請稍候</p>
                             </div>
                         </div>
@@ -269,7 +263,7 @@
                             </div>
 
                             <div id="llmAnalysisContent" class="llm-analysis-content markdown-body">
-                                <!-- AI 解盤結果將顯示在這裡 -->
+                                <!-- 解盤結果將顯示在這裡 -->
                             </div>
 
                             <!-- 底部操作列（含右下角複製與重新解盤） -->
@@ -286,7 +280,7 @@
                         <!-- 錯誤狀態 -->
                         <div id="llmErrorPanel" style="display: none;">
                             <div class="alert alert-warning">
-                                <strong>抱歉！</strong> AI 解盤服務暫時不可用，請稍後再試。
+                                <strong>抱歉！</strong> 解盤服務暫時不可用，請稍後再試。
                             </div>
                             <div id="llmErrorContent" class="text-muted">
                                 <!-- 錯誤信息將顯示在這裡 -->
@@ -305,7 +299,7 @@
         <div class="row" style="margin-bottom: 30px;">
             <div class="col-md-12">
                 <div class="alert alert-info" role="alert">
-                    <strong>提示：</strong> AI 解盤功能需要配置 LLM API Key 才能使用。
+                    <strong>提示：</strong> 解盤功能需要先完成服務設定。
                     <a href="/api/llm-config" target="_blank">查看配置</a>
                 </div>
             </div>

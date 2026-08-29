@@ -449,7 +449,7 @@
         }
 
         visualBoard.innerHTML = `
-            <div class="suite-board-title">🏮 賽博月老測算盤面</div>
+            <div class="suite-board-title">🏮 月老測算盤面</div>
             ${contentHtml}
         `;
         visualBoard.hidden = false;
@@ -606,7 +606,7 @@
             const header = document.createElement('div');
             header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--suite-border, rgba(0,0,0,0.06)); padding-bottom: 6px;';
             header.innerHTML = `
-                <span style="font-size: 13px; font-weight: 600; color: var(--suite-primary, #CC6B49);">🏮 大師解讀指引</span>
+                <span style="font-size: 13px; font-weight: 600; color: var(--suite-primary, #CC6B49);">🏮 解讀指引</span>
                 <button type="button" class="suite-copy-btn suite-copy-top" style="background: var(--suite-card, #fff); border: 1px solid var(--suite-border, #E8E0D6); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--suite-primary, #CC6B49);" title="複製內容">
                     📋 複製內容
                 </button>
@@ -849,8 +849,8 @@
             lastResult = calcData.reading || calcData.report || calcData.chart || calcData.result;
             renderVisual(lastResult, payload);
 
-            // Step 2: Auto Call AI Analysis
-            const userQuestion = payload.question || '請為我進行全盤深度解讀與具體指引。';
+            // Step 2: 自動取得解讀
+            const userQuestion = payload.question || '請為我進行全盤解讀與具體指引。';
             const aiRes = await fetch(`/api/${page}/llm-analysis`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -870,7 +870,7 @@
                 appendMessage('assistant', aiData.analysis);
                 if (followUpForm) followUpForm.hidden = false;
             } else {
-                appendMessage('assistant', `⚠️ AI 解讀暫不可用：${aiData.error || '請稍後重試'}`);
+                appendMessage('assistant', `⚠️ 解讀暫不可用：${aiData.error || '請稍後重試'}`);
             }
         } catch (err) {
             aiLoading.hidden = true;
@@ -892,7 +892,7 @@
 
         const typingBubble = document.createElement('div');
         typingBubble.className = 'suite-message-bubble assistant';
-        typingBubble.innerHTML = '<span class="suite-spinner" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></span> 大師思考中…';
+        typingBubble.innerHTML = '<span class="suite-spinner" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></span> 整理解讀中…';
         conversationStream.appendChild(typingBubble);
 
         try {

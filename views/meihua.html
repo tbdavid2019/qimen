@@ -102,16 +102,16 @@
     <div class="container">
         <div class="panel panel-default" id="meihuaLLMSection">
             <div class="panel-heading">
-                <h3 class="panel-title"> 有特定問題想問？梅花易數大師解卦</h3>
+                <h3 class="panel-title"> 有特定問題想問？梅花易數解卦</h3>
             </div>
             <div class="panel-body">
                 <p class="meihua-llm-note meihua-llm-status">
-                    可針對本卦提出問題，AI 會結合卦辭與動爻提供建議。
+                    可針對本卦提出問題，結合卦辭與動爻提供建議。
                 </p>
                 <div id="meihuaConversation" class="conversation-history"></div>
                 <form id="meihuaQuestionForm"
                       toolname="meihua_question_tool"
-                      tooldescription="針對梅花易數當前卦象提出問題進行大師解卦"
+                      tooldescription="針對梅花易數當前卦象提出問題並取得解卦"
                       toolautosubmit
                       onsubmit="return false;">
                     <textarea id="meihuaQuestion" name="question" class="form-control" rows="4"
@@ -119,7 +119,7 @@
                               placeholder="例如：這個卦象對我的事業有什麼提醒？"></textarea>
                     <div style="margin-top: 10px;">
                         <button id="meihuaAsk" type="submit" class="btn btn-primary">
-                            🤖 大師解卦
+                            🌸 梅花解卦
                         </button>
                         <button id="meihuaClear" type="button" class="btn btn-default">
                             🗑️ 清除對話

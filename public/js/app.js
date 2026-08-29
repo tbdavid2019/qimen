@@ -150,7 +150,7 @@ $(document).ready(function() {
     maintainAspectRatio();
     $(window).resize(maintainAspectRatio);
 
-    // AI 解盤主要功能
+    // 解盤主要功能
     $('#startLLMAnalysis').click(function() {
         performLLMAnalysis();
     });
@@ -305,7 +305,7 @@ $(document).ready(function() {
             } else {
                 html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 20px;">';
                 html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">';
-                html += '  <span style="display: inline-flex; align-items: center; gap: 4px; background: var(--claude-primary-gradient, linear-gradient(135deg, #D97757 0%, #C15F3D 100%)); color: #fff; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;"><i class="glyphicon glyphicon-star"></i> 奇門大師解讀</span>';
+                html += '  <span style="display: inline-flex; align-items: center; gap: 4px; background: var(--claude-primary-gradient, linear-gradient(135deg, #D97757 0%, #C15F3D 100%)); color: #fff; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;"><i class="glyphicon glyphicon-star"></i> 奇門解讀</span>';
                 html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg" data-msg-idx="' + index + '" style="padding: 3px 10px; font-size: 12px; border-radius: 6px; color: var(--claude-primary, #CC6B49); background: var(--claude-card, #fff); border: 1px solid var(--claude-border, #E8E0D6);" title="複製此解讀內容">';
                 html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
                 html += '  </button>';
@@ -370,7 +370,7 @@ $(document).ready(function() {
         $button.prop('disabled', true).html('<i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> 分析中...');
         $('#clearConversation').prop('disabled', true);
         $responseDiv.show();
-        $responseContent.html('<i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> AI 大師正在思考您的問題...');
+        $responseContent.html('<i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> 正在思考您的問題...');
 
         // 準備奇門數據（從頁面獲取）
         var qimenData = window.qimenData || {};
@@ -416,7 +416,7 @@ $(document).ready(function() {
                     $responseDiv.hide();
                 } else {
                     var fallbackContent = MarkdownRenderer.render(response.fallback || '請稍後再試。');
-                    $responseContent.html('<div class="alert alert-warning">抱歉，AI 暫時無法回答您的問題。<br>' + 
+                    $responseContent.html('<div class="alert alert-warning">抱歉，解讀服務暫時無法回答您的問題。<br>' +
                                         fallbackContent + '</div>');
                 }
             },

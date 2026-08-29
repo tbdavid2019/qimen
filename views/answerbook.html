@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>解答之書 · 默念與 AI 解讀</title>
-    <meta name="description" content="解答之書線上服務：直接默念取得一句提醒，或輸入問題請 AI 協助解讀。">
+    <title>解答之書 · 默念與解讀</title>
+    <meta name="description" content="解答之書線上服務：直接默念取得一句提醒，或輸入問題取得具體解讀。">
     <link rel="canonical" href="https://qi.david888.com/answerbook">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -57,7 +57,7 @@
         <section class="suite-hero">
             <span class="suite-hero-badge">📖 一句提醒 · 照見當下</span>
             <h1>解答之書</h1>
-            <p class="suite-hero-subtitle">默念心中的問題，接收一句簡潔提醒；也可以輸入問題，請 AI 顧問根據這句答案提供具體解讀。</p>
+            <p class="suite-hero-subtitle">默念心中的問題，接收一句簡潔提醒；也可以輸入問題，根據這句答案取得具體解讀。</p>
         </section>
 
         <section class="suite-card">
@@ -66,12 +66,12 @@
                     <strong>🔮 直接默念</strong><span>不輸入文字，直接取得解答之書的一句提醒</span>
                 </button>
                 <button type="button" class="answerbook-mode-btn" data-mode="question" role="tab" aria-selected="false">
-                    <strong>💬 輸入問題並解讀</strong><span>取得答案後，再請 AI 結合你的問題說明</span>
+                    <strong>💬 輸入問題並解讀</strong><span>取得答案後，再結合你的問題說明</span>
                 </button>
             </div>
 
-            <form id="answerbookForm" toolname="answerbook_reading" tooldescription="解答之書直接默念或輸入問題後請 AI 解讀" toolautosubmit>
-                <input type="hidden" id="answerbookMode" name="mode" value="direct" toolparamdescription="direct 直接默念；question 輸入問題並由 AI 解讀">
+            <form id="answerbookForm" toolname="answerbook_reading" tooldescription="解答之書直接默念或輸入問題後取得解讀" toolautosubmit>
+                <input type="hidden" id="answerbookMode" name="mode" value="direct" toolparamdescription="direct 直接默念；question 輸入問題並取得解讀">
                 <div id="answerbookQuestionGroup" class="suite-form-group" hidden>
                     <label for="answerbookQuestion">想請解答之書回應的問題</label>
                     <textarea id="answerbookQuestion" name="question" class="form-control input-lg" rows="3" toolparamdescription="想詢問的具體問題；省略問題則為直接默念模式" placeholder="例如：我現在適合接受這份工作嗎？"></textarea>
@@ -92,7 +92,7 @@
                     <div class="answerbook-answer-raw">以上為解答之書原始回覆，請依你的現況審慎參考。</div>
                 </div>
                 <div id="answerbookAnalysisCard" class="answerbook-analysis-card" hidden>
-                    <div class="answerbook-answer-label">AI 解讀</div>
+                    <div class="answerbook-answer-label">文字解讀</div>
                     <div id="answerbookAnalysis"></div>
                 </div>
                 <div id="answerbookStatus" class="answerbook-status"></div>

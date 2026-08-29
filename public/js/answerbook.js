@@ -29,7 +29,7 @@
             button.classList.toggle('active', active);
             button.setAttribute('aria-selected', active ? 'true' : 'false');
         });
-        submitButton.querySelector('span').textContent = mode === 'question' ? '✨ 取得答案並請 AI 解讀' : '📖 默念後取得解答';
+        submitButton.querySelector('span').textContent = mode === 'question' ? '✨ 取得答案並解讀' : '📖 默念後取得解答';
     }
 
     document.querySelectorAll('.answerbook-mode-btn').forEach((button) => button.addEventListener('click', () => setMode(button.dataset.mode)));
@@ -46,7 +46,7 @@
         errorBox.hidden = true;
         resultBox.hidden = true;
         analysisCard.hidden = true;
-        loadingText.textContent = mode === 'question' ? '正在取得答案並請 AI 解讀…' : '解答之書正在回應…';
+        loadingText.textContent = mode === 'question' ? '正在取得答案並整理解讀…' : '解答之書正在回應…';
         loading.hidden = false;
         submitButton.disabled = true;
         try {
@@ -62,7 +62,7 @@
                 analysisBox.innerHTML = renderMarkdown(data.analysis);
                 analysisCard.hidden = false;
             }
-            statusBox.textContent = data.analysisSuccess === false ? '原始答案已取得，但 AI 解讀暫時不可用。' : (mode === 'question' ? '已完成解答與 AI 解讀。' : '已取得原始答案。');
+            statusBox.textContent = data.analysisSuccess === false ? '原始答案已取得，但文字解讀暫時不可用。' : (mode === 'question' ? '已完成解答與文字解讀。' : '已取得原始答案。');
             resultBox.hidden = false;
         } catch (error) {
             errorBox.textContent = `取得失敗：${error.message}`;

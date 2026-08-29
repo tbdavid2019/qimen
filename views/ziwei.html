@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>紫微斗數排盤 · 三合飛星命理顧問</title>
-    <meta name="description" content="專業線上紫微斗數排盤系統，支援十二宮、十四主星廟旺、生年四化、大限流年、三方四正格局與 AI 智能命理顧問深度解盤。">
+    <meta name="description" content="線上紫微斗數排盤系統，支援十二宮、十四主星廟旺、生年四化、大限流年與三方四正格局解讀。">
     <link rel="canonical" href="https://qi.david888.com/ziwei">
 
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -59,8 +59,14 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <button id="themeToggle" class="btn btn-link navbar-btn" title="切換主題" style="color: #fff; font-size: 16px; padding: 6px 12px;">🌓</button>
+                    <a href="#" id="darkModeToggle" class="dark-mode-toggle"
+                       data-label-light="暗黑" data-label-dark="明亮"
+                       data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式"
+                       role="button" aria-pressed="false">
+                        <span class="dark-mode-label">暗黑</span>
+                    </a>
                 </li>
+                <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">888人生K線</a></li>
             </ul>
         </div>
     </nav>
@@ -77,7 +83,7 @@
 
         <!-- Form Card -->
         <div class="suite-card">
-            <form id="suiteForm" class="suite-form" toolname="ziwei_chart" tooldescription="紫微斗數排盤與大師命理解析" toolautosubmit data-webmcp-tool="analyze_ziwei">
+            <form id="suiteForm" class="suite-form" toolname="ziwei_chart" tooldescription="紫微斗數排盤與命理解讀" toolautosubmit data-webmcp-tool="analyze_ziwei">
                 <div class="row">
                     <div class="col-md-4 col-sm-6 mb-3">
                         <label class="suite-form-label" for="ziweiName">姓名 / 稱謂（選填）</label>
@@ -132,13 +138,13 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="suite-form-label" for="ziweiQuestion">想請教大師的問題或諮詢重點</label>
-                    <textarea class="form-control suite-textarea" id="ziweiQuestion" name="question" rows="2" placeholder="例如：請幫我看看本命事業格局、適合創業還是公職？未來的財帛與婚姻運勢如何？" data-webmcp-field="question" toolparamdescription="想請教紫微大師的問題"></textarea>
+                    <label class="suite-form-label" for="ziweiQuestion">想請教命理顧問的問題或諮詢重點</label>
+                    <textarea class="form-control suite-textarea" id="ziweiQuestion" name="question" rows="2" placeholder="例如：請幫我看看本命事業格局、適合創業還是公職？未來的財帛與婚姻運勢如何？" data-webmcp-field="question" toolparamdescription="想請教紫微命理顧問的問題"></textarea>
                 </div>
 
                 <div class="text-center mt-4">
                     <button type="submit" id="suiteSubmitBtn" class="btn suite-btn-primary btn-lg">
-                        ✨ 一鍵排盤與 AI 深度解讀
+                        ✨ 排盤並查看命理解讀
                     </button>
                 </div>
             </form>
@@ -147,20 +153,20 @@
         <!-- Visual Board Result -->
         <div id="suiteVisualBoard" class="suite-card" hidden></div>
 
-        <!-- AI Conversation Stream -->
+        <!-- 解讀與追問區域 -->
         <div id="suiteAiSection" class="suite-card" hidden>
-            <div class="suite-board-title" style="margin-bottom: 16px;">🏮 紫微命理顧問深度開示</div>
+            <div class="suite-board-title" style="margin-bottom: 16px;">🏮 紫微命理解讀</div>
             
             <div id="suiteAiLoading" class="suite-loading-box" hidden>
                 <div class="suite-spinner"></div>
-                <p style="margin-top: 12px; font-weight: 500;">大師正在依據安星訣、三方四正與生年四化為您深度推演命盤…</p>
+                <p style="margin-top: 12px; font-weight: 500;">正在依據安星訣、三方四正與生年四化推演命盤…</p>
             </div>
 
             <div id="suiteConversation" class="suite-conversation-list"></div>
 
             <form id="suiteFollowUpForm" class="suite-followup-form mt-4" hidden>
                 <div class="input-group">
-                    <input type="text" id="suiteFollowUpInput" class="form-control suite-input" placeholder="對命盤有任何疑問？繼續向紫微大師追問…">
+                    <input type="text" id="suiteFollowUpInput" class="form-control suite-input" placeholder="對命盤有任何疑問？繼續追問…">
                     <span class="input-group-btn">
                         <button class="btn suite-btn-secondary" type="submit">發送追問</button>
                     </span>

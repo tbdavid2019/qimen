@@ -76,7 +76,7 @@ test('全站使用新的網站標題與統一 footer', () => {
 
 test('首頁 SEO 與社群分享 metadata 使用完整 OG 圖片規格', () => {
     const html = read('views/index.html');
-    const description = '免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤、AI 解讀與多輪問答，提供工作、感情、財運與居家布局的實用線索，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。';
+    const description = '免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。';
     assert.match(html, /<meta name="description" content="[^"]{110,160}">/);
     assert.match(html, new RegExp(`meta name="description" content="${description}"`));
     assert.match(html, /<meta property="og:image" content="https:\/\/qi\.david888\.com\/og-image\.png">/);

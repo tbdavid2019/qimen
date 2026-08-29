@@ -349,7 +349,7 @@ function bindMeihuaEvents() {
     if (askBtn) {
         askBtn.addEventListener('click', async function() {
             if (!window.enableLLM) {
-                alert('AI 功能尚未開放，請先設定 LLM API Key');
+                alert('解讀功能尚未開放，請先完成服務設定');
                 return;
             }
 
@@ -396,13 +396,13 @@ function bindMeihuaEvents() {
                     renderMeihuaConversation();
                     questionInput.value = '';
                 } else {
-                    alert(`AI 分析失敗: ${result.error || '未知錯誤'}`);
+                    alert(`解讀失敗: ${result.error || '未知錯誤'}`);
                 }
             } catch (error) {
-                alert(`AI 分析失敗: ${error.message}`);
+                alert(`解讀失敗: ${error.message}`);
             } finally {
                 askBtn.disabled = false;
-                askBtn.textContent = '🤖 大師解卦';
+                askBtn.textContent = '🌸 梅花解卦';
                 document.getElementById('meihuaClear').disabled = false;
             }
         });
@@ -502,7 +502,7 @@ function renderMeihuaConversation() {
         } else {
             html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 20px;">';
             html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">';
-            html += '  <span style="display: inline-flex; align-items: center; gap: 4px; background: var(--claude-primary-gradient, linear-gradient(135deg, #D97757 0%, #C15F3D 100%)); color: #fff; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">🌸 梅花大師解卦</span>';
+            html += '  <span style="display: inline-flex; align-items: center; gap: 4px; background: var(--claude-primary-gradient, linear-gradient(135deg, #D97757 0%, #C15F3D 100%)); color: #fff; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">🌸 梅花解卦</span>';
             html += `  <button type="button" class="btn btn-default btn-xs meihua-copy-btn" data-msg-idx="${index}" style="padding: 3px 10px; font-size: 12px; border-radius: 6px; color: var(--claude-primary, #CC6B49); background: var(--claude-card, #fff); border: 1px solid var(--claude-border, #E8E0D6);" title="複製解讀內容">`;
             html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
             html += '  </button>';
@@ -534,14 +534,14 @@ function toggleMeihuaLLM(enabled) {
 
     if (!enabled) {
         if (status) {
-            status.textContent = 'AI 解卦功能尚未開放，請先設定 LLM API Key。';
+            status.textContent = '解卦功能尚未開放，請先完成服務設定。';
         }
         if (askBtn) askBtn.disabled = true;
         if (clearBtn) clearBtn.disabled = true;
         if (questionInput) questionInput.disabled = true;
     } else {
         if (status) {
-            status.textContent = '可針對本卦提出問題，AI 會結合卦辭與動爻提供建議。';
+            status.textContent = '可針對本卦提出問題，系統會結合卦辭與動爻提供建議。';
         }
         if (askBtn) askBtn.disabled = false;
         if (clearBtn) clearBtn.disabled = false;
