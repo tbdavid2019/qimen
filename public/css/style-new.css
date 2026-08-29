@@ -35,17 +35,17 @@
     --claude-shadow-md: 0 8px 24px rgba(74, 58, 42, 0.07), 0 2px 6px rgba(74, 58, 42, 0.03);
     --claude-shadow-lg: 0 16px 40px rgba(74, 58, 42, 0.09), 0 4px 12px rgba(74, 58, 42, 0.04);
 
-    /* 共用字級 token：元件只引用語意，不在模板與 JS 內散落 px。 */
-    --type-body: 18px;
-    --type-reading: 17px;
-    --type-label: 16px;
-    --type-meta: 15px;
-    --type-caption: 14px;
-    --type-micro: 13px;
-    --type-display: 18px;
-    --type-panel-title: 20px;
-    --type-hero-title: 32px;
-    --leading-body: 1.7;
+    /* 共用字級 token：元件只引用語意，層次協調、不再呼大呼小。 */
+    --type-body: 15px;
+    --type-reading: 16px;
+    --type-label: 15px;
+    --type-meta: 14px;
+    --type-caption: 13px;
+    --type-micro: 12px;
+    --type-display: 16px;
+    --type-panel-title: 17px;
+    --type-hero-title: 28px;
+    --leading-body: 1.6;
     --leading-reading: 1.75;
 }
 
@@ -1429,20 +1429,60 @@ body {
     padding: 10px;
 }
 .gong-details .col-md-4 {
-    padding-left: 5px;
-    padding-right: 5px;
-    margin-bottom: 10px;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-bottom: 12px;
+}
+.gong-details .panel {
+    border-radius: 12px;
+    border: 1px solid var(--claude-border, #E8E0D6);
+    background: var(--claude-card, #fff);
+    box-shadow: var(--claude-shadow-xs);
+    overflow: hidden;
+}
+.gong-details .panel-heading {
+    padding: 9px 12px;
+    background: var(--claude-bg-subtle, #FAF7F2);
+    border-bottom: 1px solid var(--claude-border, #E8E0D6);
+}
+.gong-details .panel-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--claude-text-main, #2C221E) !important;
+}
+.gong-details .panel-title .label {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    padding: 2px 7px !important;
+    border-radius: 6px !important;
 }
 .gong-details .panel-body {
-    padding: 8px;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    line-height: 1.55 !important;
 }
 .gong-details .panel-body p {
-    margin-bottom: 5px;
+    margin-bottom: 5px !important;
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    color: var(--claude-text-body, #4A3F39);
+}
+.gong-details .panel-body p strong {
+    font-weight: 700;
+    color: var(--claude-text-main, #2C221E);
 }
 .gong-explain {
-    font-size: 12px;
-    margin-top: 3px;
-    line-height: 1.4;
+    font-size: 13.5px !important;
+    line-height: 1.6 !important;
+    margin-top: 8px !important;
+    padding-top: 8px !important;
+    border-top: 1px dashed var(--claude-border, #E8E0D6);
+    color: var(--claude-text-body, #4A3F39) !important;
 }
 .suggestion-list li {
     margin-bottom: 4px;
@@ -1869,15 +1909,18 @@ input:tool-submit-active {
 /* 奇門首頁的舊式表單也沿用相同的可讀性基準。 */
 .qimen-page .panel-title {
     font-size: var(--type-panel-title);
+    font-weight: 700;
     line-height: 1.45;
 }
 
 .qimen-page .panel-body {
     font-size: var(--type-body);
+    line-height: var(--leading-body);
 }
 
 .qimen-page .form-group > label {
-    font-size: var(--type-label) !important;
+    font-size: var(--type-label);
+    font-weight: 600;
     line-height: 1.5;
 }
 
@@ -1885,36 +1928,37 @@ input:tool-submit-active {
 .qimen-page .panel [style*="font-size: 12px"],
 .qimen-page .panel .text-muted[style*="font-size:12px"],
 .qimen-page .panel [style*="font-size:12px"] {
-    font-size: var(--type-meta) !important;
+    font-size: var(--type-meta);
 }
 
 .qimen-page .panel [style*="font-size: 11px"],
 .qimen-page .panel [style*="font-size:11px"] {
-    font-size: var(--type-caption) !important;
+    font-size: var(--type-caption);
 }
 
 .qimen-page .panel .form-control {
-    font-size: var(--type-reading);
+    font-size: var(--type-body);
 }
 
 .qimen-form-label {
-    font-size: var(--type-label) !important;
+    font-size: var(--type-label);
+    font-weight: 600;
     line-height: 1.5;
 }
 
 .qimen-meta,
 .qimen-meta-badge {
-    font-size: var(--type-meta) !important;
+    font-size: var(--type-meta);
     line-height: 1.6;
 }
 
 .qimen-caption {
-    font-size: var(--type-caption) !important;
+    font-size: var(--type-caption);
     line-height: 1.5;
 }
 
 .qimen-copy-button {
-    font-size: var(--type-caption) !important;
+    font-size: var(--type-caption);
 }
 
 /* 問答元件：動態訊息不再由 app.js / meihua.js 各自維護 inline 字級。 */
