@@ -34,13 +34,26 @@
     --claude-shadow-sm: 0 2px 8px rgba(74, 58, 42, 0.05);
     --claude-shadow-md: 0 8px 24px rgba(74, 58, 42, 0.07), 0 2px 6px rgba(74, 58, 42, 0.03);
     --claude-shadow-lg: 0 16px 40px rgba(74, 58, 42, 0.09), 0 4px 12px rgba(74, 58, 42, 0.04);
+
+    /* 共用字級 token：元件只引用語意，不在模板與 JS 內散落 px。 */
+    --type-body: 18px;
+    --type-reading: 17px;
+    --type-label: 16px;
+    --type-meta: 15px;
+    --type-caption: 14px;
+    --type-micro: 13px;
+    --type-display: 18px;
+    --type-panel-title: 20px;
+    --type-hero-title: 32px;
+    --leading-body: 1.7;
+    --leading-reading: 1.75;
 }
 
 body {
     margin: 0;
     padding-bottom: 60px;
     padding-top: 72px;
-    font-size: 16px;
+    font-size: var(--type-body);
     background-color: var(--claude-bg);
     font-family: "LXGW WenKai Mono TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
     color: var(--claude-text-body);
@@ -1335,8 +1348,8 @@ body {
 
 /* LLM 解盤相關樣式 */
 .llm-analysis-content {
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: var(--type-reading);
+    line-height: var(--leading-reading);
     background-color: #fafafa;
     padding: 15px;
     border-radius: 5px;
@@ -1351,6 +1364,11 @@ body {
     margin: 14px 0 8px;
     font-weight: 600;
     line-height: 1.3;
+}
+
+.markdown-body {
+    font-size: var(--type-reading);
+    line-height: var(--leading-reading);
 }
 
 .markdown-body h1 { font-size: 1.6em; }
@@ -1412,9 +1430,11 @@ body {
 
 .markdown-body th,
 .markdown-body td {
-    padding: 10px 12px;
+    padding: 12px 14px;
     border: 1px solid #d7dce1;
     vertical-align: top;
+    font-size: var(--type-reading);
+    line-height: var(--leading-body);
 }
 
 .markdown-body th {
@@ -1552,8 +1572,8 @@ body {
 }
 
 #llmQuestionResponse .response-content {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: var(--type-reading);
+    line-height: var(--leading-reading);
     margin-bottom: 10px;
 }
 
@@ -1582,7 +1602,7 @@ body {
 /* 響應式設計 */
 @media (max-width: 768px) {
     .llm-analysis-content {
-        font-size: 14px;
+        font-size: 16px;
         padding: 12px;
     }
     
@@ -1736,28 +1756,127 @@ input:tool-submit-active {
 
 /* 奇門首頁的舊式表單也沿用相同的可讀性基準。 */
 .qimen-page .panel-title {
-    font-size: 18px;
+    font-size: var(--type-panel-title);
     line-height: 1.45;
 }
 
 .qimen-page .panel-body {
-    font-size: 16px;
+    font-size: var(--type-body);
 }
 
 .qimen-page .form-group > label {
-    font-size: 15px !important;
+    font-size: var(--type-label) !important;
     line-height: 1.5;
 }
 
 .qimen-page .panel .text-muted[style*="font-size: 12px"],
-.qimen-page .panel [style*="font-size: 12px"] {
-    font-size: 14px !important;
+.qimen-page .panel [style*="font-size: 12px"],
+.qimen-page .panel .text-muted[style*="font-size:12px"],
+.qimen-page .panel [style*="font-size:12px"] {
+    font-size: var(--type-meta) !important;
 }
 
-.qimen-page .panel [style*="font-size: 11px"] {
-    font-size: 13px !important;
+.qimen-page .panel [style*="font-size: 11px"],
+.qimen-page .panel [style*="font-size:11px"] {
+    font-size: var(--type-caption) !important;
 }
 
 .qimen-page .panel .form-control {
-    font-size: 16px;
+    font-size: var(--type-reading);
 }
+
+.qimen-form-label {
+    font-size: var(--type-label) !important;
+    line-height: 1.5;
+}
+
+.qimen-meta,
+.qimen-meta-badge {
+    font-size: var(--type-meta) !important;
+    line-height: 1.6;
+}
+
+.qimen-caption {
+    font-size: var(--type-caption) !important;
+    line-height: 1.5;
+}
+
+.qimen-copy-button {
+    font-size: var(--type-caption) !important;
+}
+
+/* 問答元件：動態訊息不再由 app.js / meihua.js 各自維護 inline 字級。 */
+.conversation-user-wrap {
+    display: inline-block;
+    max-width: 85%;
+    text-align: left;
+}
+
+.conversation-msg-label {
+    font-size: var(--type-caption);
+    font-weight: 600;
+    color: var(--claude-text-muted, #8C7E74);
+    margin-bottom: 4px;
+    text-align: right;
+}
+
+.conversation-user-bubble {
+    background: var(--claude-bg-subtle, #EFE9E0);
+    color: var(--claude-text-main, #2C221E);
+    padding: 12px 16px;
+    border-radius: 16px 16px 4px 16px;
+    font-size: var(--type-reading);
+    line-height: var(--leading-reading);
+    border: 1px solid var(--claude-border, #E8E0D6);
+}
+
+.conversation-msg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.conversation-result-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--claude-primary-gradient, linear-gradient(135deg, #D97757 0%, #C15F3D 100%));
+    color: #fff;
+    padding: 5px 11px;
+    border-radius: 6px;
+    font-size: var(--type-caption);
+    font-weight: 600;
+}
+
+.conversation-copy-button {
+    padding: 5px 11px;
+    font-size: var(--type-caption);
+    border-radius: 6px;
+    color: var(--claude-primary, #CC6B49);
+    background: var(--claude-card, #fff);
+    border: 1px solid var(--claude-border, #E8E0D6);
+}
+
+.conversation-answer {
+    background: var(--claude-card, #fff);
+    padding: 18px 22px;
+    border-radius: 16px 16px 16px 4px;
+    display: block;
+    width: 100%;
+    border: 1px solid var(--claude-border, #E8E0D6);
+    box-shadow: var(--claude-shadow-xs, 0 1px 3px rgba(0,0,0,0.04));
+    color: var(--claude-text-body, #4A3F39);
+    font-size: var(--type-reading) !important;
+    line-height: var(--leading-reading) !important;
+}
+
+/* 新舊排盤結果中的 legacy inline font-size，集中映射到 token。 */
+body.suite-page [style*="font-size: 10px"],
+body.suite-page [style*="font-size:10px"] { font-size: var(--type-micro) !important; }
+body.suite-page [style*="font-size: 11px"],
+body.suite-page [style*="font-size:11px"] { font-size: var(--type-caption) !important; }
+body.suite-page [style*="font-size: 12px"],
+body.suite-page [style*="font-size:12px"] { font-size: var(--type-meta) !important; }
+body.suite-page [style*="font-size: 13px"],
+body.suite-page [style*="font-size:13px"] { font-size: var(--type-label) !important; }

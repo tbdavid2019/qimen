@@ -153,7 +153,7 @@
                         
                         <form id="qimenQuestionForm" toolname="qimen_question_tool" tooldescription="向奇門遁甲提出具體問題並取得解盤" toolautosubmit onsubmit="return false;">
                             <div class="form-group" style="margin-bottom: 12px;">
-                                <label style="font-size: 13px; font-weight: 600; color: #555;">🎯 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
+                                <label class="qimen-form-label" style="font-weight: 600; color: #555;">🎯 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
                                 <select class="form-control" id="qimenPurpose" name="purpose" style="max-width: 320px; display: inline-block; margin-bottom: 8px;">
                                     <option value="綜合" selected>🌐 綜合運勢（全盤統攬）</option>
                                     <option value="求財">💰 求財投資（主用神：生門 / 戊）</option>
@@ -164,7 +164,7 @@
                                     <option value="出行">🚗 出行方位（主用神：目標方位宮）</option>
                                     <option value="官司">⚖️ 官司合約（主用神：驚門 / 開門）</option>
                                 </select>
-                                <span id="yongshenTip" class="label label-primary" style="margin-left: 6px; padding: 5px 8px; font-size: 12px;">
+                                <span id="yongshenTip" class="label label-primary qimen-meta-badge" style="margin-left: 6px; padding: 5px 8px;">
                                     🎯 主用神：值符 / 日干
                                 </span>
                             </div>
@@ -188,10 +188,10 @@
                         
                         <div id="llmQuestionResponse" class="well" style="display: none; margin-top: 15px;">
                             <div class="response-content"></div>
-                            <div class="text-muted response-time" style="font-size: 12px; margin-top: 10px;"></div>
+                            <div class="text-muted response-time qimen-meta" style="margin-top: 10px;"></div>
                         </div>
                         
-                        <div class="text-muted" style="margin-top: 10px; font-size: 12px;">
+                        <div class="text-muted qimen-meta" style="margin-top: 10px;">
                             <i class="glyphicon glyphicon-info-sign"></i> 
                             您可以直接詢問關於當前奇門盤的任何問題，系統會基於排盤結果給出建議。<strong>支援續問功能</strong>，會延續對話脈絡。
                         </div>
@@ -218,7 +218,7 @@
                             <button id="startLLMAnalysis" class="btn btn-primary btn-lg">
                                 <i class="glyphicon glyphicon-star"></i> 開始解盤
                             </button>
-                            <div class="text-muted" style="margin-top: 10px; font-size: 12px;">
+                            <div class="text-muted qimen-meta" style="margin-top: 10px;">
                                 <i class="glyphicon glyphicon-info-sign"></i> 
                                 系統將根據當前排盤提供個人化的運勢分析和建議
                             </div>
@@ -240,10 +240,10 @@
                         <!-- 解盤結果 -->
                         <div id="llmResultPanel" style="display: none;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
-                                <div id="llmTimestamp" class="text-muted" style="font-size: 12px;">
+                                <div id="llmTimestamp" class="text-muted qimen-meta">
                                     <!-- 解盤時間將顯示在這裡 -->
                                 </div>
-                                <button type="button" id="copyAnalysisBtn" class="btn btn-default btn-xs" style="padding: 3px 10px; font-size: 12px; border-radius: 4px;" title="複製完整解盤內容">
+                                <button type="button" id="copyAnalysisBtn" class="btn btn-default btn-xs qimen-copy-button" style="padding: 5px 11px; border-radius: 4px;" title="複製完整解盤內容">
                                     <i class="glyphicon glyphicon-copy"></i> 複製解盤內容
                                 </button>
                             </div>
@@ -257,7 +257,7 @@
                                 <button id="reAnalyzeButton" class="btn btn-default">
                                     <i class="glyphicon glyphicon-refresh"></i> 重新解盤
                                 </button>
-                                <button type="button" id="copyAnalysisBtnBottom" class="btn btn-default btn-sm" style="padding: 6px 14px; font-size: 13px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="複製完整解盤內容">
+                                <button type="button" id="copyAnalysisBtnBottom" class="btn btn-default btn-sm qimen-copy-button" style="padding: 6px 14px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="複製完整解盤內容">
                                     <i class="glyphicon glyphicon-copy"></i> 複製解盤內容
                                 </button>
                             </div>
@@ -302,15 +302,15 @@
                         <label class="btn btn-default <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'active' : '' %>" id="traditionalModeBtn">
                             <input type="radio" name="timeMode" value="traditional" <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'checked' : '' %>> 
                             <i class="glyphicon glyphicon-time"></i> 傳統模式
-                            <small style="display: block; font-size: 11px; color: #666;">以當下時辰起盤（兩小時一盤）</small>
+                                    <small class="qimen-caption" style="display: block; color: #666;">以當下時辰起盤（兩小時一盤）</small>
                         </label>
                         <label class="btn btn-default <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'active' : '' %>" id="advancedModeBtn">
                             <input type="radio" name="timeMode" value="advanced" <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'checked' : '' %>> 
                             <i class="glyphicon glyphicon-dashboard"></i> 進階模式
-                            <small style="display: block; font-size: 11px; color: #666;">九宮拆補（13分鐘法）</small>
+                                    <small class="qimen-caption" style="display: block; color: #666;">九宮拆補（13分鐘法）</small>
                         </label>
                     </div>
-                    <div id="advancedModeInfo" class="alert alert-info" style="display: none; margin-top: 10px; font-size: 12px;">
+                    <div id="advancedModeInfo" class="alert alert-info qimen-meta" style="display: none; margin-top: 10px;">
                         <i class="glyphicon glyphicon-info-sign"></i> 
                         進階模式將每個時辰（2小時）細分為9個時段，每段約13分鐘，提供更精確的時間分析
                     </div>
@@ -333,7 +333,7 @@
                         <span id="timeSegmentInfo" style="display: none;"></span>
                     </div>
                     <% if (process.env.NODE_ENV !== 'production') { %>
-                    <div class="info-item" style="font-size: 0.9em; color: #666;">
+                    <div class="info-item qimen-caption" style="color: #666;">
                         <strong>時區調試:</strong> 
                         <span title="用戶本地時間">本地: <span id="localTime"></span></span> |
                         <span title="伺服器使用時間">計算: <span id="calculationTime"><%= qimen.basicInfo && qimen.basicInfo.date || '' %></span></span>

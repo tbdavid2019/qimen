@@ -297,22 +297,22 @@ $(document).ready(function() {
         conversationHistory.forEach(function(msg, index) {
             if (msg.role === 'user') {
                 html += '<div class="conversation-msg user-msg" style="margin-bottom: 16px; text-align: right;">';
-                html += '<div style="display: inline-block; max-width: 85%; text-align: left;">';
-                html += '  <div style="font-size: 11px; font-weight: 600; color: var(--claude-text-muted, #8C7E74); margin-bottom: 4px; text-align: right;">您問道</div>';
-                html += '  <div style="background: var(--claude-bg-subtle, #EFE9E0); color: var(--claude-text-main, #2C221E); padding: 10px 16px; border-radius: 16px 16px 4px 16px; font-size: 14.5px; line-height: 1.5; border: 1px solid var(--claude-border, #E8E0D6);">' + MarkdownRenderer.escapeHtml(msg.content) + '</div>';
+                html += '<div class="conversation-user-wrap">';
+                html += '  <div class="conversation-msg-label">您問道</div>';
+                html += '  <div class="conversation-user-bubble">' + MarkdownRenderer.escapeHtml(msg.content) + '</div>';
                 html += '</div>';
                 html += '</div>';
             } else {
                 html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 20px;">';
-                html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">';
-                html += '  <span style="display: inline-flex; align-items: center; gap: 4px; background: var(--claude-primary-gradient, linear-gradient(135deg, #D97757 0%, #C15F3D 100%)); color: #fff; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;"><i class="glyphicon glyphicon-star"></i> 奇門解讀</span>';
-                html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg" data-msg-idx="' + index + '" style="padding: 3px 10px; font-size: 12px; border-radius: 6px; color: var(--claude-primary, #CC6B49); background: var(--claude-card, #fff); border: 1px solid var(--claude-border, #E8E0D6);" title="複製此解讀內容">';
+                html += '<div class="conversation-msg-header">';
+                html += '  <span class="conversation-result-label"><i class="glyphicon glyphicon-star"></i> 奇門解讀</span>';
+                html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg conversation-copy-button" data-msg-idx="' + index + '" title="複製此解讀內容">';
                 html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
                 html += '  </button>';
                 html += '</div>';
-                html += '<div class="markdown-body" style="background: var(--claude-card, #fff); padding: 16px 20px; border-radius: 16px 16px 16px 4px; display: block; width: 100%; border: 1px solid var(--claude-border, #E8E0D6); box-shadow: var(--claude-shadow-xs, 0 1px 3px rgba(0,0,0,0.04)); color: var(--claude-text-body, #4A3F39); font-size: 14px; line-height: 1.6;">' + MarkdownRenderer.render(msg.content) + '</div>';
+                html += '<div class="markdown-body conversation-answer">' + MarkdownRenderer.render(msg.content) + '</div>';
                 html += '<div style="display: flex; justify-content: flex-end; margin-top: 6px;">';
-                html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg" data-msg-idx="' + index + '" style="padding: 3px 10px; font-size: 12px; border-radius: 6px; color: var(--claude-primary, #CC6B49); background: var(--claude-card, #fff); border: 1px solid var(--claude-border, #E8E0D6);" title="複製此解讀內容">';
+                html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg conversation-copy-button" data-msg-idx="' + index + '" title="複製此解讀內容">';
                 html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
                 html += '  </button>';
                 html += '</div>';

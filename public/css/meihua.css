@@ -57,7 +57,11 @@ body.meihua-page {
 
 .meihua-meta {
     color: #666;
-    font-size: 13px;
+    font-size: var(--type-meta);
+}
+
+.meihua-timing {
+    font-size: var(--type-reading);
 }
 
 .meihua-symbol {

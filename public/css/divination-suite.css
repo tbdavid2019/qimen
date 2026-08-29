@@ -43,7 +43,7 @@ body.suite-page {
     color: var(--suite-text);
     padding-top: 72px;
     padding-bottom: 60px;
-    font-size: 16px;
+    font-size: var(--type-body);
     font-family: "LXGW WenKai Mono TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
@@ -82,7 +82,7 @@ body.suite-page {
 }
 
 .suite-hero-subtitle {
-    font-size: 16px;
+    font-size: var(--type-reading);
     color: var(--suite-text-muted);
     max-width: 680px;
     margin: 0 auto;
@@ -107,7 +107,7 @@ body.suite-page {
 
 .suite-form-group label {
     display: block;
-    font-size: 15px;
+    font-size: var(--type-label);
     font-weight: 600;
     margin-bottom: 6px;
     color: var(--suite-text);
@@ -122,7 +122,7 @@ body.suite-page {
     height: 42px !important;
     min-height: 42px !important;
     line-height: 1.5 !important;
-    font-size: 16px;
+    font-size: var(--type-reading);
     box-shadow: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
@@ -215,20 +215,25 @@ body.suite-page {
     display: block;
     margin-bottom: 7px;
     color: var(--suite-text);
-    font-size: 15px;
+    font-size: var(--type-label);
     font-weight: 650;
+    line-height: 1.45;
+}
+
+.suite-section-title {
+    font-size: var(--type-label);
     line-height: 1.45;
 }
 
 .suite-input,
 .suite-textarea {
-    font-size: 16px !important;
+    font-size: var(--type-reading) !important;
 }
 
 .suite-btn-primary,
 .suite-btn-secondary {
     min-height: 46px;
-    font-size: 16px !important;
+    font-size: var(--type-label) !important;
 }
 
 .suite-btn-primary {
@@ -921,7 +926,7 @@ body.suite-page {
 /* Responsive adjustments */
 @media (max-width: 640px) {
     .suite-hero h1 { font-size: 25px; }
-    .suite-hero-subtitle { font-size: 15px; }
+    .suite-hero-subtitle { font-size: var(--type-label); }
     .suite-card { padding: 16px; border-radius: 12px; }
     .tarot-cards-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
     .bazi-char-cell { font-size: 18px; }
@@ -1091,20 +1096,20 @@ body.suite-page {
 /* 動態結果模板仍有少量內嵌字級，統一拉回可閱讀範圍。 */
 body.suite-page [style*="font-size: 10px"],
 body.suite-page [style*="font-size:10px"] {
-    font-size: 12px !important;
+    font-size: var(--type-micro) !important;
 }
 
 body.suite-page [style*="font-size: 11px"],
 body.suite-page [style*="font-size:11px"] {
-    font-size: 13px !important;
+    font-size: var(--type-caption) !important;
 }
 
 body.suite-page [style*="font-size: 12px"],
 body.suite-page [style*="font-size:12px"] {
-    font-size: 14px !important;
+    font-size: var(--type-meta) !important;
 }
 
 body.suite-page [style*="font-size: 13px"],
 body.suite-page [style*="font-size:13px"] {
-    font-size: 15px !important;
+    font-size: var(--type-label) !important;
 }

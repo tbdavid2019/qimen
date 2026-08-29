@@ -62,7 +62,7 @@ test('全站使用新的網站標題與統一 footer', () => {
     assert.match(manifest, /"name":\s*"333 一句提醒·照見當下"/);
     assert.match(manifest, /"short_name":\s*"333 一句提醒"/);
     assert.doesNotMatch(footer, /333奇門遁甲梅花易數排盤系統 © 2026/);
-    assert.match(footer, /技術提供\s*<a href="https:\/\/david888\.com" target="_blank" rel="noopener">https:\/\/david888\.com<\/a>\s*\|\s*2026/);
+    assert.match(footer, /技術提供\s*<a href="https:\/\/david888\.com" target="_blank" rel="noopener">(?:https:\/\/)?david888\.com<\/a>\s*\|\s*2026/);
 
     for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
         const html = read(file);
