@@ -66,7 +66,7 @@ body {
     border: none !important;
     border-bottom: 1px solid var(--claude-border) !important;
     box-shadow: 0 2px 10px rgba(74, 58, 42, 0.05) !important;
-    padding: 6px 0;
+    padding: 0;
     min-height: 56px;
     z-index: 1030;
     position: fixed;
@@ -86,18 +86,20 @@ body {
     padding: 0 15px;
     position: relative;
     z-index: 1031;
+    min-height: 56px;
 }
 
 .navbar-inverse .navbar-brand {
     color: var(--claude-text-main) !important;
     font-size: 17px;
-    font-weight: 700;
+    font-weight: 800; /* 加粗 */
     letter-spacing: -0.2px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 14px 10px 6px;
-    height: auto;
+    padding: 0 14px 0 0;
+    height: 38px;
+    line-height: 38px;
     cursor: pointer;
     position: relative;
     z-index: 1032;
@@ -119,10 +121,15 @@ body {
 .navbar-inverse .navbar-nav > li > a {
     color: var(--claude-text-body) !important;
     font-size: 15px;
-    font-weight: 500;
-    padding: 7px 15px !important;
-    margin: 4px 2px;
+    font-weight: 700; /* 加粗 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0 14px !important;
+    margin: 0 2px;
     border-radius: 9999px;
+    line-height: 1;
     transition: all 0.18s ease-in-out;
     cursor: pointer;
     position: relative;
@@ -140,7 +147,7 @@ body {
 .navbar-inverse .navbar-nav > .active > a:focus {
     background: var(--claude-primary-gradient) !important;
     color: #ffffff !important;
-    font-weight: 600;
+    font-weight: 800; /* 加粗高亮 */
     box-shadow: 0 2px 10px rgba(204, 107, 73, 0.35);
     border-radius: 9999px;
 }
@@ -148,15 +155,18 @@ body {
 .dark-mode-toggle {
     display: inline-flex !important;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+    gap: 6px;
     border: 1px solid var(--claude-border) !important;
     border-radius: 9999px !important;
-    padding: 6px 14px !important;
-    margin: 4px 4px !important;
-    min-height: 40px;
+    height: 38px;
+    padding: 0 14px !important;
+    margin: 0 4px !important;
     background: var(--claude-card) !important;
     color: var(--claude-text-body) !important;
     font-size: 14px !important;
+    font-weight: 700 !important; /* 加粗 */
+    line-height: 1;
     transition: all 0.2s ease;
     cursor: pointer;
     position: relative;
@@ -175,6 +185,17 @@ body {
     color: var(--claude-text-main) !important;
 }
 
+.navbar-nav .dropdown-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700 !important; /* 加粗 */
+}
+
+.navbar-nav .dropdown-toggle .caret {
+    margin-left: 2px;
+}
+
 .navbar-nav .open .dropdown-menu,
 .dropdown-menu {
     border: 1px solid var(--claude-border);
@@ -191,7 +212,8 @@ body {
     border-radius: 8px;
     padding: 8px 14px;
     color: var(--claude-text-body);
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -206,7 +228,54 @@ body {
     color: #ffffff;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
+    .navbar.navbar-inverse.navbar-fixed-top > .container,
+    .navbar.navbar-inverse.navbar-fixed-top > .container-fluid {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .navbar-inverse .navbar-header {
+        display: flex;
+        align-items: center;
+        min-height: 56px;
+        float: none;
+    }
+
+    .navbar-collapse.collapse {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1;
+        height: 56px !important;
+        padding: 0 0 0 10px;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+    }
+
+    .navbar-inverse .navbar-nav {
+        display: flex;
+        align-items: center;
+        float: none;
+        margin: 0;
+    }
+
+    .navbar-inverse .navbar-nav > li {
+        display: flex;
+        align-items: center;
+        float: none;
+    }
+
+    .navbar-inverse .navbar-right {
+        margin-left: auto;
+        margin-right: 0;
+        float: none !important;
+    }
+}
+
+@media (max-width: 767px) {
     .navbar.navbar-inverse.navbar-fixed-top > .container {
         border-radius: 20px;
         padding: 6px 12px;
@@ -223,6 +292,14 @@ body {
         border-radius: 10px;
         padding: 10px 14px !important;
         margin: 2px 0;
+        height: auto;
+        justify-content: flex-start;
+    }
+    .dark-mode-toggle {
+        width: 100%;
+        justify-content: flex-start;
+        height: 42px;
+        margin: 4px 0 !important;
     }
 }
 
