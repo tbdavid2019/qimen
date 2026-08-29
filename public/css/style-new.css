@@ -66,7 +66,8 @@ body {
     border: none !important;
     border-bottom: 1px solid var(--claude-border) !important;
     box-shadow: 0 2px 10px rgba(74, 58, 42, 0.05) !important;
-    padding: 0;
+    padding: 0 16px;
+    height: 56px;
     min-height: 56px;
     z-index: 1030;
     position: fixed;
@@ -75,31 +76,18 @@ body {
     right: 0;
 }
 
-.navbar.navbar-inverse.navbar-fixed-top > .container,
-.navbar.navbar-inverse.navbar-fixed-top > .container-fluid {
-    max-width: 1220px;
-    margin: 0 auto;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    padding: 0 15px;
-    position: relative;
-    z-index: 1031;
-    min-height: 56px;
-}
-
 .navbar-inverse .navbar-brand {
     color: var(--claude-text-main) !important;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 800; /* 加粗 */
     letter-spacing: -0.2px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 0 14px 0 0;
+    padding: 0 12px 0 0;
     height: 38px;
     line-height: 38px;
+    white-space: nowrap;
     cursor: pointer;
     position: relative;
     z-index: 1032;
@@ -120,16 +108,17 @@ body {
 
 .navbar-inverse .navbar-nav > li > a {
     color: var(--claude-text-body) !important;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700; /* 加粗 */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 38px;
-    padding: 0 14px !important;
-    margin: 0 2px;
+    height: 36px;
+    padding: 0 11px !important;
+    margin: 0 1px;
     border-radius: 9999px;
     line-height: 1;
+    white-space: nowrap;
     transition: all 0.18s ease-in-out;
     cursor: pointer;
     position: relative;
@@ -159,14 +148,15 @@ body {
     gap: 6px;
     border: 1px solid var(--claude-border) !important;
     border-radius: 9999px !important;
-    height: 38px;
-    padding: 0 14px !important;
-    margin: 0 4px !important;
+    height: 36px;
+    padding: 0 12px !important;
+    margin: 0 3px !important;
     background: var(--claude-card) !important;
     color: var(--claude-text-body) !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
     font-weight: 700 !important; /* 加粗 */
     line-height: 1;
+    white-space: nowrap;
     transition: all 0.2s ease;
     cursor: pointer;
     position: relative;
@@ -175,7 +165,7 @@ body {
 
 .dark-mode-toggle::before {
     content: "🌓";
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1;
 }
 
@@ -204,7 +194,7 @@ body {
     background: var(--claude-card);
     padding: 6px;
     z-index: 1050;
-    min-width: 160px;
+    min-width: 150px;
     margin-top: 6px;
 }
 
@@ -212,7 +202,7 @@ body {
     border-radius: 8px;
     padding: 8px 14px;
     color: var(--claude-text-body);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
 }
@@ -229,56 +219,95 @@ body {
 }
 
 @media (min-width: 768px) {
-    .navbar.navbar-inverse.navbar-fixed-top > .container,
-    .navbar.navbar-inverse.navbar-fixed-top > .container-fluid {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    .navbar.navbar-inverse.navbar-fixed-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+        height: 56px;
+        padding: 0 16px;
     }
 
     .navbar-inverse .navbar-header {
-        display: flex;
-        align-items: center;
-        min-height: 56px;
-        float: none;
+        display: flex !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
+        float: none !important;
+        height: 56px;
+        margin: 0 !important;
     }
 
     .navbar-collapse.collapse {
         display: flex !important;
-        align-items: center;
-        justify-content: space-between;
-        flex: 1;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex: 1 1 auto !important;
+        flex-wrap: nowrap !important;
         height: 56px !important;
-        padding: 0 0 0 10px;
-        margin: 0;
-        border: none;
-        box-shadow: none;
+        padding: 0 0 0 12px !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
     }
 
     .navbar-inverse .navbar-nav {
-        display: flex;
-        align-items: center;
-        float: none;
-        margin: 0;
+        display: flex !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        float: none !important;
+        margin: 0 !important;
     }
 
     .navbar-inverse .navbar-nav > li {
-        display: flex;
-        align-items: center;
-        float: none;
+        display: flex !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
+        float: none !important;
     }
 
     .navbar-inverse .navbar-right {
-        margin-left: auto;
-        margin-right: 0;
+        margin-left: auto !important;
+        margin-right: 0 !important;
         float: none !important;
+        display: flex !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+    .navbar.navbar-inverse.navbar-fixed-top {
+        padding: 0 8px;
+    }
+    .navbar-inverse .navbar-brand {
+        font-size: 15px;
+        padding-right: 6px;
+    }
+    .navbar-inverse .navbar-nav > li > a {
+        font-size: 13px;
+        padding: 0 8px !important;
+        margin: 0 1px;
+    }
+    .dark-mode-toggle {
+        font-size: 12px;
+        padding: 0 9px !important;
     }
 }
 
 @media (max-width: 767px) {
-    .navbar.navbar-inverse.navbar-fixed-top > .container {
-        border-radius: 20px;
-        padding: 6px 12px;
+    .navbar.navbar-inverse.navbar-fixed-top {
+        display: block !important;
+        height: auto;
+        padding: 4px 12px;
+    }
+    .navbar-inverse .navbar-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100%;
+        min-height: 48px;
+        float: none;
     }
     .navbar-collapse {
         background: var(--claude-card);
@@ -287,6 +316,12 @@ body {
         margin-top: 8px;
         padding: 10px;
         box-shadow: var(--claude-shadow-lg);
+    }
+    .navbar-inverse .navbar-nav {
+        display: block !important;
+    }
+    .navbar-inverse .navbar-nav > li {
+        display: block !important;
     }
     .navbar-inverse .navbar-nav > li > a {
         border-radius: 10px;
