@@ -49,6 +49,12 @@ body.suite-page {
     -webkit-font-smoothing: antialiased;
 }
 
+@media (max-width: 767px) {
+    body.suite-page {
+        padding-top: 112px;
+    }
+}
+
 .suite-container {
     max-width: 920px;
     margin: 0 auto;

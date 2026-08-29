@@ -298,43 +298,95 @@ body {
 @media (max-width: 767px) {
     .navbar.navbar-inverse.navbar-fixed-top {
         display: block !important;
-        height: auto;
-        padding: 4px 12px;
+        height: 108px;
+        min-height: 108px;
+        padding: 4px 10px 0;
     }
     .navbar-inverse .navbar-header {
         display: flex !important;
         align-items: center !important;
-        justify-content: space-between !important;
+        justify-content: flex-start !important;
         width: 100%;
-        min-height: 48px;
-        float: none;
+        height: 52px;
+        min-height: 52px;
+        float: none !important;
     }
-    .navbar-collapse {
-        background: var(--claude-card);
-        border: 1px solid var(--claude-border);
-        border-radius: 16px;
-        margin-top: 8px;
-        padding: 10px;
-        box-shadow: var(--claude-shadow-lg);
+    /* 手機版直接展開導覽，改用可左右滑動的功能列，不藏在漢堡選單內。 */
+    .navbar-inverse .navbar-toggle {
+        display: none !important;
+    }
+    .navbar-inverse .navbar-collapse.collapse {
+        display: flex !important;
+        align-items: center !important;
+        width: 100%;
+        height: 48px !important;
+        min-height: 48px;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: var(--claude-border) transparent;
+    }
+    .navbar-inverse .navbar-collapse.collapse::-webkit-scrollbar {
+        height: 3px;
+    }
+    .navbar-inverse .navbar-collapse.collapse::-webkit-scrollbar-thumb {
+        background: var(--claude-border);
+        border-radius: 999px;
     }
     .navbar-inverse .navbar-nav {
-        display: block !important;
+        display: flex !important;
+        align-items: center !important;
+        flex: 0 0 auto !important;
+        width: max-content;
+        min-width: max-content;
+        float: none !important;
+        margin: 0 !important;
     }
     .navbar-inverse .navbar-nav > li {
-        display: block !important;
+        display: flex !important;
+        align-items: center !important;
+        flex: 0 0 auto !important;
+        float: none !important;
     }
     .navbar-inverse .navbar-nav > li > a {
-        border-radius: 10px;
-        padding: 10px 14px !important;
-        margin: 2px 0;
-        height: auto;
-        justify-content: flex-start;
+        border-radius: 9999px;
+        padding: 0 12px !important;
+        margin: 0 2px;
+        height: 36px;
+        font-size: 14px;
+        justify-content: center;
+        white-space: nowrap;
+    }
+    .navbar-inverse .navbar-right {
+        display: flex !important;
+        align-items: center !important;
+        flex: 0 0 auto !important;
+        float: none !important;
+        margin: 0 0 0 8px !important;
+    }
+    .navbar-inverse .navbar-right > li {
+        display: flex !important;
+        flex: 0 0 auto !important;
     }
     .dark-mode-toggle {
-        width: 100%;
-        justify-content: flex-start;
-        height: 42px;
-        margin: 4px 0 !important;
+        width: auto;
+        justify-content: center;
+        height: 36px;
+        margin: 0 2px !important;
+        padding: 0 12px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    body,
+    body.qimen-page {
+        padding-top: 112px;
     }
 }
 

@@ -23,6 +23,19 @@ test('所有主要頁面導覽都包含解答之書與紫微斗數', () => {
     }
 });
 
+test('手機版導覽不使用漢堡選單並提供橫向滑動功能列', () => {
+    const css = read('public/css/style-new.css');
+    const mobileStart = css.indexOf('@media (max-width: 767px)');
+    assert.ok(mobileStart >= 0, '共用樣式應包含手機版導覽規則');
+    const mobileCss = css.slice(mobileStart, css.indexOf('/* Claude 面板與卡片 */', mobileStart));
+    assert.match(mobileCss, /\.navbar-inverse \.navbar-toggle\s*\{[\s\S]*?display:\s*none\s*!important/);
+    assert.match(mobileCss, /\.navbar-inverse \.navbar-collapse\.collapse\s*\{[\s\S]*?overflow-x:\s*auto\s*!important/);
+    assert.match(mobileCss, /\.navbar-inverse \.navbar-nav\s*\{[\s\S]*?width:\s*max-content/);
+    assert.match(mobileCss, /\.navbar-inverse \.navbar-nav\s*>\s*li\s*>\s*a\s*\{[\s\S]*?white-space:\s*nowrap/);
+    assert.match(read('public/css/divination-suite.css'), /@media \(max-width: 767px\)[\s\S]*?body\.suite-page[\s\S]*?padding-top:\s*112px/);
+    assert.match(read('public/css/meihua.css'), /@media \(max-width: 767px\)[\s\S]*?body\.meihua-page[\s\S]*?padding-top:\s*112px/);
+});
+
 test('888人生K線外部站連結位於導覽最右側並另開新視窗', () => {
     for (const file of ['views/index.html', 'views/meihua.html', 'views/tarot.html', 'views/fengshui.html', 'views/bazi2.html', 'views/yinyuan.html', 'views/answerbook.html']) {
         const html = read(file);
