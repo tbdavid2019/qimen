@@ -2,8 +2,56 @@
     color-scheme: light;
 }
 
-[data-theme="dark"] {
+[data-theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"] {
     color-scheme: dark;
+    
+    /* Claude Brand Core Colors - Dark Mode */
+    --claude-bg: #181513;
+    --claude-bg-subtle: #24201D;
+    --claude-card: #221E1B;
+    --claude-primary: #E08568;
+    --claude-primary-hover: #EA967B;
+    --claude-primary-active: #D97757;
+    --claude-primary-light: #3D2B24;
+    --claude-primary-border: #6B4335;
+    --claude-primary-gradient: linear-gradient(135deg, #E08568 0%, #D97757 100%);
+    
+    /* Typography & Text Colors - Dark Mode High Contrast */
+    --claude-text-main: #F7EFE9;
+    --claude-text-body: #EDE5DC;
+    --claude-text-muted: #A89B90;
+    --claude-text-light: #7A7067;
+    
+    /* Dark Linen Borders */
+    --claude-border: #3A342F;
+    --claude-border-subtle: #2C2622;
+    --claude-border-focus: #E08568;
+    
+    /* Dark Soft Shadows */
+    --claude-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --claude-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --claude-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --claude-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    /* Divination Suite Variables Sync */
+    --suite-primary: #E08568;
+    --suite-primary-hover: #EA967B;
+    --suite-accent: #E08568;
+    --suite-bg: #181513;
+    --suite-card-bg: #221E1B;
+    --suite-text: #EDE5DC;
+    --suite-text-muted: #A89B90;
+    --suite-border: #3A342F;
+    --suite-wood: #4ADE80;
+    --suite-fire: #F87171;
+    --suite-earth: #FBBF24;
+    --suite-metal: #FB923C;
+    --suite-water: #60A5FA;
+    --suite-auspicious: #4ADE80;
+    --suite-inauspicious: #F87171;
+    --suite-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .dark-mode-toggle {
@@ -14,9 +62,13 @@
     font-weight: 600;
 }
 
+/* ==========================================================================
+   全域基礎結構與排版 (Global Structure & Typography)
+   ========================================================================== */
+
 [data-theme="dark"] body {
-    background-color: #1A1816;
-    color: #EDE5DC;
+    background-color: #181513 !important;
+    color: #EDE5DC !important;
 }
 
 [data-theme="dark"] a {
@@ -28,20 +80,48 @@
     color: #F0A58F;
 }
 
-[data-theme="dark"] .navbar.navbar-inverse.navbar-fixed-top {
-    background-color: #26221F !important;
-    border-bottom-color: #3A342F !important;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] .page-title,
+[data-theme="dark"] .panel-title,
+[data-theme="dark"] .suite-card-title,
+[data-theme="dark"] .suite-section-title {
+    color: #F7EFE9 !important;
 }
 
-[data-theme="dark"] .navbar-inverse .navbar-brand,
+[data-theme="dark"] .text-muted {
+    color: #A89B90 !important;
+}
+
+[data-theme="dark"] strong {
+    color: #F7EFE9;
+}
+
+/* ==========================================================================
+   頂部導航列 (Navbar)
+   ========================================================================== */
+
+[data-theme="dark"] .navbar.navbar-inverse.navbar-fixed-top {
+    background-color: #221E1B !important;
+    border-bottom: 1px solid #3A342F !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-theme="dark"] .navbar-inverse .navbar-brand {
+    color: #F7EFE9 !important;
+}
+
 [data-theme="dark"] .navbar-inverse .navbar-nav > li > a {
     color: #EDE5DC !important;
 }
 
 [data-theme="dark"] .navbar-inverse .navbar-nav > li > a:hover,
 [data-theme="dark"] .navbar-inverse .navbar-nav > li > a:focus {
-    background-color: #352F2B !important;
+    background-color: #2E2925 !important;
     color: #ffffff !important;
 }
 
@@ -53,6 +133,18 @@
     box-shadow: 0 2px 10px rgba(224, 133, 104, 0.4) !important;
 }
 
+[data-theme="dark"] .dark-mode-toggle {
+    background: #2A2521 !important;
+    border-color: #443C35 !important;
+    color: #EDE5DC !important;
+}
+
+[data-theme="dark"] .dark-mode-toggle:hover {
+    background: #352F2A !important;
+    border-color: #E08568 !important;
+    color: #FFFFFF !important;
+}
+
 [data-theme="dark"] .navbar-inverse .navbar-toggle {
     border-color: #3A342F;
 }
@@ -61,109 +153,201 @@
     background-color: #EDE5DC;
 }
 
-[data-theme="dark"] .page-title,
-[data-theme="dark"] .panel-title {
-    color: #EDE5DC;
+[data-theme="dark"] .dropdown-menu {
+    background-color: #24201D !important;
+    border: 1px solid #3A342F !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
 }
 
-[data-theme="dark"] .time-mode-selector,
+[data-theme="dark"] .dropdown-menu > li > a {
+    color: #EDE5DC !important;
+}
+
+[data-theme="dark"] .dropdown-menu > li > a:hover,
+[data-theme="dark"] .dropdown-menu > li > a:focus {
+    background-color: #352F2B !important;
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   面板與卡片 (Panels, Cards & Basic Info)
+   ========================================================================== */
+
+[data-theme="dark"] .panel,
 [data-theme="dark"] .basic-info,
+[data-theme="dark"] .well,
 [data-theme="dark"] .qimen-pan,
 [data-theme="dark"] .pan-legend,
 [data-theme="dark"] .auspicious-legend,
-[data-theme="dark"] .legend-box,
-[data-theme="dark"] .well {
-    background-color: #26221F;
-    border-color: #3A342F;
-    color: #EDE5DC;
-}
-
-[data-theme="dark"] .panel {
-    background-color: #26221F;
-    border-color: #3A342F;
+[data-theme="dark"] .legend-box {
+    background-color: #221E1B !important;
+    border-color: #3A342F !important;
+    color: #EDE5DC !important;
 }
 
 [data-theme="dark"] .panel-heading {
-    background-color: #2E2925;
-    border-color: #3A342F;
-    color: #EDE5DC;
+    background-color: #2A2521 !important;
+    border-bottom: 1px solid #3A342F !important;
+    color: #F7EFE9 !important;
 }
 
 [data-theme="dark"] .panel-body {
-    color: #EDE5DC;
+    color: #EDE5DC !important;
 }
 
-[data-theme="dark"] .text-muted {
-    color: #9E9287;
+[data-theme="dark"] .basic-info .info-item {
+    border-bottom: 1px solid #2E2824 !important;
+    color: #EDE5DC !important;
 }
 
-[data-theme="dark"] .info-item {
-    border-bottom-color: #3A342F;
-}
-
-[data-theme="dark"] .info-item strong {
-    color: #D5CBC2;
+[data-theme="dark"] .basic-info .info-item strong {
+    color: #F7EFE9 !important;
 }
 
 [data-theme="dark"] .legend-label {
     color: #D5CBC2;
 }
 
-[data-theme="dark"] .footer {
-    background-color: #1A1816;
-    border-top-color: #3A342F;
-    color: #9E9287;
+/* ==========================================================================
+   九宮詳解卡片專屬高對比優化 (Nine-Palace Details High Contrast)
+   ========================================================================== */
+
+[data-theme="dark"] .gong-details .panel {
+    background-color: #221E1B !important;
+    border: 1px solid #3A342F !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
 }
 
-[data-theme="dark"] .modal-content {
-    background-color: #26221F;
-    border-color: #3A342F;
-    color: #EDE5DC;
+[data-theme="dark"] .gong-details .panel-heading {
+    background-color: #2A2521 !important;
+    border-bottom: 1px solid #3A342F !important;
 }
 
-[data-theme="dark"] .modal-header,
-[data-theme="dark"] .modal-footer {
-    border-color: #3A342F;
+[data-theme="dark"] .gong-details .panel-title {
+    color: #F7EFE9 !important;
 }
 
-[data-theme="dark"] .form-control {
-    background-color: #1F1C1A;
-    border-color: #3A342F;
-    color: #EDE5DC;
+[data-theme="dark"] .gong-details .panel-body {
+    background-color: #221E1B !important;
+    color: #EDE5DC !important;
 }
 
-[data-theme="dark"] .form-control:focus {
-    border-color: #E08568;
-    box-shadow: 0 0 0 3px rgba(224, 133, 104, 0.2);
+[data-theme="dark"] .gong-details .panel-body p {
+    color: #EDE5DC !important;
+}
+
+[data-theme="dark"] .gong-details .panel-body p strong {
+    color: #F7EFE9 !important;
+}
+
+[data-theme="dark"] .gong-explain {
+    color: #D5CBC2 !important;
+    border-top: 1px dashed #3A342F !important;
+}
+
+/* ==========================================================================
+   表單控制項與下拉選單 (Form Controls & Selects - 解決太亮刺眼問題)
+   ========================================================================== */
+
+[data-theme="dark"] select,
+[data-theme="dark"] select.form-control,
+[data-theme="dark"] .form-control,
+[data-theme="dark"] input.form-control,
+[data-theme="dark"] textarea.form-control,
+[data-theme="dark"] .qimen-page select,
+[data-theme="dark"] .qimen-page .form-control {
+    background-color: #26211E !important;
+    border: 1px solid #443C35 !important;
+    color: #EDE5DC !important;
+    box-shadow: none !important;
+}
+
+[data-theme="dark"] select option {
+    background-color: #26211E !important;
+    color: #EDE5DC !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] select.form-control:focus {
+    background-color: #2D2723 !important;
+    border-color: #E08568 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(224, 133, 104, 0.25) !important;
 }
 
 [data-theme="dark"] .form-control::placeholder {
-    color: #7A7067;
+    color: #7A7067 !important;
 }
 
 [data-theme="dark"] .input-group-addon {
-    background-color: #2E2925;
-    border-color: #3A342F;
-    color: #D5CBC2;
+    background-color: #2A2521 !important;
+    border-color: #443C35 !important;
+    color: #D5CBC2 !important;
+}
+
+[data-theme="dark"] .qimen-form-label,
+[data-theme="dark"] .form-group > label {
+    color: #D5CBC2 !important;
+}
+
+/* ==========================================================================
+   按鈕與切換器 (Buttons & Time Mode Selector - 解決太亮刺眼問題)
+   ========================================================================== */
+
+[data-theme="dark"] .time-mode-selector {
+    background-color: #221E1B !important;
+    border: 1px solid #3A342F !important;
+}
+
+[data-theme="dark"] .time-mode-selector .btn-group label,
+[data-theme="dark"] .time-mode-selector .btn-group label.btn-default {
+    background-color: #2A2521 !important;
+    border: 1.5px solid #443C35 !important;
+    color: #EDE5DC !important;
+    box-shadow: none !important;
+}
+
+[data-theme="dark"] .time-mode-selector .btn-group label small {
+    color: #A89B90 !important;
+}
+
+[data-theme="dark"] .time-mode-selector .btn-group label:not(.active):hover {
+    background-color: #352F2A !important;
+    border-color: #5A4E44 !important;
+    color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .time-mode-selector .btn-group label.active,
+[data-theme="dark"] .time-mode-selector .btn-group label.btn-default.active {
+    background: linear-gradient(135deg, #E08568 0%, #D97757 100%) !important;
+    border-color: #E08568 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 10px rgba(224, 133, 104, 0.4) !important;
+}
+
+[data-theme="dark"] .time-mode-selector .btn-group label.active small {
+    color: rgba(255, 255, 255, 0.95) !important;
 }
 
 [data-theme="dark"] .btn-default {
-    background-color: #26221F;
-    border-color: #3A342F;
-    color: #EDE5DC;
+    background-color: #2A2521 !important;
+    border: 1px solid #443C35 !important;
+    color: #EDE5DC !important;
 }
 
 [data-theme="dark"] .btn-default:hover,
-[data-theme="dark"] .btn-default:focus {
-    background-color: #352F2B;
-    border-color: #4A423C;
-    color: #ffffff;
+[data-theme="dark"] .btn-default:focus,
+[data-theme="dark"] .btn-default:active {
+    background-color: #352F2A !important;
+    border-color: #5A4E44 !important;
+    color: #FFFFFF !important;
 }
 
 [data-theme="dark"] .btn-primary {
     background: linear-gradient(135deg, #E08568 0%, #D97757 100%) !important;
     border-color: transparent !important;
     color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(224, 133, 104, 0.35) !important;
 }
 
 [data-theme="dark"] .btn-primary:hover,
@@ -172,28 +356,36 @@
 }
 
 [data-theme="dark"] .btn-warning {
-    background-color: #B7791F;
-    border-color: #975A16;
-    color: #FAF5EB;
+    background-color: #B7791F !important;
+    border-color: #975A16 !important;
+    color: #FAF5EB !important;
 }
 
+/* ==========================================================================
+   提示框 (Alerts)
+   ========================================================================== */
+
 [data-theme="dark"] .alert-info {
-    background-color: #2E231C;
-    border-color: #5C3D28;
-    color: #F5D6C6;
+    background-color: #26201B !important;
+    border-color: #4A382A !important;
+    color: #F7D7C4 !important;
 }
 
 [data-theme="dark"] .alert-warning {
-    background-color: #2B2317;
-    border-color: #5C431C;
-    color: #F7E3BE;
+    background-color: #2B2317 !important;
+    border-color: #5C431C !important;
+    color: #F7E3BE !important;
 }
 
 [data-theme="dark"] .alert-danger {
-    background-color: #2C1819;
-    border-color: #5C2326;
-    color: #F7BEC2;
+    background-color: #2C1819 !important;
+    border-color: #5C2326 !important;
+    color: #F7BEC2 !important;
 }
+
+/* ==========================================================================
+   奇門九宮盤面 (Qimen Pan Grid)
+   ========================================================================== */
 
 [data-theme="dark"] .pan-grid {
     border-color: #3A342F;
@@ -269,144 +461,184 @@
     background-color: rgba(255, 255, 255, 0.08);
 }
 
-[data-theme="dark"] .time-mode-selector .btn-group label {
-    border-color: #2a323c;
-    background-color: #11161d;
-    color: #cfd6df;
+/* ==========================================================================
+   五行屬性色彩 (Five Elements - 高對比清晰度)
+   ========================================================================== */
+
+[data-theme="dark"] .wuxing-mu { color: #52c41a !important; }
+[data-theme="dark"] .wuxing-huo { color: #ff7875 !important; }
+[data-theme="dark"] .wuxing-tu { color: #ffc069 !important; }
+[data-theme="dark"] .wuxing-jin { color: #ffe58f !important; }
+[data-theme="dark"] .wuxing-shui { color: #69c0ff !important; }
+[data-theme="dark"] .wuxing-purple { color: #b37feb !important; }
+[data-theme="dark"] .wuxing-yang { color: #ff9c6e !important; }
+
+/* ==========================================================================
+   問答與對話歷史 (Conversations & AI Analysis)
+   ========================================================================== */
+
+[data-theme="dark"] #conversationHistory,
+[data-theme="dark"] .conversation-history {
+    background: #181513 !important;
+    border: 1px solid #3A342F !important;
 }
 
-[data-theme="dark"] .time-mode-selector .btn-group label.active {
-    background-color: #2f6fad;
-    border-color: #2a5f95;
-    color: #ffffff;
+[data-theme="dark"] .conversation-user-bubble {
+    background: #2A2521 !important;
+    color: #EDE5DC !important;
+    border: 1px solid #3E3732 !important;
 }
 
-[data-theme="dark"] #conversationHistory {
-    background: #121821;
-    border: 1px solid #2a323c;
+[data-theme="dark"] .conversation-answer {
+    background: #221E1B !important;
+    color: #EDE5DC !important;
+    border: 1px solid #3A342F !important;
+}
+
+[data-theme="dark"] .conversation-copy-button {
+    background: #2A2521 !important;
+    border-color: #3A342F !important;
+    color: #E08568 !important;
 }
 
 [data-theme="dark"] .llm-analysis-content {
-    background-color: #11161d;
-    border-left-color: #2f6fad;
-    color: #e6e6e6;
+    background-color: #221E1B !important;
+    border-left-color: #E08568 !important;
+    color: #EDE5DC !important;
 }
 
 [data-theme="dark"] .llm-interaction {
-    background-color: #141a22;
-}
-
-[data-theme="dark"] .llm-interaction .form-group label {
-    color: #cfd6df;
+    background-color: #221E1B !important;
 }
 
 [data-theme="dark"] #llmQuestionResponse {
-    background-color: #141a22;
-    border-color: #2a323c;
-    color: #e6e6e6;
+    background-color: #221E1B !important;
+    border-color: #3A342F !important;
+    color: #EDE5DC !important;
 }
 
 [data-theme="dark"] #llmQuestionResponse .response-time {
-    border-top-color: #2a323c;
+    border-top-color: #3A342F !important;
 }
 
+[data-theme="dark"] .assistant-bubble {
+    background: #24201D !important;
+    border-color: #3A342F !important;
+    color: #EDE5DC !important;
+}
+
+/* ==========================================================================
+   梅花易數 (Meihua)
+   ========================================================================== */
+
 [data-theme="dark"] body.meihua-page {
-    background-color: #0f131a;
+    background-color: #181513 !important;
 }
 
 [data-theme="dark"] .meihua-yao-line {
-    background-color: #e6e6e6;
+    background-color: #EDE5DC !important;
 }
 
 [data-theme="dark"] .meihua-yao-yin {
-    background: linear-gradient(to right, #e6e6e6 0 40%, transparent 40% 60%, #e6e6e6 60% 100%);
+    background: linear-gradient(to right, #EDE5DC 0 40%, transparent 40% 60%, #EDE5DC 60% 100%) !important;
 }
 
 [data-theme="dark"] .meihua-yao-changing::after {
-    background-color: #f0ad4e;
+    background-color: #E08568 !important;
 }
 
 [data-theme="dark"] .meihua-meta,
 [data-theme="dark"] .meihua-llm-note {
-    color: #9aa4b2;
+    color: #A89B90 !important;
 }
 
 [data-theme="dark"] .meihua-symbol {
-    color: #cfd6df;
+    color: #EDE5DC !important;
 }
 
 [data-theme="dark"] .meihua-yaoci-table th {
-    background-color: #1a2230;
-    border-color: #2a323c;
-    color: #e6e6e6;
+    background-color: #2A2521 !important;
+    border-color: #3A342F !important;
+    color: #F7EFE9 !important;
 }
 
 [data-theme="dark"] .meihua-yaoci-table td {
-    border-color: #2a323c;
-    color: #e6e6e6;
+    border-color: #3A342F !important;
+    color: #EDE5DC !important;
 }
 
-[data-theme="dark"] .conversation-history {
-    background: #121821;
-    border: 1px solid #2a323c;
+/* ==========================================================================
+   Markdown 排版與彈窗 (Markdown Body & Modal)
+   ========================================================================== */
+
+[data-theme="dark"] .modal-content {
+    background-color: #221E1B !important;
+    border: 1px solid #3A342F !important;
+    color: #EDE5DC !important;
 }
 
-[data-theme="dark"] .assistant-bubble {
-    background: #1a2230;
-    border-color: #2a323c;
-    color: #e6e6e6;
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+    border-color: #3A342F !important;
 }
 
 [data-theme="dark"] .markdown-body code {
-    background: rgba(255, 255, 255, 0.12);
-    color: #f5f5f5;
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #f5f5f5 !important;
 }
 
 [data-theme="dark"] .markdown-body pre {
-    background: #0f141b;
-    border: 1px solid #2a323c;
+    background: #181513 !important;
+    border: 1px solid #3A342F !important;
 }
 
 [data-theme="dark"] .markdown-body table {
-    background: #1e252b;
-    color: #e8edf2;
+    background: #221E1B !important;
+    color: #EDE5DC !important;
 }
 
 [data-theme="dark"] .markdown-body th {
-    background: #2b353d;
-    color: #ffffff;
+    background: #2A2521 !important;
+    color: #F7EFE9 !important;
 }
 
 [data-theme="dark"] .markdown-body th,
 [data-theme="dark"] .markdown-body td {
-    border-color: #46535d;
+    border-color: #46535d !important;
 }
 
-/* WebMCP Dark Mode Styles */
+/* ==========================================================================
+   WebMCP Dark Mode Styles
+   ========================================================================== */
+
 [data-theme="dark"] form:tool-form-active {
-    outline-color: #5bc0de;
+    outline-color: #E08568;
 }
 
 [data-theme="dark"] button:tool-submit-active,
 [data-theme="dark"] input:tool-submit-active {
-    outline-color: #f0ad4e;
-    box-shadow: 0 0 10px rgba(240, 173, 78, 0.5);
+    outline-color: #E08568;
+    box-shadow: 0 0 10px rgba(224, 133, 104, 0.5);
 }
 
 [data-theme="dark"] .webmcp-agent-indicator {
-    background: rgba(15, 23, 42, 0.95);
-    border-color: rgba(96, 165, 250, 0.5);
+    background: rgba(24, 21, 19, 0.95);
+    border-color: rgba(224, 133, 104, 0.5);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 }
 
-/* Footer Dark Mode */
+/* ==========================================================================
+   Footer Dark Mode
+   ========================================================================== */
+
 [data-theme="dark"] .footer.site-footer {
-    background: #0f172a !important;
-    border-top-color: #1e293b !important;
-    color: #94a3b8 !important;
+    background: #181513 !important;
+    border-top: 1px solid #3A342F !important;
+    color: #A89B90 !important;
 }
 
 [data-theme="dark"] .site-footer-provider {
-    color: #64748b !important;
+    color: #7A7067 !important;
 }
+
 

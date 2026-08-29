@@ -15,3 +15,12 @@ Use this skill when the user wants a short answer from the 解答之書 or asks 
 4. Treat the answer as a reflective prompt rather than a guaranteed prediction. For medical, legal, financial, or safety matters, recommend qualified professional advice.
 
 The script calls `POST /api/answerbook-question` with Node.js `fetch` only. It supports `QIMEN_API_BASE_URL`, prints the complete JSON response, and does not require Python or a local server.
+
+## Parameters
+
+`ask_answerbook.js` accepts inline JSON, JSON from stdin, or flags:
+
+- `--mode direct|question` (default `direct`)
+- `--question TEXT` (optional; used by `question` mode)
+- `--lang zh-tw|zh-cn` (optional)
+- `--conversationHistory JSON` (optional)

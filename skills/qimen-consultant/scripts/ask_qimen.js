@@ -8,25 +8,10 @@
  *   node ask_qimen.js "今天適合換工作嗎？" "2026-08-27T10:00:00" "事業"
  */
 
+const { readJsonOrStdin } = require('../../_shared/cli-input');
+
 async function readInput() {
-    if (process.argv[2]) {
-        try {
-            return JSON.parse(process.argv[2]);
-        } catch (_e) {
-            // Positional arguments fallback
-            return {
-                question: process.argv[2],
-                datetime: process.argv[3] || null,
-                purpose: process.argv[4] || '綜合',
-                mode: process.argv[5] || 'advanced'
-            };
-        }
-    }
-    if (process.stdin.isTTY) return {};
-    const chunks = [];
-    for await (const chunk of process.stdin) chunks.push(chunk);
-    const text = Buffer.concat(chunks).toString('utf8').trim();
-    return text ? JSON.parse(text) : {};
+    return readJsonOrStdin(process.argv.slice(2), ['question', 'datetime', 'purpose', 'mode'], { mode: 'advanced', purpose: '綜合' });
 }
 
 async function main() {

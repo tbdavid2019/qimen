@@ -6,7 +6,7 @@ description: >
   採用時家奇門拆補法定局，結合十干克應、三遁吉凶格局、主客動靜利弊分析與專題用神定位，提供專業、理性、可驗證的決策指引。
 ---
 
-# 奇門遁甲大師技能 (Mainline-CN-V1)
+# 奇門遁甲顧問技能 (Mainline-CN-V1)
 
 你是一位精通奇門遁甲的專業決策顧問，遵循 `mainline-cn-v1` 標準口徑。你的任務不是堆砌艱澀術語，而是先確認求測事項與時空參數，完成嚴謹排盤與用神定位，再轉化為求測者能具體執行的行動策略。
 
@@ -39,6 +39,10 @@ node skills/qimen-consultant/scripts/qimen_cli.js --input '{"question_type":"car
 ```
 
 或透過 API 模式（發送 `POST /api/qimen-question`）呼叫 `node skills/qimen-consultant/scripts/ask_qimen.js`。
+
+### `ask_qimen.js` 參數
+
+支援 inline JSON、stdin JSON、位置參數 `question datetime purpose mode`，以及命令列旗標：`--question`（必填）、`--datetime`、`--purpose`、`--mode advanced|traditional`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ### 第 3 步：解讀與結構化輸出
 

@@ -464,7 +464,7 @@ app.post('/api/:module/llm-analysis', async (req, res, next) => {
         });
 
         if (!aiResult.success) {
-            return res.status(500).json({ success: false, error: aiResult.error || 'AI 分析失敗' });
+            return res.status(500).json({ success: false, error: aiResult.error || '解讀失敗' });
         }
 
         const discord = await sendModuleRecord(moduleName, req.body, result, aiResult.analysis);
@@ -1329,7 +1329,7 @@ app.get('/api/docs', (req, res) => {
             qimenQuestion: {
                 method: "POST",
                 path: "/api/qimen-question",
-                description: "提交問題並獲得基於奇門遁甲的 AI 分析回答",
+                description: "提交問題並獲得基於奇門遁甲的分析回答",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -1411,7 +1411,7 @@ app.get('/api/docs', (req, res) => {
             meihuaQuestion: {
                 method: "POST",
                 path: "/api/meihua-question",
-                description: "提交問題並獲得基於梅花易數的 AI 分析回答",
+                description: "提交問題並獲得基於梅花易數的分析回答",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -1425,7 +1425,7 @@ app.get('/api/docs', (req, res) => {
                         type: "string",
                         required: false,
                         default: "time",
-                        enum: ["time", "number"],
+                        enum: ["time", "number", "text", "character"],
                         description: "起卦方式"
                     },
                     datetime: {
@@ -1447,6 +1447,11 @@ app.get('/api/docs', (req, res) => {
                         type: "number",
                         required: false,
                         description: "數字起卦第三數 (動爻)"
+                    },
+                    text: {
+                        type: "string",
+                        required: false,
+                        description: "漢字或詞語（text/character 起卦時使用）"
                     },
                     purpose: {
                         type: "string",
@@ -1472,11 +1477,14 @@ app.get('/api/docs', (req, res) => {
             tarotQuestion: {
                 method: "POST",
                 path: "/api/tarot-question",
-                description: "抽取塔羅牌並獲得模組化 AI 解讀",
+                description: "抽取塔羅牌並獲得模組化解讀",
                 headers: { "Content-Type": "application/json" },
                 parameters: {
                     question: { type: "string", required: true, description: "要詢問的問題" },
                     spread: { type: "string", required: false, default: "three", enum: Object.keys(TAROT_SPREADS), description: "牌陣" },
+                    variant: { type: "string", required: false, enum: ["timeline", "situation", "relationship", "decision"], description: "三牌陣解讀視角" },
+                    time_factor: { type: "string", required: false, enum: ["morning", "afternoon", "night"], description: "時間能量因子" },
+                    timeFactor: { type: "string", required: false, enum: ["morning", "afternoon", "night"], description: "時間能量因子（相容別名）" },
                     seed: { type: "string", required: false, description: "可重現抽牌的亂數種子" },
                     lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
                     conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
@@ -1485,15 +1493,20 @@ app.get('/api/docs', (req, res) => {
             fengshuiQuestion: {
                 method: "POST",
                 path: "/api/fengshui-question",
-                description: "計算八宅、九運與流年飛星並獲得 AI 建議",
+                description: "計算八宅、九運與流年飛星並獲得行動建議",
                 headers: { "Content-Type": "application/json" },
                 parameters: {
                     question: { type: "string", required: true, description: "要詢問的問題" },
-                    facing: { type: "string", required: false, default: "南", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南"], description: "房屋朝向" },
+                    mode: { type: "string", required: false, default: "yangzhai", enum: ["yangzhai", "shaqi", "zeri"], description: "風水服務模式" },
+                    facing: { type: "string", required: false, default: "南", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"], description: "房屋朝向（8 大方位或 24 山）" },
                     moveInYear: { type: "integer", required: false, description: "入住年份" },
                     residentYear: { type: "integer", required: false, description: "居住者出生年份" },
                     sex: { type: "string", required: false, enum: ["男", "女"], description: "居住者性別" },
                     year: { type: "integer", required: false, description: "分析年份" },
+                    shaType: { type: "string", required: false, description: "形煞類型（shaqi 模式）" },
+                    matter: { type: "string", required: false, description: "擇日事項（zeri 模式，如入宅/喬遷、開業/開市）" },
+                    zeriYear: { type: "integer", required: false, description: "擇日目標年份" },
+                    zeriMonth: { type: "integer", required: false, minimum: 1, maximum: 12, description: "擇日目標月份" },
                     lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
                     conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
                 }
@@ -1501,7 +1514,7 @@ app.get('/api/docs', (req, res) => {
             ziweiQuestion: {
                 method: "POST",
                 path: "/api/ziwei-question",
-                description: "計算紫微斗數十二宮命盤、18經典格局與十干四化，並獲得專業 AI 命理解讀",
+                description: "計算紫微斗數十二宮命盤、18經典格局與十干四化，並獲得命理解讀",
                 headers: { "Content-Type": "application/json" },
                 parameters: {
                     question: { type: "string", required: true, description: "要詢問的命理問題" },
@@ -1510,6 +1523,7 @@ app.get('/api/docs', (req, res) => {
                     shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
                     sex: { type: "string", required: false, enum: ["男", "女"], description: "命主性別" },
                     calendar: { type: "string", required: false, default: "solar", enum: ["solar", "lunar"], description: "曆法" },
+                    leap: { type: "boolean", required: false, description: "農曆是否閏月" },
                     lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
                     conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
                 }
@@ -1529,7 +1543,7 @@ app.get('/api/docs', (req, res) => {
             bazi2Question: {
                 method: "POST",
                 path: "/api/bazi2-question",
-                description: "計算生辰八字2命盤並獲得 AI 解讀",
+                description: "計算生辰八字2命盤並獲得命理解讀",
                 headers: { "Content-Type": "application/json" },
                 parameters: {
                     question: { type: "string", required: true, description: "要詢問的問題" },
@@ -1538,6 +1552,8 @@ app.get('/api/docs', (req, res) => {
                     shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
                     sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
                     calendar: { type: "string", required: false, default: "solar", enum: ["solar", "lunar"], description: "曆法" },
+                    deceasedYear: { type: "integer", required: false, description: "已故年份上限過濾" },
+                    allowUnknownHour: { type: "boolean", required: false, description: "未提供時辰時保留未知時柱" },
                     name: { type: "string", required: false, description: "姓名（可選）" },
                     formerName: { type: "string", required: false, description: "曾用名（可選）" },
                     place: { type: "string", required: false, description: "出生地（可選）" },
@@ -1552,9 +1568,21 @@ app.get('/api/docs', (req, res) => {
                 headers: { "Content-Type": "application/json" },
                 parameters: {
                     question: { type: "string", required: true, description: "要詢問的問題" },
-                    mode: { type: "string", required: false, default: "fortune", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "peach-blossom"], description: "姻緣測算模式" },
+                    mode: { type: "string", required: false, default: "fortune", enum: ["fortune", "zodiac", "ziwei-marriage", "peach-blossom", "bazi-match", "red-thread", "marriage-palace", "taohua-luck"], description: "姻緣測算模式" },
                     firstYear: { type: "integer", required: false, description: "第一位出生年份（生肖／桃花模式）" },
                     secondYear: { type: "integer", required: false, description: "第二位出生年份（生肖合婚模式）" },
+                    firstZodiac: { type: "string", required: false, description: "第一位生肖" },
+                    secondZodiac: { type: "string", required: false, description: "第二位生肖" },
+                    name: { type: "string", required: false, description: "姓名" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
+                    stickNum: { type: "integer", required: false, minimum: 1, maximum: 100, description: "自選籤號（1-100）" },
+                    calendar: { type: "string", required: false, enum: ["solar", "lunar"], description: "曆法" },
+                    date: { type: "string", required: false, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, description: "出生時間或時辰" },
+                    stage: { type: "string", required: false, description: "關係階段" },
+                    seekingSex: { type: "string", required: false, enum: ["男", "女"], description: "尋找對象性別" },
+                    preference: { type: "string", required: false, description: "理想型特質偏好" },
+                    scope: { type: "string", required: false, description: "桃花查詢範圍" },
                     status: { type: "string", required: false, default: "單身", description: "感情狀態" },
                     seed: { type: "string", required: false, description: "姻緣籤亂數種子" },
                     chart: { type: "object", required: false, description: "八字命盤（紅線／夫妻宮模式）" },
@@ -1567,10 +1595,10 @@ app.get('/api/docs', (req, res) => {
             answerbookQuestion: {
                 method: "POST",
                 path: "/api/answerbook-question",
-                description: "直接默念取得解答之書原始答案，或輸入問題後由 AI 解讀",
+                description: "直接默念取得解答之書原始答案，或輸入問題後取得解讀",
                 headers: { "Content-Type": "application/json" },
                 parameters: {
-                    mode: { type: "string", required: false, default: "direct", enum: ["direct", "question"], description: "direct 直接默念；question 輸入問題並由 AI 解讀" },
+                    mode: { type: "string", required: false, default: "direct", enum: ["direct", "question"], description: "direct 直接默念；question 輸入問題後取得解讀" },
                     question: { type: "string", required: false, description: "問題模式的具體問題；省略時為直接默念" },
                     lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
                     conversationHistory: { type: "array", required: false, description: "問題模式的多輪對話歷史" }

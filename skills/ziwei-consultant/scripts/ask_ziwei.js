@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 
+const { readJsonOrStdin } = require('../../_shared/cli-input');
+
 async function readInput() {
-    if (process.argv[2]) return JSON.parse(process.argv[2]);
-    if (process.stdin.isTTY) return {};
-    const chunks = [];
-    for await (const chunk of process.stdin) chunks.push(chunk);
-    const text = Buffer.concat(chunks).toString('utf8').trim();
-    return text ? JSON.parse(text) : {};
+    return readJsonOrStdin(process.argv.slice(2), [], {});
 }
 
 async function main() {

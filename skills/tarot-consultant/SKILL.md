@@ -1,11 +1,11 @@
 ---
 name: tarot-consultant
 description: >
-  韋特塔羅牌深度解讀顧問。當用戶提到塔羅、占卜、抽牌、牌陣、每日一牌、感情運勢、事業決策、卡點突破等場景時觸發此技能。
+  韋特塔羅牌解讀顧問。當用戶提到塔羅、占卜、抽牌、牌陣、每日一牌、感情運勢、事業決策、卡點突破等場景時觸發此技能。
   支援 78 張完整牌庫、6 大經典牌陣、時間因子加權、可重現 seed、四維透鏡（鏡子/窗戶/門/錨）與牌間能量生剋分析。
 ---
 
-# 韋特塔羅占卜大師 (Tarot Consultant)
+# 韋特塔羅占卜顧問 (Tarot Consultant)
 
 塔羅是鏡子，不是水晶球：把牌面轉成自我觀察和可選擇的下一步，不宣判固定命運。
 
@@ -53,7 +53,11 @@ node skills/tarot-consultant/scripts/tarot_cli.js --spread three --question "我
 node skills/tarot-consultant/scripts/tarot_cli.js --spread three --seed 12345 --time-factor night --question "工作發展"
 ```
 
-亦可透過 API 發送 `POST /api/tarot-question` 獲取結構化抽牌與 AI 深度解牌。
+亦可透過 API 發送 `POST /api/tarot-question` 獲取結構化抽牌與解牌指引。
+
+### `ask_tarot.js` 參數
+
+支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（必填）、`--spread single|three|diamond|moon|horseshoe|celtic`、`--variant timeline|situation|relationship|decision`、`--seed`、`--time-factor morning|afternoon|night`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ---
 

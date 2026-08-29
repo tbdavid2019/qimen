@@ -6,7 +6,7 @@ description: >
   包含完整安星訣排盤、十二宮位解讀、四化吉凶分析、大限流年推演與人生格局指引。
 ---
 
-# 紫微斗數大師技能 (Ziwei Consultant Skill)
+# 紫微斗數顧問技能 (Ziwei Consultant Skill)
 
 你是一位精通紫微斗數的專業命理顧問，採用主流三合派排盤口徑，並結合飛星四化分析。你的任務不是堆砌艱澀名詞，而是先確保盤面排定精準，解析命身宮與三方四正結構，再轉化為求測者能理解的人生傾向、機遇與具體建議。
 
@@ -36,6 +36,10 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --input '{"date":"1990-05-15",
 ```
 
 或透過 API 模式（發送 `POST /api/ziwei-question` 或 `POST /api/ziwei/chart`）呼叫 `node skills/ziwei-consultant/scripts/ask_ziwei.js`。
+
+### `ask_ziwei.js` 參數
+
+支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（必填）、`--date`（必填，`YYYY-MM-DD`）、`--time`、`--shichen`、`--sex`、`--calendar solar|lunar`、`--leap`、`--name`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ### 第 3 步：結構化解盤輸出
 

@@ -105,8 +105,8 @@
                         <div class="suite-form-group">
                             <label>性別</label>
                             <div class="gender-pill-group">
-                                <label class="gender-pill active"><input type="radio" name="fortuneSex" value="女" checked> 👧 女</label>
-                                <label class="gender-pill"><input type="radio" name="fortuneSex" value="男"> 👦 男</label>
+                                <label class="gender-pill active"><input type="radio" name="fortuneSex" value="女" checked toolparamdescription="求籤者性別"> 👧 女</label>
+                                <label class="gender-pill"><input type="radio" name="fortuneSex" value="男" toolparamdescription="求籤者性別"> 👦 男</label>
                             </div>
                         </div>
                         <div class="suite-form-group">
@@ -122,11 +122,11 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="fortuneBirthDate">信士出生日期（選填，結合生辰斷籤）</label>
-                            <input type="date" class="form-control input-lg" id="fortuneBirthDate" name="fortuneBirthDate" value="1995-06-18">
+                            <input type="date" class="form-control input-lg" id="fortuneBirthDate" name="fortuneBirthDate" value="1995-06-18" toolparamdescription="求籤者出生日期">
                         </div>
                         <div class="suite-form-group">
                             <label for="fortuneStatus">目前感情狀態</label>
-                            <select class="form-control input-lg" id="fortuneStatus" name="fortuneStatus">
+                            <select class="form-control input-lg" id="fortuneStatus" name="fortuneStatus" toolparamdescription="目前感情狀態">
                                 <option value="單身尋覓中" selected>單身尋覓中</option>
                                 <option value="暗戀曖昧中">暗戀/曖昧中</option>
                                 <option value="熱戀交往中">熱戀交往中</option>
@@ -143,7 +143,7 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="firstZodiac">你的生肖</label>
-                            <select class="form-control input-lg" id="firstZodiac" name="firstZodiac">
+                            <select class="form-control input-lg" id="firstZodiac" name="firstZodiac" toolparamdescription="第一人的生肖">
                                 <option value="鼠">🐭 鼠 (子)</option>
                                 <option value="牛">🐮 牛 (丑)</option>
                                 <option value="虎">🐯 虎 (寅)</option>
@@ -164,7 +164,7 @@
                         </div>
                         <div class="suite-form-group">
                             <label for="secondZodiac">對方的生肖</label>
-                            <select class="form-control input-lg" id="secondZodiac" name="secondZodiac">
+                            <select class="form-control input-lg" id="secondZodiac" name="secondZodiac" toolparamdescription="第二人的生肖">
                                 <option value="鼠">🐭 鼠 (子)</option>
                                 <option value="牛">🐮 牛 (丑)</option>
                                 <option value="虎">🐯 虎 (寅)</option>
@@ -187,7 +187,7 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="zodiacRelationStage">雙方相處階段</label>
-                            <select class="form-control input-lg" id="zodiacRelationStage" name="zodiacRelationStage">
+                            <select class="form-control input-lg" id="zodiacRelationStage" name="zodiacRelationStage" toolparamdescription="雙方目前相處階段">
                                 <option value="初步認識">初步認識 / 好感評估</option>
                                 <option value="曖昧互動" selected>曖昧互動 / 互相試探</option>
                                 <option value="交往熱戀">交往熱戀中</option>
@@ -203,18 +203,18 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="ziweiName">姓名（選填）</label>
-                            <input type="text" class="form-control input-lg" id="ziweiName" name="ziweiName" placeholder="例如：張小雅">
+                            <input type="text" class="form-control input-lg" id="ziweiName" name="ziweiName" placeholder="例如：張小雅" toolparamdescription="命主姓名">
                         </div>
                         <div class="suite-form-group">
                             <label>性別</label>
                             <div class="gender-pill-group">
-                                <label class="gender-pill active"><input type="radio" name="ziweiSex" value="女" checked> 👧 女</label>
-                                <label class="gender-pill"><input type="radio" name="ziweiSex" value="男"> 👦 男</label>
+                                <label class="gender-pill active"><input type="radio" name="ziweiSex" value="女" checked toolparamdescription="命主性別"> 👧 女</label>
+                                <label class="gender-pill"><input type="radio" name="ziweiSex" value="男" toolparamdescription="命主性別"> 👦 男</label>
                             </div>
                         </div>
                         <div class="suite-form-group">
                             <label for="ziweiCalendar">曆法</label>
-                            <select class="form-control input-lg" id="ziweiCalendar" name="ziweiCalendar">
+                            <select class="form-control input-lg" id="ziweiCalendar" name="ziweiCalendar" toolparamdescription="曆法類型，solar 或 lunar">
                                 <option value="solar" selected>公曆 (陽曆)</option>
                                 <option value="lunar">農曆 (陰曆)</option>
                             </select>
@@ -223,11 +223,11 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="ziweiDate">出生日期 <span style="color:#ef4444;">*</span></label>
-                            <input type="date" class="form-control input-lg" id="ziweiDate" name="ziweiDate" value="1995-08-18">
+                            <input type="date" class="form-control input-lg" id="ziweiDate" name="ziweiDate" value="1995-08-18" toolparamdescription="出生日期，格式 YYYY-MM-DD">
                         </div>
                         <div class="suite-form-group">
                             <label for="ziweiShichen">出生時辰</label>
-                            <select class="form-control input-lg" id="ziweiShichen" name="ziweiShichen">
+                            <select class="form-control input-lg" id="ziweiShichen" name="ziweiShichen" toolparamdescription="出生時辰">
                                 <option value="12:00">午時 (11:00-13:00)</option>
                                 <option value="00:00">子時 (23:00-01:00)</option>
                                 <option value="02:00">丑時 (01:00-03:00)</option>
@@ -244,7 +244,7 @@
                         </div>
                         <div class="suite-form-group">
                             <label for="ziweiStatus">目前情感狀態</label>
-                            <select class="form-control input-lg" id="ziweiStatus" name="ziweiStatus">
+                            <select class="form-control input-lg" id="ziweiStatus" name="ziweiStatus" toolparamdescription="目前感情狀態">
                                 <option value="單身" selected>單身尋找正緣</option>
                                 <option value="交往中">交往中看配偶特質</option>
                                 <option value="已婚">已婚看婚姻和諧度</option>
@@ -259,24 +259,24 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="taohuaBirthDate">出生日期</label>
-                            <input type="date" class="form-control input-lg" id="taohuaBirthDate" name="taohuaBirthDate" value="1995-06-20">
+                            <input type="date" class="form-control input-lg" id="taohuaBirthDate" name="taohuaBirthDate" value="1995-06-20" toolparamdescription="查詢桃花者出生日期">
                         </div>
                         <div class="suite-form-group">
                             <label for="taohuaYear">或出生年份</label>
-                            <input type="number" class="form-control input-lg" id="taohuaYear" name="taohuaYear" value="1995">
+                            <input type="number" class="form-control input-lg" id="taohuaYear" name="taohuaYear" value="1995" toolparamdescription="出生年份或分析年份">
                         </div>
                         <div class="suite-form-group">
                             <label>性別</label>
                             <div class="gender-pill-group">
-                                <label class="gender-pill active"><input type="radio" name="taohuaSex" value="女" checked> 👧 女</label>
-                                <label class="gender-pill"><input type="radio" name="taohuaSex" value="男"> 👦 男</label>
+                                <label class="gender-pill active"><input type="radio" name="taohuaSex" value="女" checked toolparamdescription="查詢桃花者性別"> 👧 女</label>
+                                <label class="gender-pill"><input type="radio" name="taohuaSex" value="男" toolparamdescription="查詢桃花者性別"> 👦 男</label>
                             </div>
                         </div>
                     </div>
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="taohuaStatus">目前感情狀態</label>
-                            <select class="form-control input-lg" id="taohuaStatus" name="taohuaStatus">
+                            <select class="form-control input-lg" id="taohuaStatus" name="taohuaStatus" toolparamdescription="目前感情狀態">
                                 <option value="單身" selected>單身尋覓正緣</option>
                                 <option value="暗戀中">暗戀/等待對方</option>
                                 <option value="曖昧中">曖昧拉扯發展中</option>
@@ -286,7 +286,7 @@
                         </div>
                         <div class="suite-form-group">
                             <label for="taohuaScope">查詢時效範圍</label>
-                            <select class="form-control input-lg" id="taohuaScope" name="taohuaScope">
+                            <select class="form-control input-lg" id="taohuaScope" name="taohuaScope" toolparamdescription="桃花查詢範圍">
                                 <option value="2026年度整體" selected>2026 年度整體桃花</option>
                                 <option value="近期數月">近期 3-6 個月動態</option>
                             </select>
@@ -306,20 +306,20 @@
                             <div class="suite-form-group">
                                 <label>性別</label>
                                 <div class="gender-pill-group">
-                                    <label class="gender-pill active"><input type="radio" name="bmSex1" value="男" checked> 👦 男</label>
-                                    <label class="gender-pill"><input type="radio" name="bmSex1" value="女"> 👧 女</label>
+                                    <label class="gender-pill active"><input type="radio" name="bmSex1" value="男" checked toolparamdescription="第一方性別"> 👦 男</label>
+                                    <label class="gender-pill"><input type="radio" name="bmSex1" value="女" toolparamdescription="第一方性別"> 👧 女</label>
                                 </div>
                             </div>
                             <div class="suite-form-group">
                                 <label>曆法</label>
-                                <select class="form-control" id="bmCal1" name="bmCal1">
+                                <select class="form-control" id="bmCal1" name="bmCal1" toolparamdescription="第一方曆法">
                                     <option value="solar" selected>公曆 (陽曆)</option>
                                     <option value="lunar">農曆 (陰曆)</option>
                                 </select>
                             </div>
                             <div class="suite-form-group">
                                 <label>出生日期</label>
-                                <input type="date" class="form-control" id="bmDate1" name="bmDate1" value="1992-04-10">
+                                <input type="date" class="form-control" id="bmDate1" name="bmDate1" value="1992-04-10" toolparamdescription="第一方出生日期">
                             </div>
                             <div class="suite-form-group">
                                 <label>出生時辰</label>
@@ -351,20 +351,20 @@
                             <div class="suite-form-group">
                                 <label>性別</label>
                                 <div class="gender-pill-group">
-                                    <label class="gender-pill active"><input type="radio" name="bmSex2" value="女" checked> 👧 女</label>
-                                    <label class="gender-pill"><input type="radio" name="bmSex2" value="男"> 👦 男</label>
+                                    <label class="gender-pill active"><input type="radio" name="bmSex2" value="女" checked toolparamdescription="第二方性別"> 👧 女</label>
+                                    <label class="gender-pill"><input type="radio" name="bmSex2" value="男" toolparamdescription="第二方性別"> 👦 男</label>
                                 </div>
                             </div>
                             <div class="suite-form-group">
                                 <label>曆法</label>
-                                <select class="form-control" id="bmCal2" name="bmCal2">
+                                <select class="form-control" id="bmCal2" name="bmCal2" toolparamdescription="第二方曆法">
                                     <option value="solar" selected>公曆 (陽曆)</option>
                                     <option value="lunar">農曆 (陰曆)</option>
                                 </select>
                             </div>
                             <div class="suite-form-group">
                                 <label>出生日期</label>
-                                <input type="date" class="form-control" id="bmDate2" name="bmDate2" value="1994-09-22">
+                                <input type="date" class="form-control" id="bmDate2" name="bmDate2" value="1994-09-22" toolparamdescription="第二方出生日期">
                             </div>
                             <div class="suite-form-group">
                                 <label>出生時辰</label>
@@ -388,7 +388,7 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="bmStage">關係進展階段</label>
-                            <select class="form-control input-lg" id="bmStage" name="bmStage">
+                            <select class="form-control input-lg" id="bmStage" name="bmStage" toolparamdescription="雙方目前關係階段">
                                 <option value="相親評估">相親評估 / 初步接觸</option>
                                 <option value="熱戀交往" selected>熱戀交往 / 感情磨合</option>
                                 <option value="論及婚嫁">論及婚嫁 / 準備訂婚結婚</option>
@@ -403,38 +403,38 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="rtName">姓名（選填）</label>
-                            <input type="text" class="form-control input-lg" id="rtName" name="rtName" placeholder="例如：李小明">
+                            <input type="text" class="form-control input-lg" id="rtName" name="rtName" placeholder="例如：李小明" toolparamdescription="命主姓名">
                         </div>
                         <div class="suite-form-group">
                             <label>你的性別</label>
                             <div class="gender-pill-group">
-                                <label class="gender-pill active"><input type="radio" name="rtSex" value="女" checked> 👧 女</label>
-                                <label class="gender-pill"><input type="radio" name="rtSex" value="男"> 👦 男</label>
+                                <label class="gender-pill active"><input type="radio" name="rtSex" value="女" checked toolparamdescription="命主性別"> 👧 女</label>
+                                <label class="gender-pill"><input type="radio" name="rtSex" value="男" toolparamdescription="命主性別"> 👦 男</label>
                             </div>
                         </div>
                         <div class="suite-form-group">
                             <label>尋找對象性別</label>
                             <div class="gender-pill-group">
-                                <label class="gender-pill active"><input type="radio" name="rtSeekingSex" value="男" checked> 👦 尋找男性</label>
-                                <label class="gender-pill"><input type="radio" name="rtSeekingSex" value="女"> 👧 尋找女性</label>
+                                <label class="gender-pill active"><input type="radio" name="rtSeekingSex" value="男" checked toolparamdescription="希望尋找的對象性別"> 👦 尋找男性</label>
+                                <label class="gender-pill"><input type="radio" name="rtSeekingSex" value="女" toolparamdescription="希望尋找的對象性別"> 👧 尋找女性</label>
                             </div>
                         </div>
                     </div>
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="rtCalendar">曆法</label>
-                            <select class="form-control input-lg" id="rtCalendar" name="rtCalendar">
+                            <select class="form-control input-lg" id="rtCalendar" name="rtCalendar" toolparamdescription="曆法類型">
                                 <option value="solar" selected>公曆 (陽曆)</option>
                                 <option value="lunar">農曆 (陰曆)</option>
                             </select>
                         </div>
                         <div class="suite-form-group">
                             <label for="rtDate">出生日期 <span style="color:#ef4444;">*</span></label>
-                            <input type="date" class="form-control input-lg" id="rtDate" name="rtDate" value="1996-03-12">
+                            <input type="date" class="form-control input-lg" id="rtDate" name="rtDate" value="1996-03-12" toolparamdescription="出生日期">
                         </div>
                         <div class="suite-form-group">
                             <label for="rtShichen">出生時辰</label>
-                            <select class="form-control input-lg" id="rtShichen" name="rtShichen">
+                            <select class="form-control input-lg" id="rtShichen" name="rtShichen" toolparamdescription="出生時辰">
                                 <option value="09:00" selected>巳時 (09:00-11:00)</option>
                                 <option value="00:00">子時 (23:00-01:00)</option>
                                 <option value="02:00">丑時 (01:00-03:00)</option>
@@ -453,7 +453,7 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="rtStatus">目前感情狀態</label>
-                            <select class="form-control input-lg" id="rtStatus" name="rtStatus">
+                            <select class="form-control input-lg" id="rtStatus" name="rtStatus" toolparamdescription="目前感情狀態">
                                 <option value="單身" selected>母胎單身 / 積極尋找正緣</option>
                                 <option value="空窗期">情傷走出 / 沉澱後的空窗期</option>
                                 <option value="剛分手">剛分手不久 / 渴望新起點</option>
@@ -461,7 +461,7 @@
                         </div>
                         <div class="suite-form-group">
                             <label for="rtPreference">期望理想型偏好（選填）</label>
-                            <input type="text" class="form-control input-lg" id="rtPreference" name="rtPreference" placeholder="例如：性格溫和幽默、有責任感">
+                            <input type="text" class="form-control input-lg" id="rtPreference" name="rtPreference" placeholder="例如：性格溫和幽默、有責任感" toolparamdescription="理想對象特質偏好">
                         </div>
                     </div>
                 </div>

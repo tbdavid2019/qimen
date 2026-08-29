@@ -131,7 +131,11 @@ description: >
 node skills/yinyuan-consultant/scripts/ask_yinyuan.js --mode ziwei-marriage --date 1995-10-24 --time 14:30 --sex 女 --question "我想了解我的未來伴侶特質"
 ```
 
-或發送 `POST /api/yinyuan-question` 獲取結構化排盤與 AI 深度解盤。
+或發送 `POST /api/yinyuan-question` 獲取結構化測算與行動建議。
+
+### `ask_yinyuan.js` 參數
+
+支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（必填）、`--mode fortune|zodiac|ziwei-marriage|peach-blossom|bazi-match|red-thread|marriage-palace|taohua-luck`、`--firstYear`、`--secondYear`、`--firstZodiac`、`--secondZodiac`、`--name`、`--sex`、`--stickNum`、`--calendar`、`--date`、`--time`、`--stage`、`--seekingSex`、`--preference`、`--status`、`--scope`、`--seed`、`--chart`、`--firstChart`、`--secondChart`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ---
 

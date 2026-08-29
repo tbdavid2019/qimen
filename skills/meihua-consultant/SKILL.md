@@ -28,7 +28,11 @@ Trigger this skill whenever a user:
 
 ## API 調用
 
-透過腳本調用 `POST /api/meihua-question` 端點以取得完整的排盤與 AI 解讀。
+透過腳本調用 `POST /api/meihua-question` 端點以取得完整的排盤與解讀。
+
+### `ask_meihua.js` 參數
+
+支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（必填）、`--method time|number|text`、`--datetime`、`--num1`、`--num2`、`--num3`、`--text`、`--purpose`、`--timezone`、`--lang`、`--conversationHistory`。也支援位置參數 `question method purpose`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ## Tone and Style
 

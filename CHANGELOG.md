@@ -4,6 +4,14 @@
 
 ## [2026-08-29]
 
+### 🔗 WebMCP、API 與 Skill 契約補齊
+
+- 修正梅花時間／數字 WebMCP 對 API 的 method 值，補上目前盤面追問工具，並讓首頁註冊完整梅花工具。
+- 宣告式 WebMCP 表單改為將 `FormData` 轉成 canonical payload 後實際執行對應工具，不再回傳固定成功訊息；同步統一 Qimen／Meihua 表單名稱。
+- 修正風水 24 山與形煞 canonical enum、姻緣模式 enum，以及 API 文件中落後的梅花、風水、紫微、姻緣參數。
+- 新增共用 Node.js Skill CLI 輸入解析器，所有 `ask_*.js` 支援 inline JSON、stdin JSON 與旗標參數；同步補齊各 Skill 的參數說明。
+- 移除 WebMCP 與 Skill 操作描述中的 AI 自我強調字眼；移除未實作的塔羅 `cards` 輸入宣稱。
+
 ### 📢 Google AdSense 廣告共用 Partial 模組化與全站 8 大頁面統一佈局
 
 - **廣告元件模組化 (`views/partials/`)**：
@@ -35,6 +43,11 @@
 - 預設導入 Google Fonts「LXGW WenKai Mono TC」，並保留系統中文字型作為遠端載入失敗時的 fallback。
 - 再提高奇門問答正文、解讀表格、提問泡泡與操作按鈕的字級；同步放大其他排盤頁面的主要表單文字，避免 14px 內嵌樣式讓內容顯得過小。
 - 將共用字級集中為語意化 typography tokens，並把奇門、梅花問答訊息改用共用元件 class；後續調整正文或輔助字級只需修改共用 token。
+- **暗黑模式（Dark Mode）深度優化與高對比重構**：
+  - 重構 `dark-mode.css`，注入完整 `--claude-*` 深色 Tokens，解決九宮詳解卡片文字過暗看不清的問題。
+  - 修正表單控制項（`select.form-control`, `input`）與按鈕（`btn-default`, `time-mode-selector`）在暗黑模式下過亮刺眼的問題，改為沉浸式深褐灰（`#26211E` / `#2A2521`）搭配暖色焦點。
+  - 優化五行屬性（`wuxing-mu`, `wuxing-huo`, `wuxing-tu`, `wuxing-jin`, `wuxing-shui`）在暗黑背景下的高對比發光感與清晰度。
+  - 清除 HTML 樣板殘留的寫死色碼（`color: #555`, `color: #666`），確保全站 8 大頁面明暗主題切換體驗一致。
 
 ## [2026-08-28]
 

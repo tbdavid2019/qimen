@@ -17,6 +17,7 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 
 	const expectedTools = [
 		"qimen_divination",
+		"qimen_question",
 		"qimen_custom_paipan",
 		"get_current_pan",
 		"switch_time_mode",
@@ -24,6 +25,7 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 		"meihua_qigua_time",
 		"meihua_qigua_numbers",
 		"meihua_qigua_text",
+		"meihua_question",
 		"meihua_divination",
 		"ziwei_chart",
 		"tarot_reading",
@@ -102,12 +104,32 @@ test("梅花易數工具 schema 格式符合 WebMCP 標準", () => {
 	assert.ok(textQigua, "缺少 meihua_qigua_text 工具");
 	assert.ok(textQigua.inputSchema.properties.text, "缺少 text 參數");
 	assert.deepEqual(textQigua.inputSchema.required, ["text"]);
+	assert.deepEqual(WebMCP.tools.meihua_divination.inputSchema.properties.method.enum, ["time", "number", "text"]);
+});
+
+test("WebMCP 梅花工具會送出 API 可接受的 canonical method", async () => {
+	const WebMCP = require("../public/js/webmcp");
+	const originalFetch = global.fetch;
+	const requests = [];
+	global.fetch = async (_url, options) => {
+		requests.push(JSON.parse(options.body));
+		return { json: async () => ({ success: true, data: { bengua: { name: "測試卦" } } }) };
+	};
+	try {
+		await WebMCP.tools.meihua_qigua_time.execute({ datetime: "2026-08-29T14:30" });
+		await WebMCP.tools.meihua_qigua_numbers.execute({ num1: 1, num2: 2, num3: 3 });
+	} finally {
+		global.fetch = originalFetch;
+	}
+	assert.equal(requests[0].method, "time");
+	assert.equal(requests[0].datetime, "2026-08-29T14:30");
+	assert.equal(requests[1].method, "number");
 });
 
 test("新增四個服務的 WebMCP schema 暴露完整輸入", () => {
 	const WebMCP = require("../public/js/webmcp");
 	const expectations = {
-		tarot_reading: ["question", "spread", "variant", "seed", "cards"],
+		tarot_reading: ["question", "spread", "variant", "seed"],
 		fengshui_report: ["question", "mode", "facing", "moveInYear", "residentYear", "sex", "year", "shaType", "matter", "zeriYear", "zeriMonth"],
 		bazi2_chart: ["question", "date", "time", "sex", "calendar", "name", "formerName", "place"],
 		yinyuan_reading: ["question", "mode", "firstYear", "secondYear", "name", "sex", "stickNum", "calendar", "date", "time", "stage", "status", "scope", "seekingSex", "chart", "firstChart", "secondChart"]
@@ -141,6 +163,23 @@ test("解答之書頁面包含宣告式 WebMCP 表單與兩種操作", () => {
 	assert.match(html, /data-mode="direct"/);
 	assert.match(html, /data-mode="question"/);
 	assert.match(html, /toolparamdescription=/);
+});
+
+test("宣告式表單名稱與 imperative WebMCP 工具一致", () => {
+	assert.match(read("views/index.html"), /id="qimenQuestionForm"[^>]*toolname="qimen_question"/);
+	assert.match(read("views/index.html"), /id="customPanForm"[^>]*toolname="qimen_custom_paipan"/);
+	const html = read("views/meihua.html");
+	assert.match(html, /id="meihuaQuestionForm"[\s\S]*?toolname="meihua_question"/);
+	assert.match(html, /id="meihuaTimeForm"[\s\S]*?toolname="meihua_qigua_time"/);
+	assert.match(html, /id="meihuaNumberForm"[\s\S]*?toolname="meihua_qigua_numbers"/);
+	assert.match(html, /id="meihuaTextForm"[\s\S]*?toolname="meihua_qigua_text"/);
+});
+
+test("宣告式 WebMCP 事件會執行工具而非回傳假成功訊息", () => {
+	const source = read("public/js/webmcp.js");
+	assert.match(source, /new FormData\(form\)/);
+	assert.match(source, /tool\.execute\(readDeclarativeForm\(form\)\)/);
+	assert.doesNotMatch(source, /Form \$\{toolName\} processed successfully/);
 });
 
 test("術數套件頁面都提供宣告式 WebMCP 表單欄位", () => {

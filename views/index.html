@@ -151,10 +151,10 @@
                             <!-- 對話記錄將動態插入這裡 -->
                         </div>
                         
-                        <form id="qimenQuestionForm" toolname="qimen_question_tool" tooldescription="向奇門遁甲提出具體問題並取得解盤" toolautosubmit onsubmit="return false;">
+                        <form id="qimenQuestionForm" toolname="qimen_question" tooldescription="針對目前奇門盤面提出具體問題並取得解讀" toolautosubmit onsubmit="return false;">
                             <div class="form-group" style="margin-bottom: 12px;">
-                                <label class="qimen-form-label" style="font-weight: 600; color: #555;">🎯 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
-                                <select class="form-control" id="qimenPurpose" name="purpose" style="max-width: 320px; display: inline-block; margin-bottom: 8px;">
+                                <label class="qimen-form-label" style="font-weight: 600;">🎯 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
+                                <select class="form-control" id="qimenPurpose" name="purpose" toolparamdescription="占問事項類別，決定主用神方向" style="max-width: 320px; display: inline-block; margin-bottom: 8px;">
                                     <option value="綜合" selected>🌐 綜合運勢（全盤統攬）</option>
                                     <option value="求財">💰 求財投資（主用神：生門 / 戊）</option>
                                     <option value="事業">💼 工作事業（主用神：開門 / 值符）</option>
@@ -302,12 +302,12 @@
                         <label class="btn btn-default <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'active' : '' %>" id="traditionalModeBtn">
                             <input type="radio" name="timeMode" value="traditional" <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'checked' : '' %>> 
                             <i class="glyphicon glyphicon-time"></i> 傳統模式
-                                    <small class="qimen-caption" style="display: block; color: #666;">以當下時辰起盤（兩小時一盤）</small>
+                                    <small class="qimen-caption" style="display: block;">以當下時辰起盤（兩小時一盤）</small>
                         </label>
                         <label class="btn btn-default <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'active' : '' %>" id="advancedModeBtn">
                             <input type="radio" name="timeMode" value="advanced" <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'checked' : '' %>> 
                             <i class="glyphicon glyphicon-dashboard"></i> 進階模式
-                                    <small class="qimen-caption" style="display: block; color: #666;">九宮拆補（13分鐘法）</small>
+                                    <small class="qimen-caption" style="display: block;">九宮拆補（13分鐘法）</small>
                         </label>
                     </div>
                     <div id="advancedModeInfo" class="alert alert-info qimen-meta" style="display: none; margin-top: 10px;">
@@ -333,7 +333,7 @@
                         <span id="timeSegmentInfo" style="display: none;"></span>
                     </div>
                     <% if (process.env.NODE_ENV !== 'production') { %>
-                    <div class="info-item qimen-caption" style="color: #666;">
+                    <div class="info-item qimen-caption">
                         <strong>時區調試:</strong> 
                         <span title="用戶本地時間">本地: <span id="localTime"></span></span> |
                         <span title="伺服器使用時間">計算: <span id="calculationTime"><%= qimen.basicInfo && qimen.basicInfo.date || '' %></span></span>
@@ -689,10 +689,10 @@
                 </div>
                 <div class="modal-body">
                     <form id="customPanForm" action="/custom" method="get"
-                          toolname="qimen_custom_paipan_tool"
+                          toolname="qimen_custom_paipan"
                           tooldescription="設定自定義日期、時間、地點與模式進行奇門遁甲排盤"
                           toolautosubmit>
-                        <input type="hidden" name="lang" value="<%= currentLang %>">
+                        <input type="hidden" name="lang" value="<%= currentLang %>" toolparamdescription="回答語言">
                         <div class="form-group">
                             <label for="type"><%= t('form.type') %></label>
                             <select class="form-control" id="type" name="type" toolparamdescription="排盤類型（預設：四柱）">

@@ -74,7 +74,11 @@ description: >
 node skills/fengshui-consultant/scripts/ask_fengshui.js --mode yangzhai --facing 癸山丁向 --moveInYear 2024 --residentYear 1990 --sex 男 --question "我想了解我家九運的財位與健康佈局"
 ```
 
-或發送 `POST /api/fengshui-question` 獲取結構化排盤與 AI 深度解盤。
+或發送 `POST /api/fengshui-question` 獲取結構化排盤與行動建議。
+
+### `ask_fengshui.js` 參數
+
+支援 inline JSON、stdin JSON，以及命令列旗標：`--question`、`--mode yangzhai|shaqi|zeri`、`--facing`（8 方位或 24 山）、`--moveInYear`、`--residentYear`、`--sex`、`--year`、`--shaType`、`--matter`、`--zeriYear`、`--zeriMonth`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ---
 

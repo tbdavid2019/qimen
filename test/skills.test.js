@@ -38,6 +38,22 @@ test('Skill 腳本只使用 Node.js JavaScript，不依賴 Python', () => {
     }
 });
 
+test('共用 Skill CLI 輸入解析器支援 JSON、旗標與位置參數', async () => {
+    const { readCliInput } = require('../skills/_shared/cli-input');
+    assert.deepEqual(
+        await readCliInput(['{"question":"測試","date":"1990-05-15"}'], [], {}),
+        { question: '測試', date: '1990-05-15' }
+    );
+    assert.deepEqual(
+        await readCliInput(['--mode', 'zeri', '--zeri-year', '2026', '--allow-unknown-hour'], [], {}),
+        { mode: 'zeri', zeriYear: '2026', allowUnknownHour: true }
+    );
+    assert.deepEqual(
+        await readCliInput(['問題', 'number', '事業'], ['question', 'method', 'purpose'], {}),
+        { question: '問題', method: 'number', purpose: '事業' }
+    );
+});
+
 test('所有獨立 CLI 腳本（bazi, qimen, ziwei, fengshui, yinyuan, tarot）均可正常獨立執行', () => {
     const { execSync } = require('child_process');
 

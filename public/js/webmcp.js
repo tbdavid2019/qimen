@@ -80,6 +80,8 @@
 						description:
 							"時間精度模式：advanced (進階九時段模式) 或 traditional (傳統模式)，預設 advanced",
 					},
+					timezone: { type: "string", description: "時區偏移（如 +08:00）" },
+					lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
 				},
 				required: ["question"],
 			},
@@ -99,7 +101,7 @@
 				showAgentFeedback(`奇門遁甲解盤中：「${question}」`);
 
 				// If on Qimen page with question form, sync UI
-				const userQuestionEl = document.getElementById("userQuestion");
+				const userQuestionEl = typeof document !== "undefined" ? document.getElementById("userQuestion") : null;
 				if (userQuestionEl) {
 					userQuestionEl.value = question;
 				}
@@ -109,6 +111,8 @@
 					purpose,
 					mode,
 					datetime,
+					timezone: args?.timezone || "+08:00",
+					lang: args?.lang || "zh-tw",
 				};
 
 				try {
@@ -203,7 +207,7 @@
 					},
 					type: {
 						type: "string",
-						enum: ["四柱"],
+						enum: ["四柱", "三元"],
 						description: "排盤類型（預設四柱）",
 					},
 					method: {
@@ -390,6 +394,7 @@
 				let payload;
 				if (customDateTime) {
 					const parsed = new Date(customDateTime);
+					if (Number.isNaN(parsed.getTime())) throw new Error("自定義時間格式無效");
 					payload = {
 						method: "time",
 						datetime: customDateTime,
@@ -467,10 +472,13 @@
 				readOnlyHint: false,
 				untrustedContentHint: false,
 			},
-			execute: async (args) => {
-				const num1 = Number.parseInt(args.num1, 10);
-				const num2 = Number.parseInt(args.num2, 10);
-				const num3 = Number.parseInt(args.num3, 10);
+				execute: async (args) => {
+					const num1 = Number.parseInt(args.num1, 10);
+					const num2 = Number.parseInt(args.num2, 10);
+					const num3 = Number.parseInt(args.num3, 10);
+					if (![num1, num2, num3].every((value) => Number.isInteger(value) && value >= 1 && value <= 100)) {
+						throw new Error("三個數字都必須是 1 到 100 的整數");
+					}
 
 				showAgentFeedback(`梅花數字起卦: ${num1}, ${num2}, ${num3}`);
 
@@ -521,8 +529,9 @@
 				readOnlyHint: false,
 				untrustedContentHint: false,
 			},
-			execute: async (args) => {
-				const text = String(args?.text || "").trim();
+				execute: async (args) => {
+					const text = String(args?.text || "").trim();
+					if (!text) throw new Error("請提供起卦文字 (text)");
 				showAgentFeedback(`梅花漢字起卦: ${text}`);
 
 				const res = await fetch("/api/meihua/qigua", {
@@ -615,21 +624,23 @@
 						enum: ["time", "number", "text"],
 						description: "起卦方式（time 時間起卦, number 數字起卦, text 漢字起卦，預設 time）",
 					},
+					datetime: { type: "string", description: "時間起卦的指定時間（ISO 8601）" },
+					timezone: { type: "string", description: "時區偏移（如 +08:00）" },
 					text: {
 						type: "string",
 						description: "漢字起卦字串（method 為 text 時使用）",
 					},
 					num1: {
 						type: "integer",
-						description: "第一個數字（method 為 numbers 時使用）",
+						description: "第一個數字（method 為 number 時使用）",
 					},
 					num2: {
 						type: "integer",
-						description: "第二個數字（method 為 numbers 時使用）",
+						description: "第二個數字（method 為 number 時使用）",
 					},
 					num3: {
 						type: "integer",
-						description: "第三個數字（method 為 numbers 時使用）",
+						description: "第三個數字（method 為 number 時使用）",
 					},
 					purpose: {
 						type: "string",
@@ -640,6 +651,7 @@
 						type: "array",
 						description: "可選的續問對話歷史",
 					},
+					lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
 				},
 				required: ["question"],
 			},
@@ -667,7 +679,10 @@
 						num1: args?.num1,
 						num2: args?.num2,
 						num3: args?.num3,
-						conversationHistory: args?.conversationHistory
+						conversationHistory: args?.conversationHistory,
+						datetime: args?.datetime,
+						timezone: args?.timezone || "+08:00",
+						lang: args?.lang || "zh-tw"
 					}),
 				});
 				const data = await res.json();
@@ -693,7 +708,7 @@
 			execute: async (args) => {
 				const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(args || {}) });
 				const data = await response.json();
-				if (!data.success) throw new Error(data.error || "計算失敗");
+				if (!response.ok || !data.success) throw new Error(data.message || data.error || "計算失敗");
 				return JSON.stringify({
 					answer: data.answer || null,
 					analysis: data.analysis || null,
@@ -731,7 +746,6 @@
 				time_factor: { type: "string", enum: ["morning", "afternoon", "night"], description: "時間能量因子加權" },
 				timeFactor: { type: "string", enum: ["morning", "afternoon", "night"] },
 				seed: { type: "string", description: "可選的可重現抽牌種子" },
-				cards: { type: "array", description: "手動指定牌組（可選）" },
 				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
 				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
 			},
@@ -807,10 +821,10 @@
 			},
 			required: ["question"]
 		}),
-		answerbook_reading: createSuiteTool("answerbook_reading", "解答之書直接默念取得提醒，或輸入問題後請 AI 解讀。", "/api/answerbook-question", {
+		answerbook_reading: createSuiteTool("answerbook_reading", "解答之書直接默念取得提醒，或輸入問題後取得解讀。", "/api/answerbook-question", {
 			type: "object",
 			properties: {
-				mode: { type: "string", enum: ["direct", "question"], default: "direct", description: "direct 直接默念；question 輸入問題並由 AI 解讀" },
+				mode: { type: "string", enum: ["direct", "question"], default: "direct", description: "direct 直接默念；question 輸入問題後取得解讀" },
 				question: { type: "string", description: "問題模式使用的具體問題；直接模式可省略" },
 				lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw", description: "回答語言" },
 				conversationHistory: { type: "array", description: "問題模式的續問對話歷史" }
@@ -904,12 +918,13 @@
 		}
 		if (toolName === "fengshui_report" && values.zeriMatter) values.matter = values.zeriMatter;
 		if (toolName === "yinyuan_reading") {
-			const aliases = {
-				fortuneName: "name", fortuneSex: "sex", fortuneStickNum: "stickNum", fortuneBirthDate: "birthDate", fortuneStatus: "status",
-				ziweiName: "name", ziweiSex: "sex", ziweiCalendar: "calendar", ziweiDate: "date", ziweiShichen: "shichen", ziweiStatus: "status",
-				taohuaBirthDate: "birthDate", taohuaYear: "firstYear", taohuaSex: "sex", taohuaStatus: "status", taohuaScope: "scope",
-				zodiacRelationStage: "stage"
+			const aliasGroups = {
+				fortune: { fortuneName: "name", fortuneSex: "sex", fortuneStickNum: "stickNum", fortuneBirthDate: "birthDate", fortuneStatus: "status" },
+				zodiac: { zodiacRelationStage: "stage" },
+				"ziwei-marriage": { ziweiName: "name", ziweiSex: "sex", ziweiCalendar: "calendar", ziweiDate: "date", ziweiShichen: "shichen", ziweiStatus: "status" },
+				"peach-blossom": { taohuaBirthDate: "birthDate", taohuaYear: "firstYear", taohuaSex: "sex", taohuaStatus: "status", taohuaScope: "scope" }
 			};
+			const aliases = aliasGroups[values.mode] || {};
 			for (const [source, target] of Object.entries(aliases)) {
 				if (values[source] !== undefined && values[source] !== "") values[target] = values[source];
 				delete values[source];
@@ -966,9 +981,13 @@
 					);
 					event.preventDefault();
 					const tool = toolDefinitions[toolName];
-					const responsePromise = tool
-						? tool.execute(readDeclarativeForm(form))
-						: Promise.reject(new Error(`找不到 WebMCP 工具：${toolName}`));
+					const responsePromise = Promise.resolve().then(() => {
+						if (!tool) throw new Error(`找不到 WebMCP 工具：${toolName}`);
+						return tool.execute(readDeclarativeForm(form));
+					}).catch((error) => {
+						showAgentFeedback(error.message || "工具執行失敗", "error");
+						throw error;
+					});
 					if (typeof event.respondWith === "function") event.respondWith(responsePromise);
 				}
 			},

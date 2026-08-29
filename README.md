@@ -110,13 +110,13 @@
 
 | 服務模組 | 核心參數集合 (Full Parameters) | Web UI 路由 | API 端點 | CLI Skill 腳本 | WebMCP 工具名稱 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **奇門遁甲** | `question`, `purpose` (8大專題), `mode` (adv/trad), `datetime`, `conversationHistory` | `/` & `/custom` | `POST /api/qimen-question` | `skills/qimen-consultant/scripts/qimen_cli.js` & `ask_qimen.js` | `qimen_divination`, `qimen_custom_paipan` |
+| **奇門遁甲** | `question`, `purpose` (8大專題), `mode` (adv/trad), `datetime`, `conversationHistory` | `/` & `/custom` | `POST /api/qimen-question` | `skills/qimen-consultant/scripts/qimen_cli.js` & `ask_qimen.js` | `qimen_divination`, `qimen_question`, `qimen_custom_paipan` |
 | **紫微斗數** | `question`, `date`, `time`, `shichen`, `sex`, `calendar`, `leap`, `name`, `conversationHistory` | `/ziwei` | `POST /api/ziwei-question` | `skills/ziwei-consultant/scripts/ziwei_cli.js` & `ask_ziwei.js` | `ziwei_chart` |
-| **梅花易數** | `question`, `method` (time/numbers/text), `text`, `num1..3`, `purpose`, `conversationHistory` | `/meihua` | `POST /api/meihua-question` | `skills/meihua-consultant/scripts/ask_meihua.js` | `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_qigua_text`, `meihua_divination` |
+| **梅花易數** | `question`, `method` (time/number/text), `text`, `num1..3`, `purpose`, `conversationHistory` | `/meihua` | `POST /api/meihua-question` | `skills/meihua-consultant/scripts/ask_meihua.js` | `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_qigua_text`, `meihua_question`, `meihua_divination` |
 | **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory` | `/bazi2` | `POST /api/bazi2-question` | `skills/bazi2-consultant/scripts/ask_bazi2.js` | `bazi2_chart` |
 | **月老姻緣** | `question`, `mode` (6大模式), `name`, `sex`, `stickNum` (1-100), `calendar`, `date`, `time`, `status`, `stage`, `scope`, `seekingSex`, `first/secondZodiac`, `first/secondYear`, `first/second` (雙方四柱), `preference` | `/yinyuan` | `POST /api/yinyuan-question` | `skills/yinyuan-consultant/scripts/ask_yinyuan.js` | `yinyuan_reading` |
 | **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri), `facing`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question` | `skills/fengshui-consultant/scripts/ask_fengshui.js` | `fengshui_report` |
-| **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (3維度), `seed`, `cards`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
+| **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (4種視角), `time_factor`, `seed`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
 | **解答之書** | `mode` (direct/question), `question`, `conversationHistory` | `/answerbook` | `POST /api/answerbook-question` | `skills/answerbook-consultant/scripts/ask_answerbook.js` | `answerbook_reading` |
 
 ---
@@ -124,9 +124,9 @@
 ## 🤖 外部調用與 AI Agent 整合
 
 ### 1. WebMCP (Chrome 瀏覽器標準 In-Browser AI Tools)
-本系統全面支援 Chrome WebMCP 規範：
+本系統支援 Chrome WebMCP 規範：
 - 開啟支援 WebMCP 的瀏覽器（如 Chrome 150+ 或啟用 `chrome://flags/#enable-webmcp-testing`）
-- 瀏覽器內建 AI 或擴充套件即可透過 `document.modelContext` 自動探索並執行網頁上的 14 項專屬工具。
+- 瀏覽器內建代理或擴充套件即可透過 `document.modelContext` 自動探索並執行網頁工具；工具 schema 與 API 使用同一組 canonical enum。
 
 ### 2. 零依賴 MCP Bridge (JSON-RPC stdio)
 供 Claude Desktop、Cursor 或任意 MCP Client 使用：

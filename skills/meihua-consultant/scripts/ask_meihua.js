@@ -9,23 +9,10 @@
  *   node ask_meihua.js "明天天氣如何？" "time" "綜合"
  */
 
+const { readJsonOrStdin } = require('../../_shared/cli-input');
+
 async function readInput() {
-    if (process.argv[2]) {
-        try {
-            return JSON.parse(process.argv[2]);
-        } catch (_e) {
-            return {
-                question: process.argv[2],
-                method: process.argv[3] || 'time',
-                purpose: process.argv[4] || '綜合'
-            };
-        }
-    }
-    if (process.stdin.isTTY) return {};
-    const chunks = [];
-    for await (const chunk of process.stdin) chunks.push(chunk);
-    const text = Buffer.concat(chunks).toString('utf8').trim();
-    return text ? JSON.parse(text) : {};
+    return readJsonOrStdin(process.argv.slice(2), ['question', 'method', 'purpose'], { method: 'time', purpose: '綜合' });
 }
 
 async function main() {
