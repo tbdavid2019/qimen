@@ -142,6 +142,10 @@ test("新增四個服務的 WebMCP schema 暴露完整輸入", () => {
 			assert.ok(tool.inputSchema.properties[field], `${toolName} 缺少 ${field} schema`);
 		}
 	}
+	assert.ok(WebMCP.tools.fengshui_report.inputSchema.properties.shaType.enum.includes("天斬煞"));
+	assert.ok(!WebMCP.tools.fengshui_report.inputSchema.properties.shaType.enum.includes("tianzan"));
+	assert.ok(WebMCP.tools.yinyuan_reading.inputSchema.properties.mode.enum.includes("ziwei-marriage"));
+	assert.ok(!WebMCP.tools.yinyuan_reading.inputSchema.properties.mode.enum.includes("ziwei"));
 });
 
 test("解答之書 WebMCP schema 支援兩種模式", () => {
