@@ -22,6 +22,7 @@
             } catch (error) {}
         })();
     </script>
+    <%- include('partials/ads-head.html') %>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style-new.css">
     <link rel="stylesheet" href="/css/dark-mode.css">
@@ -79,6 +80,8 @@
                 <button type="submit" id="answerbookSubmit" class="suite-btn-submit"><span>📖 默念後取得解答</span></button>
             </form>
 
+            <%- include('partials/ads-mobile.html') %>
+
             <div id="answerbookLoading" class="suite-loading-state" hidden>
                 <div class="suite-spinner"></div>
                 <div id="answerbookLoadingText">解答之書正在回應…</div>
@@ -99,6 +102,8 @@
             </div>
         </section>
     </main>
+
+    <%- include('partials/ads-bottom.html') %>
 
     <%- include('partials/site-footer.html') %>
 

@@ -4,6 +4,16 @@
 
 ## [2026-08-29]
 
+### 📢 Google AdSense 廣告共用 Partial 模組化與全站 8 大頁面統一佈局
+
+- **廣告元件模組化 (`views/partials/`)**：
+  - 新建 `views/partials/ads-head.html`：統一管理 Google AdSense SDK 腳本引入（`ca-pub-5210017545918559`）。
+  - 新建 `views/partials/ads-mobile.html`：統一管理行動端頂部/問答區下方自適應橫幅廣告。
+  - 新建 `views/partials/ads-bottom.html`：統一管理桌面端兩側浮動側邊欄（160x600）與頁尾橫幅廣告。
+- **全站 8 大頁面端到端一致性佈局**：
+  - 將廣告版位同步引入至全站所有 8 個術數模組頁面（奇門遁甲 `index.html`、紫微斗數 `ziwei.html`、梅花易數 `meihua.html`、生辰八字 `bazi2.html`、易經風水 `fengshui.html`、韋特塔羅 `tarot.html`、月老姻緣 `yinyuan.html`、解答之書 `answerbook.html`）。
+  - 完美適配 `style-new.css` 響應式邏輯：大螢幕（>1200px）自動展示兩側浮動廣告，小螢幕（<=1200px）自動收合側欄並展示自適應頂部橫幅，底端統一展示橫幅廣告。
+
 ### 🎯 全模組 LLM 解盤「直面解答 · 一句提醒」白話決策結論升級
 
 - **核心解讀邏輯優化（保留專業深度 + 強化白話直答）**：

@@ -27,6 +27,7 @@
         })();
     </script>
 
+    <%- include('partials/ads-head.html') %>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style-new.css">
     <link rel="stylesheet" href="/css/dark-mode.css">
@@ -150,6 +151,8 @@
             </form>
         </div>
 
+        <%- include('partials/ads-mobile.html') %>
+
         <!-- Visual Board Result -->
         <div id="suiteVisualBoard" class="suite-card" hidden></div>
 
@@ -175,14 +178,9 @@
         </div>
     </div>
 
-    <!-- Site Footer -->
-    <footer class="footer site-footer">
-        <div class="container text-center">
-            <p class="site-footer-provider">
-                333 一句提醒·照見當下 · 傳統智慧，理性解讀；照見當下，指引行動
-            </p>
-        </div>
-    </footer>
+    <%- include('partials/ads-bottom.html') %>
+
+    <%- include('partials/site-footer.html') %>
 
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
