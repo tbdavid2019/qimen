@@ -2,6 +2,31 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-09-02]
+
+### 🛡️ Cloudflare Security Audit Skill 全專案安全審計與漏洞修復 (run-1)
+
+- **遠端 DoS 無限迴圈修復 (`lib/solar-time.js`)**：
+  - 修復 `resolveCoordinates` 中未校驗 `Number.isFinite()` 導致 `Infinity` 經度使 `calculateTrueSolarTime` 的 `while` 迴圈無法終止、鎖死 Node.js 單執行緒 Event Loop 的重大高危弱點。
+  - 將經緯度嚴格限制於合理地理範圍（經度 `-180..180`、緯度 `-90..90`），並改以數學取模計算 `dayShift` 與 `adjustedMinutes`。
+- **奇門遁甲陽遁啟用重大演算法修復 (`lib/qimen.js`)**：
+  - 修復 `calculateJuShu` 中 `date >= dongZhiDate` 於 `Date` 與 `Solar` 物件比較時轉型為 `NaN` 恆為 `false` 的缺陷，改由 `JIE_QI_JU_SUAN` 節氣映射表直接提取正規陰陽遁類型，恢復春夏期間陽遁（Yang Dun）正常排盤。
+- **反射型 XSS 修復 (`app.js`)**：
+  - 修復 `GET /` 與 `GET /custom` 錯誤捕獲中未設定 Content-Type 導致 `error.message` 反射未跳脫 query 參數的 XSS 隱患，強制指定 `res.type('text/plain')`。
+- **未授權測試端點與環境資訊防護 (`app.js`)**：
+  - 將 `/api/llm-test`、`/api/discord-test` 與 `/api/timezone-debug` 診斷端點限制為僅在非生產環境（`process.env.NODE_ENV !== 'production'`）開放，避免公開消耗 LLM 額度與 Webhook 濫用。
+  - 修復 `/api/:module/llm-analysis` 透過 `Object.prototype` 原型鏈解析繞過模組白名單校驗的漏洞。
+- **AI 對話歷史角色注入過濾 (`lib/llm-analysis.js`)**：
+  - 於 `buildPayloadWithHistory` 增加嚴格 Schema 過濾，僅允許 `role === 'user'` 或 `role === 'assistant'` 且內容為字串的訊息，防止攻擊者注入 `system` / `developer` 角色覆寫系統提示詞。
+- **梅花易數與風水負數運算健全化 (`lib/meihua.js`, `lib/fengshui.js`)**：
+  - `numToGua` 與 `chooseZeri` 統一採用正餘數取模 `((n % m) + m) % m`，防止負數輸入引發 `TypeError`。
+- **Discord Webhook 提及防護與長度截斷 (`lib/discord-webhook.js`)**：
+  - 全面配置 `allowed_mentions: { parse: [] }` 防止 `@everyone` 提及濫用，並對提問文字進行 4000 字元上限截斷。
+- **容器安全現代化 (`Dockerfile`, `.dockerignore`)**：
+  - 基礎映像檔升級至目前 Active LTS 之 `node:24-alpine`，改以非 root 使用者 `USER node` 運行，並配置 `.dockerignore` 避免敏感檔案打包。
+- **全套測試覆蓋 (`test/security-audit-fixes.test.js`)**：
+  - 新增針對上述弱點的防護測試，全套 142 項單元與整合測試 100% 通過（142/142 PASS）。
+
 ## [2026-08-29]
 
 ### 🧩 WebMCP 宣告式表單避免重複註冊

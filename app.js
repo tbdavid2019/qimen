@@ -54,9 +54,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 中介軟體：WebMCP 權限政策
+// 安全標頭與 WebMCP 權限政策
+app.disable('x-powered-by');
 app.use((req, res, next) => {
     res.setHeader('Permissions-Policy', 'tools=(self)');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     next();
 });
 
@@ -452,8 +456,10 @@ app.get('/api/answerbook-question', answerbookQuestionHandler);
 
 app.post('/api/:module/llm-analysis', async (req, res, next) => {
     const modules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
+    if (!Object.prototype.hasOwnProperty.call(modules, req.params.module)) {
+        return next();
+    }
     const moduleName = modules[req.params.module];
-    if (!moduleName) return next();
     try {
         const { result, question = '', conversationHistory = [] } = req.body || {};
         if (!result) return res.status(400).json({ success: false, error: '缺少計算結果' });
@@ -485,7 +491,7 @@ app.get('/', async (req, res) => {
     try {
         date = parseCivilTime(req.query);
     } catch (error) {
-        return res.status(getHttpErrorStatus(error)).send('排盤錯誤: ' + error.message);
+        return res.type('text/plain').status(getHttpErrorStatus(error)).send('排盤錯誤: ' + error.message);
     }
     if (process.env.NODE_ENV !== 'production') {
         console.log(`最終使用時間: ${date.toISOString()}, 本地表示: ${date.toString()}`);
@@ -541,7 +547,7 @@ app.get('/', async (req, res) => {
     } catch (error) {
         console.error('排盤錯誤:', error);
         const statusCode = getHttpErrorStatus(error);
-        res.status(statusCode).send('排盤錯誤: ' + error.message);
+        res.type('text/plain').status(statusCode).send('排盤錯誤: ' + error.message);
     }
 });
 
@@ -560,7 +566,7 @@ app.get('/custom', async (req, res) => {
     try {
         date = parseCivilTime({ date: dateStr, time: timeStr });
     } catch (error) {
-        return res.status(getHttpErrorStatus(error)).send('排盤錯誤: ' + error.message);
+        return res.type('text/plain').status(getHttpErrorStatus(error)).send('排盤錯誤: ' + error.message);
     }
 
     try {
@@ -610,7 +616,7 @@ app.get('/custom', async (req, res) => {
     } catch (error) {
         console.error('自定義排盤錯誤:', error);
         const statusCode = getHttpErrorStatus(error);
-        res.status(statusCode).send('排盤錯誤: ' + error.message);
+        res.type('text/plain').status(statusCode).send('排盤錯誤: ' + error.message);
     }
 });
 
@@ -1266,8 +1272,11 @@ app.get('/api/llm-config', (req, res) => {
     });
 });
 
-// 測試 Discord webhook
+// 測試 Discord webhook（僅限非生產環境）
 app.get('/api/discord-test', async (req, res) => {
+    if (process.env.NODE_ENV === 'production') {
+        return res.status(404).json({ success: false, message: 'Not found' });
+    }
     try {
         if (!discordWebhook.isEnabled()) {
             return res.json({ 
@@ -1287,8 +1296,11 @@ app.get('/api/discord-test', async (req, res) => {
     }
 });
 
-// 測試 LLM 連接
+// 測試 LLM 連接（僅限非生產環境）
 app.get('/api/llm-test', async (req, res) => {
+    if (process.env.NODE_ENV === 'production') {
+        return res.status(404).json({ success: false, message: 'Not found' });
+    }
     try {
         if (!process.env.LLM_API_KEY) {
             return res.json({ 
@@ -1645,8 +1657,11 @@ app.get('/api/docs', (req, res) => {
     res.json(apiDocs);
 });
 
-// 時區調試 API
+// 時區調試 API（僅限非生產環境）
 app.get('/api/timezone-debug', (req, res) => {
+    if (process.env.NODE_ENV === 'production') {
+        return res.status(404).json({ success: false, message: 'Not found' });
+    }
     const serverTime = new Date();
     const userTimestamp = req.query.timestamp ? new Date(parseInt(req.query.timestamp)) : null;
     const userTimezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset) : null;

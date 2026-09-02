@@ -194,6 +194,19 @@ npm start
 
 ---
 
+## 🛡️ 安全架構與安全審計 (Security Architecture & Auditing)
+
+本系統全面導入 [Cloudflare Security Audit Skill](https://github.com/cloudflare/security-audit-skill) 標準進行 6 階段深度安全審計（Reconnaissance, Hunting, Validation, Reporting, Structured JSON, Independent Verification）：
+
+- **零資料庫無狀態架構 (Zero-Storage Architecture)**：無 SQL/NoSQL 資料庫，不儲存使用者生辰八字、姓名或對話歷史，杜絕 SQL Injection 與個資外洩風險。
+- **金鑰隔離與後端封裝**：所有 LLM API Key 嚴格留存於伺服端環境變數，絕不外流至前端 JavaScript Bundle。
+- **安全標頭與 WebMCP 邊界**：伺服器配置 `Permissions-Policy: tools=(self)`、`X-Content-Type-Options: nosniff`、`X-Frame-Options: SAMEORIGIN`，並停用 `X-Powered-By`。
+- **防禦 DoS 與演算法邊界**：地理經緯度與時間計算皆施加嚴格 `Number.isFinite` 邊界校驗與數學取模，杜絕無限迴圈與 ReDoS 風險。
+- **Prompt Injection 防護**：對話歷史嚴格限制僅接受 `user` 與 `assistant` 角色，防止攻擊者注入 `system` / `developer` 角色覆寫提示詞。
+- **安全審計產物**：審計報表與機器可讀格式位於 `~/security-audit-skill/qimen/run-1/`（包含 `architecture.md`、`REPORT.md`、`FINDINGS-DETAIL.md` 與符合 JSON Schema 之 `findings.json`）。
+
+---
+
 ## 📜 專案理念與社群規範
 
 > 「傳統智慧，理性解讀；照見當下，指引行動。」
