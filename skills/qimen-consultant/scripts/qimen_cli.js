@@ -129,6 +129,15 @@ function parseTargetDate(inputData) {
         }
     }
 
+    if (typeof timeStr === 'string') {
+        const trimmed = timeStr.trim();
+        // 處理純日期 YYYY-MM-DD，預設正午 12:00，防止 JS UTC 午夜跨日漂移問題
+        if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+            const [y, m, d] = trimmed.split('-').map(Number);
+            return new Date(y, m - 1, d, 12, 0, 0);
+        }
+    }
+
     return new Date(timeStr);
 }
 

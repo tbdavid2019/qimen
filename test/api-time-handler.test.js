@@ -46,3 +46,28 @@ test('API 時間驗證保留既有 valid 與 errors response shape', () => {
         { valid: true, errors: [] }
     );
 });
+
+test('APITimeHandler.parseDateRange 正確解析 9/1 ~ 9/9 邊界與天數', () => {
+    const range = APITimeHandler.parseDateRange({
+        startDate: '2026-09-01',
+        endDate: '2026-09-09'
+    });
+
+    assert.equal(range.days, 9);
+    assert.equal(range.endDateTimeInclusive, '2026-09-09T23:59:59.999');
+    assert.equal(range.endDateTimeExclusive, '2026-09-10T00:00:00.000');
+    assert.ok(range.sql.halfOpen.includes('<'));
+    assert.ok(range.mongo.halfOpen.$lt);
+});
+
+test('APITimeHandler.normalizeDateBoundary 支援 start 與 end 模式', () => {
+    const start = APITimeHandler.normalizeDateBoundary('2026-09-09', { boundary: 'start' });
+    const end = APITimeHandler.normalizeDateBoundary('2026-09-09', { boundary: 'end' });
+
+    assert.equal(start.getHours(), 0);
+    assert.equal(start.getMinutes(), 0);
+    assert.equal(end.getHours(), 23);
+    assert.equal(end.getMinutes(), 59);
+    assert.equal(end.getSeconds(), 59);
+});
+

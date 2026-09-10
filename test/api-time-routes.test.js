@@ -144,3 +144,52 @@ test('梅花問答 API 回傳統一時間錯誤契約', async () => {
     assert.equal(body.code, 'INVALID_DATETIME');
     assert.equal(body.field, 'datetime');
 });
+
+test('GET /api/time/range 解決午夜邊界問題 (9/1 ~ 9/9 涵蓋至 23:59:59.999)', async () => {
+    const response = await fetch(`${baseUrl}/api/time/range?startDate=2026-09-01&endDate=2026-09-09`);
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.success, true);
+    assert.equal(body.range.days, 9);
+    assert.equal(body.range.startDate, '2026-09-01');
+    assert.equal(body.range.endDate, '2026-09-09');
+    assert.equal(body.range.startDateTime, '2026-09-01T00:00:00.000');
+    assert.equal(body.range.endDateTimeInclusive, '2026-09-09T23:59:59.999');
+    assert.equal(body.range.endDateTimeExclusive, '2026-09-10T00:00:00.000');
+    assert.equal(body.range.midnightBoundaryResolved, true);
+});
+
+test('POST /api/time/range 支援 JSON payload 與自訂時區', async () => {
+    const response = await postJson('/api/time/range', {
+        startDate: '2026-09-01',
+        endDate: '2026-09-09',
+        timezone: '+08:00'
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.success, true);
+    assert.equal(body.range.days, 9);
+});
+
+test('GET /api/time/range 在日期倒置時回傳 400 與結構化錯誤', async () => {
+    const response = await fetch(`${baseUrl}/api/time/range?startDate=2026-09-10&endDate=2026-09-09`);
+    const body = await response.json();
+
+    assert.equal(response.status, 400);
+    assert.equal(body.success, false);
+    assert.equal(body.code, 'INVALID_DATE_RANGE');
+    assert.equal(body.field, 'endDate');
+});
+
+test('GET /api/time/boundary 支援校正至當日結束邊界 (23:59:59)', async () => {
+    const response = await fetch(`${baseUrl}/api/time/boundary?date=2026-09-09&boundary=end`);
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.success, true);
+    assert.equal(body.boundary, 'end');
+    assert.ok(body.datetime);
+});
+

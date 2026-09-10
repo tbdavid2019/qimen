@@ -830,6 +830,16 @@
 				conversationHistory: { type: "array", description: "問題模式的續問對話歷史" }
 			},
 			required: []
+		}),
+		date_range_normalize: createSuiteTool("date_range_normalize", "標準化日期區間並解決午夜邊界問題（如 9/1~9/9 完整覆蓋至 9/9 23:59:59.999 或半開區間 < 9/10 00:00:00）。", "/api/time/range", {
+			type: "object",
+			properties: {
+				startDate: { type: "string", description: "開始日期 (YYYY-MM-DD)" },
+				endDate: { type: "string", description: "結束日期 (YYYY-MM-DD)" },
+				timezone: { type: "string", description: "時區偏移 (如 +08:00)" },
+				precision: { type: "string", enum: ["millisecond", "second"], default: "millisecond", description: "邊界精度" }
+			},
+			required: ["startDate", "endDate"]
 		})
 	});
 

@@ -2,7 +2,27 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-09-10]
+
+### ⏰ 午夜邊界問題徹底解決 (Midnight Boundary Problem Resolution Engine)
+
+- **核心設計原則（「9/1 ~ 9/9 必到 9/9 23:59:59.999」）**：
+  - 解決資料工程、時序統計與 API 查詢中最易被忽視的午夜邊界陷阱：使用者指定之結束日期自動完整覆蓋當日最後一毫秒（`23:59:59.999`），或以資料庫半開區間標準（`< 次日 00:00:00.000`）進行精準查詢。
+- **民用時間引擎擴充 (`lib/civil-time.js`)**：
+  - 新增 `normalizeDateBoundary(dateInput, { boundary: 'start' | 'end' | 'next_day_start', precision, timezone })`：標準化時間戳邊界，精準支援當日午夜（`00:00:00.000`）、當日末刻（`23:59:59.999`）與次日零點（`next_day_start`）。
+  - 新增 `parseDateRange(input, options)`：支援 `startDate`/`endDate` 及 `from`/`to` 別名，自動計算涵蓋天數（9/1 ~ 9/9 為 9 天），生成 SQL `BETWEEN`、半開區間（`>= start AND < next_day_start`）及 MongoDB 查詢條件物件，並提供記憶體內 `contains(testDate)` 判斷工具。
+- **API 與端點對齊 (`app.js`, `lib/api-time-handler.js`)**：
+  - 擴充 `APITimeHandler.normalizeDateBoundary` 與 `APITimeHandler.parseDateRange`。
+  - 新增端點 `GET /api/time/range`、`POST /api/time/range` 與 `GET /api/time/boundary`、`POST /api/time/boundary`，並完整更新 `/api/docs` API 文檔規格。
+- **CLI 與 Skill 防止 UTC 午夜漂移 (`skills/qimen-consultant/scripts/qimen_cli.js`)**：
+  - 修復 `parseTargetDate` 中純日期字串使用 `new Date(timeStr)` 遭 Node.js 依 UTC 午夜解析導致在西半球向後漂移一天的隱患，改採本地年月日直解並預設正午。
+- **WebMCP 標準擴充 (`public/js/webmcp.js`)**：
+  - 新增 `date_range_normalize` WebMCP 工具定義，使 AI Agent 可在瀏覽器端標準化處理任意日期區間查詢。
+- **全套測試覆蓋 (`test/civil-time.test.js`, `test/api-time-handler.test.js`, `test/api-time-routes.test.js`)**：
+  - 新增 10 項專題測試，驗證 9/1 ~ 9/9 邊界涵蓋、閏年跨月、倒置日期校驗與端點整合，全套 152 項測試 100% 通過（152/152 PASS）。
+
 ## [2026-09-02]
+
 
 ### 🛡️ Cloudflare Security Audit Skill 全專案安全審計與漏洞修復 (run-1)
 

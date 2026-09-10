@@ -95,6 +95,13 @@
   - `direct`（直接默念）：隨機翻開一頁獲取宇宙的一句提醒。
   - `question`（輸入問題）：輸入具體困惑，由 AI 結合書中籤言進行深層象徵解讀與理性行動指引。
 
+### 9. ⏰ 時間標準化與午夜邊界解決引擎 (`/api/time/range` & `/api/time/boundary`)
+- **午夜邊界問題 (Midnight Boundary Problem)**：徹底根治資料工程與時序統計中常見的「9/1 ~ 9/9 漏算 9/9 當天下午與晚間」的重大邊界缺陷。
+- **雙標準保證**：
+  - **當日末刻閉區間**：`endDate` 自動補齊至 `23:59:59.999`（或秒精度 `23:59:59`），完整包容當天所有數據。
+  - **次日零點半開區間**：同步生成 `endDateTimeExclusive`（次日 `00:00:00.000`），完美支援資料庫標準半開區間查詢（`>= start AND < next_day_start`）。
+  - **時區防禦**：避免 JavaScript `new Date('YYYY-MM-DD')` 強制轉 UTC 造成西半球倒退一天或東八區時辰錯亂問題。
+
 ---
 
 ## 🧠 AI 專業解盤標準與雙層輸出架構 (Dual-Layer Architecture)
@@ -124,6 +131,7 @@
 | **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri), `facing`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question` | `skills/fengshui-consultant/scripts/ask_fengshui.js` | `fengshui_report` |
 | **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (4種視角), `time_factor`, `seed`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
 | **解答之書** | `mode` (direct/question), `question`, `conversationHistory` | `/answerbook` | `POST /api/answerbook-question` | `skills/answerbook-consultant/scripts/ask_answerbook.js` | `answerbook_reading` |
+| **時間範圍校正** | `startDate`, `endDate`, `timezone`, `precision` | `/` | `GET/POST /api/time/range` | `lib/civil-time.js` | `date_range_normalize` |
 
 ---
 

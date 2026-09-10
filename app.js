@@ -177,6 +177,51 @@ app.get('/api/solar-time', (req, res) => {
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
 });
 
+const handleTimeRange = (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const range = APITimeHandler.parseDateRange(payload);
+        res.json({ success: true, range });
+    } catch (error) {
+        res.status(getHttpErrorStatus(error)).json({
+            success: false,
+            error: error.message,
+            code: error.code || 'INVALID_DATE_RANGE',
+            field: error.field || 'range'
+        });
+    }
+};
+
+const handleTimeBoundary = (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const date = APITimeHandler.normalizeDateBoundary(payload.date || payload.datetime || payload.timestamp, {
+            boundary: payload.boundary || 'start',
+            timezone: payload.timezone,
+            precision: payload.precision
+        });
+        res.json({
+            success: true,
+            boundary: payload.boundary || 'start',
+            datetime: date.toISOString(),
+            timestamp: date.getTime()
+        });
+    } catch (error) {
+        res.status(getHttpErrorStatus(error)).json({
+            success: false,
+            error: error.message,
+            code: error.code || 'INVALID_DATETIME',
+            field: error.field || 'date'
+        });
+    }
+};
+
+app.get('/api/time/range', handleTimeRange);
+app.post('/api/time/range', handleTimeRange);
+app.get('/api/time/boundary', handleTimeBoundary);
+app.post('/api/time/boundary', handleTimeBoundary);
+
+
 const handleBaziChart = async (req, res) => {
     try {
         const payload = { ...(req.query || {}), ...(req.body || {}) };
@@ -1618,9 +1663,32 @@ app.get('/api/docs', (req, res) => {
                 responseExample: {
                     success: true,
                     mode: "question",
-                    answer: "準時\\nBE ON TIME",
+                    answer: "準時\nBE ON TIME",
                     analysis: "請依問題與現況安排可執行的下一步。",
                     analysisSuccess: true
+                }
+            },
+            timeRange: {
+                method: "GET / POST",
+                path: "/api/time/range",
+                description: "標準化日期區間並徹底解決午夜邊界問題（Midnight Boundary Problem，如 9/1~9/9 覆蓋至 9/9 23:59:59.999 或半開區間 < 9/10 00:00:00）",
+                parameters: {
+                    startDate: { type: "string", required: true, description: "開始日期 (YYYY-MM-DD)", example: "2026-09-01" },
+                    endDate: { type: "string", required: true, description: "結束日期 (YYYY-MM-DD)", example: "2026-09-09" },
+                    timezone: { type: "string", required: false, default: "+08:00", description: "時區偏移 (±HH:MM 格式)" },
+                    precision: { type: "string", required: false, default: "millisecond", enum: ["millisecond", "second"], description: "邊界精度" }
+                },
+                responseExample: {
+                    success: true,
+                    range: {
+                        startDate: "2026-09-01",
+                        endDate: "2026-09-09",
+                        startDateTime: "2026-09-01T00:00:00.000",
+                        endDateTimeInclusive: "2026-09-09T23:59:59.999",
+                        endDateTimeExclusive: "2026-09-10T00:00:00.000",
+                        days: 9,
+                        midnightBoundaryResolved: true
+                    }
                 }
             }
         },
