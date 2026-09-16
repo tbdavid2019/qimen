@@ -148,6 +148,19 @@ test("新增四個服務的 WebMCP schema 暴露完整輸入", () => {
 	assert.ok(!WebMCP.tools.yinyuan_reading.inputSchema.properties.mode.enum.includes("ziwei"));
 });
 
+test("WebMCP 風水佈局評估工具提供嚴格九宮與路徑契約", () => {
+	const WebMCP = require("../public/js/webmcp");
+	const tool = WebMCP.tools.fengshui_layout_evaluation;
+	assert.ok(tool);
+	assert.deepEqual(tool.inputSchema.required, ["layoutObjects"]);
+	assert.equal(tool.inputSchema.additionalProperties, false);
+	assert.equal(tool.inputSchema.properties.layoutObjects.minProperties, 1);
+	assert.deepEqual(Object.keys(tool.inputSchema.properties.layoutObjects.properties), ["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]);
+	assert.equal(tool.inputSchema.properties.layoutObjects.properties["南"].maxItems, 63);
+	assert.equal(tool.inputSchema.properties.entryPath.maxItems, 9);
+	assert.deepEqual(tool.inputSchema.properties.entryPath.items.enum, ["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]);
+});
+
 test("解答之書 WebMCP schema 支援兩種模式", () => {
 	const WebMCP = require("../public/js/webmcp");
 	const tool = WebMCP.tools.answerbook_reading;
@@ -191,6 +204,37 @@ test("WebMCP 註冊器會跳過已有宣告式表單的同名工具", () => {
 	assert.match(source, /document\.querySelectorAll\("form\[toolname\]"\)/);
 	assert.match(source, /declarativeToolNames\.has\(tool\.name\)/);
 	assert.match(source, /InvalidStateError: Duplicate tool name/);
+});
+
+test("風水頁面會保留宣告式報告並註冊確定性佈局評估工具", async () => {
+	const previousWindow = global.window;
+	const previousDocument = global.document;
+	const registered = [];
+	global.window = { location: { pathname: "/fengshui" } };
+	global.document = {
+		readyState: "loading",
+		addEventListener: () => {},
+		modelContext: {
+			registerTool: async (tool) => {
+				registered.push(tool.name);
+			},
+		},
+		querySelectorAll: (selector) => selector === "form[toolname]"
+			? [{ getAttribute: () => "fengshui_report" }]
+			: [],
+	};
+
+	try {
+		const WebMCP = require("../public/js/webmcp");
+		await WebMCP.registerAllTools();
+		assert.deepEqual(registered, ["fengshui_layout_evaluation", "switch_theme"]);
+		assert.deepEqual(WebMCP.getRegisteredTools(), ["fengshui_layout_evaluation", "switch_theme"]);
+	} finally {
+		if (previousWindow === undefined) delete global.window;
+		else global.window = previousWindow;
+		if (previousDocument === undefined) delete global.document;
+		else global.document = previousDocument;
+	}
 });
 
 test("術數套件頁面都提供宣告式 WebMCP 表單欄位", () => {

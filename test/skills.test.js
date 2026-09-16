@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const http = require('node:http');
 
 const root = path.join(__dirname, '..');
 const skills = [
@@ -81,4 +82,36 @@ test('所有獨立 CLI 腳本（bazi, qimen, ziwei, fengshui, yinyuan, tarot）�
     const trStdout = execSync('node skills/tarot-consultant/scripts/tarot_cli.js --spread three --seed 999', { encoding: 'utf-8' });
     const trRes = JSON.parse(trStdout);
     assert.equal(trRes.cards.length, 3);
+});
+
+test('風水 Skill evaluate-layout 模式路由本地 API 且不要求 question', async () => {
+    const requests = [];
+    const server = http.createServer((req, res) => {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            requests.push({ method: req.method, url: req.url, body: JSON.parse(body) });
+            res.writeHead(200, { 'content-type': 'application/json' });
+            res.end(JSON.stringify({ success: true, layoutEvaluation: { findings: [] } }));
+        });
+    });
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const { execFile } = require('node:child_process');
+    const { promisify } = require('node:util');
+    const run = promisify(execFile);
+    try {
+        const baseUrl = `http://127.0.0.1:${server.address().port}`;
+        await run(process.execPath, [
+            path.join(root, 'skills/fengshui-consultant/scripts/ask_fengshui.js'),
+            JSON.stringify({ mode: 'evaluate-layout', layoutObjects: { '南': ['door.main'] } })
+        ], { env: { ...process.env, QIMEN_API_BASE_URL: baseUrl } });
+    } finally {
+        await new Promise(resolve => server.close(resolve));
+    }
+    assert.equal(requests.length, 1);
+    assert.equal(requests[0].method, 'POST');
+    assert.equal(requests[0].url, '/api/fengshui/evaluate-layout');
+    assert.equal(requests[0].body.mode, 'evaluate-layout');
+    assert.equal(requests[0].body.question, undefined);
+    assert.deepEqual(requests[0].body.layoutObjects, { '南': ['door.main'] });
 });

@@ -66,3 +66,259 @@ test('形勢巒頭與空間六事 24 種煞氣庫與多重診斷完整支援', (
     assert.ok(multi.summary.includes('外局形煞'));
     assert.ok(multi.summary.includes('內局空間六事'));
 });
+
+test('電子羅盤度數正規化與圓周距離計算', () => {
+    const { normalizeHeading, circularDistance } = require('../lib/fengshui');
+    assert.equal(normalizeHeading(0), 0);
+    assert.equal(normalizeHeading(360), 0);
+    assert.equal(normalizeHeading(725), 5);
+    assert.equal(normalizeHeading(-15), 345);
+    assert.equal(normalizeHeading(-365), 355);
+
+    assert.equal(circularDistance(10, 20), 10);
+    assert.equal(circularDistance(355, 5), 10);
+    assert.equal(circularDistance(5, 355), 10);
+    assert.equal(circularDistance(0, 180), 180);
+});
+
+test('24山全部中心與全部山界均正確分類', () => {
+    const { calculateMountainFromHeading, determineChartType, MOUNTAIN_CENTERS, MOUNTAIN_BOUNDARIES } = require('../lib/fengshui');
+    assert.equal(Object.keys(MOUNTAIN_CENTERS).length, 24);
+
+    for (const mountain of MOUNTAIN_CENTERS) {
+        const info = calculateMountainFromHeading(mountain.center);
+        assert.equal(info.facingMountain, mountain.name, `${mountain.name} 向首山`);
+        assert.equal(info.deviationFromCenter, 0, `${mountain.name} 中心偏差`);
+        const qualification = determineChartType(mountain.center, info);
+        assert.equal(qualification.chartType, 'pure', `${mountain.name} 中心應為正向下卦`);
+        assert.equal(qualification.isSubstitute, false, `${mountain.name} 中心不應替卦`);
+    }
+
+    const largeVoidBoundaries = new Set([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]);
+    assert.equal(MOUNTAIN_BOUNDARIES.length, 24);
+    for (const boundary of MOUNTAIN_BOUNDARIES) {
+        const info = calculateMountainFromHeading(boundary);
+        const qualification = determineChartType(boundary, info);
+        assert.equal(qualification.chartType, 'void', `${boundary}° 應為空亡線`);
+        assert.equal(qualification.boundary, boundary, `${boundary}° 應命中自身山界`);
+        assert.equal(qualification.voidType, largeVoidBoundaries.has(boundary) ? 'large' : 'small', `${boundary}° 空亡類型`);
+        assert.equal(qualification.deviationFromBoundary, 0, `${boundary}° 山界偏差`);
+    }
+});
+
+test('正向下卦、兼向替卦與大小空亡線判定', () => {
+    const { calculateMountainFromHeading, determineChartType } = require('../lib/fengshui');
+
+    // 午山正中 180° -> 正向下卦 (離中心 0°)
+    const m180 = calculateMountainFromHeading(180);
+    const q180 = determineChartType(180, m180);
+    assert.equal(q180.chartType, 'pure');
+    assert.equal(q180.isSubstitute, false);
+
+    // 午山 182° -> 正向下卦 (偏離 2° <= 4.5°)
+    const m182 = calculateMountainFromHeading(182);
+    const q182 = determineChartType(182, m182);
+    assert.equal(q182.chartType, 'pure');
+
+    // 丁午交界 (187.5°) 附近：187.0° 離邊界 0.5° <= 1.5° -> 小空亡線
+    const m187 = calculateMountainFromHeading(187.0);
+    const q187 = determineChartType(187.0, m187);
+    assert.equal(q187.chartType, 'void');
+    assert.equal(q187.voidType, 'small');
+
+    // 巽離宮位出卦大交界 (157.5°) 附近：157.0° 離八卦大邊界 0.5° <= 1.5° -> 大空亡線
+    const m157 = calculateMountainFromHeading(157.0);
+    const q157 = determineChartType(157.0, m157);
+    assert.equal(q157.chartType, 'void');
+    assert.equal(q157.voidType, 'large');
+});
+
+test('review regressions: candidate substitute, kitchen/stove distinction, and true-north correction', () => {
+    const { calculateFengShui } = require('../lib/fengshui');
+    const candidate = calculateFengShui({ heading: 65 });
+    assert.equal(candidate.chartQualification.chartType, 'candidate');
+    assert.equal(candidate.chartQualification.isSubstitute, false);
+
+    const kitchenOnly = calculateFengShui({ layoutObjects: { '西北': ['space.kitchen'] } });
+    assert.ok(kitchenOnly.layoutEvaluation.missingData.includes('appliance.stove'));
+    assert.equal(kitchenOnly.layoutEvaluation.findings.some(f => f.category === 'stove'), false);
+
+    const corrected = calculateFengShui({ heading: 10, northReference: 'true', declination: 10 });
+    assert.equal(corrected.orientation.heading, 0);
+});
+
+test('三元九運歷法涵蓋全部九個元運 (1864-2043+)', () => {
+    const { getPeriod } = require('../lib/fengshui');
+    assert.equal(getPeriod(1870), 1);
+    assert.equal(getPeriod(1890), 2);
+    assert.equal(getPeriod(1910), 3);
+    assert.equal(getPeriod(1930), 4);
+    assert.equal(getPeriod(1950), 5);
+    assert.equal(getPeriod(1970), 6);
+    assert.equal(getPeriod(1990), 7);
+    assert.equal(getPeriod(2010), 8);
+    assert.equal(getPeriod(2024), 9);
+    assert.equal(getPeriod(2035), 9);
+    assert.equal(getPeriod(2045), 1);
+});
+
+test('住宅格局輸入防呆驗證 validateLayoutInput', () => {
+    const { validateLayoutInput } = require('../lib/fengshui');
+
+    // 正常結構通過
+    assert.doesNotThrow(() => {
+        validateLayoutInput({
+            layoutObjects: { '南': ['door.main'], '西北': ['space.kitchen', 'appliance.stove'] },
+            entryPath: ['南', '中'],
+            pathQuality: 'open'
+        });
+    });
+
+    // 非物件 layoutObjects 報錯
+    assert.throws(() => {
+        validateLayoutInput({ layoutObjects: 'invalid' });
+    }, /必須為以九宮方位為鍵的物件/);
+
+    // 未知物件 ID 報錯
+    assert.throws(() => {
+        validateLayoutInput({ layoutObjects: { '南': ['fake.item.id'] } });
+    }, /未知的住宅物件 ID/);
+
+    // 單一放置模式多處擺放報錯
+    assert.throws(() => {
+        validateLayoutInput({ layoutObjects: { '南': ['door.main'], '北': ['door.main'] } });
+    }, /不可同時出現在多個宮位/);
+
+    // 非法入路通暢度報錯
+    assert.throws(() => {
+        validateLayoutInput({ layoutObjects: {}, pathQuality: 'super-open' });
+    }, /pathQuality 必須為/);
+});
+
+test('風水 CLI 將 inline JSON facing 視為明確輸入並驗證度數衝突', () => {
+    const { spawnSync } = require('node:child_process');
+    const cli = require('node:path').join(__dirname, '../skills/fengshui-consultant/scripts/fengshui_cli.js');
+    const inferred = spawnSync(process.execPath, [cli, '{"heading":0,"mode":"yangzhai"}'], { encoding: 'utf8' });
+    assert.equal(inferred.status, 0);
+    const explicit = spawnSync(process.execPath, [cli, '{"heading":0,"facing":"南","mode":"yangzhai"}'], { encoding: 'utf8' });
+    assert.equal(explicit.status, 1);
+    assert.match(explicit.stderr, /FACING|互相矛盾|矛盾/);
+});
+
+test('中州派玄空室內佈局評估與資料不足誠實標註', () => {
+    const { calculateFengShui } = require('../lib/fengshui');
+
+    // 測試火燒天門（瓦斯爐位於西北乾宮）
+    const result = calculateFengShui({
+        heading: 180,
+        moveInYear: 2024,
+        residentYear: 1990,
+        sex: '男',
+        layoutObjects: {
+            '南': ['door.main'],
+            '西北': ['space.kitchen', 'appliance.stove']
+        },
+        entryPath: ['南', '中'],
+        pathQuality: 'open'
+    });
+
+    assert.ok(result.layoutEvaluation);
+    assert.ok(result.layoutEvaluation.findings.length > 0);
+    const fireGate = result.layoutEvaluation.findings.find(f => f.ruleId === 'stove-fire-heaven-gate-v1');
+    assert.ok(fireGate, '應檢驗出火燒天門');
+    assert.equal(fireGate.palace, '西北');
+    assert.ok(fireGate.action.length > 0);
+
+    // 誠實標註：主臥室未標註，應出現在 missingData 中，禁止臆測
+    assert.ok(result.layoutEvaluation.missingData.includes('space.master_bedroom'));
+    assert.ok(result.missingData.includes('space.master_bedroom'));
+
+    // 朝向與度數衝突檢查
+    assert.throws(() => {
+        calculateFengShui({
+            heading: 180, // 南
+            facing: '北',  // 矛盾
+            moveInYear: 2024
+        });
+    }, /互相矛盾/);
+});
+
+test('中州派室內佈局評估支援動態元運（八運宅旺星為八白，九紫為生氣）', () => {
+    const { calculateFengShui } = require('../lib/fengshui');
+    // 八運宅（2015年入宅，旺星為8，生氣為9）
+    const resultPeriod8 = calculateFengShui({
+        heading: 180,
+        moveInYear: 2015,
+        layoutObjects: {
+            '南': ['door.main']
+        }
+    });
+    assert.equal(resultPeriod8.period, 8);
+    assert.ok(resultPeriod8.layoutEvaluation);
+});
+
+test('renderFengShui DOM 渲染回歸測試：正確消費完整欄位與本地化標籤且無異常', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const code = fs.readFileSync(path.join(__dirname, '../public/js/divination-suite.js'), 'utf8');
+
+    const elements = {
+        suiteVisualBoard: { innerHTML: '', hidden: true },
+        aiResponseBox: { innerHTML: '', hidden: true },
+        responseSummary: { textContent: '' },
+        aiAnalysisText: { innerHTML: '' },
+        suiteForm: { addEventListener: () => {}, elements: { mode: { value: 'yangzhai', addEventListener: () => {} } } },
+        customDateTimeRow: { style: {} },
+        fsGroupYangzhai: { style: {} },
+        fsGroupShaqi: { style: {} },
+        fsGroupZeri: { style: {} }
+    };
+
+    const previousWindow = global.window;
+    const previousDoc = global.document;
+
+    global.window = { location: { pathname: '/fengshui' } };
+    global.document = {
+        readyState: 'complete',
+        body: { dataset: { suite: 'fengshui' } },
+        addEventListener: () => {},
+        getElementById: (id) => elements[id] || { innerHTML: '', style: {}, addEventListener: () => {} },
+        querySelector: () => null,
+        querySelectorAll: () => []
+    };
+
+    try {
+        const instrumented = code.replace('function renderFengShui(report) {', 'window.testRenderFengShui = function(report) {');
+        eval(instrumented);
+
+        const { calculateFengShui } = require('../lib/fengshui');
+        const fixture = calculateFengShui({
+            heading: 180,
+            moveInYear: 2024,
+            residentYear: 1990,
+            sex: '男',
+            layoutObjects: {
+                '南': ['door.main'],
+                '西北': ['space.kitchen', 'appliance.stove'],
+                '東': ['space.study']
+            },
+            entryPath: ['南', '中'],
+            pathQuality: 'open'
+        });
+
+        assert.doesNotThrow(() => {
+            global.window.testRenderFengShui(fixture);
+        });
+
+        const html = elements.suiteVisualBoard.innerHTML;
+        assert.ok(html.length > 500, '盤面應渲染充足 HTML');
+        assert.ok(html.includes('大門'), '應包含本地化標籤 大門');
+        assert.ok(html.includes('瓦斯爐'), '應包含本地化標籤 瓦斯爐');
+        assert.ok(html.includes('中州派玄空室內格局評估'), '應包含中州派評估標題');
+        assert.ok(html.includes('羅盤向首'), '應包含羅盤向首');
+        assert.ok(html.includes('經典引證'), '應包含經典引證');
+    } finally {
+        if (previousWindow === undefined) delete global.window; else global.window = previousWindow;
+        if (previousDoc === undefined) delete global.document; else global.document = previousDoc;
+    }
+});

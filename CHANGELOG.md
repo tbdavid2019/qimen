@@ -2,6 +2,36 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-09-16]
+
+### 🧭 易經風水 PWA 實時電子羅盤與中州派快速九宮住宅佈局評估 (fengshui-compass-zhongzhou-layout)
+
+- **跨平台 PWA 實時電子羅盤 (`views/fengshui.html`, `public/js/fengshui.js`)**：
+  - 提供 iOS Safari/Android Chrome 感測器介面與手動 fallback；實機 HTTPS 權限與跨平台校正仍待驗證。
+  - 引入圓周平滑低通濾波演算法（Circular Low-pass Filter），消除微幅抖動。
+  - 姿態防呆安全門檻：感測傾角（Pitch/Roll）超過 $\pm 15^\circ$ 時即時提示水平握持警告並鎖定禁止誤鎖定。
+  - 羅盤幾何演算法：自動將向首度數精確映射至 24 山，嚴格判定**正向下卦**、**兼向候選**（完整替卦排盤待補）與**大小空亡線**。
+  - 手動度數微調滑桿提供無感測器桌機備援；頁面方向選擇完整涵蓋 8 大方位與 24 山精確坐向全集合下拉選單。
+- **STEP 2 快速九宮住宅物件落位標註器 (`data/fengshui/layout-catalog.json`, `public/js/fengshui.js`)**：
+  - 建立 7 大類 63 項 Canonical 住宅物件標準庫（空間 15 項、門窗 5 項、家具 11 項、設備 11 項、動線 4 項、外局 6 項、形體 11 項），區分單一與多處放置模式。
+  - 實作「南在頂、北在下」互動式九宮格標註盤面，支援物件點選放置、重複點選移除、標籤刪除與全盤清空。
+  - 進門動線循跡（最後入路宮位序列）與通暢度設定（`open` / `obstructed` / `unknown`），並與大門宮位即時雙向連動防呆。
+  - 版本化本地快照機制（`fengshui-layout:v1`），自動儲存與載入裝置本地配置。
+- **中州派玄空室內佈局評估引擎 (`lib/fengshui.js`)**：
+  - 門氣納氣評估（依建造/入住年份動態推導當令旺星與生氣星，不再寫死九運）。
+  - 主臥床位評估（依動態元運判定山星當令吉凶、避開二黑病符與五黃大煞）。
+  - 爐灶火門評估（西北乾宮火燒天門、西兌宮烈火焚金、二黑五黃煞位安灶禁忌）。
+  - 衛浴廁所壓煞與書房文昌吉位評估（一四同宮、一六共宗）。
+  - **資料不足誠實標註原則 (Omission Honesty)**：未標註之住宅項目（如未標註主臥、未標註瓦斯爐、未標註入路）嚴格列入 `missingData`，演算法與 LLM 提示詞全面禁止憑空臆測與幻覺。
+  - 整合傳統文獻短句與文化詮釋及現代化空間調整指引；版本／頁碼 provenance 尚待補齊。
+- **全介面 5 層參數同步對齊 (Full-Stack 5-Layer Parameter Alignment)**：
+  - **Web UI**：`views/fengshui.html` 羅盤儀表、24 山全集合下拉選單、STEP 2 九宮標註、`public/js/fengshui.js`、`public/js/divination-suite.js`（支援 63 項住宅標籤中文本地化顯示、修正兼向 badge 樣式）與 `public/css/divination-suite.css` 完整樣式。
+  - **API 端點**：新增純演算法確定性端點 `POST /api/fengshui/evaluate-layout` 與 `GET /api/fengshui/evaluate-layout`；修復 Query 字串空物件防呆漏洞；擴充 `/api/fengshui/report` 與 `/api/fengshui-question`；`Permissions-Policy` 新增感測器授權指令；坐向與度數衝突檢查（`FACING_HEADING_CONFLICT`）；`/api/docs` 同步登記住宅目錄端點。
+  - **CLI / Skill**：更新 `skills/fengshui-consultant/scripts/fengshui_cli.js` 支援 `--heading`、`--layout`、`--entry-path`、`--path-quality` 等旗標與非阻塞 stdin 讀取；同步更新 `SKILL.md`。
+  - **WebMCP / 官方 MCP / Bridge**：更新 `public/js/webmcp.js` `fengshui_report` 與獨立 `fengshui_layout_evaluation` 工具宣告與表單序列化；更新 `mcp/src/tools/divination.ts`、`mcp/dist/tools/divination.js` 與 `mcp-bridge.js`。
+  - **文檔**：同步更新 `README.md` 與 `CHANGELOG.md`。
+  - **Node 測試**：目前全專案 169 項自動化測試通過（169/169 PASS），新增 DOM 渲染回歸測試與動態元運佈局評估測試。
+
 ## [2026-09-10]
 
 ### ⏰ 午夜邊界問題徹底解決 (Midnight Boundary Problem Resolution Engine)

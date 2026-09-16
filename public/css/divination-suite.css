@@ -599,6 +599,758 @@ body.suite-page {
     color: var(--suite-text-muted);
 }
 
+/* FengShui Electronic Compass & Step 2 Layout UI */
+.fs-compass-card {
+    background: var(--suite-card-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 20px;
+    box-shadow: var(--suite-shadow);
+}
+
+.fs-compass-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.fs-compass-title-box {
+    flex: 1;
+    min-width: 240px;
+}
+
+.fs-badge-feature {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: rgba(204, 107, 73, 0.12);
+    color: var(--suite-primary);
+    margin-bottom: 4px;
+}
+
+.fs-compass-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: var(--suite-text);
+}
+
+.fs-compass-desc {
+    font-size: 12px;
+    color: var(--suite-text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.fs-start-compass-btn {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.fs-compass-body {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.fs-compass-dial-wrap {
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0 auto;
+}
+
+.fs-compass-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.compass-outer-ring {
+    stroke: var(--suite-border);
+    fill: var(--suite-bg);
+    stroke-width: 2;
+}
+
+.compass-middle-ring {
+    stroke: var(--suite-border);
+    fill: none;
+    stroke-dasharray: 3 3;
+}
+
+.compass-inner-ring {
+    stroke: var(--suite-border);
+    fill: none;
+}
+
+.compass-dir-label {
+    font-size: 11px;
+    font-weight: 700;
+    fill: var(--suite-text-muted);
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+.needle-north {
+    fill: #ef4444;
+}
+
+.needle-south {
+    fill: #64748b;
+}
+
+.needle-cap {
+    fill: #1e293b;
+    stroke: #fff;
+    stroke-width: 1.5;
+}
+
+.fs-compass-data-panel {
+    flex: 1;
+    min-width: 250px;
+}
+
+.fs-data-row-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.compass-deg-large {
+    font-size: 36px;
+    font-weight: 800;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: var(--suite-primary);
+    line-height: 1;
+}
+
+.compass-mount-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--suite-text);
+    margin-bottom: 4px;
+}
+
+.compass-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.compass-badge.badge-pure {
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
+}
+
+.compass-badge.badge-sub,
+.compass-badge.badge-substitute,
+.compass-badge.badge-candidate {
+    background: rgba(245, 158, 11, 0.15);
+    color: #d97706;
+}
+
+.compass-badge.badge-void {
+    background: rgba(239, 68, 68, 0.15);
+    color: #dc2626;
+}
+
+.compass-meta-line {
+    font-size: 11px;
+    color: var(--suite-text-muted);
+    margin-bottom: 8px;
+}
+
+.compass-tilt-alert {
+    font-size: 12px;
+    color: #dc2626;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 3px solid #dc2626;
+}
+
+.fs-compass-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.fs-btn-action {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.fs-manual-slider-box {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px dashed var(--suite-border);
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.fs-slider-label {
+    font-size: 11px;
+    color: var(--suite-text-muted);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.fs-slider-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fs-range-slider {
+    flex: 1;
+    accent-color: var(--suite-primary);
+    cursor: pointer;
+}
+
+.fs-num-input {
+    width: 70px;
+    height: 30px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: monospace;
+    border-radius: 6px;
+}
+
+.fs-unit {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--suite-text-muted);
+}
+
+/* STEP 2 Nine-Grid Layout Editor */
+.fs-step2-card {
+    background: var(--suite-card-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--suite-shadow);
+}
+
+.fs-step2-header {
+    margin-bottom: 14px;
+    position: relative;
+}
+
+.fs-step2-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+    margin-bottom: 4px;
+}
+
+.fs-step2-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: var(--suite-text);
+}
+
+.fs-step2-subtext {
+    font-size: 12px;
+    color: var(--suite-text-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.fs-step2-actions-top {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.fs-btn-clear {
+    font-size: 11px;
+    padding: 3px 8px;
+}
+
+.fs-category-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.fs-cat-btn {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    border: 1px solid var(--suite-border);
+    background: var(--suite-bg);
+    color: var(--suite-text);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.fs-cat-btn:hover {
+    border-color: var(--suite-primary);
+}
+
+.fs-cat-btn.active {
+    background: var(--suite-primary);
+    color: #fff;
+    border-color: var(--suite-primary);
+    font-weight: 600;
+}
+
+.fs-item-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    max-height: 110px;
+    overflow-y: auto;
+    padding: 2px;
+}
+
+.fs-item-pill {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--suite-border);
+    background: var(--suite-card-bg);
+    color: var(--suite-text);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.fs-item-pill:hover {
+    border-color: var(--suite-primary);
+}
+
+.fs-item-pill.selected {
+    background: rgba(204, 107, 73, 0.15);
+    border-color: var(--suite-primary);
+    color: var(--suite-primary);
+    font-weight: 700;
+}
+
+.fs-selection-banner {
+    background: rgba(204, 107, 73, 0.08);
+    border-left: 3px solid var(--suite-primary);
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+}
+
+.fs-selection-banner .highlight {
+    color: var(--suite-primary);
+    font-weight: 700;
+}
+
+.fs-item-hint {
+    font-size: 11px;
+    color: var(--suite-text-muted);
+    margin-left: 4px;
+}
+
+.fs-nine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.fs-palace-cell {
+    background: var(--suite-bg);
+    border: 1.5px solid var(--suite-border);
+    border-radius: 10px;
+    padding: 8px 6px;
+    min-height: 96px;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    outline: none;
+}
+
+.fs-palace-cell:hover, .fs-palace-cell:focus {
+    border-color: var(--suite-primary);
+}
+
+.fs-palace-cell.center-cell {
+    background: rgba(204, 107, 73, 0.03);
+}
+
+.fs-palace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.fs-palace-name {
+    font-weight: 700;
+    color: var(--suite-text);
+}
+
+.fs-sit-face-tag {
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.fs-sit-face-tag.sit {
+    background: rgba(59, 130, 246, 0.15);
+    color: #2563eb;
+}
+
+.fs-sit-face-tag.face {
+    background: rgba(239, 68, 68, 0.15);
+    color: #dc2626;
+}
+
+.fs-palace-items-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
+    align-content: flex-start;
+}
+
+.fs-empty-hint {
+    font-size: 11px;
+    color: var(--suite-text-muted);
+    margin: auto 0;
+    opacity: 0.6;
+}
+
+.fs-grid-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--suite-card-bg);
+    border: 1px solid var(--suite-border);
+    color: var(--suite-text);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.fs-tag-remove {
+    background: none;
+    border: none;
+    color: #dc2626;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 1px;
+}
+
+.fs-entry-path-box {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid var(--suite-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+}
+
+.fs-entry-path-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--suite-text);
+}
+
+.fs-entry-path-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    min-height: 24px;
+    margin-bottom: 8px;
+}
+
+.fs-path-step {
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--suite-primary);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+.fs-path-arrow {
+    color: var(--suite-text-muted);
+    font-size: 11px;
+}
+
+.fs-entry-path-add-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.fs-path-prompt {
+    font-size: 11px;
+    color: var(--suite-text-muted);
+}
+
+.fs-path-palace-buttons {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+}
+
+.fs-add-path-btn {
+    font-size: 10px;
+    padding: 1px 5px;
+}
+
+.fs-path-quality-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.fs-quality-select {
+    width: auto;
+    max-width: 260px;
+    height: 30px;
+    font-size: 12px;
+}
+
+.fs-step2-footer-note {
+    font-size: 11px;
+    color: var(--suite-text-muted);
+    line-height: 1.4;
+}
+
+/* FengShui Result Visual Board Enhancements */
+.fs-cell-tags-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+.fs-cell-tag {
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    background: rgba(204, 107, 73, 0.1);
+    color: var(--suite-primary);
+    border: 1px solid rgba(204, 107, 73, 0.2);
+}
+
+.fs-orientation-info-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.fs-info-pill {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--suite-border);
+    color: var(--suite-text);
+}
+
+.fs-eval-card {
+    background: var(--suite-card-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 16px;
+    box-shadow: var(--suite-shadow);
+}
+
+.fs-eval-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--suite-border);
+    padding-bottom: 8px;
+}
+
+.fs-eval-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--suite-text);
+}
+
+.fs-eval-rating-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+}
+
+.fs-eval-rating-badge.rating-good {
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
+}
+
+.fs-eval-rating-badge.rating-neutral {
+    background: rgba(59, 130, 246, 0.15);
+    color: #2563eb;
+}
+
+.fs-eval-rating-badge.rating-bad {
+    background: rgba(239, 68, 68, 0.15);
+    color: #dc2626;
+}
+
+.fs-finding-item {
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 3px solid;
+    font-size: 12px;
+}
+
+.fs-finding-item.level-good {
+    background: rgba(16, 185, 129, 0.06);
+    border-color: #059669;
+}
+
+.fs-finding-item.level-warning {
+    background: rgba(245, 158, 11, 0.06);
+    border-color: #d97706;
+}
+
+.fs-finding-item.level-bad {
+    background: rgba(239, 68, 68, 0.06);
+    border-color: #dc2626;
+}
+
+.fs-finding-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 3px;
+    color: var(--suite-text);
+}
+
+.fs-finding-desc {
+    font-size: 12px;
+    color: var(--suite-text);
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.fs-finding-rec {
+    font-size: 12px;
+    color: var(--suite-primary);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.fs-quote-cite {
+    font-size: 11px;
+    color: var(--suite-text-muted);
+    font-style: italic;
+    margin-top: 6px;
+    border-top: 1px dashed var(--suite-border);
+    padding-top: 4px;
+    line-height: 1.4;
+}
+
+.fs-actions-list {
+    margin-top: 12px;
+}
+
+.fs-action-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.fs-action-priority {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--suite-primary);
+    color: #fff;
+    line-height: 1.4;
+}
+
+.fs-missing-box {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px dashed var(--suite-border);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--suite-text-muted);
+}
+
+/* Dark mode theme overrides */
+[data-theme="dark"] .fs-manual-slider-box,
+[data-theme="dark"] .fs-entry-path-box,
+[data-theme="dark"] .fs-missing-box {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .needle-cap {
+    fill: #e2e8f0;
+    stroke: #1e293b;
+}
+
+[data-theme="dark"] .fs-info-pill {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .compass-badge.badge-pure,
+[data-theme="dark"] .fs-eval-rating-badge.rating-good {
+    color: #34d399;
+}
+
+[data-theme="dark"] .compass-badge.badge-sub,
+[data-theme="dark"] .compass-badge.badge-substitute,
+[data-theme="dark"] .compass-badge.badge-candidate {
+    color: #fbbf24;
+}
+
+[data-theme="dark"] .compass-badge.badge-void,
+[data-theme="dark"] .fs-eval-rating-badge.rating-bad {
+    color: #f87171;
+}
+
 /* YinYuan & Fortune Scroll UI */
 .fortune-scroll {
     background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);

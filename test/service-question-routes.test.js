@@ -131,3 +131,83 @@ test('新 API 端點 /api/solar-time, /api/fengshui/shaqi-list, /api/fengshui/lu
     assert.equal(dataLuantou.success, true);
     assert.equal(dataLuantou.result.totalIssues, 2);
 });
+
+test('風水住宅物件目錄端點回傳權威 63 項 catalog', async () => {
+    const response = await fetch(`${baseUrl}/data/fengshui/layout-catalog.json`);
+    const catalog = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(catalog.version, '1.0.0');
+    assert.ok(Array.isArray(catalog.categories));
+    assert.ok(Array.isArray(catalog.items));
+    assert.equal(catalog.items.length, 63);
+    assert.equal(new Set(catalog.items.map(item => item.id)).size, 63);
+    assert.ok(catalog.items.some(item => item.id === 'space.entryway'));
+    assert.ok(catalog.items.some(item => item.id === 'form.sloped_roof'));
+});
+
+test('中州派住宅佈局評估端點 /api/fengshui/evaluate-layout 正常運作且不經由 LLM', async () => {
+    const payload = {
+        heading: 180,
+        moveInYear: 2024,
+        layoutObjects: {
+            '南': ['door.main'],
+            '西北': ['space.kitchen', 'appliance.stove']
+        },
+        entryPath: ['南', '中'],
+        pathQuality: 'open'
+    };
+
+    const resPost = await fetch(`${baseUrl}/api/fengshui/evaluate-layout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    const dataPost = await resPost.json();
+    assert.equal(resPost.status, 200);
+    assert.equal(dataPost.success, true);
+    assert.ok(dataPost.layoutEvaluation);
+    assert.ok(dataPost.layoutEvaluation.findings);
+    assert.ok(dataPost.missingData.includes('space.master_bedroom'));
+
+    const resGet = await fetch(`${baseUrl}/api/fengshui/evaluate-layout?heading=180&moveInYear=2024&layoutObjects=${encodeURIComponent(JSON.stringify(payload.layoutObjects))}`);
+    const dataGet = await resGet.json();
+    assert.equal(resGet.status, 200);
+    assert.equal(dataGet.success, true);
+    assert.ok(dataGet.layoutEvaluation);
+    assert.ok(dataGet.layoutEvaluation.findings);
+});
+
+test('風水報告 API 端點支援羅盤向首與九宮佈局，並檢測坐向度數矛盾', async () => {
+    // 正常帶入 heading 與 layoutObjects
+    const resSuccess = await postJson('/api/fengshui/report', {
+        heading: 180,
+        moveInYear: 2024,
+        residentYear: 1990,
+        sex: '男',
+        year: 2026,
+        layoutObjects: {
+            '南': ['door.main'],
+            '西北': ['appliance.stove']
+        }
+    });
+    assert.equal(resSuccess.status, 200);
+    const dataSuccess = await resSuccess.json();
+    assert.equal(dataSuccess.success, true);
+    assert.ok(dataSuccess.report.orientation);
+    assert.equal(dataSuccess.report.orientation.heading, 180);
+    assert.ok(dataSuccess.report.layoutEvaluation);
+
+    // 坐向度數衝突：heading=180 (南), facing='北' -> 400
+    const resConflict = await postJson('/api/fengshui/report', {
+        heading: 180,
+        facing: '北',
+        moveInYear: 2024,
+        residentYear: 1990,
+        sex: '男',
+        year: 2026
+    });
+    assert.equal(resConflict.status, 400);
+    const dataConflict = await resConflict.json();
+    assert.equal(dataConflict.success, false);
+    assert.equal(dataConflict.code, 'FACING_HEADING_CONFLICT');
+});

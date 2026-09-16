@@ -8,8 +8,21 @@ async function readInput() {
 
 async function main() {
     const input = await readInput();
+    // Keep documented --layout/--entry-path flags equivalent to API JSON.
+    if (typeof input.layout === 'string' && input.layoutObjects === undefined) {
+        try { input.layoutObjects = JSON.parse(input.layout); } catch { input.layoutObjects = input.layout; }
+        delete input.layout;
+    }
+    if (typeof input.layoutObjects === 'string') {
+        try { input.layoutObjects = JSON.parse(input.layoutObjects); } catch {}
+    }
+    if (typeof input.entryPath === 'string') {
+        try { input.entryPath = JSON.parse(input.entryPath); } catch { input.entryPath = input.entryPath.split(',').map(value => value.trim()).filter(Boolean); }
+    }
     const baseUrl = (process.env.QIMEN_API_BASE_URL || 'https://qi.david888.com').replace(/\/$/, '');
-    const response = await fetch(`${baseUrl}/api/fengshui-question`, {
+    const endpoint = input.mode === 'evaluate-layout' ? '/api/fengshui/evaluate-layout' : '/api/fengshui-question';
+    if (input.mode === 'evaluate-layout') delete input.question;
+    const response = await fetch(`${baseUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input)

@@ -236,14 +236,41 @@
 
         const auspiciousStars = new Set(['生氣', '天醫', '延年', '伏位']);
 
+        const FENGSHUI_CATALOG_LABELS = {
+            "space.entryway": "玄關", "space.living_room": "客廳", "space.dining_room": "餐廳", "space.master_bedroom": "主臥室",
+            "space.second_bedroom": "次臥室", "space.children_room": "兒童房", "space.elder_room": "長輩房", "space.study": "書房",
+            "space.studio": "工作室", "space.kitchen": "廚房", "space.bathroom": "浴室", "space.toilet": "廁所",
+            "space.storage": "儲藏室", "space.dressing_room": "更衣室", "space.other_room": "其他房間",
+            "door.main": "大門", "door.secondary": "次要門", "window.standard": "窗戶", "door.balcony": "陽台", "opening.lightwell": "天井",
+            "furniture.bed": "睡床", "furniture.sofa": "沙發", "furniture.desk": "書桌", "furniture.dining_table": "餐桌",
+            "furniture.shrine": "神位/佛堂", "furniture.tv_cabinet": "電視櫃", "furniture.coffee_table": "茶几",
+            "furniture.vanity": "梳妝台", "furniture.wardrobe": "衣櫃", "furniture.shelf": "收納架", "furniture.plant": "綠植盆栽",
+            "appliance.stove": "瓦斯爐/灶", "appliance.refrigerator": "冰箱", "appliance.sink": "水槽", "appliance.washing_machine": "洗衣機",
+            "appliance.water_heater": "熱水器", "appliance.air_conditioner": "冷氣機", "appliance.microwave": "微波爐/烤箱",
+            "appliance.water_dispenser": "飲水機", "appliance.aquarium": "魚缸/水景", "appliance.audio": "音響", "appliance.air_purifier": "空氣清淨機",
+            "circulation.entry": "主玄關走道", "circulation.hallway": "室內長廊", "circulation.stairs": "樓梯", "circulation.elevator": "電梯",
+            "exterior.mingtang": "明堂/開闊地", "exterior.road_rush": "路沖", "exterior.sky_cut": "天斬煞", "exterior.reverse_bow": "反弓水/路",
+            "exterior.wall_knife": "高樓壁刀", "exterior.park": "公園綠地",
+            "form.beam_press": "樑壓頂", "form.missing_corner": "缺角", "form.convex_corner": "凸角", "form.through_house": "穿堂格局",
+            "form.door_to_door": "門對門", "form.door_to_window": "門對窗", "form.stairs_rush_door": "梯沖門", "form.dark_room": "暗室",
+            "form.large_window": "大窗採光", "form.high_ceiling": "挑高", "form.sloped_roof": "斜頂"
+        };
+
         const gridHtml = layout.map((item) => {
             if (item.key === '中') {
+                const palaceItems = (report.palaceDetails || []).find(p => p.direction === '中' || p.direction === '中宮')?.layoutObjects || [];
+                const tagsHtml = palaceItems.length > 0 ? `
+                    <div class="fs-cell-tags-box">
+                        ${palaceItems.map(id => `<span class="fs-cell-tag">${escapeHtml(FENGSHUI_CATALOG_LABELS[id] || id)}</span>`).join('')}
+                    </div>
+                ` : '';
                 return `
                     <div class="fengshui-cell center-palace">
                         <div class="fengshui-dir-title">${item.name}</div>
                         <div style="font-size: var(--type-label); font-weight:700; margin:4px 0; color:var(--suite-primary);">${escapeHtml(house)}</div>
                         <div class="fengshui-flying-star">九運運星: ${base['中'] || 9}</div>
                         <div class="fengshui-flying-star" style="color:#ef4444;">流年飛星: ${annual['中'] || 1}</div>
+                        ${tagsHtml}
                     </div>
                 `;
             }
@@ -251,18 +278,109 @@
             const isAuspicious = starRaw.includes('吉');
             const starBadgeClass = isAuspicious ? 'auspicious' : 'inauspicious';
 
+            const mountainStars = report.flyingStars?.mountain || {};
+            const facingStars = report.flyingStars?.facing || {};
+            const mStar = mountainStars[item.key];
+            const fStar = facingStars[item.key];
+            const hasXkStars = mStar !== undefined && fStar !== undefined;
+            const palaceItems = (report.palaceDetails || []).find(p => p.direction === item.key)?.layoutObjects || [];
+            const tagsHtml = palaceItems.length > 0 ? `
+                <div class="fs-cell-tags-box">
+                    ${palaceItems.map(id => `<span class="fs-cell-tag">${escapeHtml(FENGSHUI_CATALOG_LABELS[id] || id)}</span>`).join('')}
+                </div>
+            ` : '';
+
             return `
                 <div class="fengshui-cell">
                     <div class="fengshui-dir-title">${item.name}</div>
                     <span class="fengshui-star-badge ${starBadgeClass}">${escapeHtml(starRaw)}</span>
                     <div class="fengshui-flying-star">運星: ${base[item.key] || '-'} | 流年: ${annual[item.key] || '-'}</div>
+                    ${hasXkStars ? `<div class="fengshui-flying-star" style="color:var(--suite-primary); font-weight:600;">山星: ${mStar} · 向星: ${fStar}</div>` : ''}
+                    ${tagsHtml}
                 </div>
             `;
         }).join('');
 
         const mingGuaName = report.resident?.mingGua?.name || '';
+
+        let orientationHtml = '';
+        if (report.orientation) {
+            const chartQual = report.chartQualification || {};
+            const qualBadgeClass = chartQual.chartType === 'void'
+                ? 'badge-void'
+                : (chartQual.chartType === 'candidate' ? 'badge-candidate' : (chartQual.chartType === 'substitute' ? 'badge-sub' : 'badge-pure'));
+            orientationHtml = `
+                <div class="fs-orientation-info-row">
+                    <span class="fs-info-pill">🧭 羅盤向首：<strong>${escapeHtml(report.orientation.heading)}°</strong></span>
+                    <span class="fs-info-pill">⛰️ 坐山向首：<strong>${escapeHtml(report.orientation.sittingMountain)}山${escapeHtml(report.orientation.facingMountain)}向</strong></span>
+                    <span class="compass-badge ${qualBadgeClass}">${escapeHtml(chartQual.chartDesc || '正向下卦')}</span>
+                    ${chartQual.warning ? `<div class="compass-tilt-alert" style="margin-top:6px;">⚠️ ${escapeHtml(chartQual.warning)}</div>` : ''}
+                </div>
+            `;
+        }
+
+        let layoutEvaluationHtml = '';
+        if (report.layoutEvaluation) {
+            const ev = report.layoutEvaluation;
+            const findingsHtml = (ev.findings || []).map(f => {
+                const fLevelClass = f.severity === 'warning' ? 'level-warning' : (f.severity === 'negative' ? 'level-bad' : 'level-good');
+                return `
+                    <div class="fs-finding-item ${fLevelClass}">
+                        <div class="fs-finding-title">${escapeHtml(f.title)} (${escapeHtml(f.palace)}宮)</div>
+                        <div class="fs-finding-desc">${escapeHtml((f.evidence || []).join('；'))}</div>
+                        <div class="fs-finding-rec">💡 佈局建議：${escapeHtml(f.action || '')}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const actionsHtml = (ev.actions || []).length > 0 ? `
+                <div class="fs-actions-list">
+                    <div style="font-weight:700; margin-bottom:6px; font-size:13px;">📋 優先行動指引（依急迫性排序）：</div>
+                        ${ev.actions.map((action, index) => `
+                        <div class="fs-action-item">
+                            <span class="fs-action-priority">P${index + 1}</span>
+                            <div>${escapeHtml(action)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '';
+
+            const quotesHtml = (ev.quotesCited || []).length > 0 ? `
+                <div class="fs-quotes-list">
+                    <div style="font-weight:700; margin-bottom:6px; font-size:13px;">📜 經典引證</div>
+                    ${(ev.quotesCited || []).map(quote => `
+                        <div class="fs-quote-cite">${escapeHtml(quote.source || '')}：「${escapeHtml(quote.text || '')}」<br>
+                            <span style="opacity:0.85;">義理：${escapeHtml(quote.interpretation || '')}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '';
+
+            const missingHtml = (ev.missingData || []).length > 0 ? `
+                <div class="fs-missing-box">
+                    <strong>ℹ️ 資料不足誠實標註（未標註之住宅項目，堪輿系統不妄作推斷）：</strong>
+                    <ul style="margin:4px 0 0 16px; padding:0;">
+                        ${ev.missingData.map(m => `<li>${escapeHtml(typeof m === 'string' ? m : `${m.item || ''}：${m.note || ''}`)}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : '';
+
+            layoutEvaluationHtml = `
+                <div class="fs-eval-card">
+                    <div class="fs-eval-header">
+                        <div class="fs-eval-title">🎯 中州派玄空室內格局評估</div>
+                    </div>
+                    ${findingsHtml || '<div class="text-muted" style="font-size:12px;">目前尚未在九宮中放置關鍵住宅物件。</div>'}
+                    ${actionsHtml}
+                    ${quotesHtml}
+                    ${missingHtml}
+                </div>
+            `;
+        }
+
         visualBoard.innerHTML = `
-            <div class="suite-board-title">🏡 八宅九星與流年飛星盤（${escapeHtml(house)} · 坐向：${escapeHtml(report.facing || '')}）</div>
+            <div class="suite-board-title">🏡 八宅九星與玄空飛星盤（${escapeHtml(house)} · 坐向：${escapeHtml(report.facing || '')}）</div>
+            ${orientationHtml}
             <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size: var(--type-label); margin-bottom:12px; color:var(--suite-text-muted);">
                 <div>居住者命卦：<strong>${escapeHtml(mingGuaName)}</strong></div>
                 <div>九運格局：<strong style="color:var(--suite-primary);">${escapeHtml(report.pattern || '旺山旺向')}</strong></div>
@@ -271,6 +389,7 @@
                 ⚠️ ${escapeHtml(report.flyingStars?.wuhuangPosition || '')}
             </div>
             <div class="fengshui-grid">${gridHtml}</div>
+            ${layoutEvaluationHtml}
         `;
         visualBoard.hidden = false;
     }
@@ -713,7 +832,7 @@
                     question
                 };
             }
-            return {
+            const payload = {
                 mode,
                 facing: val('facing') || '南',
                 moveInYear: Number(val('moveInYear')) || 2024,
@@ -722,6 +841,25 @@
                 year: Number(val('year')) || new Date().getFullYear(),
                 question
             };
+            if (typeof window.getFengshuiLayoutPayload === 'function') {
+                const layoutData = window.getFengshuiLayoutPayload();
+                if (layoutData) {
+                    if (typeof layoutData.heading === 'number' && !isNaN(layoutData.heading)) {
+                        payload.heading = layoutData.heading;
+                    }
+                    if (layoutData.northReference) payload.northReference = layoutData.northReference;
+                    if (typeof layoutData.declination === 'number') payload.declination = layoutData.declination;
+                    if (layoutData.headingSource) payload.headingSource = layoutData.headingSource;
+                    if (layoutData.layoutObjects && typeof layoutData.layoutObjects === 'object') {
+                        payload.layoutObjects = layoutData.layoutObjects;
+                    }
+                    if (Array.isArray(layoutData.entryPath) && layoutData.entryPath.length > 0) {
+                        payload.entryPath = layoutData.entryPath;
+                    }
+                    if (layoutData.pathQuality) payload.pathQuality = layoutData.pathQuality;
+                }
+            }
+            return payload;
         }
         if (page === 'yinyuan') {
             const mode = val('mode') || 'fortune';

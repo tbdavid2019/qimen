@@ -30,7 +30,7 @@ export const TarotInputSchema = z.object({
 // 4. 易經風水 (24 山玄空飛星 / 煞氣化解 / 協紀辨方擇日)
 export const FengShuiInputSchema = z.object({
     question: z.string().describe("The user's Feng Shui question."),
-    mode: z.enum(["yangzhai", "shaqi", "zeri"]).optional().default("yangzhai").describe("Analysis mode: yangzhai (陽宅飛星), shaqi (形煞化解), zeri (擇日)."),
+    mode: z.enum(["yangzhai", "shaqi", "zeri", "evaluate-layout"]).optional().default("yangzhai").describe("Analysis mode."),
     facing: z.enum([
         "南", "北", "東", "西", "東南", "西北", "東北", "西南",
         "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向",
@@ -46,8 +46,27 @@ export const FengShuiInputSchema = z.object({
     matter: z.string().optional().describe("Matter for zeri mode (e.g., 入宅/喬遷, 開市/開業, 動土修造)."),
     zeriYear: z.number().int().optional(),
     zeriMonth: z.number().int().min(1).max(12).optional(),
+    heading: z.number().finite().optional().describe("Compass heading in degrees; normalized circularly to [0, 360)."),
+    northReference: z.enum(["magnetic", "true"]).optional().describe("North reference: magnetic or true."),
+    declination: z.number().optional().describe("Magnetic declination in degrees."),
+    headingSource: z.enum(["sensor", "manual"]).optional().describe("Heading source."),
+    layoutObjects: z.record(z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]), z.array(z.string().regex(/^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\.[a-z_]+$/)).max(63)).optional().describe("9-grid canonical object IDs mapped by direction palace."),
+    entryPath: z.array(z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"])).max(9).optional().describe("Sequential entry path direction palaces (最後入路)."),
+    pathQuality: z.enum(["open", "obstructed", "unknown"]).optional().describe("Circulation path quality."),
     lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
     conversationHistory: ConversationHistorySchema
+}).strict();
+export const FengShuiLayoutEvaluationSchema = z.object({
+    layoutObjects: z.record(z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]), z.array(z.string().regex(/^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\.[a-z_]+$/)).max(63)).refine(value => Object.keys(value).length > 0, "layoutObjects must not be empty"),
+    heading: z.number().finite().optional(),
+    northReference: z.enum(["magnetic", "true"]).optional(),
+    declination: z.number().finite().optional(),
+    headingSource: z.enum(["sensor", "manual"]).optional(),
+    facing: z.enum(["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"]).optional(),
+    entryPath: z.array(z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"])).max(9).optional(),
+    pathQuality: z.enum(["open", "obstructed", "unknown"]).optional(),
+    moveInYear: z.number().int().min(1).max(9999).optional(),
+    year: z.number().int().min(1).max(9999).optional()
 }).strict();
 // 5. 生辰八字2 (完整神煞、精確起運歲月、未知時辰)
 export const Bazi2InputSchema = z.object({
@@ -122,6 +141,15 @@ export function registerDivinationTools(server) {
         return {
             content: [{ type: "text", text: response.answer || response.fallback || response.error || "No response received." }]
         };
+    });
+    server.registerTool("fengshui_layout_evaluation", {
+        title: "Deterministic Feng Shui Layout Evaluation",
+        description: "Evaluate a canonical nine-palace layout using the deterministic HTTP contract; no LLM interpretation.",
+        inputSchema: FengShuiLayoutEvaluationSchema,
+        annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
+    }, async (params) => {
+        const response = await makeApiRequest("fengshui/evaluate-layout", params);
+        return { content: [{ type: "text", text: JSON.stringify(response, null, 2) }] };
     });
     // 2. Meihua
     server.registerTool("meihua_divination", {

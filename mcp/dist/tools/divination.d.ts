@@ -71,7 +71,7 @@ export declare const TarotInputSchema: z.ZodObject<{
 }>;
 export declare const FengShuiInputSchema: z.ZodObject<{
     question: z.ZodString;
-    mode: z.ZodDefault<z.ZodOptional<z.ZodEnum<["yangzhai", "shaqi", "zeri"]>>>;
+    mode: z.ZodDefault<z.ZodOptional<z.ZodEnum<["yangzhai", "shaqi", "zeri", "evaluate-layout"]>>>;
     facing: z.ZodDefault<z.ZodOptional<z.ZodEnum<["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"]>>>;
     moveInYear: z.ZodOptional<z.ZodNumber>;
     residentYear: z.ZodOptional<z.ZodNumber>;

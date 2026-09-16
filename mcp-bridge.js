@@ -86,7 +86,34 @@ async function makeApiRequest(endpoint, payload) {
 }
 
 // Tool definitions conforming to MCP standard
+const FENGSHUI_PALACES = ["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"];
+const FENGSHUI_FACINGS = ["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"];
+const FENGSHUI_LAYOUT_PROPERTIES = Object.fromEntries(FENGSHUI_PALACES.map((palace) => [palace, {
+  type: "array", maxItems: 63,
+  items: { type: "string", pattern: "^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\\.[a-z_]+$" }
+}]));
 const tools = [
+  {
+    name: "fengshui_layout_evaluation",
+    description: "純計算中州派九宮住宅格局評估，不呼叫 LLM。",
+    inputSchema: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        layoutObjects: { type: "object", additionalProperties: false, properties: FENGSHUI_LAYOUT_PROPERTIES, minProperties: 1 },
+        facing: { type: "string", enum: FENGSHUI_FACINGS },
+        heading: { type: "number" },
+        northReference: { type: "string", enum: ["magnetic", "true"] },
+        declination: { type: "number" },
+        headingSource: { type: "string", enum: ["sensor", "manual"] },
+        entryPath: { type: "array", maxItems: 9, items: { type: "string", enum: FENGSHUI_PALACES } },
+        pathQuality: { type: "string", enum: ["open", "obstructed", "unknown"] },
+        moveInYear: { type: "integer", minimum: 1, maximum: 9999 },
+        year: { type: "integer", minimum: 1, maximum: 9999 }
+      },
+      required: ["layoutObjects"]
+    }
+  },
   {
     name: "qimen_divination",
     description: "奇門遁甲專業排盤與大師分析。提供十干克應、三遁吉格、專題用神與主客動靜深度解讀。建議提供具體問題與占問事項。",
@@ -166,6 +193,13 @@ const tools = [
         matter: { type: "string" },
         zeriYear: { type: "integer" },
         zeriMonth: { type: "integer", minimum: 1, maximum: 12 },
+        heading: { type: "number", description: "電子羅盤向首度數；服務端循環正規化至 [0, 360)" },
+        northReference: { type: "string", enum: ["magnetic", "true"] },
+        declination: { type: "number" },
+        headingSource: { type: "string", enum: ["sensor", "manual"] },
+        layoutObjects: { type: "object", additionalProperties: false, properties: Object.fromEntries(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"].map(p => [p, { type: "array", maxItems: 63, items: { type: "string", pattern: "^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\\.[a-z_]+$" } }])), description: "九宮住宅物件落位；僅接受方向宮位與 canonical ID" },
+        entryPath: { type: "array", maxItems: 9, items: { type: "string", enum: ["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"] }, description: "最後入路循跡宮位" },
+        pathQuality: { type: "string", enum: ["open", "obstructed", "unknown"] },
         lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
         conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
@@ -322,6 +356,15 @@ rl.on('line', async (line) => {
           const result = await makeApiRequest('meihua-question', payload);
           const responseText = result.success ? result.answer : `Error: ${result.message || result.error || 'Unknown error'}`;
           return sendResponse(id, { content: [{ type: 'text', text: responseText }] });
+        } catch (err) {
+          return sendResponse(id, { content: [{ type: 'text', text: `Failed to connect to divination service: ${err.message}` }], isError: true });
+        }
+      }
+
+      if (toolName === 'fengshui_layout_evaluation') {
+        try {
+          const result = await makeApiRequest('fengshui/evaluate-layout', args);
+          return sendResponse(id, { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }], isError: !result.success });
         } catch (err) {
           return sendResponse(id, { content: [{ type: 'text', text: `Failed to connect to divination service: ${err.message}` }], isError: true });
         }

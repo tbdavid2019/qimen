@@ -755,7 +755,7 @@
 			type: "object",
 			properties: {
 				question: { type: "string", description: "使用者的空間或擇日問題" },
-				mode: { type: "string", enum: ["yangzhai", "shaqi", "zeri"], description: "風水模式：yangzhai 陽宅飛星八宅；shaqi 形煞診斷；zeri 協紀辨方擇日" },
+				mode: { type: "string", enum: ["yangzhai", "shaqi", "zeri", "evaluate-layout"], description: "風水模式" },
 				facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"], description: "房屋朝向（陽宅模式，支援8大方位與24山精確坐向）" },
 				moveInYear: { type: "integer", minimum: 1, maximum: 9999, description: "入住或建造年份（陽宅模式）" },
 				residentYear: { type: "integer", minimum: 1, maximum: 9999, description: "主要居住者出生年（陽宅模式）" },
@@ -765,10 +765,34 @@
 				matter: { type: "string", enum: ["入宅/喬遷", "開業/開市", "動土/修造", "嫁娶/結婚", "open", "renovate", "marry"], description: "擇日事項（擇日模式）" },
 				zeriYear: { type: "integer", description: "擇日目標年份（擇日模式）" },
 				zeriMonth: { type: "integer", minimum: 1, maximum: 12, description: "擇日目標月份（擇日模式）" },
+				heading: { type: "number", description: "電子羅盤實測向首度數；服務端循環正規化至 [0, 360)" },
+				northReference: { type: "string", enum: ["magnetic", "true"], description: "北基準：磁北或真北" },
+				declination: { type: "number", description: "磁偏角（度數）" },
+				headingSource: { type: "string", enum: ["sensor", "manual"], description: "向首度數來源" },
+				layoutObjects: { type: "object", additionalProperties: false, properties: Object.fromEntries(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"].map(p => [p, { type: "array", maxItems: 63, items: { type: "string", pattern: "^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\\.[a-z_]+$" } }])), description: "九宮住宅物件標註；僅接受方向宮位 key 與 canonical object ID" },
+				entryPath: { type: "array", maxItems: 9, items: { type: "string", enum: ["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"] }, description: "進門動線循跡宮位陣列（最後入路）" },
+				pathQuality: { type: "string", enum: ["open", "obstructed", "unknown"], description: "動線通暢度" },
 				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
 				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
 			},
 			required: ["question"]
+		}),
+		fengshui_layout_evaluation: createSuiteTool("fengshui_layout_evaluation", "純計算中州派九宮住宅格局評估，不呼叫 LLM。", "/api/fengshui/evaluate-layout", {
+			type: "object",
+			additionalProperties: false,
+			properties: {
+				layoutObjects: { type: "object", additionalProperties: false, minProperties: 1, properties: Object.fromEntries(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"].map(p => [p, { type: "array", maxItems: 63, items: { type: "string", pattern: "^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\\.[a-z_]+$" } }])) },
+				facing: { type: "string", enum: ["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"] },
+				heading: { type: "number" },
+				northReference: { type: "string", enum: ["magnetic", "true"] },
+				declination: { type: "number" },
+				headingSource: { type: "string", enum: ["sensor", "manual"] },
+				entryPath: { type: "array", maxItems: 9, items: { type: "string", enum: ["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"] } },
+				pathQuality: { type: "string", enum: ["open", "obstructed", "unknown"] },
+				moveInYear: { type: "integer", minimum: 1, maximum: 9999 },
+				year: { type: "integer", minimum: 1, maximum: 9999 }
+			},
+			required: ["layoutObjects"]
 		}),
 		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、十神藏干、神煞、旺衰格局與命理解讀。", "/api/bazi2-question", {
 			type: "object",
@@ -880,7 +904,13 @@
 				toolDefinitions.meihua_divination,
 				toolDefinitions.switch_theme,
 			];
-		} else if (["/ziwei", "/tarot", "/fengshui", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
+		} else if (pathname === "/fengshui") {
+			toolsToRegister = [
+				toolDefinitions.fengshui_report,
+				toolDefinitions.fengshui_layout_evaluation,
+				toolDefinitions.switch_theme,
+			];
+		} else if (["/ziwei", "/tarot", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
 			const suiteTool = { "/ziwei": "ziwei_chart", "/tarot": "tarot_reading", "/fengshui": "fengshui_report", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
 			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme];
 		} else {
@@ -946,7 +976,30 @@
 			if (values.timeMode !== "custom") delete values.customDateTime;
 			delete values.timeMode;
 		}
-		if (toolName === "fengshui_report" && values.zeriMatter) values.matter = values.zeriMatter;
+		if (toolName === "fengshui_report") {
+			if (values.zeriMatter) values.matter = values.zeriMatter;
+			if (typeof window !== "undefined" && typeof window.getFengshuiLayoutPayload === "function") {
+				const layoutData = window.getFengshuiLayoutPayload();
+				if (layoutData) {
+					if (typeof layoutData.heading === "number" && !isNaN(layoutData.heading)) values.heading = layoutData.heading;
+					if (layoutData.northReference) values.northReference = layoutData.northReference;
+					if (typeof layoutData.declination === "number") values.declination = layoutData.declination;
+					if (layoutData.headingSource) values.headingSource = layoutData.headingSource;
+					if (layoutData.layoutObjects && Object.keys(layoutData.layoutObjects).length > 0) values.layoutObjects = layoutData.layoutObjects;
+					if (Array.isArray(layoutData.entryPath) && layoutData.entryPath.length > 0) values.entryPath = layoutData.entryPath;
+					if (layoutData.pathQuality) values.pathQuality = layoutData.pathQuality;
+				}
+			}
+			if (typeof values.layoutObjects === "string") {
+				try { values.layoutObjects = JSON.parse(values.layoutObjects); } catch (_) {}
+			}
+			if (typeof values.entryPath === "string") {
+				try { values.entryPath = JSON.parse(values.entryPath); } catch (_) {}
+			}
+			if (values.heading !== undefined && values.heading !== "") {
+				values.heading = Number(values.heading);
+			}
+		}
 		if (toolName === "yinyuan_reading") {
 			const aliasGroups = {
 				fortune: { fortuneName: "name", fortuneSex: "sex", fortuneStickNum: "stickNum", fortuneBirthDate: "birthDate", fortuneStatus: "status" },

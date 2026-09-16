@@ -94,6 +94,90 @@
 
                 <!-- 模式1: 陽宅分析 -->
                 <div id="fsGroupYangzhai" class="fs-mode-group">
+                    <!-- 電子羅盤區塊 (Compass & Orientation Sensor) -->
+                    <div class="fs-compass-card">
+                        <div class="fs-compass-header">
+                            <div class="fs-compass-title-box">
+                                <span class="fs-badge-feature">🧭 PWA 實時電子羅盤</span>
+                                <h4 class="fs-compass-title">手持羅盤定坐向（支援 iOS / Android / 平板）</h4>
+                                <p class="fs-compass-desc">平放裝置朝向房屋大門或主要採光陽台，即時感測向首度數、換算 24 山與判定正向（下卦）／兼向（替卦）／出卦空亡線。</p>
+                            </div>
+                            <button type="button" id="btnStartCompass" class="btn btn-primary fs-start-compass-btn">
+                                <span class="compass-icon">🧭</span> 啟動實時電子羅盤
+                            </button>
+                        </div>
+
+                        <!-- 羅盤儀表與控制台 -->
+                        <div class="fs-compass-body">
+                            <div class="fs-compass-dial-wrap">
+                                <svg id="fsCompassDialSvg" class="fs-compass-svg" viewBox="0 0 240 240" aria-label="風水 24 山電子羅盤儀表">
+                                    <circle cx="120" cy="120" r="115" class="compass-outer-ring" />
+                                    <circle cx="120" cy="120" r="95" class="compass-middle-ring" />
+                                    <circle cx="120" cy="120" r="75" class="compass-inner-ring" />
+
+                                    <!-- 八方刻度線與主方位字 -->
+                                    <text x="120" y="32" class="compass-dir-label dir-n">北 (坎)</text>
+                                    <text x="210" y="125" class="compass-dir-label dir-e">東 (震)</text>
+                                    <text x="120" y="220" class="compass-dir-label dir-s">南 (離)</text>
+                                    <text x="30" y="125" class="compass-dir-label dir-w">西 (兌)</text>
+
+                                    <!-- 旋轉指針群組 -->
+                                    <g id="compassNeedle" class="compass-needle-group" style="transform-origin: 120px 120px; transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);">
+                                        <!-- 北針 (紅) -->
+                                        <polygon points="120,40 126,115 120,110 114,115" class="needle-north" />
+                                        <!-- 南針 (藍灰) -->
+                                        <polygon points="120,200 126,125 120,130 114,125" class="needle-south" />
+                                        <circle cx="120" cy="120" r="7" class="needle-cap" />
+                                    </g>
+                                    <!-- 中心定位點 -->
+                                    <circle cx="120" cy="120" r="2" fill="#ef4444" />
+                                </svg>
+                            </div>
+
+                            <div class="fs-compass-data-panel">
+                                <div class="fs-data-row-main">
+                                    <div id="compassDegreeDisplay" class="compass-deg-large">180.0°</div>
+                                    <div class="fs-data-text-col">
+                                        <div id="compassMountDisplay" class="compass-mount-label">子山午向 · 南方 (正南)</div>
+                                        <div id="compassChartTypeBadge" class="compass-badge badge-pure">正向下卦</div>
+                                    </div>
+                                </div>
+
+                                <div id="compassProvenance" class="compass-meta-line">
+                                    基準：磁北 | 來源：手動微調 | 精度：正常 | 姿態：水平
+                                </div>
+
+                                <div id="compassTiltWarning" class="compass-tilt-alert" style="display:none;">
+                                    ⚠️ 手機傾角較大（超過 ±15°），請將手機水平握持以確保度數精確！
+                                </div>
+
+                                <div class="fs-compass-actions">
+                                    <button type="button" id="btnLockCompass" class="btn btn-success fs-btn-action">
+                                        🔒 鎖定坐向並帶入表單
+                                    </button>
+                                    <button type="button" id="btnUnlockCompass" class="btn btn-warning fs-btn-action" style="display:none;">
+                                        🔓 解除鎖定（恢復實時感測）
+                                    </button>
+                                </div>
+
+                                <div class="fs-manual-slider-box">
+                                    <label for="compassHeadingSlider" class="fs-slider-label">手動微調度數（無感測器或手動覆蓋）：</label>
+                                    <div class="fs-slider-inputs">
+                                        <input type="range" id="compassHeadingSlider" min="0" max="359.9" step="0.5" value="180" class="fs-range-slider">
+                                        <input type="number" id="compassHeadingInput" min="0" max="359.9" step="0.1" value="180" class="form-control fs-num-input">
+                                        <span class="fs-unit">°</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 隱藏欄位供表單與 WebMCP 提交 -->
+                        <input type="hidden" id="fsHeading" name="heading" value="">
+                        <input type="hidden" id="fsNorthReference" name="northReference" value="magnetic">
+                        <input type="hidden" id="fsDeclination" name="declination" value="0">
+                        <input type="hidden" id="fsHeadingSource" name="headingSource" value="manual">
+                    </div>
+
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="fengshuiFacing">房屋朝向（24山或8大方位）</label>
@@ -109,14 +193,30 @@
                                     <option value="西南">朝西南（艮宅 · 坐東北朝西南）</option>
                                 </optgroup>
                                 <optgroup label="精確 24 山坐向">
+                                    <option value="壬山丙向">壬山丙向（坐北朝南偏東）</option>
                                     <option value="子山午向">子山午向（坐正北朝正南）</option>
-                                    <option value="午山子向">午山子向（坐正南朝正北 · 九運旺山旺向）</option>
+                                    <option value="癸山丁向">癸山丁向（坐北朝南偏西）</option>
+                                    <option value="丑山未向">丑山未向（坐東北朝西南偏南）</option>
+                                    <option value="艮山坤向">艮山坤向（坐正東北朝正西南 · 九運旺山旺向）</option>
+                                    <option value="寅山申向">寅山申向（坐東北朝西南偏西）</option>
+                                    <option value="甲山庚向">甲山庚向（坐東朝西偏北）</option>
                                     <option value="卯山酉向">卯山酉向（坐正東朝正西 · 雙星到向）</option>
+                                    <option value="乙山辛向">乙山辛向（坐東朝西偏南）</option>
+                                    <option value="辰山戌向">辰山戌向（坐東南朝西北偏北）</option>
+                                    <option value="巽山乾向">巽山乾向（坐正東南朝正西北 · 九運旺山旺向）</option>
+                                    <option value="巳山亥向">巳山亥向（坐東南朝西北偏西）</option>
+                                    <option value="丙山壬向">丙山壬向（坐南朝北偏西）</option>
+                                    <option value="午山子向">午山子向（坐正南朝正北 · 九運旺山旺向）</option>
+                                    <option value="丁山癸向">丁山癸向（坐南朝北偏東）</option>
+                                    <option value="未山丑向">未山丑向（坐西南朝東北偏北）</option>
+                                    <option value="坤山艮向">坤山艮向（坐正西南朝正東北）</option>
+                                    <option value="申山寅向">申山寅向（坐西南朝東北偏東）</option>
+                                    <option value="庚山甲向">庚山甲向（坐西朝東偏南）</option>
                                     <option value="酉山卯向">酉山卯向（坐正西朝正東 · 雙星到坐）</option>
-                                    <option value="乾山巽向">乾山巽向（坐西北朝東南）</option>
-                                    <option value="巽山乾向">巽山乾向（坐東南朝西北 · 九運旺山旺向）</option>
-                                    <option value="艮山坤向">艮山坤向（坐東北朝西南 · 九運旺山旺向）</option>
-                                    <option value="坤山艮向">坤山艮向（坐西南朝東北）</option>
+                                    <option value="辛山乙向">辛山乙向（坐西朝東偏北）</option>
+                                    <option value="戌山辰向">戌山辰向（坐西北朝東南偏南）</option>
+                                    <option value="乾山巽向">乾山巽向（坐正西北朝正東南）</option>
+                                    <option value="亥山巳向">亥山巳向（坐西北朝東南偏東）</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -148,6 +248,70 @@
                             </div>
                         </div>
                     </details>
+
+                    <!-- STEP 2 · 快速九宮物件標註器 (Interactive 9-Grid Layout Editor) -->
+                    <div id="fsNineGridSection" class="fs-step2-card">
+                        <div class="fs-step2-header">
+                            <div class="fs-step2-badge">STEP 2 · 快速九宮模式</div>
+                            <h3 class="fs-step2-title">把住宅物件放進九宮</h3>
+                            <p class="fs-step2-subtext">先選物件，再點它所在的宮位；同一宮可放多項，也可再次點擊移除。盤面採「南在上、北在下」。</p>
+                            <div class="fs-step2-actions-top">
+                                <button type="button" id="btnClearNineGrid" class="btn btn-default btn-xs fs-btn-clear">清空格局標註</button>
+                            </div>
+                        </div>
+
+                        <!-- 7 大類別 Pills -->
+                        <div id="fsCategoryPills" class="fs-category-pills" role="tablist" aria-label="住宅物件分類"></div>
+
+                        <!-- 當前分類下的物件 Pills -->
+                        <div id="fsItemButtons" class="fs-item-pills" role="group" aria-label="住宅物件選項"></div>
+
+                        <!-- 當前選取提示 -->
+                        <div class="fs-selection-banner">
+                            目前選擇：<strong id="fsActiveItemLabel">尚未選擇</strong> <span id="fsActiveItemHint" class="fs-item-hint"></span>
+                        </div>
+
+                        <!-- 九宮格標註盤面 (南在頂、北在底) -->
+                        <div id="fsNineGridBoard" class="fs-nine-grid" role="grid" aria-live="polite" aria-label="九宮住宅格局標註盤面"></div>
+                        <div class="fs-step2-footer-note">星曜需在提供向首與建造／入住年份後由確定性排盤產生；編輯時不顯示推測星曜。</div>
+
+                        <!-- 最後入路循跡設定 (Entry Path & Circulation) -->
+                        <div class="fs-entry-path-box">
+                            <div class="fs-entry-path-title">🚪 進門動線循跡（最後入路）：</div>
+                            <div id="fsEntryPathDisplay" class="fs-entry-path-display"></div>
+                            <div class="fs-entry-path-add-row">
+                                <span class="fs-path-prompt">點擊加入入路宮位：</span>
+                                <div id="fsAddPathPalaces" class="fs-path-palace-buttons">
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="東南">東南</button>
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="南">南</button>
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="西南">西南</button>
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="東">東</button>
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="中">中宮</button>
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="西">西</button>
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="東北">東北</button>
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="北">北</button>
+                                    <button type="button" class="btn btn-xs btn-default fs-add-path-btn" data-palace="西北">西北</button>
+                                </div>
+                            </div>
+                            <div class="fs-path-quality-row">
+                                <label for="fsPathQualitySelect">動線通暢度：</label>
+                                <select id="fsPathQualitySelect" class="form-control input-sm fs-quality-select">
+                                    <option value="unknown">未確認／一般</option>
+                                    <option value="open">通暢無阻（利於納入生旺水氣）</option>
+                                    <option value="obstructed">動線受阻（有鞋櫃或雜物阻滯）</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="fs-step2-footer-note">
+                            💡 格局標註只保存在這台裝置（localStorage）；沒有提供的項目會在報告中明確列為「資料不足」，不會憑空推斷。
+                        </div>
+
+                        <!-- 隱藏欄位供表單與 WebMCP 提交 -->
+                        <input type="hidden" id="fsLayoutObjects" name="layoutObjects" value="{}">
+                        <input type="hidden" id="fsEntryPath" name="entryPath" value="[]">
+                        <input type="hidden" id="fsPathQuality" name="pathQuality" value="unknown">
+                    </div>
                 </div>
 
                 <!-- 模式2: 煞氣診斷 -->
@@ -258,6 +422,7 @@
     <script src="/js/theme.js"></script>
     <script src="/js/markdown-renderer.js"></script>
     <script src="/js/webmcp.js"></script>
+    <script src="/js/fengshui.js"></script>
     <script src="/js/divination-suite.js"></script>
 </body>
 </html>

@@ -76,9 +76,28 @@ node skills/fengshui-consultant/scripts/ask_fengshui.js --mode yangzhai --facing
 
 或發送 `POST /api/fengshui-question` 獲取結構化排盤與行動建議。
 
-### `ask_fengshui.js` 參數
+### `fengshui_cli.js` 與 `ask_fengshui.js` 參數
 
-支援 inline JSON、stdin JSON，以及命令列旗標：`--question`、`--mode yangzhai|shaqi|zeri`、`--facing`（8 方位或 24 山）、`--moveInYear`、`--residentYear`、`--sex`、`--year`、`--shaType`、`--matter`、`--zeriYear`、`--zeriMonth`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
+支援 inline JSON、stdin JSON，以及命令列旗標：
+- `--mode yangzhai|shaqi|zeri|luantou|evaluate-layout`：運作模式。
+- `--heading <number>`：電子羅盤實測向首度數 `[0, 360)`，自動換算 24 山與判定正向（下卦）／兼向（替卦）／大小空亡線。
+- `--north-reference <magnetic|true>`：北基準（磁北或真北）。
+- `--declination <number>`：磁偏角。
+- `--heading-source <sensor|manual>`：度數來源。
+- `--facing <string>`：8 方位或 24 山坐向（若同時提供 `--heading`，需與度數換算坐向吻合，否則拋出衝突警示）。
+- `--layout <json_or_file>` / `--layout-objects`：7 大類 63 項 Canonical 住宅物件的九宮落位 JSON（只接受九個方向宮位 key；物件 ID 必須來自 `data/fengshui/layout-catalog.json`）。
+- `--entry-path <csv_or_json>`：進門動線循跡宮位陣列（最多 9 個方向宮位，如 `南,中,北`）；主門存在時首項須與主門宮位相同。
+- `--path-quality <open|obstructed|unknown>`：進門動線通暢度。
+- `--move-in` / `--moveInYear`：入住或建造年份（決定三元玄空運盤）。
+- `--resident-year` / `--residentYear`：主要居住者出生年（計算命卦）。
+- `--sex`：男或女。
+- `--year`：分析流年。
+- `--sha` / `--shaType`：形煞類型。
+- `--matter`、`--month`、`--zeriYear`、`--zeriMonth`：協紀辨方擇日參數。
+- `--question`：使用者詢問問題。
+
+確定性評估端點：`POST /api/fengshui/evaluate-layout` 可純演算法計算中州派室內格局，不呼叫 LLM；CLI `--mode evaluate-layout` 會先產生與 HTTP 相同的朝向／星盤，再進行評估。
+API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ---
 

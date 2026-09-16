@@ -76,14 +76,28 @@
 - **紅線測算 (`red-thread`)**：命主姓名、性別、尋找對象性別、理想型特質偏好、單身狀態、正緣外貌氣質/職業/相遇場景與時機窗口。
 
 ### 6. 🏡 易經風水 / 陽宅分析 (`/fengshui` & `/api/fengshui-question`)
+- **PWA 實時電子羅盤與 24 山坐向測定 (`heading`, `northReference`, `declination`)**：
+  - 提供 iOS/Android 感測器介面與手動角度 fallback；實機權限、磁干擾與跨平台校正仍需在 HTTPS 裝置環境驗證。
+  - 結合圓周平滑低通濾波與傾角防呆（傾角超過 ±15° 發出水平握持警告並禁止鎖定），提供手動滑桿；頁面方向選擇完整涵蓋 8 大方位與 24 山精確坐向全集合下拉選單。
+  - 嚴格幾何演算法自動判定**正向下卦**（距山中心 $\le 4.5^\circ$）、**兼向候選**（$4.5^\circ \sim <6.0^\circ$；完整替卦排盤尚未宣稱完成）與**大小空亡線**（距山界或八宮交界 $\le 1.5^\circ$ 出卦警示）。
+- **STEP 2 快速九宮住宅物件落位標註器 (`layoutObjects`, `entryPath`, `pathQuality`)**：
+  - **7 大類 63 項 Canonical 住宅物件目錄**（空間 15 項、門窗 5 項、家具 11 項、設備 11 項、動線 4 項、外局 6 項、形體 11 項），區分單一放置模式與多處放置。
+  - 南在頂、北在下之互動九宮格住宅標註盤面，支援即時點選落位、標籤移除、全盤清空與版本化 `localStorage` 本地快照（`fengshui-layout:v1`）。
+  - 進門動線循跡（最後入路宮位序列）與通暢度評估（`open` / `obstructed` / `unknown`）。
+- **中州派玄空室內佈局評估引擎 (`lib/fengshui.js`)**：
+  - 門氣納氣（向星當令旺生衰死）、主臥床位（山星生旺、病符煞星迴避）、爐灶火門（西北乾宮火燒天門、西兌宮烈火焚金、二黑五黃重煞）、衛浴廁所壓煞、書房文昌（一四同宮、一六共宗）。
+  - **資料不足誠實標註原則（Omission Honesty）**：未標註或缺漏的住宅項目（如未安床、未設灶、未設入路），系統嚴格標記為「資料不足」，絕不憑空臆測或產生 AI 幻覺。
+  - 收錄傳統文獻短句作文化背景與現代空間行動指引；目前資料未提供可核驗的版本／頁碼，故不宣稱精確版本考據。
 - **陽宅玄空飛星與八宅 (`yangzhai`)**：
   - 8 大朝向與 24 山精確坐向立極。
   - 1-9 元運運盤、山星盤、向星盤順逆飛九宮，判定「旺山旺向/雙星到向/雙星到坐/上山下水」。
-  - 流年九星飛臨，標註五黃大煞、二黑病符與當令旺星。
+  - 流年九星飛臨，標註傳統星曜名稱；健康、家庭與財務結果不作確定性預測。
   - 八宅明鏡（四吉方：生氣/天醫/延年/伏位；四凶方：絕命/五鬼/六煞/禍害）。
   - 居住者命卦（男命/女命東四命/西四命配對）與空間功能區佈局優化。
-- **形煞診斷與化解 (`shaqi`)**：路沖煞、天斬煞、壁刀煞、反弓煞、穿堂風、橫梁壓頂、鏡對床等 8 大內外形煞「移形易位」化解法。
+- **形煞診斷與化解 (`shaqi`)**：路沖煞、天斬煞、壁刀煞、反弓煞、穿堂風、橫梁壓頂、鏡對床等 24 種外局與內局形煞「移形易位」化解法。
 - **協紀辨方擇日 (`zeri`)**：入宅喬遷、開業開市、動土裝修、婚嫁之建除十二神黃道吉日吉時，避太歲、歲破、三煞。
+- **確定性純算 API 端點 (`POST /api/fengshui/evaluate-layout`)**：純演算法評估室內格局，不呼叫 LLM，供 Agent 與外部系統直接查詢。
+  - 官方 MCP 提供 `fengshui_layout_evaluation`；WebMCP 與 bridge 使用同一方向宮位／canonical ID／最多 9 段入路契約。
 
 ### 7. 🃏 韋特塔羅解讀 (`/tarot` & `/api/tarot-question`)
 - **78 張完整韋特牌庫**：22 張大阿爾克那 + 56 張小阿爾克那（權杖/火、聖杯/水、寶劍/風、錢幣/土），支援正逆位與自訂牌組/種子抽牌。
@@ -128,7 +142,7 @@
 | **梅花易數** | `question`, `method` (time/number/text), `text`, `num1..3`, `purpose`, `conversationHistory` | `/meihua` | `POST /api/meihua-question` | `skills/meihua-consultant/scripts/ask_meihua.js` | `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_qigua_text`, `meihua_question`, `meihua_divination` |
 | **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory` | `/bazi2` | `POST /api/bazi2-question` | `skills/bazi2-consultant/scripts/ask_bazi2.js` | `bazi2_chart` |
 | **月老姻緣** | `question`, `mode` (6大模式), `name`, `sex`, `stickNum` (1-100), `calendar`, `date`, `time`, `status`, `stage`, `scope`, `seekingSex`, `first/secondZodiac`, `first/secondYear`, `first/second` (雙方四柱), `preference` | `/yinyuan` | `POST /api/yinyuan-question` | `skills/yinyuan-consultant/scripts/ask_yinyuan.js` | `yinyuan_reading` |
-| **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri), `facing`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question` | `skills/fengshui-consultant/scripts/ask_fengshui.js` | `fengshui_report` |
+| **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri/evaluate-layout), `facing`, `heading`, `northReference`, `declination`, `headingSource`, `layoutObjects`, `entryPath`, `pathQuality`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question`, `POST /api/fengshui/evaluate-layout`, `POST /api/fengshui/report` | `skills/fengshui-consultant/scripts/fengshui_cli.js` & `ask_fengshui.js` | `fengshui_report`, `fengshui_layout_evaluation` |
 | **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (4種視角), `time_factor`, `seed`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
 | **解答之書** | `mode` (direct/question), `question`, `conversationHistory` | `/answerbook` | `POST /api/answerbook-question` | `skills/answerbook-consultant/scripts/ask_answerbook.js` | `answerbook_reading` |
 | **時間範圍校正** | `startDate`, `endDate`, `timezone`, `precision` | `/` | `GET/POST /api/time/range` | `lib/civil-time.js` | `date_range_normalize` |

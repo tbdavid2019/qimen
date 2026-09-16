@@ -37,3 +37,20 @@ test('零依賴 MCP bridge 也包含八個服務工具', () => {
         assert.match(bridge, new RegExp(endpoint), endpoint);
     }
 });
+
+test('WebMCP 官方 MCP source/dist 與 bridge 均宣告確定性風水佈局工具', () => {
+    const source = fs.readFileSync(sourcePath, 'utf8');
+    const dist = fs.readFileSync(distPath, 'utf8');
+    const bridge = fs.readFileSync(bridgePath, 'utf8');
+    assert.match(source, /registerTool\(\s*"fengshui_layout_evaluation"/);
+    assert.match(source, /FengShuiLayoutEvaluationSchema/);
+    assert.match(source, /fengshui\/evaluate-layout/);
+    assert.match(dist, /registerTool\("fengshui_layout_evaluation"/);
+    assert.match(dist, /fengshui\/evaluate-layout/);
+    assert.match(bridge, /name: "fengshui_layout_evaluation"/);
+    assert.match(bridge, /fengshui\/evaluate-layout/);
+    for (const content of [source, dist, bridge]) {
+        assert.match(content, /layoutObjects/);
+        assert.match(content, /maxItems: 9|max\(9\)/);
+    }
+});

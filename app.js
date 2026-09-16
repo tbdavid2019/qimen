@@ -16,8 +16,18 @@ const DiscordWebhook = require('./lib/discord-webhook');
 const APITimeHandler = require('./lib/api-time-handler');
 const { parseCivilTime } = require('./lib/civil-time');
 const { drawCards, SPREADS: TAROT_SPREADS } = require('./lib/tarot');
-const { calculateFengShui, diagnoseShaqi, diagnoseLuantou, getAllShaQiLibrary, chooseZeri } = require('./lib/fengshui');
 const { calculateBazi } = require('./lib/bazi2');
+const {
+    calculateFengShui,
+    diagnoseShaqi,
+    diagnoseLuantou,
+    getAllShaQiLibrary,
+    chooseZeri,
+    calculateMountainFromHeading,
+    determineChartType,
+    validateLayoutInput,
+    evaluateZhongzhouLayout
+} = require('./lib/fengshui');
 const { calculateZiweiChart } = require('./lib/ziwei');
 const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
 const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time');
@@ -51,13 +61,17 @@ app.engine('html', require('ejs').renderFile);
 
 // 靜態文件服務
 app.use(express.static(path.join(__dirname, 'public')));
+// Browser UI consumes the same versioned catalog used by the Node evaluator.
+app.get('/data/fengshui/layout-catalog.json', (req, res) => {
+    res.type('application/json').sendFile(path.join(__dirname, 'data/fengshui/layout-catalog.json'));
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 安全標頭與 WebMCP 權限政策
+// 安全標頭與 WebMCP / 感測器權限政策
 app.disable('x-powered-by');
 app.use((req, res, next) => {
-    res.setHeader('Permissions-Policy', 'tools=(self)');
+    res.setHeader('Permissions-Policy', 'tools=(self), accelerometer=(self), gyroscope=(self), magnetometer=(self)');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -134,14 +148,103 @@ const handleFengshuiReport = async (req, res) => {
         } else if (body.mode === 'zeri') {
             report = chooseZeri(body.matter, body.year, body.month);
         } else {
-            report = calculateFengShui(body);
+            let layoutObjects = body.layoutObjects;
+            if (typeof layoutObjects === 'string') {
+                try { layoutObjects = JSON.parse(layoutObjects); } catch (e) {
+                    const err = new Error('layoutObjects JSON 格式無效');
+                    err.code = 'INVALID_LAYOUT_OBJECTS';
+                    err.field = 'layoutObjects';
+                    throw err;
+                }
+            }
+            let entryPath = body.entryPath;
+            if (typeof entryPath === 'string') {
+                try { entryPath = JSON.parse(entryPath); } catch (e) {
+                    const err = new Error('entryPath JSON 格式無效');
+                    err.code = 'INVALID_LAYOUT_OBJECTS';
+                    err.field = 'entryPath';
+                    throw err;
+                }
+            }
+            report = calculateFengShui({
+                ...body,
+                layoutObjects,
+                entryPath
+            });
         }
         const discord = await sendModuleRecord('風水', body, report);
         res.json({ success: true, report, discord });
-    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message,
+            code: error.code || 'INVALID_FENGSHUI_INPUT',
+            field: error.field || null
+        });
+    }
 };
 app.post('/api/fengshui/report', handleFengshuiReport);
 app.get('/api/fengshui/report', handleFengshuiReport);
+
+const handleEvaluateLayout = (req, res) => {
+    try {
+        const body = { ...(req.query || {}), ...(req.body || {}) };
+        let layoutObjects = body.layoutObjects;
+        if (typeof layoutObjects === 'string') {
+            try {
+                layoutObjects = JSON.parse(layoutObjects);
+            } catch (e) {
+                const err = new Error('layoutObjects JSON 格式無效');
+                err.code = 'INVALID_LAYOUT_OBJECTS';
+                err.field = 'layoutObjects';
+                throw err;
+            }
+        }
+        if (!layoutObjects || typeof layoutObjects !== 'object' || Array.isArray(layoutObjects) || Object.keys(layoutObjects).length === 0) {
+            throw validationError('evaluate-layout 必須提供至少一項 layoutObjects', 'INSUFFICIENT_LAYOUT_DATA', 'layoutObjects');
+        }
+        let entryPath = body.entryPath;
+        if (typeof entryPath === 'string') {
+            try { entryPath = JSON.parse(entryPath); } catch (e) {
+                const err = new Error('entryPath JSON 格式無效');
+                err.code = 'INVALID_LAYOUT_OBJECTS';
+                err.field = 'entryPath';
+                throw err;
+            }
+        }
+
+        const report = calculateFengShui({
+            ...body,
+            layoutObjects,
+            entryPath
+        });
+
+        res.json({
+            success: true,
+            orientation: report.orientation || null,
+            chart: {
+                period: report.period,
+                pattern: report.pattern,
+                patternDesc: report.patternDesc,
+                flyingStars: report.flyingStars,
+                eightMansions: report.eightMansions
+            },
+            chartQualification: report.chartQualification || null,
+            layoutEvaluation: report.layoutEvaluation || null,
+            missingData: report.missingData || [],
+            dataQuality: (report.missingData && report.missingData.length > 0) ? 'insufficient' : 'complete'
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message,
+            code: error.code || 'INVALID_LAYOUT_EVALUATION',
+            field: error.field || null
+        });
+    }
+};
+app.post('/api/fengshui/evaluate-layout', handleEvaluateLayout);
+app.get('/api/fengshui/evaluate-layout', handleEvaluateLayout);
 app.get('/api/fengshui/shaqi-list', (req, res) => res.json({ success: true, list: getAllShaQiLibrary() }));
 app.get('/api/fengshui/luantou', (req, res) => {
     try {
@@ -308,14 +411,73 @@ function validateTarotQuestion(body) {
 function validateFengShuiQuestion(body) {
     const mode = body.mode || 'yangzhai';
     if (mode === 'yangzhai') {
-        const facing = body.facing || '南';
-        if (!FENGSHUI_FACINGS.has(facing)) {
-            throw validationError('請提供有效的房屋朝向', 'INVALID_FACING', 'facing');
+        let facing = body.facing;
+        let heading = body.heading;
+
+        if (heading !== undefined && heading !== null && heading !== '') {
+            const numHeading = Number(heading);
+            if (!Number.isFinite(numHeading)) {
+                throw validationError(`無效的角度數值: ${heading}`, 'INVALID_HEADING', 'heading');
+            }
+            const orientation = calculateMountainFromHeading(numHeading);
+            if (facing && !FENGSHUI_FACINGS.has(facing)) {
+                throw validationError('請提供有效的房屋朝向', 'INVALID_FACING', 'facing');
+            }
+            if (facing) {
+                const matches = facing === orientation.facingMountain ||
+                                facing === orientation.facingDir ||
+                                facing === orientation.mountKey ||
+                                orientation.mountKey.includes(facing);
+                if (!matches) {
+                    throw validationError(`提供的手機度數 (${heading}° -> ${orientation.mountKey}) 與朝向參數 (${facing}) 互相矛盾`, 'FACING_HEADING_CONFLICT', 'heading');
+                }
+            }
+            if (!facing) {
+                facing = orientation.mountKey;
+            }
+        } else {
+            facing = facing || '南';
+            if (!FENGSHUI_FACINGS.has(facing)) {
+                throw validationError('請提供有效的房屋朝向', 'INVALID_FACING', 'facing');
+            }
         }
+
+        let layoutObjects = body.layoutObjects;
+        if (typeof layoutObjects === 'string') {
+            try {
+                layoutObjects = JSON.parse(layoutObjects);
+            } catch (e) {
+                throw validationError('layoutObjects JSON 格式無效', 'INVALID_LAYOUT_OBJECTS', 'layoutObjects');
+            }
+        }
+        let entryPath = body.entryPath;
+        if (typeof entryPath === 'string') {
+            try {
+                entryPath = JSON.parse(entryPath);
+            } catch (e) {
+                throw validationError('entryPath JSON 格式無效', 'INVALID_LAYOUT_OBJECTS', 'entryPath');
+            }
+        }
+
+        if (layoutObjects || entryPath || body.pathQuality) {
+            try {
+                validateLayoutInput(layoutObjects, entryPath, body.pathQuality);
+            } catch (err) {
+                throw validationError(err.message, err.code || 'INVALID_LAYOUT_OBJECTS', err.field || 'layoutObjects');
+            }
+        }
+
         return {
             ...body,
             mode,
             facing,
+            heading: (heading !== undefined && heading !== null && heading !== '') ? Number(heading) : undefined,
+            layoutObjects,
+            entryPath,
+            pathQuality: body.pathQuality,
+            northReference: body.northReference,
+            declination: body.declination,
+            headingSource: body.headingSource,
             moveInYear: parseYear(body.moveInYear, 'moveInYear', { required: false }) || new Date().getFullYear(),
             residentYear: parseYear(body.residentYear, 'residentYear', { required: false }) || 1990,
             sex: body.sex === '男' ? '男' : '女',
@@ -1556,6 +1718,13 @@ app.get('/api/docs', (req, res) => {
                     question: { type: "string", required: true, description: "要詢問的問題" },
                     mode: { type: "string", required: false, default: "yangzhai", enum: ["yangzhai", "shaqi", "zeri"], description: "風水服務模式" },
                     facing: { type: "string", required: false, default: "南", enum: Array.from(FENGSHUI_FACINGS), description: "房屋朝向（8 大方位或 24 山）" },
+                    heading: { type: "number", required: false, description: "電子羅盤向首角度 [0, 360)，優先推導 24 山" },
+                    northReference: { type: "string", required: false, enum: ["magnetic", "true"], default: "magnetic", description: "北向基準" },
+                    declination: { type: "number", required: false, default: 0, description: "磁偏角（真北校正度數）" },
+                    headingSource: { type: "string", required: false, enum: ["sensor", "manual"], description: "角度數據來源" },
+                    layoutObjects: { type: "object", required: false, description: "住宅物件九宮配置（九宮方位鍵 -> 63 種 Canonical ID 陣列）" },
+                    entryPath: { type: "array", required: false, description: "最後入路宮位有序序列（例如 [\"東南\", \"南\", \"中\"]）" },
+                    pathQuality: { type: "string", required: false, enum: ["open", "obstructed", "unknown"], description: "入路通暢程度" },
                     moveInYear: { type: "integer", required: false, description: "入住年份" },
                     residentYear: { type: "integer", required: false, description: "居住者出生年份" },
                     sex: { type: "string", required: false, enum: ["男", "女"], description: "居住者性別" },
@@ -1567,6 +1736,28 @@ app.get('/api/docs', (req, res) => {
                     lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
                     conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
                 }
+            },
+            fengshuiEvaluateLayout: {
+                method: "POST",
+                path: "/api/fengshui/evaluate-layout",
+                description: "純計算端點：根據坐向角度或 24 山與九宮物件標註進行中州派陽宅理氣評估（無 LLM 延遲）",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    heading: { type: "number", required: false, description: "向首角度 [0, 360)" },
+                    facing: { type: "string", required: false, enum: Array.from(FENGSHUI_FACINGS), description: "房屋朝向" },
+                    layoutObjects: { type: "object", required: false, description: "九宮物件 ID 分佈物件" },
+                    entryPath: { type: "array", required: false, description: "大門至核心入路宮位序列" },
+                    pathQuality: { type: "string", required: false, enum: ["open", "obstructed", "unknown"], description: "入路通暢狀態" },
+                    moveInYear: { type: "integer", required: false, description: "入住年份" },
+                    year: { type: "integer", required: false, description: "分析年份" }
+                }
+            },
+            fengshuiLayoutCatalog: {
+                method: "GET",
+                path: "/data/fengshui/layout-catalog.json",
+                description: "獲取權威中州派 7 大類 63 項 Canonical 住宅物件目錄元數據",
+                headers: { "Content-Type": "application/json" },
+                parameters: {}
             },
             ziweiQuestion: {
                 method: "POST",
