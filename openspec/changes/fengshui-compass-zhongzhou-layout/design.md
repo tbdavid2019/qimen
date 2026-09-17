@@ -79,8 +79,8 @@
 
 ### Decision 3: Sensor adapter and measurement quality
 
-- iOS WebKit 優先讀取 `webkitCompassHeading` 與 `webkitCompassAccuracy`。權限請求必須在「啟動電子羅盤」按鈕的 user gesture 中執行，並以 feature detection 支援 `requestPermission(true)` 與舊版行為。
-- Android 優先監聽 `deviceorientationabsolute`；只有 `event.absolute === true` 且通過測試向量時才轉成向首。`360 - alpha` 只是 adapter 的候選公式，必須加上 `screen.orientation.angle` 校正，不能視為所有裝置的通用契約。
+- iOS WebKit 優先讀取 `webkitCompassHeading` 與 `webkitCompassAccuracy`。權限請求必須在「啟動電子羅盤」按鈕的 user gesture 中執行，並以 feature detection 支援 `requestPermission(true)` 與舊版行為；不能以 `requestPermission` 的存在判斷作業系統。
+- Android 優先監聽 `deviceorientationabsolute`，並在瀏覽器提供方向權限 API 時同時保留 `deviceorientation` listener。只有 absolute event 或 `event.absolute === true` 且通過測試向量時才轉成向首；一般 `absolute=false` 的相對事件不可當羅盤北向。`360 - alpha` 只是 adapter 的候選公式，必須加上 `screen.orientation.angle` 校正，不能視為所有裝置的通用契約。
 - 若未取得絕對方向、磁力計權限或裝置資料不完整，顯示「無法確認方位」，保留滑桿與數字輸入；不可把相對方向當成真北。
 - 伺服器加上 `accelerometer=(self), gyroscope=(self), magnetometer=(self)` 的 Permissions-Policy，與既有 `tools=(self)` 同時保留。
 - 濾波使用 circular mean 或最短角差的一階濾波；鎖定前至少累積一段穩定窗口，例如 500ms 內最大圓周離差不超過 2°。傾角超過 ±15° 時禁止鎖定並顯示提示。

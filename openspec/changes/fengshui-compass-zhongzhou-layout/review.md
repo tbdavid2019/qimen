@@ -226,3 +226,14 @@ Remaining blockers are narrower but still real:
 8. New rule/quote data still contains deterministic health/family harm and talisman language; task 7.15 remains open.
 
 Verdict remains **Request changes / in progress**, with the user-facing manual-angle requirement now implemented at code level but awaiting browser acceptance evidence.
+
+## Third pass — 2026-09-17
+
+The Android sensor adapter regression was reproduced and repaired:
+
+- when `DeviceOrientationEvent.requestPermission()` exists, permission grant now registers both `deviceorientationabsolute` and `deviceorientation`;
+- `deviceorientationabsolute` is accepted as absolute by event type, while generic `absolute=false` readings remain rejected as relative data;
+- insecure HTTP contexts exit to the manual fallback;
+- an executable Node VM browser harness now covers the Android permission/absolute-event path and relative-event rejection.
+
+This closes the code-level adapter defect. Real HTTPS Android/iOS acceptance, browser DevTools evidence, and the remaining cross-interface/ruleset work are still open; the change remains **Request changes / in progress**.

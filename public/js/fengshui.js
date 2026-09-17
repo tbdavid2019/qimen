@@ -332,8 +332,11 @@
             state.compass.northReference = 'magnetic';
             state.compass.headingSource = 'sensor';
         }
-        // Android: deviceorientationabsolute (alpha 逆時針)
-        else if (event.alpha !== null && event.absolute) {
+        // Android: absolute orientation 的 alpha 以逆時針方向表示。
+        // 標準 absolute event 保證 absolute=true；部分瀏覽器可能不填該欄位，
+        // 因此也以 event.type 作為可信的 absolute 訊號。一般相對事件不可當羅盤北向。
+        else if (event.alpha !== null && event.alpha !== undefined &&
+                 (event.type === 'deviceorientationabsolute' || event.absolute === true)) {
             const screenAngle = (window.screen && window.screen.orientation && window.screen.orientation.angle) || 0;
             // 逆時針轉換為順時針地磁方位角並校正螢幕方向
             rawHeading = ((360 - event.alpha + screenAngle) % 360 + 360) % 360;
@@ -350,22 +353,32 @@
         }
     }
 
+    function markSensorListening(btn) {
+        window.addEventListener('deviceorientationabsolute', handleOrientationEvent, true);
+        window.addEventListener('deviceorientation', handleOrientationEvent, true);
+        state.compass.isListening = true;
+        if (btn) {
+            btn.innerHTML = '<span class="compass-icon">🧭</span> 羅盤感測中（點擊停止）';
+            btn.classList.add('active');
+        }
+    }
+
     async function startSensorCompass() {
         const btn = document.getElementById('btnStartCompass');
         state.compass.recentHeadings = [];
         state.compass.isStable = false;
+
+        if (window.isSecureContext === false) {
+            alert('電子羅盤需要 HTTPS 安全連線，已保留手動度數輸入與滑桿調整。');
+            return;
+        }
 
         // iOS 12.2+ requires a user gesture before requesting sensor permission.
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
             try {
                 const permission = await DeviceOrientationEvent.requestPermission(true);
                 if (permission === 'granted') {
-                    window.addEventListener('deviceorientation', handleOrientationEvent, true);
-                    state.compass.isListening = true;
-                    if (btn) {
-                        btn.innerHTML = '<span class="compass-icon">🧭</span> 羅盤感測中（點擊停止）';
-                        btn.classList.add('active');
-                    }
+                    markSensorListening(btn);
                 } else {
                     alert('未獲取指南針感測權限，已保留下方手動度數輸入與滑桿調整。');
                 }
@@ -374,20 +387,8 @@
             }
         }
         // Android 與支援 deviceorientationabsolute 之瀏覽器
-        else if ('ondeviceorientationabsolute' in window) {
-            window.addEventListener('deviceorientationabsolute', handleOrientationEvent, true);
-            state.compass.isListening = true;
-            if (btn) {
-                btn.innerHTML = '<span class="compass-icon">🧭</span> 羅盤感測中（點擊停止）';
-                btn.classList.add('active');
-            }
-        } else if ('ondeviceorientation' in window) {
-            window.addEventListener('deviceorientation', handleOrientationEvent, true);
-            state.compass.isListening = true;
-            if (btn) {
-                btn.innerHTML = '<span class="compass-icon">🧭</span> 羅盤感測中（點擊停止）';
-                btn.classList.add('active');
-            }
+        else if ('ondeviceorientationabsolute' in window || 'ondeviceorientation' in window) {
+            markSensorListening(btn);
         } else {
             alert('此裝置或環境不支援方向感測器，已啟用手動度數輸入與滑桿調整。');
         }

@@ -46,6 +46,16 @@ The system SHALL feature-detect secure-context orientation APIs, request absolut
 - **WHEN** an Android browser emits `deviceorientationabsolute` with complete absolute data
 - **THEN** the client uses the tested Android adapter, applies screen-orientation correction, and exposes the normalized clockwise heading
 
+#### Scenario: Permission API exists on Android
+
+- **WHEN** an Android browser exposes `DeviceOrientationEvent.requestPermission()` and then emits `deviceorientationabsolute`
+- **THEN** the client requests permission from the user gesture and registers the absolute listener as well as the generic listener; the absolute event updates the heading
+
+#### Scenario: Relative orientation is not a compass reading
+
+- **WHEN** a generic `deviceorientation` event has `absolute=false`
+- **THEN** the client does not use its `alpha` as north and keeps the manual angle fallback available
+
 #### Scenario: Permission is denied or API is unavailable
 
 - **WHEN** permission is denied, the page is not a secure context, or the device has no usable absolute sensor

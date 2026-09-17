@@ -322,3 +322,78 @@ test('renderFengShui DOM 渲染回歸測試：正確消費完整欄位與本地�
         if (previousDoc === undefined) delete global.document; else global.document = previousDoc;
     }
 });
+
+test('Android 羅盤在提供 requestPermission 時仍會監聽 absolute orientation event', async () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const vm = require('node:vm');
+    const code = fs.readFileSync(path.join(__dirname, '../public/js/fengshui.js'), 'utf8');
+    const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/fengshui/layout-catalog.json'), 'utf8'));
+    const elementIds = [
+        'btnStartCompass', 'btnLockCompass', 'btnUnlockCompass', 'compassDegreeDisplay',
+        'compassMountDisplay', 'compassChartTypeBadge', 'compassNeedle', 'compassProvenance',
+        'compassTiltWarning', 'compassHeadingSlider', 'compassHeadingInput', 'fsCategoryPills',
+        'fsItemButtons', 'fsActiveItemLabel', 'fsActiveItemHint', 'fsNineGridBoard',
+        'fsEntryPathDisplay', 'fsPathQualitySelect', 'btnClearNineGrid', 'fsHeading',
+        'fsNorthReference', 'fsDeclination', 'fsHeadingSource', 'fsLayoutObjects',
+        'fsEntryPath', 'fsPathQuality', 'fengshuiFacing', 'fsAddPathPalaces'
+    ];
+    const elements = new Map();
+
+    for (const id of elementIds) {
+        const handlers = new Map();
+        elements.set(id, {
+            value: '', innerHTML: '', textContent: '', disabled: false, style: {}, options: [],
+            classList: { add() {}, remove() {} },
+            addEventListener(type, handler) { handlers.set(type, handler); },
+            querySelectorAll() { return []; },
+            getHandler(type) { return handlers.get(type); }
+        });
+    }
+    elements.get('fengshuiFacing').options = [{ value: '南' }, { value: '北' }];
+
+    const listeners = new Map();
+    const windowObject = {
+        screen: { orientation: { angle: 0 } },
+        ondeviceorientationabsolute: null,
+        ondeviceorientation: null,
+        addEventListener(type, handler) { listeners.set(type, handler); },
+        removeEventListener(type) { listeners.delete(type); }
+    };
+    const context = {
+        window: windowObject,
+        document: {
+            readyState: 'complete',
+            getElementById(id) { return elements.get(id) || null; },
+            addEventListener() {}
+        },
+        DeviceOrientationEvent: { requestPermission: async () => 'granted' },
+        localStorage: { getItem() { return null; }, setItem() {}, removeItem() {} },
+        fetch: async () => ({ ok: true, async json() { return catalog; } }),
+        console,
+        alert() {},
+        confirm() { return true; },
+        Date, Number, Map, Set, JSON, Math, Error, Promise, Intl, parseFloat, parseInt, isNaN
+    };
+
+    vm.createContext(context);
+    vm.runInContext(code, context);
+    await new Promise(resolve => setImmediate(resolve));
+    elements.get('btnStartCompass').getHandler('click')();
+    await new Promise(resolve => setImmediate(resolve));
+
+    assert.ok(listeners.has('deviceorientationabsolute'), '應監聽 Android absolute orientation event');
+    assert.ok(listeners.has('deviceorientation'), '應保留一般 orientation event 作為跨瀏覽器 fallback');
+
+    listeners.get('deviceorientation')({
+        type: 'deviceorientation', alpha: 45, beta: 0, gamma: 0, absolute: false
+    });
+    assert.equal(elements.get('fsHeading').value, '', '相對方向事件不可被當成羅盤 heading');
+
+    listeners.get('deviceorientationabsolute')({
+        type: 'deviceorientationabsolute', alpha: 90, beta: 0, gamma: 0, absolute: true
+    });
+
+    assert.notEqual(elements.get('fsHeading').value, '', 'absolute event 應寫入 heading');
+    assert.equal(elements.get('fsHeadingSource').value, 'sensor');
+});

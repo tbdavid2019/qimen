@@ -28,7 +28,7 @@
 
 - [x] 3.1 Add the compass markup, 24-mountain ring, trigram sectors, heading/accuracy/source labels, tilt warning, permission state, lock/unlock controls, and manual angle fallback to `views/fengshui.html`.
 - [x] 3.2 Include the new page-specific `public/js/fengshui.js` from the Fengshui view. Keep sensor and layout state in that module; do not create a second form-submit pipeline.
-- [ ] 3.3 Implement iOS WebKit heading, Android absolute-orientation adapter, feature detection, `requestPermission(true)` user-gesture handling, screen-orientation correction, listener cleanup, and manual fallback.
+- [x] 3.3 Implement iOS WebKit heading, Android absolute-orientation adapter, feature detection, `requestPermission(true)` user-gesture handling, screen-orientation correction, listener cleanup, and manual fallback. Android permission API and absolute-event listener paths are covered by a regression test; real-device acceptance remains under 5.6/7.10.
 - [ ] 3.4 Implement circular filtering, tilt/stability gating, visible measurement provenance, and lock synchronization with the existing `facing` field and payload hook.
 - [ ] 3.5 Add the fixed South-top/North-bottom nine-grid board with palace stars and assigned tags. Support multi-item stacking, single-placement movement, toggle removal, clear-grid, keyboard access, and screen-reader labels.
 - [ ] 3.6 Implement catalog-driven category pills, quick actions, ordered `entryPath` editing, `pathQuality`, versioned localStorage snapshots, corrupt-snapshot recovery, and state reset.
@@ -83,5 +83,5 @@
 - [ ] 8.1 **Critical UI follow-up:** Complete the renderer contract fix. Use `chartType === 'void'`, `chartDesc`, and `warning` instead of nonexistent `isVoid`, `categoryLabel`, and `reason`; hide unsupported rating/count/path fields or add them to the backend contract. Add an executable browser/DOM regression test.
 - [x] 8.2 **Important manual-input follow-up:** Disable or reject `鎖定坐向` while `heading` is null. Locking before sensor/manual input must not derive 0° or change the existing facing selector.
 - [x] 8.3 **Important sensor follow-up:** Call `checkStability()` from the orientation event path and use its boolean result for locking. The current code never appends `recentHeadings`, so sensor mode cannot satisfy the lock sample gate.
-- [ ] 8.4 **Important documentation follow-up:** Remove the remaining claim of a complete “24 山下拉” fallback unless all 24 pairs are actually present in the page selector; retain the truthful statement that real-device HTTPS validation is pending.
+- [x] 8.4 **Important documentation follow-up:** The page contains all 24 mountain pairs; README/CHANGELOG retain the truthful statement that real-device HTTPS validation is pending.
 - [ ] 8.5 **Verification gate:** After 8.1–8.4 and remaining 7.x items, rerun Node tests, browser/DOM tests, schema parity tests, `git diff --check`, lint/check, strict OpenSpec validation, and an independent Sol review before archive.

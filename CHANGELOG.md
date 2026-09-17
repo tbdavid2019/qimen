@@ -2,6 +2,14 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-09-17]
+
+### 🧭 修正 Android 電子羅盤感測器事件路徑
+
+- 修正 Android 瀏覽器提供 `DeviceOrientationEvent.requestPermission()` 時，只註冊一般 `deviceorientation`、漏掉 `deviceorientationabsolute` 的問題。
+- 授權後同時保留 absolute 與一般方向 listener；只有絕對方向資料才會更新羅盤，`absolute=false` 的相對方向不會被誤判為北向。
+- 增加 HTTPS 安全內容防呆與 Android adapter 回歸測試；iOS/Android 實機驗收仍待完成。
+
 ## [2026-09-16]
 
 ### 🧭 易經風水 PWA 實時電子羅盤與中州派快速九宮住宅佈局評估 (fengshui-compass-zhongzhou-layout)
