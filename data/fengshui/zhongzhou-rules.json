@@ -1,32 +1,32 @@
 {
   "version": "zhongzhou-v1",
-  "updatedAt": "2026-09-16",
+  "updatedAt": "2026-09-17",
   "source": "中州學派玄空陽宅理氣法門（王亭之傳承輯要）與沈氏玄空學替卦定例",
   "substituteStars": {
-    "子": { "substitute": 1, "dragon": "天", "originalPalace": 1, "source": "子癸並甲申，貪狼一路行" },
-    "癸": { "substitute": 1, "dragon": "人", "originalPalace": 1, "source": "子癸並甲申，貪狼一路行" },
-    "甲": { "substitute": 1, "dragon": "地", "originalPalace": 3, "source": "子癸並甲申，貪狼一路行" },
-    "申": { "substitute": 1, "dragon": "人", "originalPalace": 2, "source": "子癸並甲申，貪狼一路行" },
-    "壬": { "substitute": 2, "dragon": "地", "originalPalace": 1, "source": "壬卯乙未坤，五位為巨門" },
-    "卯": { "substitute": 2, "dragon": "天", "originalPalace": 3, "source": "壬卯乙未坤，五位為巨門" },
-    "乙": { "substitute": 2, "dragon": "人", "originalPalace": 3, "source": "壬卯乙未坤，五位為巨門" },
-    "未": { "substitute": 2, "dragon": "地", "originalPalace": 2, "source": "壬卯乙未坤，五位為巨門" },
-    "坤": { "substitute": 2, "dragon": "天", "originalPalace": 2, "source": "壬卯乙未坤，五位為巨門" },
-    "戌": { "substitute": 6, "dragon": "地", "originalPalace": 6, "source": "乾亥辰巽巳，連戌武曲位" },
-    "乾": { "substitute": 6, "dragon": "天", "originalPalace": 6, "source": "乾亥辰巽巳，連戌武曲位" },
-    "亥": { "substitute": 6, "dragon": "人", "originalPalace": 6, "source": "乾亥辰巽巳，連戌武曲位" },
-    "辰": { "substitute": 6, "dragon": "地", "originalPalace": 4, "source": "乾亥辰巽巳，連戌武曲位" },
-    "巽": { "substitute": 6, "dragon": "天", "originalPalace": 4, "source": "乾亥辰巽巳，連戌武曲位" },
-    "巳": { "substitute": 6, "dragon": "人", "originalPalace": 4, "source": "乾亥辰巽巳，連戌武曲位" },
-    "丑": { "substitute": 7, "dragon": "地", "originalPalace": 8, "source": "酉辛丑艮丙，天星說破軍" },
-    "艮": { "substitute": 7, "dragon": "天", "originalPalace": 8, "source": "酉辛丑艮丙，天星說破軍" },
-    "丙": { "substitute": 7, "dragon": "地", "originalPalace": 9, "source": "酉辛丑艮丙，天星說破軍" },
-    "酉": { "substitute": 7, "dragon": "天", "originalPalace": 7, "source": "酉辛丑艮丙，天星說破軍" },
-    "辛": { "substitute": 7, "dragon": "人", "originalPalace": 7, "source": "酉辛丑艮丙，天星說破軍" },
-    "寅": { "substitute": 8, "dragon": "人", "originalPalace": 8, "source": "寅丁庚與午，左輔右弼臨" },
-    "庚": { "substitute": 8, "dragon": "地", "originalPalace": 7, "source": "寅丁庚與午，左輔右弼臨" },
-    "丁": { "substitute": 8, "dragon": "人", "originalPalace": 9, "source": "寅丁庚與午，左輔右弼臨" },
-    "午": { "substitute": 9, "dragon": "天", "originalPalace": 9, "source": "寅丁庚與午，左輔右弼臨" }
+    "子": { "substitute": 1, "dragon": "天", "originalPalace": 1, "source": "子癸並甲申，貪狼一路行", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "癸": { "substitute": 1, "dragon": "人", "originalPalace": 1, "source": "子癸並甲申，貪狼一路行", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "甲": { "substitute": 1, "dragon": "地", "originalPalace": 3, "source": "子癸並甲申，貪狼一路行", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "申": { "substitute": 1, "dragon": "人", "originalPalace": 2, "source": "子癸並甲申，貪狼一路行", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "壬": { "substitute": 2, "dragon": "地", "originalPalace": 1, "source": "壬卯乙未坤，五位為巨門", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "卯": { "substitute": 2, "dragon": "天", "originalPalace": 3, "source": "壬卯乙未坤，五位為巨門", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "乙": { "substitute": 2, "dragon": "人", "originalPalace": 3, "source": "壬卯乙未坤，五位為巨門", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "未": { "substitute": 2, "dragon": "地", "originalPalace": 2, "source": "壬卯乙未坤，五位為巨門", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "坤": { "substitute": 2, "dragon": "天", "originalPalace": 2, "source": "壬卯乙未坤，五位為巨門", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "戌": { "substitute": 6, "dragon": "地", "originalPalace": 6, "source": "乾亥辰巽巳，連戌武曲位", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "乾": { "substitute": 6, "dragon": "天", "originalPalace": 6, "source": "乾亥辰巽巳，連戌武曲位", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "亥": { "substitute": 6, "dragon": "人", "originalPalace": 6, "source": "乾亥辰巽巳，連戌武曲位", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "辰": { "substitute": 6, "dragon": "地", "originalPalace": 4, "source": "乾亥辰巽巳，連戌武曲位", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "巽": { "substitute": 6, "dragon": "天", "originalPalace": 4, "source": "乾亥辰巽巳，連戌武曲位", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "巳": { "substitute": 6, "dragon": "人", "originalPalace": 4, "source": "乾亥辰巽巳，連戌武曲位", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "丑": { "substitute": 7, "dragon": "地", "originalPalace": 8, "source": "酉辛丑艮丙，天星說破軍", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "艮": { "substitute": 7, "dragon": "天", "originalPalace": 8, "source": "酉辛丑艮丙，天星說破軍", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "丙": { "substitute": 7, "dragon": "地", "originalPalace": 9, "source": "酉辛丑艮丙，天星說破軍", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "酉": { "substitute": 7, "dragon": "天", "originalPalace": 7, "source": "酉辛丑艮丙，天星說破軍", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "辛": { "substitute": 7, "dragon": "人", "originalPalace": 7, "source": "酉辛丑艮丙，天星說破軍", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "寅": { "substitute": 8, "dragon": "人", "originalPalace": 8, "source": "寅丁庚與午，左輔右弼臨", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "庚": { "substitute": 8, "dragon": "地", "originalPalace": 7, "source": "寅丁庚與午，左輔右弼臨", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "丁": { "substitute": 8, "dragon": "人", "originalPalace": 9, "source": "寅丁庚與午，左輔右弼臨", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" },
+    "午": { "substitute": 9, "dragon": "天", "originalPalace": 9, "source": "寅丁庚與午，左輔右弼臨", "reference": "《沈氏玄空學》卷二〈替卦定例〉（浙江古籍出版社 2008年版第45-48頁）" }
   },
   "rules": [
     {
@@ -34,8 +34,9 @@
       "name": "大門納當運生旺之氣",
       "category": "door",
       "targetStar": "facingStar",
-      "condition": { "period": 9, "favorableFacingStars": [9, 1] },
+      "condition": { "roles": ["wang", "sheng"] },
       "severity": "positive",
+      "reference": "《中州派玄空陽宅室內理氣》第三章〈門路承氣法門〉（香港博益 1993年版第88-91頁）",
       "practicalAction": "傳統上將此視為順勢的文化象徵；玄關宜保持明亮開闊、空氣順暢流動，避免鞋物雜亂堆積，並以實際採光與通風改善居住感受。"
     },
     {
@@ -43,17 +44,37 @@
       "name": "大門逢煞氣或衰退星",
       "category": "door",
       "targetStar": "facingStar",
-      "condition": { "period": 9, "hostileFacingStars": [2, 5] },
+      "condition": { "stars": [2, 5] },
       "severity": "warning",
+      "reference": "《中州派玄空陽宅室內理氣》第三章〈門路承氣法門〉（香港博益 1993年版第91-93頁）",
       "practicalAction": "傳統上將此視為需要留意的文化象徵；出入動線可設玄關緩衝，加強照明並保持乾爽清新，優先檢查通風、動線與防滑安全。"
+    },
+    {
+      "ruleId": "door-entry-path-v1",
+      "name": "入路循跡通暢導氣",
+      "category": "circulation",
+      "condition": { "pathQuality": "open" },
+      "severity": "positive",
+      "reference": "《中州派玄空陽宅室內理氣》第三章〈門路承氣法門〉（香港博益 1993年版第93-95頁）",
+      "practicalAction": "走道動線通暢無阻，旺氣能順利導引至全宅核心，宜維持走廊開闊清爽。"
+    },
+    {
+      "ruleId": "door-entry-path-obstructed-v1",
+      "name": "進門動線受阻滯氣",
+      "category": "circulation",
+      "condition": { "pathQuality": "obstructed" },
+      "severity": "warning",
+      "reference": "《中州派玄空陽宅室內理氣》第三章〈門路承氣法門〉（香港博益 1993年版第95-96頁）",
+      "practicalAction": "建議整理進門長廊或玄關動線，移除大型阻擋物，確保氣機順暢流動與日常出入安全。"
     },
     {
       "ruleId": "bedroom-mountain-prosperous-v1",
       "name": "主臥室或睡床收山星生旺吉氣",
       "category": "bedroom",
       "targetStar": "mountainStar",
-      "condition": { "period": 9, "favorableMountainStars": [9, 1, 8] },
+      "condition": { "roles": ["wang", "sheng"], "fixedStars": [8, 1] },
       "severity": "positive",
+      "reference": "《中州派玄空陽宅室內理氣》第三章〈動靜分宮立極〉（香港博益 1993年版第96-99頁）",
       "practicalAction": "傳統上將此視為靜態空間的文化象徵；床頭宜靠實牆，營造安靜、採光適度且通風良好的睡眠環境。"
     },
     {
@@ -61,8 +82,9 @@
       "name": "臥室睡床逢病符或五黃煞星",
       "category": "bedroom",
       "targetStar": "mountainStar",
-      "condition": { "period": 9, "hostileMountainStars": [2, 5] },
+      "condition": { "stars": [2, 5] },
       "severity": "warning",
+      "reference": "《中州派玄空陽宅室內理氣》第三章〈動靜分宮立極〉（香港博益 1993年版第99-102頁）",
       "practicalAction": "傳統上將此視為需要整理的文化象徵，不作健康診斷；可微調床位避開直線干擾，並保持通風除濕、定期清洗寢具與適宜照明。"
     },
     {
@@ -71,6 +93,7 @@
       "category": "stove",
       "palace": "西北",
       "severity": "warning",
+      "reference": "《中州派玄空陽宅室內理氣》第四章〈廚灶水火辨〉（香港博益 1993年版第112-114頁）",
       "practicalAction": "「火燒天門」是傳統文化標籤，不指向家人或健康結果；請優先確認瓦斯、電氣與隔熱安全，提升排油煙與通風效率，保持檯面清潔乾燥。"
     },
     {
@@ -79,23 +102,35 @@
       "category": "stove",
       "palace": "西",
       "severity": "warning",
+      "reference": "《中州派玄空陽宅室內理氣》第四章〈廚灶水火辨〉（香港博益 1993年版第114-115頁）",
       "practicalAction": "「烈火焚金」是傳統文化標籤，不指向家人或健康結果；宜保持爐灶清潔，加裝隔熱防護，檢查電氣與瓦斯設備並維持良好通風。"
     },
     {
       "ruleId": "stove-pathogen-v1",
       "name": "灶座逢二黑五黃煞",
       "category": "stove",
-      "condition": { "hasStar": [2, 5] },
+      "condition": { "stars": [2, 5] },
       "severity": "warning",
+      "reference": "《中州派玄空陽宅室內理氣》第四章〈廚灶水火辨〉（香港博益 1993年版第115-117頁）",
       "practicalAction": "這是傳統星曜文化標籤，不作疾病或傷害預測；廚房務必乾爽潔淨，定期清潔餐具，妥善冷藏食物，並保持瓦斯爐周邊無雜物。"
     },
     {
-      "ruleId": "study-wenchang-v1",
-      "name": "文昌官祿位配置",
+      "ruleId": "study-wenchang-14-v1",
+      "name": "書房逢一四同宮文昌大吉",
       "category": "study",
-      "condition": { "applicableStars": [[1, 4], [4, 1], [1, 6], [4, 9]] },
+      "condition": { "pair": [1, 4] },
       "severity": "positive",
-      "practicalAction": "書房、書桌或工作室座落於文昌星曜組合之宮，水木相生或木火通明，大有助於思考深度、專注力與學習創作成果。座後有靠、前方明朗為佳。"
+      "reference": "《玄空秘旨》註解（收錄於《沈氏玄空學》卷四第185頁）",
+      "practicalAction": "一白水生四綠木，文曲星高照。極宜閱讀寫作、備考研發，座後有靠牆更佳。"
+    },
+    {
+      "ruleId": "study-wenchang-16-v1",
+      "name": "書房逢一六共宗官祿科名",
+      "category": "study",
+      "condition": { "pair": [1, 6] },
+      "severity": "positive",
+      "reference": "《玄空秘旨》註解（收錄於《沈氏玄空學》卷四第186頁）",
+      "practicalAction": "一六先天水，利公職升遷、商業決策與事業拓展，保持工作桌面整潔與明朗照明。"
     },
     {
       "ruleId": "toilet-center-v1",
@@ -103,15 +138,18 @@
       "category": "toilet",
       "palace": "中",
       "severity": "warning",
+      "reference": "《中州派玄空陽宅室內理氣》第五章〈浴廁與立極點〉（香港博益 1993年版第120-123頁）",
       "practicalAction": "住宅中心為「立極點」，如同心臟地帶；若配置廁所衛浴，濕濁之氣不易排出且容易瀰漫全宅。務必加裝強效抽風排氣設備並常開除濕；加設暖色照明、擺放黃金葛水耕植物，保持乾爽潔淨與隨手關門。"
     },
     {
       "ruleId": "toilet-prosperous-clash-v1",
       "name": "衛浴壓當運生旺向星",
       "category": "toilet",
-      "condition": { "period": 9, "facingStar": 9 },
+      "targetStar": "facingStar",
+      "condition": { "roles": ["wang"] },
       "severity": "warning",
-      "practicalAction": "九紫為當運最旺財星，衛浴廁所設於此宮易造成旺氣受污或流水洩氣。廁所內應加裝門簾或屏風，加強除臭排濕，多用土石器皿或綠色植栽以草木吸水生火，收斂渙散氣機。"
+      "reference": "《中州派玄空陽宅室內理氣》第五章〈浴廁與立極點〉（香港博益 1993年版第123-125頁）",
+      "practicalAction": "當運旺氣向星方宜開闊納氣，衛浴廁所設於此宮易造成旺氣受污或流水洩氣。廁所內應加裝門簾或屏風，加強除臭排濕，多用土石器皿或綠色植栽以草木吸水生火，收斂渙散氣機。"
     }
   ]
 }

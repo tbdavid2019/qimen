@@ -329,6 +329,7 @@
                         <div class="fs-finding-title">${escapeHtml(f.title)} (${escapeHtml(f.palace)}宮)</div>
                         <div class="fs-finding-desc">${escapeHtml((f.evidence || []).join('；'))}</div>
                         <div class="fs-finding-rec">💡 佈局建議：${escapeHtml(f.action || '')}</div>
+                        ${f.reference ? `<div class="fs-finding-ref" style="font-size:11px; opacity:0.75; margin-top:4px;">📖 考據出處：${escapeHtml(f.reference)}</div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -351,6 +352,7 @@
                     ${(ev.quotesCited || []).map(quote => `
                         <div class="fs-quote-cite">${escapeHtml(quote.source || '')}：「${escapeHtml(quote.text || '')}」<br>
                             <span style="opacity:0.85;">義理：${escapeHtml(quote.interpretation || '')}</span>
+                            ${quote.reference ? `<br><span style="font-size:11px; opacity:0.75;">📖 出處：${escapeHtml(quote.reference)}</span>` : ''}
                         </div>
                     `).join('')}
                 </div>
@@ -1061,7 +1063,7 @@
 
     // --- Dynamic Mode Switcher for Yinyuan ---
     if (page === 'yinyuan') {
-        const modeSelect = form?.elements['mode'];
+        const modeSelect = form?.elements?.['mode'];
         const groupMap = {
             fortune: document.getElementById('groupFortune'),
             zodiac: document.getElementById('groupZodiac'),
@@ -1092,7 +1094,7 @@
 
     // --- Dynamic Mode Switcher for Fengshui ---
     if (page === 'fengshui') {
-        const fsModeSelect = form?.elements['mode'];
+        const fsModeSelect = form?.elements?.['mode'];
         const fsGroupMap = {
             yangzhai: document.getElementById('fsGroupYangzhai'),
             shaqi: document.getElementById('fsGroupShaqi'),

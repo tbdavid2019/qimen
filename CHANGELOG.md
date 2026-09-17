@@ -4,11 +4,19 @@
 
 ## [2026-09-17]
 
-### 🧭 修正 Android 電子羅盤感測器事件路徑
+### 🧭 易經風水中州派規則庫考據深化 (Task 7.7) 與九宮編輯器實時飛星/無障礙宣告 (Task 7.11)
 
-- 修正 Android 瀏覽器提供 `DeviceOrientationEvent.requestPermission()` 時，只註冊一般 `deviceorientation`、漏掉 `deviceorientationabsolute` 的問題。
-- 授權後同時保留 absolute 與一般方向 listener；只有絕對方向資料才會更新羅盤，`absolute=false` 的相對方向不會被誤判為北向。
-- 增加 HTTPS 安全內容防呆與 Android adapter 回歸測試；iOS/Android 實機驗收仍待完成。
+- **中州派規則庫與考據出處完整化 (Task 7.7)**：
+  - `data/fengshui/zhongzhou-rules.json` 與 `data/fengshui/classical-quotes.json` 全面補充古典文獻版本、卷數、章節與確切頁碼考據（涵蓋《沈氏玄空學》、《中州派玄空陽宅室內理氣》等 24 兼向替卦與 13 項室內佈局規則）。
+  - 佈局評估引擎 (`lib/fengshui.js`) 改由版本化規則庫與賦文庫動態執行，並在前端結果卡片中完整輸出「考據出處」。
+- **Step 2 九宮編輯器即時飛星預覽與互動無障礙宣告 (Task 7.11)**：
+  - 編輯器九宮格盤面實作確定性客戶端玄空飛星演算法，依房屋坐向與入住年份即時在九宮宮位顯示運星、山星與向星，點選宮位時可直接對照星曜吉凶擺放物件。
+  - 盤面宮位、標籤刪除按鈕、分類分頁與物件選項全面落實鍵盤存取性（`Enter` / `Space` 鍵啟用）與 WAI-ARIA 屬性（`role="tab"`、`aria-selected`、`role="button"`、`aria-pressed`）。
+  - 九宮標註盤面新增無障礙宣告容器（`#fsAriaStatus`，ARIA Live Announcements），在物件選取、放置、移除、清空與入路循跡操作時即時語音朗讀回饋。
+- **Android 羅盤感測與測試保障**：
+  - 修正 Android 瀏覽器授權後同時保留 absolute 與一般方向 listener，確保相對方向不被誤判為北向。
+  - 強化 `divination-suite.js` 表單元素可選串連防呆。
+  - 全套自動化測試提升至 173 項通過（173/173 PASS，100% 通過率）；OpenSpec 嚴格驗證通過。
 
 ## [2026-09-16]
 

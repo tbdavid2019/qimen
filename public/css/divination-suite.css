@@ -1000,10 +1000,48 @@ body.suite-page {
 
 .fs-palace-header {
     display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.fs-palace-name-row {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
-    font-size: 12px;
+    width: 100%;
+}
+
+.fs-cell-stars-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    line-height: 1.2;
+    padding: 1px 4px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+    width: fit-content;
+}
+
+.dark-mode .fs-cell-stars-preview {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.fs-pstar-period {
+    color: var(--suite-text-muted);
+    font-weight: 600;
+}
+
+.fs-pstar-m {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.fs-pstar-f {
+    color: #dc2626;
+    font-weight: 700;
 }
 
 .fs-palace-name {

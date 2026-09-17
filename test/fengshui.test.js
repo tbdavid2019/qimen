@@ -228,6 +228,7 @@ test('中州派玄空室內佈局評估與資料不足誠實標註', () => {
     assert.ok(fireGate, '應檢驗出火燒天門');
     assert.equal(fireGate.palace, '西北');
     assert.ok(fireGate.action.length > 0);
+    assert.ok(fireGate.reference && fireGate.reference.includes('第四章'), 'finding 應包含考據出處章卷');
 
     // 誠實標註：主臥室未標註，應出現在 missingData 中，禁止臆測
     assert.ok(result.layoutEvaluation.missingData.includes('space.master_bedroom'));
@@ -241,6 +242,44 @@ test('中州派玄空室內佈局評估與資料不足誠實標註', () => {
             moveInYear: 2024
         });
     }, /互相矛盾/);
+});
+
+test('中州派規則庫與賦文考據版本、章卷與頁碼完整性 (Task 7.7 Fixtures)', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const rules = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/fengshui/zhongzhou-rules.json'), 'utf8'));
+    const quotes = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/fengshui/classical-quotes.json'), 'utf8'));
+
+    // 1. 24 山替星規則
+    const mountains = Object.keys(rules.substituteStars);
+    assert.equal(mountains.length, 24, '應包含完整 24 山替星');
+    for (const m of mountains) {
+        const sub = rules.substituteStars[m];
+        assert.ok(Number.isInteger(sub.substitute), `${m} 替星應為整數`);
+        assert.ok(sub.source && sub.source.length > 0, `${m} 應有賦文出處`);
+        assert.ok(sub.reference && sub.reference.includes('頁'), `${m} 應有書籍卷頁考據`);
+    }
+
+    // 2. 佈局評估規則
+    assert.ok(rules.rules.length >= 12, '應包含至少 12 條標準格局規則');
+    for (const r of rules.rules) {
+        assert.ok(r.ruleId, '規則應有 ruleId');
+        assert.ok(r.name, '規則應有 name');
+        assert.ok(r.category, '規則應有 category');
+        assert.ok(r.reference && r.reference.includes('頁'), `${r.ruleId} 應有版本頁碼考據`);
+        assert.ok(r.practicalAction && r.practicalAction.length > 0, `${r.ruleId} 應有現代化環境改善指引`);
+    }
+
+    // 3. 經典賦文引證
+    assert.ok(quotes.quotes.length >= 8, '應包含至少 8 條經典賦文引證');
+    for (const q of quotes.quotes) {
+        assert.ok(q.quoteId, '賦文應有 quoteId');
+        assert.ok(q.source, '賦文應有 source');
+        assert.ok(q.edition, '賦文應有 edition 出版版本');
+        assert.ok(q.page, '賦文應有 page 頁碼');
+        assert.ok(q.reference, '賦文應有完整 reference');
+        assert.ok(q.recommendedAction, '賦文應有建議行動');
+    }
 });
 
 test('中州派室內佈局評估支援動態元運（八運宅旺星為八白，九紫為生氣）', () => {
@@ -396,4 +435,157 @@ test('Android 羅盤在提供 requestPermission 時仍會監聽 absolute orienta
 
     assert.notEqual(elements.get('fsHeading').value, '', 'absolute event 應寫入 heading');
     assert.equal(elements.get('fsHeadingSource').value, 'sensor');
+
+    // 傾角超過 ±15° 觸發警告並禁止鎖定
+    listeners.get('deviceorientationabsolute')({
+        type: 'deviceorientationabsolute', alpha: 90, beta: 25, gamma: 0, absolute: true
+    });
+    assert.equal(elements.get('compassTiltWarning').style.display, 'block', '傾斜時應顯示警示');
+    assert.equal(elements.get('btnLockCompass').disabled, true, '傾斜時禁止鎖定');
+
+    // 恢復水平後警示消失
+    listeners.get('deviceorientationabsolute')({
+        type: 'deviceorientationabsolute', alpha: 90, beta: 0, gamma: 0, absolute: true
+    });
+    assert.equal(elements.get('compassTiltWarning').style.display, 'none', '水平時警示隱藏');
+});
+
+test('風水九宮互動無障礙宣告 (ARIA Live Announcements)', async () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const vm = require('node:vm');
+    const code = fs.readFileSync(path.join(__dirname, '../public/js/fengshui.js'), 'utf8');
+    const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/fengshui/layout-catalog.json'), 'utf8'));
+
+    const elementIds = [
+        'btnStartCompass', 'btnLockCompass', 'btnUnlockCompass', 'compassDegreeDisplay',
+        'compassMountDisplay', 'compassChartTypeBadge', 'compassNeedle', 'compassProvenance',
+        'compassTiltWarning', 'compassHeadingSlider', 'compassHeadingInput', 'fsCategoryPills',
+        'fsItemButtons', 'fsActiveItemLabel', 'fsActiveItemHint', 'fsNineGridBoard',
+        'fsEntryPathDisplay', 'fsPathQualitySelect', 'btnClearNineGrid', 'fsHeading',
+        'fsNorthReference', 'fsDeclination', 'fsHeadingSource', 'fsLayoutObjects',
+        'fsEntryPath', 'fsPathQuality', 'fengshuiFacing', 'fsAddPathPalaces', 'fsAriaStatus'
+    ];
+    const elements = new Map();
+
+    for (const id of elementIds) {
+        const handlers = new Map();
+        elements.set(id, {
+            value: '', innerHTML: '', textContent: '', disabled: false, style: {}, options: [],
+            classList: { add() {}, remove() {} },
+            addEventListener(type, handler) { handlers.set(type, handler); },
+            querySelectorAll() { return []; },
+            getHandler(type) { return handlers.get(type); }
+        });
+    }
+
+    const context = {
+        window: {
+            screen: { orientation: { angle: 0 } },
+            addEventListener() {},
+            removeEventListener() {}
+        },
+        document: {
+            readyState: 'complete',
+            getElementById(id) { return elements.get(id) || null; },
+            addEventListener() {}
+        },
+        localStorage: { getItem() { return null; }, setItem() {}, removeItem() {} },
+        fetch: async () => ({ ok: true, async json() { return catalog; } }),
+        console,
+        alert() {},
+        confirm() { return true; },
+        Date, Number, Map, Set, JSON, Math, Error, Promise, Intl, parseFloat, parseInt, isNaN
+    };
+
+    vm.createContext(context);
+    vm.runInContext(code, context);
+    await new Promise(resolve => setImmediate(resolve));
+
+    // 觸發清空格局標註
+    const clearBtn = elements.get('btnClearNineGrid');
+    assert.ok(clearBtn && clearBtn.getHandler('click'), '應綁定清空按鈕');
+    clearBtn.getHandler('click')();
+    assert.equal(elements.get('fsAriaStatus').textContent, '已清空九宮中所有住宅物件標註', '清空應更新無障礙宣告');
+});
+
+test('風水九宮編輯器實時飛星預覽、鍵盤操作與無障礙宣告完整性 (Task 7.11)', async () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const vm = require('node:vm');
+    const code = fs.readFileSync(path.join(__dirname, '../public/js/fengshui.js'), 'utf8');
+    const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/fengshui/layout-catalog.json'), 'utf8'));
+
+    const elementIds = [
+        'btnStartCompass', 'btnLockCompass', 'btnUnlockCompass', 'compassDegreeDisplay',
+        'compassMountDisplay', 'compassChartTypeBadge', 'compassNeedle', 'compassProvenance',
+        'compassTiltWarning', 'compassHeadingSlider', 'compassHeadingInput', 'fsCategoryPills',
+        'fsItemButtons', 'fsActiveItemLabel', 'fsActiveItemHint', 'fsNineGridBoard',
+        'fsEntryPathDisplay', 'fsPathQualitySelect', 'btnClearNineGrid', 'fsHeading',
+        'fsNorthReference', 'fsDeclination', 'fsHeadingSource', 'fsLayoutObjects',
+        'fsEntryPath', 'fsPathQuality', 'fengshuiFacing', 'moveInYear', 'fsAddPathPalaces', 'fsAriaStatus'
+    ];
+    const elements = new Map();
+
+    for (const id of elementIds) {
+        const handlers = new Map();
+        elements.set(id, {
+            value: '', innerHTML: '', textContent: '', disabled: false, style: {}, options: [],
+            classList: { add() {}, remove() {} },
+            addEventListener(type, handler) { handlers.set(type, handler); },
+            querySelectorAll() { return []; },
+            getHandler(type) { return handlers.get(type); }
+        });
+    }
+    elements.get('fengshuiFacing').value = '南';
+    elements.get('moveInYear').value = '2024';
+
+    const context = {
+        window: {
+            screen: { orientation: { angle: 0 } },
+            addEventListener() {},
+            removeEventListener() {}
+        },
+        document: {
+            readyState: 'complete',
+            getElementById(id) { return elements.get(id) || null; },
+            addEventListener() {}
+        },
+        localStorage: { getItem() { return null; }, setItem() {}, removeItem() {} },
+        fetch: async () => ({ ok: true, async json() { return catalog; } }),
+        console,
+        alert() {},
+        confirm() { return true; },
+        Date, Number, Map, Set, JSON, Math, Error, Promise, Intl, parseFloat, parseInt, isNaN
+    };
+
+    vm.createContext(context);
+    vm.runInContext(code, context);
+    await new Promise(resolve => setImmediate(resolve));
+
+    // 1. 驗證九宮編輯器產生之盤面包含飛星即時預覽 (.fs-cell-stars-preview)
+    const boardHtml = elements.get('fsNineGridBoard').innerHTML;
+    assert.ok(boardHtml.includes('fs-cell-stars-preview'), '九宮編輯器應包含飛星即時預覽');
+    assert.ok(boardHtml.includes('9運'), '九宮編輯器中應正確顯示九運運星');
+    assert.ok(boardHtml.includes('fs-pstar-m') && boardHtml.includes('fs-pstar-f'), '九宮編輯器應同時顯示山星與向星');
+    assert.ok(boardHtml.includes('aria-label="南宮位，運星'), '宮位應具備完整的 ARIA 飛星標籤');
+
+    // 2. 驗證朝向變更時自動觸發排盤更新
+    elements.get('fengshuiFacing').value = '北';
+    const facingChangeHandler = elements.get('fengshuiFacing').getHandler('change');
+    assert.ok(typeof facingChangeHandler === 'function', 'fengshuiFacing 應綁定 change 監聽器');
+    facingChangeHandler();
+    const updatedBoardHtml = elements.get('fsNineGridBoard').innerHTML;
+    assert.ok(updatedBoardHtml.includes('fs-cell-stars-preview'), '更新朝向後仍保有飛星');
+    assert.notEqual(updatedBoardHtml, boardHtml, '更新朝向後九宮星曜分佈應即時重新計算更新');
+
+    // 3. 驗證分類 Pills 具備 role="tab" 與 aria-selected
+    const catHtml = elements.get('fsCategoryPills').innerHTML;
+    assert.ok(catHtml.includes('role="tab"'), '分類 pill 應具備 role="tab"');
+    assert.ok(catHtml.includes('aria-selected="true"'), '當前選中分類應標註 aria-selected="true"');
+
+    // 4. 驗證物件按鈕具備 role="button" 與 aria-pressed
+    const itemHtml = elements.get('fsItemButtons').innerHTML;
+    assert.ok(itemHtml.includes('role="button"'), '物件 pill 應具備 role="button"');
+    assert.ok(itemHtml.includes('aria-pressed="false"'), '未選中物件應標註 aria-pressed="false"');
 });

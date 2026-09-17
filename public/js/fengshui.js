@@ -427,6 +427,7 @@
         if (lockBtn) lockBtn.style.display = 'none';
         if (unlockBtn) unlockBtn.style.display = 'inline-block';
         syncHiddenInputs();
+        renderNineGrid();
     }
 
     function unlockHeading() {
@@ -436,6 +437,7 @@
         if (lockBtn) lockBtn.style.display = 'inline-block';
         if (unlockBtn) unlockBtn.style.display = 'none';
         syncHiddenInputs();
+        renderNineGrid();
     }
 
     // 手動滑桿 / 數字輸入事件
@@ -459,7 +461,7 @@
         const container = document.getElementById('fsCategoryPills');
         if (!container) return;
         container.innerHTML = CATALOG.categories.map(cat => `
-            <button type="button" class="fs-cat-btn ${cat.id === state.activeCategoryId ? 'active' : ''}" data-cat="${cat.id}">
+            <button type="button" class="fs-cat-btn ${cat.id === state.activeCategoryId ? 'active' : ''}" data-cat="${cat.id}" role="tab" aria-selected="${cat.id === state.activeCategoryId}">
                 ${cat.label} <span class="badge">${cat.count}</span>
             </button>
         `).join('');
@@ -480,7 +482,7 @@
         const items = CATALOG.items.filter(it => it.category === state.activeCategoryId);
 
         container.innerHTML = items.map(it => `
-            <button type="button" class="fs-item-pill ${it.id === state.activeItemId ? 'selected' : ''}" data-id="${it.id}">
+            <button type="button" class="fs-item-pill ${it.id === state.activeItemId ? 'selected' : ''}" data-id="${it.id}" role="button" aria-pressed="${it.id === state.activeItemId}">
                 ${it.label}
             </button>
         `).join('');
@@ -490,8 +492,13 @@
                 const id = btn.getAttribute('data-id');
                 if (state.activeItemId === id) {
                     state.activeItemId = null; // 取消選取
+                    announceAria('已取消選取物件');
                 } else {
                     state.activeItemId = id;
+                    const it = CATALOG_MAP.get(id);
+                    if (it) {
+                        announceAria(`已選取【${it.label}】，請點選九宮格中相應宮位進行放置`);
+                    }
                 }
                 updateActiveItemDisplay();
                 renderItemButtons();
@@ -520,6 +527,11 @@
         }
     }
 
+    function announceAria(message) {
+        const el = document.getElementById('fsAriaStatus');
+        if (el) el.textContent = message;
+    }
+
     // 宮位物件放置與切換 (南在頂、北在底 順序)
     function handlePalaceClick(palaceKey) {
         if (!state.activeItemId) {
@@ -540,6 +552,7 @@
             if (state.activeItemId === 'door.main' && state.entryPath.length > 0 && state.entryPath[0] === palaceKey) {
                 state.entryPath.shift();
             }
+            announceAria(`已從【${palaceKey}】宮移除【${item.label}】`);
         } else {
             // 若為單一放置模式，先從其他宮位移除
             if (item.placementMode === 'single') {
@@ -556,6 +569,7 @@
                     state.entryPath = [palaceKey];
                 }
             }
+            announceAria(`已將【${item.label}】放置於【${palaceKey}】宮`);
         }
 
         saveLayoutSnapshot();
@@ -565,10 +579,127 @@
 
     function removePalaceItem(palaceKey, itemId, event) {
         if (event) event.stopPropagation();
+        const it = CATALOG_MAP.get(itemId);
         state.layout[palaceKey] = (state.layout[palaceKey] || []).filter(id => id !== itemId);
+        announceAria(`已從【${palaceKey}】宮移除【${it ? it.label : itemId}】`);
         saveLayoutSnapshot();
         renderNineGrid();
         syncHiddenInputs();
+    }
+
+    // 24山坐向與三元龍定義（供 Step 2 互動九宮格實時排布玄空飛星）
+    const TWENTY_FOUR_MOUNTAINS_MAP = {
+        '壬山丙向': { facingDir: '南', sittingDir: '北', dragon: '地' },
+        '子山午向': { facingDir: '南', sittingDir: '北', dragon: '天' },
+        '癸山丁向': { facingDir: '南', sittingDir: '北', dragon: '人' },
+        '丑山未向': { facingDir: '西南', sittingDir: '東北', dragon: '地' },
+        '艮山坤向': { facingDir: '西南', sittingDir: '東北', dragon: '天' },
+        '寅山申向': { facingDir: '西南', sittingDir: '東北', dragon: '人' },
+        '甲山庚向': { facingDir: '西', sittingDir: '東', dragon: '地' },
+        '卯山酉向': { facingDir: '西', sittingDir: '東', dragon: '天' },
+        '乙山辛向': { facingDir: '西', sittingDir: '東', dragon: '人' },
+        '辰山戌向': { facingDir: '西北', sittingDir: '東南', dragon: '地' },
+        '巽山乾向': { facingDir: '西北', sittingDir: '東南', dragon: '天' },
+        '巳山亥向': { facingDir: '西北', sittingDir: '東南', dragon: '人' },
+        '丙山壬向': { facingDir: '北', sittingDir: '南', dragon: '地' },
+        '午山子向': { facingDir: '北', sittingDir: '南', dragon: '天' },
+        '丁山癸向': { facingDir: '北', sittingDir: '南', dragon: '人' },
+        '未山丑向': { facingDir: '東北', sittingDir: '西南', dragon: '地' },
+        '坤山艮向': { facingDir: '東北', sittingDir: '西南', dragon: '天' },
+        '申山寅向': { facingDir: '東北', sittingDir: '西南', dragon: '人' },
+        '庚山甲向': { facingDir: '東', sittingDir: '西', dragon: '地' },
+        '酉山卯向': { facingDir: '東', sittingDir: '西', dragon: '天' },
+        '辛山乙向': { facingDir: '東', sittingDir: '西', dragon: '人' },
+        '戌山辰向': { facingDir: '東南', sittingDir: '西北', dragon: '地' },
+        '乾山巽向': { facingDir: '東南', sittingDir: '西北', dragon: '天' },
+        '亥山巳向': { facingDir: '東南', sittingDir: '西北', dragon: '人' }
+    };
+
+    const PALACE_DRAGONS_MAP = {
+        1: { 地: { polarity: '陽' }, 天: { polarity: '陰' }, 人: { polarity: '陰' } },
+        2: { 地: { polarity: '陰' }, 天: { polarity: '陽' }, 人: { polarity: '陽' } },
+        3: { 地: { polarity: '陽' }, 天: { polarity: '陰' }, 人: { polarity: '陰' } },
+        4: { 地: { polarity: '陰' }, 天: { polarity: '陽' }, 人: { polarity: '陽' } },
+        5: { 地: { polarity: '陰' }, 天: { polarity: '陽' }, 人: { polarity: '陽' } },
+        6: { 地: { polarity: '陰' }, 天: { polarity: '陽' }, 人: { polarity: '陽' } },
+        7: { 地: { polarity: '陽' }, 天: { polarity: '陰' }, 人: { polarity: '陰' } },
+        8: { 地: { polarity: '陰' }, 天: { polarity: '陽' }, 人: { polarity: '陽' } },
+        9: { 地: { polarity: '陽' }, 天: { polarity: '陰' }, 人: { polarity: '陰' } }
+    };
+
+    const LUOSHU_ORDER = ['中', '西北', '西', '東北', '南', '北', '西南', '東', '東南'];
+
+    function flyLuoshuClient(centerStar, isForward) {
+        const res = {};
+        LUOSHU_ORDER.forEach((palace, step) => {
+            const star = isForward
+                ? (centerStar - 1 + step) % 9 + 1
+                : (centerStar - 1 - step + 18) % 9 + 1;
+            res[palace] = star;
+        });
+        return res;
+    }
+
+    function getPeriodClient(year) {
+        const y = Number(year) || new Date().getFullYear();
+        if (y >= 2024 && y <= 2043) return 9;
+        if (y >= 2004 && y <= 2023) return 8;
+        if (y >= 1984 && y <= 2003) return 7;
+        if (y >= 1964 && y <= 1983) return 6;
+        if (y >= 1944 && y <= 1963) return 5;
+        if (y >= 1924 && y <= 1943) return 4;
+        if (y >= 1904 && y <= 1923) return 3;
+        if (y >= 1884 && y <= 1903) return 2;
+        if (y >= 1864 && y <= 1883) return 1;
+        const diff = y - 1864;
+        const cyclePos = ((diff % 180) + 180) % 180;
+        return Math.floor(cyclePos / 20) + 1;
+    }
+
+    function calculateEditorFlyingStars() {
+        const selectEl = document.getElementById('fengshuiFacing');
+        const yearEl = document.getElementById('moveInYear');
+        const moveInYear = yearEl && yearEl.value ? (parseInt(yearEl.value, 10) || 2024) : 2024;
+
+        let facingInput = selectEl && selectEl.value ? selectEl.value : '南';
+        if (state.compass.isLocked && state.compass.heading !== null) {
+            const mInfo = calcMountain(state.compass.heading);
+            facingInput = mInfo.mountKey;
+        }
+
+        let mountKey = Object.keys(TWENTY_FOUR_MOUNTAINS_MAP).find(k => k === facingInput || k.includes(facingInput));
+        if (!mountKey) {
+            const map8 = { 南: '子山午向', 北: '午山子向', 東: '酉山卯向', 西: '卯山酉向', 東南: '乾山巽向', 西北: '巽山乾向', 東北: '坤山艮向', 西南: '艮山坤向' };
+            mountKey = map8[facingInput] || '子山午向';
+        }
+
+        const mountInfo = TWENTY_FOUR_MOUNTAINS_MAP[mountKey];
+        if (!mountInfo) return null;
+
+        const period = getPeriodClient(moveInYear);
+        const periodChart = flyLuoshuClient(period, true);
+
+        const sittingDir = mountInfo.sittingDir;
+        const facingDir = mountInfo.facingDir;
+        const dragonType = mountInfo.dragon;
+
+        const sittingBaseStar = periodChart[sittingDir];
+        const sittingDragon = PALACE_DRAGONS_MAP[sittingBaseStar]?.[dragonType] || { polarity: '陽' };
+        const isMountainForward = sittingDragon.polarity === '陽';
+        const mountainChart = flyLuoshuClient(sittingBaseStar, isMountainForward);
+
+        const facingBaseStar = periodChart[facingDir];
+        const facingDragon = PALACE_DRAGONS_MAP[facingBaseStar]?.[dragonType] || { polarity: '陽' };
+        const isFacingForward = facingDragon.polarity === '陽';
+        const facingChart = flyLuoshuClient(facingBaseStar, isFacingForward);
+
+        return {
+            mountKey,
+            period,
+            periodChart,
+            mountainChart,
+            facingChart
+        };
     }
 
     // 渲染南上北下九宮盤
@@ -589,6 +720,7 @@
         if (!container) return;
 
         const mInfo = state.compass.heading === null ? null : calcMountain(state.compass.heading);
+        const starsData = calculateEditorFlyingStars();
 
         container.innerHTML = PALACE_ORDER.map(p => {
             const items = state.layout[p.key] || [];
@@ -599,22 +731,42 @@
             if (isSitting) tagDesc = '<span class="fs-sit-face-tag sit">坐山</span>';
             if (isFacing) tagDesc = '<span class="fs-sit-face-tag face">向首</span>';
 
+            let starsHtml = '';
+            let starsAria = '';
+            if (starsData) {
+                const isCenter = p.key === '中';
+                const pStar = isCenter ? starsData.period : (starsData.periodChart[p.key] || '-');
+                const mStar = starsData.mountainChart[p.key] || '-';
+                const fStar = starsData.facingChart[p.key] || '-';
+                starsHtml = `
+                    <div class="fs-cell-stars-preview" title="運星 ${pStar} · 山星 ${mStar} · 向星 ${fStar}">
+                        <span class="fs-pstar-period">${pStar}運</span>
+                        <span class="fs-pstar-m">山${mStar}</span>
+                        <span class="fs-pstar-f">向${fStar}</span>
+                    </div>
+                `;
+                starsAria = `，運星${pStar}，山星${mStar}，向星${fStar}`;
+            }
+
             const itemsHtml = items.map(id => {
                 const it = CATALOG_MAP.get(id);
                 const label = it ? it.label : id;
                 return `
                     <span class="fs-grid-tag" title="${label}">
                         ${label}
-                        <button type="button" class="fs-tag-remove" data-palace="${p.key}" data-id="${id}">×</button>
+                        <button type="button" class="fs-tag-remove" data-palace="${p.key}" data-id="${id}" aria-label="從${p.key}宮移除${label}">×</button>
                     </span>
                 `;
             }).join('');
 
             return `
-                <div class="fs-palace-cell ${p.key === '中' ? 'center-cell' : ''}" data-palace="${p.key}" tabindex="0" role="button" aria-label="${p.key}宮位">
+                <div class="fs-palace-cell ${p.key === '中' ? 'center-cell' : ''}" data-palace="${p.key}" tabindex="0" role="button" aria-label="${p.key}宮位${starsAria}">
                     <div class="fs-palace-header">
-                        <span class="fs-palace-name">${p.name} ${p.trigram ? `(${p.trigram})` : ''}</span>
-                        ${tagDesc}
+                        <div class="fs-palace-name-row">
+                            <span class="fs-palace-name">${p.name} ${p.trigram ? `(${p.trigram})` : ''}</span>
+                            ${tagDesc}
+                        </div>
+                        ${starsHtml}
                     </div>
                     <div class="fs-palace-items-box">
                         ${itemsHtml || '<span class="fs-empty-hint">點此放置物件</span>'}
@@ -623,7 +775,7 @@
             `;
         }).join('');
 
-        // 綁定宮位點擊
+        // 綁定宮位點擊與鍵盤事件
         container.querySelectorAll('.fs-palace-cell').forEach(cell => {
             cell.addEventListener('click', () => {
                 const palace = cell.getAttribute('data-palace');
@@ -637,12 +789,21 @@
             });
         });
 
-        // 綁定個別標籤移除點擊
+        // 綁定個別標籤移除點擊與鍵盤事件
         container.querySelectorAll('.fs-tag-remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const palace = btn.getAttribute('data-palace');
                 const id = btn.getAttribute('data-id');
                 removePalaceItem(palace, id, e);
+            });
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const palace = btn.getAttribute('data-palace');
+                    const id = btn.getAttribute('data-id');
+                    removePalaceItem(palace, id, e);
+                }
             });
         });
 
@@ -665,6 +826,7 @@
                 if (clearBtn) {
                     clearBtn.addEventListener('click', () => {
                         state.entryPath = [];
+                        announceAria('已清空進門入路動線');
                         saveLayoutSnapshot();
                         renderEntryPathUI();
                         syncHiddenInputs();
@@ -728,6 +890,7 @@
                         state.layout[p] = [];
                     }
                     state.entryPath = [];
+                    announceAria('已清空九宮中所有住宅物件標註');
                     saveLayoutSnapshot();
                     renderNineGrid();
                     syncHiddenInputs();
@@ -755,16 +918,37 @@
                     if (state.entryPath.length === 0 && doorPalace && palace !== doorPalace) {
                         alert(`大門已標註於【${doorPalace}】宮，進門動線第一步必須為大門所在宮位。已自動為您由【${doorPalace}】開始！`);
                         state.entryPath.push(doorPalace);
+                        announceAria(`已自動將大門所在【${doorPalace}】宮作為入路第一步`);
                         if (state.entryPath.length < 9) {
                             state.entryPath.push(palace);
+                            announceAria(`已將【${palace}】宮加入進門入路動線`);
                         }
                     } else if (state.entryPath.length < 9) {
                         state.entryPath.push(palace);
+                        announceAria(`已將【${palace}】宮加入進門入路動線`);
                     }
                     saveLayoutSnapshot();
                     renderEntryPathUI();
                     syncHiddenInputs();
                 });
+            });
+        }
+
+        // 房屋朝向與入住年份變更時即時重排九宮星曜
+        const facingSelect = document.getElementById('fengshuiFacing');
+        if (facingSelect) {
+            facingSelect.addEventListener('change', () => {
+                renderNineGrid();
+            });
+        }
+
+        const moveInYearInput = document.getElementById('moveInYear');
+        if (moveInYearInput) {
+            moveInYearInput.addEventListener('input', () => {
+                renderNineGrid();
+            });
+            moveInYearInput.addEventListener('change', () => {
+                renderNineGrid();
             });
         }
 
