@@ -21,9 +21,15 @@
   - **文案精簡吸睛**：主標題精煉為「💍 看出你未來另一半」與「⚡ 男生真實尺寸速測」，加入「🔥 夫妻宮直斷」與「🔥 隱私雙核」醒目標籤，副標題直擊用戶核心關切（「大你幾歲？長相、性格與相遇時機全揭秘」），按鈕升級為「立即揭秘 ➔」與「立即測算 ➔」。
   - **醒目高對比底色與視覺層級**：告別容易被忽視的平淡底色，未來另一半卡片注入玫瑰粉漸層（`#fff0f3` ~ `#ffd1dc`）與玫瑰光暈投影；尺寸速測卡片注入金黃暖琥珀漸層（`#fffbeb` ~ `#fde68a`）與琥珀光暈投影，適配暗黑模式玻璃霓虹質感。
   - **字體加大與排版呼吸感**：標題放大至 18px (800加粗)，描述放大至 13.5px，圖標升級為 48px 圓角半透明懸浮容器，按鈕升級為質感膠囊按鈕，行動端流暢垂直自適應。
+- **紫微斗數頁面 (`/ziwei`) 模式選擇器全面升級新風格 & 頂部留白呼吸感優化**：
+  - **模式選擇器卡片化升級**：將原本灰白單薄的藥丸按鈕重構為三張專屬特色卡片（`.ziwei-mode-grid`）：
+    - 🔮 **完整紫微排盤**：典雅紫晶漸層（`#fbf9ff` ~ `#ddd6fe`）＋紫色亮邊框＋「全命盤」標籤。
+    - 💍 **看出你未來另一半**：浪漫玫瑰粉漸層（`#fff5f7` ~ `#ffd1dc`）＋粉紅亮邊框＋「🔥 夫妻宮直斷」標籤。
+    - ⚡ **3秒測男生真實尺寸**：暖金琥珀漸層（`#fffdf5` ~ `#fde68a`）＋金琥珀亮邊框＋「🔥 隱私雙核」標籤。
+  - **頂部排版精簡與下移**：將佔據首屏大版位的長篇理論說明（「經典安星訣排定十二宮位...」）自頂部 Hero 移至頁尾 Footer 區域（`.ziwei-footer-note`），頂部保留精煉緊湊標題，首屏即刻呈現特色模式與表單。
 - **Web UI Spacing 與版面呼吸感優化 (`views/ziwei.html`, `public/css/divination-suite.css`)**：
   - 修復 Bootstrap 3 環境下缺少 `.mt-4` / `.mb-3` 工具類別導致「問題輸入框」與「提交按鈕」黏在一起的間距問題，重構 `.suite-submit-container`，提供舒適的視覺呼吸感。
-  - 新增 `.spouse-banner`、`.spouse-card`、`.spouse-hero`、`.spouse-age-badge`、`.spouse-tag-pill` 等自適應主題樣式。
+  - 新增 `.spouse-banner`、`.male-size-banner`、`.spouse-card`、`.spouse-hero`、`.spouse-age-badge`、`.spouse-tag-pill` 等自適應主題樣式。
 - **API、CLI、WebMCP 與測試保障**：
   - **API 端點**：新增毫秒級確定性端點 `GET /api/ziwei/spouse` 與 `POST /api/ziwei/spouse`，同步登記至 `/api/docs`。
   - **CLI & Skill**：`ziwei_cli.js` 與 `ask_ziwei.js` 支援 `--spouse` 與 `--mode spouse`；同步更新 `skills/ziwei-consultant/SKILL.md`。

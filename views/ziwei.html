@@ -74,26 +74,46 @@
 
     <div class="suite-container">
         <!-- Hero Header -->
-        <div class="suite-hero">
+        <div class="suite-hero suite-hero-compact">
             <span class="suite-hero-badge">🔮 正統三合 · 飛星四化</span>
             <h1>紫微斗數命盤解析</h1>
-            <p class="suite-hero-subtitle">
-                經典安星訣排定十二宮位、十四主星廟旺平陷、六吉六煞與十干生年四化，以三方四正洞悉人生格局與大限流年機遇。
-            </p>
         </div>
 
         <!-- Form Card -->
         <div class="suite-card">
-            <!-- Mode Switcher -->
-            <div class="ziwei-mode-pills text-center mb-4">
-                <button type="button" class="btn btn-sm ziwei-mode-btn <%= (typeof activeMode === 'undefined' || activeMode === 'chart') ? 'active' : '' %>" data-mode="chart" id="btnModeChart">
-                    🔮 完整紫微排盤 (深度解讀)
+            <!-- Mode Switcher Grid (Punchy & Prominent UI) -->
+            <div class="ziwei-mode-grid mb-4">
+                <button type="button" class="ziwei-mode-card mode-card-chart ziwei-mode-btn <%= (typeof activeMode === 'undefined' || activeMode === 'chart') ? 'active' : '' %>" data-mode="chart" id="btnModeChart">
+                    <span class="mode-card-icon">🔮</span>
+                    <div class="mode-card-content">
+                        <div class="mode-card-header">
+                            <span class="mode-card-title">完整紫微排盤</span>
+                            <span class="mode-card-badge badge-chart">全命盤</span>
+                        </div>
+                        <span class="mode-card-desc">十二宮星耀 · 大限流年深入解讀</span>
+                    </div>
                 </button>
-                <button type="button" class="btn btn-sm ziwei-mode-btn <%= (typeof activeMode !== 'undefined' && activeMode === 'spouse') ? 'active' : '' %>" data-mode="spouse" id="btnModeSpouse">
-                    💍 看出你未來另一半 (夫妻宮年齡長相)
+
+                <button type="button" class="ziwei-mode-card mode-card-spouse ziwei-mode-btn <%= (typeof activeMode !== 'undefined' && activeMode === 'spouse') ? 'active' : '' %>" data-mode="spouse" id="btnModeSpouse">
+                    <span class="mode-card-icon">💍</span>
+                    <div class="mode-card-content">
+                        <div class="mode-card-header">
+                            <span class="mode-card-title">看出你未來另一半</span>
+                            <span class="mode-card-badge badge-spouse">🔥 夫妻宮直斷</span>
+                        </div>
+                        <span class="mode-card-desc">大你幾歲？長相、性格與相遇時機</span>
+                    </div>
                 </button>
-                <button type="button" class="btn btn-sm ziwei-mode-btn <%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? 'active' : '' %>" data-mode="male-size" id="btnModeMaleSize">
-                    ⚡ 3秒測男生真實尺寸 (雙核出廠規格)
+
+                <button type="button" class="ziwei-mode-card mode-card-malesize ziwei-mode-btn <%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? 'active' : '' %>" data-mode="male-size" id="btnModeMaleSize">
+                    <span class="mode-card-icon">⚡</span>
+                    <div class="mode-card-content">
+                        <div class="mode-card-header">
+                            <span class="mode-card-title">3秒測男生真實尺寸</span>
+                            <span class="mode-card-badge badge-malesize">🔥 隱私雙核</span>
+                        </div>
+                        <span class="mode-card-desc">子位＋疾厄宮：真實規格與戰鬥力</span>
+                    </div>
                 </button>
             </div>
 
@@ -210,6 +230,13 @@
                     </span>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- 頁底紫微排盤理論說明 (自頁首移至頁底保持介面清爽) -->
+    <div class="container text-center">
+        <div class="ziwei-footer-note">
+            <p>經典安星訣排定十二宮位、十四主星廟旺平陷、六吉六煞與十干生年四化，以三方四正洞悉人生格局與大限流年機遇。</p>
         </div>
     </div>
 
