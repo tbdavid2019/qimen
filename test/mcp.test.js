@@ -54,3 +54,16 @@ test('WebMCP 官方 MCP source/dist 與 bridge 均宣告確定性風水佈局工
         assert.match(content, /maxItems: 9|max\(9\)/);
     }
 });
+
+test('WebMCP 官方 MCP source/dist 與 bridge 均宣告紫微斗數男生尺寸評估工具', () => {
+    const source = fs.readFileSync(sourcePath, 'utf8');
+    const dist = fs.readFileSync(distPath, 'utf8');
+    const bridge = fs.readFileSync(bridgePath, 'utf8');
+    assert.match(source, /registerTool\(\s*"ziwei_male_size"/);
+    assert.match(source, /ZiweiMaleSizeInputSchema/);
+    assert.match(source, /ziwei\/male-size/);
+    assert.match(dist, /registerTool\("ziwei_male_size"/);
+    assert.match(dist, /ziwei\/male-size/);
+    assert.match(bridge, /name: "ziwei_male_size"/);
+    assert.match(bridge, /ziwei\/male-size/);
+});

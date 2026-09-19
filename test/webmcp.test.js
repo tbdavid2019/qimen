@@ -33,6 +33,7 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 		"bazi2_chart",
 		"yinyuan_reading",
 		"answerbook_reading",
+		"ziwei_male_size",
 	];
 
 	for (const toolName of expectedTools) {
@@ -229,6 +230,38 @@ test("風水頁面會保留宣告式報告並註冊確定性佈局評估工具",
 		await WebMCP.registerAllTools();
 		assert.deepEqual(registered, ["fengshui_layout_evaluation", "switch_theme"]);
 		assert.deepEqual(WebMCP.getRegisteredTools(), ["fengshui_layout_evaluation", "switch_theme"]);
+	} finally {
+		if (previousWindow === undefined) delete global.window;
+		else global.window = previousWindow;
+		if (previousDocument === undefined) delete global.document;
+		else global.document = previousDocument;
+	}
+});
+
+test("紫微頁面會保留宣告式排盤並註冊確定性男生尺寸工具", async () => {
+	const previousWindow = global.window;
+	const previousDocument = global.document;
+	const registered = [];
+	global.window = { location: { pathname: "/ziwei" } };
+	global.document = {
+		readyState: "loading",
+		addEventListener: () => {},
+		modelContext: {
+			registerTool: async (tool) => {
+				registered.push(tool.name);
+			},
+		},
+		querySelectorAll: (selector) => selector === "form[toolname]"
+			? [{ getAttribute: () => "ziwei_chart" }]
+			: [],
+	};
+
+	try {
+		const WebMCP = require("../public/js/webmcp");
+		WebMCP.resetForTesting();
+		await WebMCP.registerAllTools();
+		assert.deepEqual(registered, ["ziwei_male_size", "switch_theme"]);
+		assert.deepEqual(WebMCP.getRegisteredTools(), ["ziwei_male_size", "switch_theme"]);
 	} finally {
 		if (previousWindow === undefined) delete global.window;
 		else global.window = previousWindow;

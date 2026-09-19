@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { calculateZiweiChart } = require(path.join(__dirname, '../../../lib/ziwei.js'));
+const { calculateZiweiChart, evaluateMaleSize } = require(path.join(__dirname, '../../../lib/ziwei.js'));
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -27,6 +27,10 @@ function parseArgs() {
             inputFile = args[++i];
         } else if (arg === '--output' && args[i + 1]) {
             outputFile = args[++i];
+        } else if (arg === '--mode' && args[i + 1]) {
+            params.mode = args[++i];
+        } else if (arg === '--male-size') {
+            params.mode = 'male-size';
         } else if ((arg === '--date' || arg === '--solar') && args[i + 1]) {
             params.date = args[++i];
             params.calendar = 'solar';
@@ -39,6 +43,7 @@ function parseArgs() {
             params.hour = args[++i];
         } else if (arg === '--shichen' && args[i + 1]) {
             params.shichen = args[++i];
+            delete params.time;
         } else if (arg === '--sex' && args[i + 1]) {
             params.sex = args[++i];
         } else if (arg === '--place' && args[i + 1]) {
@@ -71,12 +76,14 @@ function readInput(inputFile, rawInline, defaultParams) {
         } catch {}
     }
 
-    try {
-        const stdinBuffer = fs.readFileSync(0, 'utf-8');
-        if (stdinBuffer.trim().startsWith('{')) {
-            return Object.assign({}, defaultParams, JSON.parse(stdinBuffer.trim()));
-        }
-    } catch {}
+    if (!process.stdin.isTTY) {
+        try {
+            const stdinBuffer = fs.readFileSync(0, 'utf-8');
+            if (stdinBuffer.trim().startsWith('{')) {
+                return Object.assign({}, defaultParams, JSON.parse(stdinBuffer.trim()));
+            }
+        } catch {}
+    }
 
     return defaultParams;
 }
@@ -86,8 +93,13 @@ function run() {
         const { inputFile, outputFile, rawInline, params } = parseArgs();
         const inputData = readInput(inputFile, rawInline, params);
 
-        const chart = calculateZiweiChart(inputData);
-        const jsonString = JSON.stringify(chart, null, 2);
+        let result;
+        if (inputData.mode === 'male-size') {
+            result = evaluateMaleSize(inputData);
+        } else {
+            result = calculateZiweiChart(inputData);
+        }
+        const jsonString = JSON.stringify(result, null, 2);
 
         if (outputFile) {
             fs.writeFileSync(outputFile, jsonString, 'utf-8');

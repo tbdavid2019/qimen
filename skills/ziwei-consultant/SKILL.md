@@ -35,11 +35,19 @@ description: >
 node skills/ziwei-consultant/scripts/ziwei_cli.js --input '{"date":"1990-05-15","time":"14:30","sex":"男","calendar":"solar"}'
 ```
 
-或透過 API 模式（發送 `POST /api/ziwei-question` 或 `POST /api/ziwei/chart`）呼叫 `node skills/ziwei-consultant/scripts/ask_ziwei.js`。
+#### 男生真實尺寸與實戰體魄速測（快速通關模式）
+
+支援「子位出廠氣象 ＋ 疾厄宮實體肉身」雙核合參速測男生真實尺寸（公分區間與實戰風格）：
+
+```bash
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --time 10:00 --sex 男 --male-size
+```
+
+或透過 API 模式（發送 `POST /api/ziwei-question`、`POST /api/ziwei/chart` 或 `POST /api/ziwei/male-size`）呼叫 `node skills/ziwei-consultant/scripts/ask_ziwei.js`。
 
 ### `ask_ziwei.js` 參數
 
-支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（必填）、`--date`（必填，`YYYY-MM-DD`）、`--time`、`--shichen`、`--sex`、`--calendar solar|lunar`、`--leap`、`--name`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
+支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（排盤解讀時必填）、`--mode chart|male-size`、`--date`（必填，`YYYY-MM-DD`）、`--time`、`--shichen`、`--sex`、`--calendar solar|lunar`、`--leap`、`--name`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ### 第 3 步：結構化解盤輸出
 

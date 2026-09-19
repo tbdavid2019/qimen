@@ -2,6 +2,36 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-09-19]
+
+### ⚡ 紫微斗數男生真實尺寸與親密戰鬥力雙核測算引擎 & 快速通關模式 (ziwei-male-size-fastpass)
+
+- **紫微斗數男生真實尺寸與親密戰鬥力雙核測算引擎 (`lib/ziwei.js`)**：
+  - **破解網路單宮流言**：打破社群粗糙「單看子位」流言，開創正統「子位（外觀視覺器量）」＋「疾厄宮（肉身器官與實質體能）」雙核合參演算法。
+  - **精準排盤校正**：嚴格依循水二局等五行局安紫微星歌訣，排除網路推算偏誤，解決傳統單宮流言將全天 50% 時辰盲目灌水為「＞16 cm 特大杯」的失真現象。
+  - **客觀區間與風格判定**：明確提供客觀公分區間（`＞16 cm 特大杯`、`11 - 15 cm 大/中杯`、`＜10 cm 小杯`）、耐力評分（50～95分）、實戰風格標籤（暴風破壞型、鋒刃精鋼型、長效永動型等）與正統合參解讀。
+- **全介面 5 層架構同步對齊 (Full-Stack 5-Layer Parameter Alignment)**：
+  - **1. Web UI (`views/ziwei.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)**：
+    - 頂部模式切換 Pill Group：【🔮 完整紫微排盤】與【⚡ 男生尺寸速測（快速通關）】。
+    - 快速通關模式僅需出生年月日與時辰，0.1 秒純演算法即時出盤，免除等待 LLM 分析耗時。
+    - 完整排盤模式分析結果同步嵌入「⚡ 趣味彩蛋：男生真實尺寸與親密戰鬥力」專屬卡片。
+    - 樣式新增 `.ziwei-mode-pills`、`.male-size-card`、`.male-size-cm-badge` 等自適應深淺色主題卡片。
+  - **2. API 端點 (`app.js`)**：
+    - 新增確定性運算端點 `POST /api/ziwei/male-size` 與 `GET /api/ziwei/male-size`，自動紀錄至 Discord webhook。
+    - `/api/docs` API Catalog 字典同步登記。
+  - **3. CLI & Skill (`skills/ziwei-consultant`)**：
+    - `ziwei_cli.js` 新增 `--male-size` 與 `--mode male-size` 旗標；強化非互動 TTY 輸入偵測。
+    - `ask_ziwei.js` 支援 `mode: "male-size"` 路由至本地確定性端點。
+    - `SKILL.md` 完整補充參數與使用範例。
+  - **4. WebMCP / 官方 MCP / Bridge (`public/js/webmcp.js`, `mcp-bridge.js`, `mcp/src/tools/divination.ts`)**：
+    - 新增 `ziwei_male_size` 工具，暴露完整 Schema 與 input validation。
+    - 編譯並同步官方 MCP TypeScript 輸出至 `mcp/dist/tools/divination.js`。
+  - **5. 文檔與 Wiki**：
+    - 發布全面深度分析專文至 `david888 wiki`（Live URL: `https://wiki.david888.com/share/25nfaa`），解析 1981-08-11 十二時辰全天比對與巳時 11cm 校正實測。
+    - `README.md` 與 `CHANGELOG.md` 同步更新。
+  - **6. 自動化測試**：
+    - `test/ziwei.test.js`、`test/service-question-routes.test.js`、`test/webmcp.test.js`、`test/mcp.test.js` 擴充，全套 175 項測試 100% 通過。
+
 ## [2026-09-17]
 
 ### 🧭 易經風水中州派規則庫考據深化 (Task 7.7) 與九宮編輯器實時飛星/無障礙宣告 (Task 7.11)

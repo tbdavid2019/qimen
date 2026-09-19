@@ -4,6 +4,7 @@ const { execSync } = require('node:child_process');
 const path = require('node:path');
 const {
     calculateZiweiChart,
+    evaluateMaleSize,
     getFiveBureau,
     calcZiweiBranch,
     STAR_BRIGHTNESS,
@@ -121,3 +122,64 @@ test('Qimen CLI 腳本 (skills/qimen-consultant/scripts/qimen_cli.js) 獨立運�
     assert.ok(output.chart.palaces, 'CLI 輸出必須包含 chart.palaces');
     assert.equal(output.chart.palaces.length, 9);
 });
+
+test('紫微斗數男生真實尺寸雙核評估（子位＋疾厄宮合參）', () => {
+    // 1981-08-11 巳時 (10:00) 乾造：子位天同太陰、疾厄戌宮獨坐擎羊 -> 命中 11-13cm 鋒刃精鋼型
+    const siResult = evaluateMaleSize({ date: '1981-08-11', time: '10:00', sex: '男' });
+    assert.equal(siResult.tier, '大/中杯');
+    assert.equal(siResult.cmRange, '11 - 13 cm');
+    assert.match(siResult.title, /精鋼|鋒刃/);
+    assert.match(siResult.physique, /擎羊/);
+
+    // 1981-08-11 辰時 (07:00) 乾造：子位巨門祿（虛標>16）、疾厄亥宮坐廉貪天馬 -> 雙核校正為 12-15cm 實戰永動機
+    const chenResult = evaluateMaleSize({ date: '1981-08-11', time: '07:00', sex: '男' });
+    assert.equal(chenResult.tier, '大/中杯');
+    assert.equal(chenResult.cmRange, '12 - 15 cm');
+    assert.match(chenResult.title, /永動機|長青/);
+
+    // 1981-08-11 卯時 (06:00) 乾造：子疾同宮巨門祿 -> 真·特大杯
+    const maoResult = evaluateMaleSize({ date: '1981-08-11', time: '06:00', sex: '男' });
+    assert.equal(maoResult.tier, '特大杯');
+    assert.equal(maoResult.cmRange, '＞16 cm');
+    assert.match(maoResult.title, /深潛重砲/);
+});
+
+test('紫微斗數女性命盤不附帶男生尺寸且 evaluateMaleSize 標註不適用', () => {
+    const femaleChart = calculateZiweiChart({ date: '1981-08-11', time: '10:00', sex: '女' });
+    assert.equal(femaleChart.maleSize, null, '女性全盤不得附帶 maleSize');
+
+    const femaleResult = evaluateMaleSize({ date: '1981-08-11', time: '10:00', sex: '女' });
+    assert.equal(femaleResult.isApplicable, false, '女性 evaluateMaleSize 必須標註 isApplicable: false');
+    assert.equal(femaleResult.tier, '不適用');
+    assert.equal(femaleResult.title, '女性命盤不適用');
+    assert.match(femaleResult.summary, /僅適用於男性命盤/);
+});
+
+test('紫微斗數支援 birthDate 別名且真太陽時正常推算不崩潰', () => {
+    const chart = calculateZiweiChart({ birthDate: '1981-08-11', time: '10:00', place: '台北', sex: '男' });
+    assert.ok(chart.solarTimeInfo, '真太陽時必須成功計算');
+    assert.ok(chart.maleSize, '男性盤必須附帶 maleSize');
+    assert.equal(chart.maleSize.tier, '大/中杯');
+});
+
+test('紫微斗數正確回傳耐力評分 enduranceScore 與文化趣味免責聲明', () => {
+    const res = evaluateMaleSize({ date: '1981-08-11', time: '10:00', sex: '男' });
+    assert.equal(typeof res.enduranceScore, 'number');
+    assert.ok(res.enduranceScore >= 50 && res.enduranceScore <= 95);
+    assert.ok(res.disclaimer, '必須包含 disclaimer 免責說明');
+});
+
+test('紫微斗數農曆閏月字串參數 (leap="false") 正確標準化不拋錯', () => {
+    // 2023-02-22 農曆 (2023年有閏二月，leap="false" 代表非閏月)
+    const chart = calculateZiweiChart({ date: '2023-02-22', calendar: 'lunar', leap: 'false', sex: '男' });
+    assert.equal(chart.lunar.month, 2);
+    assert.equal(chart.lunar.isLeap, false);
+});
+
+test('紫微斗數當輸入 shichen 且帶預設 time 時，normalized_input.time 一致同步為時辰代表時間', () => {
+    const chart = calculateZiweiChart({ date: '1981-08-11', shichen: '巳', time: '12:00', sex: '男' });
+    assert.equal(chart.normalized_input.time, '10:00');
+});
+
+
+

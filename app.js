@@ -28,7 +28,7 @@ const {
     validateLayoutInput,
     evaluateZhongzhouLayout
 } = require('./lib/fengshui');
-const { calculateZiweiChart } = require('./lib/ziwei');
+const { calculateZiweiChart, evaluateMaleSize } = require('./lib/ziwei');
 const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
 const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time');
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
@@ -53,6 +53,32 @@ const llmService = new LLMAnalysisService({
 
 // 初始化 Discord Webhook
 const discordWebhook = new DiscordWebhook(process.env.DISCORD_WEBHOOK_URL);
+
+const SHICHEN_TIME_MAP = {
+    子: '00:00', 丑: '02:00', 寅: '04:00', 卯: '06:00', 辰: '08:00', 巳: '10:00',
+    午: '12:00', 未: '14:00', 申: '16:00', 酉: '18:00', 戌: '20:00', 亥: '22:00'
+};
+
+function validateZiweiQuestion(body) {
+    const rawDate = body.date || body.birthDate;
+    if (typeof rawDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+        throw validationError('請提供出生日期（YYYY-MM-DD）', 'MISSING_BIRTH_DATE', 'date');
+    }
+    const [year, month, day] = rawDate.split('-').map(Number);
+    const check = new Date(Date.UTC(year, month - 1, day));
+    if (check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1 || check.getUTCDate() !== day) {
+        throw validationError('出生日期無效', 'INVALID_BIRTH_DATE', 'date');
+    }
+    const calendar = body.calendar || 'solar';
+    if (!['solar', 'lunar'].includes(calendar)) {
+        throw validationError('不支援的曆法', 'INVALID_CALENDAR', 'calendar');
+    }
+    if (body.sex !== undefined && !['男', '女', 'male', 'female'].includes(body.sex)) {
+        throw validationError('請選擇性別', 'INVALID_SEX', 'sex');
+    }
+    const time = body.time || (body.shichen ? SHICHEN_TIME_MAP[body.shichen] : '12:00');
+    return { ...body, date: rawDate, calendar, time, sex: (body.sex === '女' || body.sex === 'female') ? '女' : '男' };
+}
 
 // 設置視圖引擎
 app.set('views', path.join(__dirname, 'views'));
@@ -120,13 +146,29 @@ function sendModuleRecord(moduleName, input, result, analysis = '') {
 const handleZiweiChart = async (req, res) => {
     try {
         const payload = { ...(req.query || {}), ...(req.body || {}) };
-        const chart = calculateZiweiChart(payload);
-        const discord = await sendModuleRecord('紫微斗數', payload, chart);
+        if (payload.palaces) delete payload.palaces;
+        const validated = validateZiweiQuestion(payload);
+        const chart = calculateZiweiChart(validated);
+        const discord = await sendModuleRecord('紫微斗數', validated, chart);
         res.json({ success: true, chart, discord });
-    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+    } catch (error) { res.status(error.status || error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
 };
 app.post('/api/ziwei/chart', handleZiweiChart);
 app.get('/api/ziwei/chart', handleZiweiChart);
+
+const handleZiweiMaleSize = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        if (payload.palaces) delete payload.palaces;
+        const validated = validateZiweiQuestion(payload);
+        const result = evaluateMaleSize(validated);
+        // Decouple Discord record from response path so fast-pass never blocks on external network
+        sendModuleRecord('紫微男生尺寸', validated, result).catch(() => {});
+        res.json({ success: true, result, ...result });
+    } catch (error) { res.status(error.status || error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
+};
+app.post('/api/ziwei/male-size', handleZiweiMaleSize);
+app.get('/api/ziwei/male-size', handleZiweiMaleSize);
 
 const handleTarotReading = async (req, res) => {
     try {
@@ -501,11 +543,6 @@ function calculateFengshuiQuestion(input) {
     return calculateFengShui(input);
 }
 
-const SHICHEN_TIME_MAP = {
-    子: '00:00', 丑: '02:00', 寅: '04:00', 卯: '06:00', 辰: '08:00', 巳: '10:00',
-    午: '12:00', 未: '14:00', 申: '16:00', 酉: '18:00', 戌: '20:00', 亥: '22:00'
-};
-
 function validateBaziQuestion(body) {
     if (typeof body.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(body.date)) {
         throw validationError('請提供出生日期（YYYY-MM-DD）', 'MISSING_BIRTH_DATE', 'date');
@@ -575,26 +612,6 @@ function calculateYinyuanQuestion(input) {
         case 'red-thread': return redThreadFull(input);
         default: return drawFortuneStick(input.question, input.name, input.seed, input.stickNum || input.fortuneStickNum);
     }
-}
-
-function validateZiweiQuestion(body) {
-    if (typeof body.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(body.date)) {
-        throw validationError('請提供出生日期（YYYY-MM-DD）', 'MISSING_BIRTH_DATE', 'date');
-    }
-    const [year, month, day] = body.date.split('-').map(Number);
-    const check = new Date(Date.UTC(year, month - 1, day));
-    if (check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1 || check.getUTCDate() !== day) {
-        throw validationError('出生日期無效', 'INVALID_BIRTH_DATE', 'date');
-    }
-    const calendar = body.calendar || 'solar';
-    if (!['solar', 'lunar'].includes(calendar)) {
-        throw validationError('不支援的曆法', 'INVALID_CALENDAR', 'calendar');
-    }
-    if (body.sex !== undefined && !['男', '女'].includes(body.sex)) {
-        throw validationError('請選擇性別', 'INVALID_SEX', 'sex');
-    }
-    const time = body.time || (body.shichen ? SHICHEN_TIME_MAP[body.shichen] : '12:00');
-    return { ...body, calendar, time, sex: body.sex || '男' };
 }
 
 const ziweiQuestionHandler = createServiceQuestionHandler({
@@ -1785,6 +1802,18 @@ app.get('/api/docs', (req, res) => {
                     date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
                     time: { type: "string", required: false, description: "出生時間（HH:mm）" },
                     shichen: { type: "string", required: false, description: "傳統時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" }
+                }
+            },
+            ziweiMaleSize: {
+                method: "GET / POST",
+                path: "/api/ziwei/male-size",
+                description: "紫微斗數男生真實尺寸與體質雙核速測（子位出廠氣象＋疾厄宮實體肉身合參）",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
                     sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" }
                 }
             },

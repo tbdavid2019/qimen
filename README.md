@@ -49,7 +49,11 @@
   - 十天干生年四化（祿權科忌）增減損益。
   - 大限順逆排盤（陽男陰女順行、陰男陽女逆行，起運年齡=局數）與三方四正照會。
   - 30+ 種吉凶格局自動檢測（紫府同宮、機月同梁、殺破狼、陽梁昌祿、火貪格等）。
-- **標準 CLI 工具**：`skills/ziwei-consultant/scripts/ziwei_cli.js` 輸出標準十二宮位與四化格局 JSON。
+- **⚡ 快速通關：男生真實尺寸與親密戰鬥力雙核測算 (`/api/ziwei/male-size`)**：
+  - **破解網路單宮流言**：打破網路流傳「單看子位」導致 50% 膨脹為特大杯的誤區，首創正統斗數「子位（外觀視覺器量）」＋「疾厄宮（肉身器官與實質體能）」雙核合參。
+  - **公分區間與風格判定**：明確提供客觀公分區間（`＞16 cm 特大杯`、`11 - 15 cm 大/中杯`、`＜10 cm 小杯`）、耐力評分與戰鬥風格（如暴風破壞型、鋒刃精鋼型、長效永動型等）。
+  - **雙模式自由切換**：Web UI 提供頂部模式切換（完整命盤解析 / ⚡ 男生尺寸速測），快速通關模式純演算法運算（0.1 秒秒出結果，免等 LLM 回應）。
+- **標準 CLI 工具**：`skills/ziwei-consultant/scripts/ziwei_cli.js` 輸出標準十二宮位與四化格局 JSON，支援 `--male-size` 旗標直接輸出尺寸戰鬥力評估。
 
 ### 3. 🌸 梅花易數 (`/meihua` & `/api/meihua-question`)
 - **起卦方式**：
@@ -139,7 +143,7 @@
 | 服務模組 | 核心參數集合 (Full Parameters) | Web UI 路由 | API 端點 | CLI Skill 腳本 | WebMCP 工具名稱 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **奇門遁甲** | `question`, `purpose` (8大專題), `mode` (adv/trad), `datetime`, `conversationHistory` | `/` & `/custom` | `POST /api/qimen-question` | `skills/qimen-consultant/scripts/qimen_cli.js` & `ask_qimen.js` | `qimen_divination`, `qimen_question`, `qimen_custom_paipan` |
-| **紫微斗數** | `question`, `date`, `time`, `shichen`, `sex`, `calendar`, `leap`, `name`, `conversationHistory` | `/ziwei` | `POST /api/ziwei-question` | `skills/ziwei-consultant/scripts/ziwei_cli.js` & `ask_ziwei.js` | `ziwei_chart` |
+| **紫微斗數** | `question`, `date`, `time`, `shichen`, `sex`, `calendar`, `leap`, `name`, `conversationHistory`, `mode` (chart/male-size) | `/ziwei` | `POST /api/ziwei-question`, `POST /api/ziwei/male-size` | `skills/ziwei-consultant/scripts/ziwei_cli.js` & `ask_ziwei.js` | `ziwei_chart`, `ziwei_male_size` |
 | **梅花易數** | `question`, `method` (time/number/text), `text`, `num1..3`, `purpose`, `conversationHistory` | `/meihua` | `POST /api/meihua-question` | `skills/meihua-consultant/scripts/ask_meihua.js` | `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_qigua_text`, `meihua_question`, `meihua_divination` |
 | **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory` | `/bazi2` | `POST /api/bazi2-question` | `skills/bazi2-consultant/scripts/ask_bazi2.js` | `bazi2_chart` |
 | **月老姻緣** | `question`, `mode` (6大模式), `name`, `sex`, `stickNum` (1-100), `calendar`, `date`, `time`, `status`, `stage`, `scope`, `seekingSex`, `first/secondZodiac`, `first/secondYear`, `first/second` (雙方四柱), `preference` | `/yinyuan` | `POST /api/yinyuan-question` | `skills/yinyuan-consultant/scripts/ask_yinyuan.js` | `yinyuan_reading` |
@@ -185,6 +189,12 @@ node skills/yinyuan-consultant/scripts/ask_yinyuan.js '{"mode":"fortune","stickN
 
 # 風水擇日
 node skills/fengshui-consultant/scripts/ask_fengshui.js '{"mode":"zeri","matter":"movein","zeriYear":2026,"zeriMonth":9,"question":"推薦入宅吉日"}'
+
+# 紫微斗數十二宮排盤
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen 巳 --sex male
+
+# 紫微斗數男生真實尺寸與戰鬥力快速測算（免等 LLM）
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen 巳 --sex male --male-size
 ```
 
 ---

@@ -737,6 +737,42 @@
 			},
 			required: ["question", "date"]
 		}),
+		ziwei_male_size: {
+			name: "ziwei_male_size",
+			description: "紫微斗數男生真實尺寸與體質雙核速測（子位出廠氣象＋疾厄宮實體肉身合參，解鎖公分區間與戰力封號）。",
+			inputSchema: {
+				type: "object",
+				properties: {
+					date: { type: "string", description: "出生日期 YYYY-MM-DD" },
+					time: { type: "string", description: "出生時間 HH:mm" },
+					shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+					sex: { type: "string", enum: ["男", "女"], description: "性別" },
+					calendar: { type: "string", enum: ["solar", "lunar"], description: "曆法" },
+					leap: { type: "boolean", description: "農曆是否閏月" }
+				},
+				required: ["date"]
+			},
+			execute: async (args) => {
+				const date = args?.date;
+				if (!date) throw new Error("請提供出生日期 (date)");
+				const payload = {
+					date,
+					time: args?.time || "12:00",
+					shichen: args?.shichen,
+					sex: args?.sex || "男",
+					calendar: args?.calendar || "solar",
+					leap: !!args?.leap
+				};
+				const res = await fetch("/api/ziwei/male-size", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload)
+				});
+				const data = await res.json();
+				if (!data.success) throw new Error(data.error || "測算失敗");
+				return data.summary || JSON.stringify(data);
+			}
+		},
 		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與解讀（78張牌、6大牌陣與四維透鏡）。", "/api/tarot-question", {
 			type: "object",
 			properties: {
@@ -910,8 +946,14 @@
 				toolDefinitions.fengshui_layout_evaluation,
 				toolDefinitions.switch_theme,
 			];
-		} else if (["/ziwei", "/tarot", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
-			const suiteTool = { "/ziwei": "ziwei_chart", "/tarot": "tarot_reading", "/fengshui": "fengshui_report", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
+		} else if (pathname === "/ziwei") {
+			toolsToRegister = [
+				toolDefinitions.ziwei_chart,
+				toolDefinitions.ziwei_male_size,
+				toolDefinitions.switch_theme,
+			];
+		} else if (["/tarot", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
+			const suiteTool = { "/tarot": "tarot_reading", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
 			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme];
 		} else {
 			// Default / or /custom
@@ -1101,6 +1143,7 @@
 		getModelContext,
 		isSupported: () => !!getModelContext(),
 		getRegisteredTools: () => registeredTools.slice(),
+		resetForTesting: () => { registeredTools = []; },
 		registerAllTools,
 		showAgentFeedback,
 	};

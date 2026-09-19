@@ -660,6 +660,21 @@
             </div>
         `).join('');
 
+        const maleSizeHtml = chart.maleSize ? `
+            <div style="background:linear-gradient(135deg, rgba(217,119,87,0.08) 0%, rgba(245,158,11,0.05) 100%); border:1px solid rgba(217,119,87,0.25); border-radius:12px; padding:16px; margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <span style="font-size:var(--type-label); font-weight:800; color:#ea580c;">⚡ 趣味解碼：男生出廠體魄與真實尺寸</span>
+                        <div style="font-size:var(--type-meta); color:var(--suite-text-muted); margin-top:2px;">雙核合參（子位出廠氣象＋疾厄宮實體肉身）</div>
+                    </div>
+                    <span class="male-size-title-tag">【${escapeHtml(chart.maleSize.tier)} · ${escapeHtml(chart.maleSize.cmRange)}】${escapeHtml(chart.maleSize.title)}</span>
+                </div>
+                <div style="margin-top:10px; font-size:var(--type-label); line-height:1.6; color:var(--suite-text);">
+                    ${escapeHtml(chart.maleSize.summary)}
+                </div>
+            </div>
+        ` : '';
+
         visualBoard.innerHTML = `
             <div class="suite-board-title">🔮 紫微斗數十二宮命盤（${escapeHtml(chart.normalized_input?.date || '')} ${escapeHtml(chart.normalized_input?.time || '')} · ${escapeHtml(chart.normalized_input?.sex || '')}）</div>
             <div class="ziwei-board-grid">
@@ -669,8 +684,106 @@
                 ${row4}
             </div>
             ${patternsHtml ? `<div style="margin-top:16px;"><div style="font-size: var(--type-reading); font-weight:700; margin-bottom:8px; color:var(--suite-text);">🌟 命盤特殊格局剖析</div>${patternsHtml}</div>` : ''}
+            ${maleSizeHtml}
         `;
         visualBoard.hidden = false;
+    }
+
+    function renderMaleSizeCard(data) {
+        const maleSizeCard = document.getElementById('maleSizeResultCard');
+        if (!maleSizeCard || !data) return;
+
+        if (data.isApplicable === false) {
+            maleSizeCard.innerHTML = `
+                <div class="male-size-hero">
+                    <div style="font-size: var(--type-label); font-weight: 700; color: var(--suite-primary); margin-bottom: 4px;">
+                        ⚡ 紫微雙核出廠規格 · 測算提示
+                    </div>
+                    <div class="male-size-cm-badge" style="color: var(--suite-warning, #f59e0b);">
+                        【女性命盤不適用】
+                    </div>
+                    <div style="margin-top: 8px; color: var(--suite-text-muted);">
+                        ${escapeHtml(data.appearance || '男生真實尺寸評估僅適用於男性命盤。')}
+                    </div>
+                </div>
+                <div class="male-size-advice-box" style="margin-top: 16px;">
+                    <strong>💡 333 一句提醒·照見當下：</strong><br>
+                    ${escapeHtml(data.advice || '本功能為男性生理機能與尺寸測算，若需測算請切換性別為「男」。')}
+                </div>
+            `;
+            return;
+        }
+
+        maleSizeCard.innerHTML = `
+            <div class="male-size-hero">
+                <div style="font-size: var(--type-label); font-weight: 700; color: var(--suite-primary); margin-bottom: 4px;">
+                    ⚡ 紫微雙核出廠規格 · 男生真實尺寸速測結果
+                </div>
+                <div class="male-size-cm-badge">
+                    【${escapeHtml(data.tier || '大/中杯')} · ${escapeHtml(data.cmRange || '11 - 15 cm')}】
+                </div>
+                <div>
+                    <span class="male-size-title-tag">🏷️ 出廠戰力封號：${escapeHtml(data.title || '實戰長青型')}</span>
+                    ${data.enduranceScore ? `<span class="male-size-title-tag" style="margin-left: 6px;">⚡ 耐力指數：${escapeHtml(data.enduranceScore)} / 100</span>` : ''}
+                </div>
+            </div>
+
+            <div class="male-size-grid">
+                <div class="male-size-item">
+                    <div class="male-size-item-header">
+                        <span>🏷️</span> 出廠外觀（子位星曜）
+                    </div>
+                    <div class="male-size-item-body">
+                        <strong>坐星：</strong>${escapeHtml(data.ziStars || '無主星')}<br>
+                        ${escapeHtml(data.appearance || '')}
+                    </div>
+                </div>
+                <div class="male-size-item">
+                    <div class="male-size-item-header">
+                        <span>🩸</span> 實體肉身（疾厄宮星曜）
+                    </div>
+                    <div class="male-size-item-body">
+                        <strong>坐星：</strong>${escapeHtml(data.jieStars || '無主星')}（${escapeHtml(data.jiePalace || '')}宮）<br>
+                        ${escapeHtml(data.physique || '')}
+                    </div>
+                </div>
+                <div class="male-size-item" style="grid-column: 1 / -1;">
+                    <div class="male-size-item-header">
+                        <span>⚔️</span> 實戰耐力與戰鬥風格
+                    </div>
+                    <div class="male-size-item-body">
+                        ${data.enduranceScore ? `<strong>耐力評分：${escapeHtml(data.enduranceScore)} 分</strong><br>` : ''}
+                        ${escapeHtml(data.endurance || '')}
+                    </div>
+                </div>
+            </div>
+
+            <div class="male-size-advice-box">
+                <strong>💡 333 一句提醒·照見當下：</strong><br>
+                ${escapeHtml(data.advice || '')}
+            </div>
+
+            ${data.disclaimer ? `
+                <div style="font-size: var(--type-caption); color: var(--suite-text-muted); text-align: center; margin-top: 12px;">
+                    🛡️ ${escapeHtml(data.disclaimer)}
+                </div>
+            ` : ''}
+
+            <div class="text-center mt-3">
+                <button type="button" id="btnUnlockFullZiwei" class="btn suite-btn-primary btn-lg">
+                    👉 想看我的人生大運與完整格局？一鍵解鎖完整紫微命盤
+                </button>
+            </div>
+        `;
+
+        const unlockBtn = document.getElementById('btnUnlockFullZiwei');
+        if (unlockBtn) {
+            unlockBtn.addEventListener('click', () => {
+                const btnChart = document.getElementById('btnModeChart');
+                if (btnChart) btnChart.click();
+                if (form) form.dispatchEvent(new Event('submit'));
+            });
+        }
     }
 
     function renderVisual(data, payload) {
@@ -791,6 +904,7 @@
         const question = val('question');
         if (page === 'ziwei') {
             return {
+                mode: val('mode') || 'chart',
                 name: val('name'),
                 calendar: val('calendar') || 'solar',
                 date: val('date'),
@@ -970,6 +1084,34 @@
             return;
         }
 
+        // Fast-Pass for Ziwei Male Size (0.1s Deterministic)
+        if (page === 'ziwei' && payload.mode === 'male-size') {
+            if (submitBtn) submitBtn.disabled = true;
+            try {
+                const calcRes = await fetch('/api/ziwei/male-size', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const calcData = await calcRes.json();
+                if (!calcData.success) throw new Error(calcData.error || '測算失敗');
+
+                const maleSizeCard = document.getElementById('maleSizeResultCard');
+                renderMaleSizeCard(calcData.result || calcData);
+                if (maleSizeCard) {
+                    maleSizeCard.hidden = false;
+                    maleSizeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                if (visualBoard) visualBoard.hidden = true;
+                if (aiSection) aiSection.hidden = true;
+            } catch (err) {
+                alert(`錯誤：${err.message}`);
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+            return;
+        }
+
         if (submitBtn) submitBtn.disabled = true;
         aiSection.hidden = false;
         aiLoading.hidden = false;
@@ -1110,5 +1252,73 @@
 
         fsModeSelect?.addEventListener('change', updateFengshuiFields);
         updateFengshuiFields();
+    }
+
+    // --- Dynamic Mode Switcher for Ziwei Fast-Pass ---
+    if (page === 'ziwei') {
+        const btnModeChart = document.getElementById('btnModeChart');
+        const btnModeMaleSize = document.getElementById('btnModeMaleSize');
+        const ziweiModeInput = document.getElementById('ziweiMode');
+        const maleSizeBanner = document.getElementById('maleSizeBanner');
+        const ziweiQuestionGroup = document.getElementById('ziweiQuestionGroup');
+        const maleSizeResultCard = document.getElementById('maleSizeResultCard');
+
+        if (btnModeChart && btnModeMaleSize) {
+            btnModeChart.addEventListener('click', () => {
+                btnModeChart.classList.add('active');
+                btnModeMaleSize.classList.remove('active');
+                if (ziweiModeInput) ziweiModeInput.value = 'chart';
+                if (maleSizeBanner) maleSizeBanner.style.display = 'none';
+                if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = '';
+                if (submitBtn) submitBtn.textContent = '✨ 排盤並查看命理解讀';
+                if (maleSizeResultCard) maleSizeResultCard.hidden = true;
+            });
+
+            btnModeMaleSize.addEventListener('click', () => {
+                btnModeMaleSize.classList.add('active');
+                btnModeChart.classList.remove('active');
+                if (ziweiModeInput) ziweiModeInput.value = 'male-size';
+                if (maleSizeBanner) maleSizeBanner.style.display = 'block';
+                if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = 'none';
+                if (submitBtn) submitBtn.textContent = '⚡ 3秒立即速測男生真實尺寸';
+                if (visualBoard) visualBoard.hidden = true;
+                if (aiSection) aiSection.hidden = true;
+
+                // Ensure male radio is checked and active for male size test
+                const maleRadio = form?.querySelector('input[name="sex"][value="男"]');
+                const femaleRadio = form?.querySelector('input[name="sex"][value="女"]');
+                if (maleRadio && !maleRadio.checked) {
+                    maleRadio.checked = true;
+                    maleRadio.closest('.gender-pill')?.classList.add('active');
+                    femaleRadio?.closest('.gender-pill')?.classList.remove('active');
+                }
+            });
+        }
+
+        // Two-way sync between shichen select and time picker
+        const ziweiShichenSelect = document.getElementById('ziweiShichen');
+        const ziweiTimeInput = document.getElementById('ziweiTime');
+        const shichenToTime = {
+            子: '00:00', 丑: '02:00', 寅: '04:00', 卯: '06:00',
+            辰: '08:00', 巳: '10:00', 午: '12:00', 未: '14:00',
+            申: '16:00', 酉: '18:00', 戌: '20:00', 亥: '22:00'
+        };
+        const hourToShichen = ['子', '丑', '丑', '寅', '寅', '卯', '卯', '辰', '辰', '巳', '巳', '午', '午', '未', '未', '申', '申', '酉', '酉', '戌', '戌', '亥', '亥', '子'];
+
+        ziweiShichenSelect?.addEventListener('change', () => {
+            const val = ziweiShichenSelect.value;
+            if (shichenToTime[val] && ziweiTimeInput) {
+                ziweiTimeInput.value = shichenToTime[val];
+            }
+        });
+
+        ziweiTimeInput?.addEventListener('change', () => {
+            if (ziweiTimeInput.value && ziweiShichenSelect) {
+                const hour = parseInt(ziweiTimeInput.value.split(':')[0], 10);
+                if (!isNaN(hour) && hourToShichen[hour]) {
+                    ziweiShichenSelect.value = hourToShichen[hour];
+                }
+            }
+        });
     }
 })();

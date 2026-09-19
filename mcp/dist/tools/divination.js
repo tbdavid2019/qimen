@@ -4,6 +4,9 @@ const ConversationHistorySchema = z.array(z.object({
     role: z.enum(["user", "assistant"]),
     content: z.string()
 })).optional().default([]);
+const PalaceSchema = z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]);
+const LayoutObjectIdSchema = z.string().regex(/^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\.[a-z_]+$/);
+const FacingSchema = z.enum(["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"]);
 // 1. 奇門遁甲
 export const QimenInputSchema = z.object({
     question: z.string().describe("The user's question or situation requiring divination."),
@@ -50,20 +53,20 @@ export const FengShuiInputSchema = z.object({
     northReference: z.enum(["magnetic", "true"]).optional().describe("North reference: magnetic or true."),
     declination: z.number().optional().describe("Magnetic declination in degrees."),
     headingSource: z.enum(["sensor", "manual"]).optional().describe("Heading source."),
-    layoutObjects: z.record(z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]), z.array(z.string().regex(/^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\.[a-z_]+$/)).max(63)).optional().describe("9-grid canonical object IDs mapped by direction palace."),
-    entryPath: z.array(z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"])).max(9).optional().describe("Sequential entry path direction palaces (最後入路)."),
+    layoutObjects: z.record(PalaceSchema, z.array(LayoutObjectIdSchema).max(63)).optional().describe("9-grid canonical object IDs mapped by direction palace."),
+    entryPath: z.array(PalaceSchema).max(9).optional().describe("Sequential entry path direction palaces (最後入路)."),
     pathQuality: z.enum(["open", "obstructed", "unknown"]).optional().describe("Circulation path quality."),
     lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
     conversationHistory: ConversationHistorySchema
 }).strict();
 export const FengShuiLayoutEvaluationSchema = z.object({
-    layoutObjects: z.record(z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]), z.array(z.string().regex(/^(space|door|window|opening|furniture|appliance|circulation|exterior|form)\.[a-z_]+$/)).max(63)).refine(value => Object.keys(value).length > 0, "layoutObjects must not be empty"),
+    layoutObjects: z.record(PalaceSchema, z.array(LayoutObjectIdSchema).max(63)).refine(value => Object.keys(value).length > 0, "layoutObjects must not be empty"),
     heading: z.number().finite().optional(),
     northReference: z.enum(["magnetic", "true"]).optional(),
     declination: z.number().finite().optional(),
     headingSource: z.enum(["sensor", "manual"]).optional(),
-    facing: z.enum(["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"]).optional(),
-    entryPath: z.array(z.enum(["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"])).max(9).optional(),
+    facing: FacingSchema.optional(),
+    entryPath: z.array(PalaceSchema).max(9).optional(),
     pathQuality: z.enum(["open", "obstructed", "unknown"]).optional(),
     moveInYear: z.number().int().min(1).max(9999).optional(),
     year: z.number().int().min(1).max(9999).optional()
@@ -95,6 +98,14 @@ export const ZiweiInputSchema = z.object({
     leap: z.boolean().optional().default(false),
     lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
     conversationHistory: ConversationHistorySchema
+}).strict();
+export const ZiweiMaleSizeInputSchema = z.object({
+    date: z.string().describe("Birth date in YYYY-MM-DD format."),
+    time: z.string().optional().default("12:00").describe("Birth time in HH:mm format."),
+    shichen: z.enum(["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]).optional().describe("Traditional birth shichen."),
+    sex: z.enum(["男", "女"]).optional().default("男"),
+    calendar: z.enum(["solar", "lunar"]).optional().default("solar"),
+    leap: z.boolean().optional().default(false).describe("Whether the lunar month is a leap month.")
 }).strict();
 // 7. 月老姻緣 (6大正統模式)
 export const YinyuanInputSchema = z.object({
@@ -240,6 +251,21 @@ export function registerDivinationTools(server) {
                         chart: response.chart || response.result || null,
                         error: response.error || null
                     }, null, 2)
+                }]
+        };
+    });
+    // 6b. Ziwei Male Size
+    server.registerTool("ziwei_male_size", {
+        title: "Ziwei Male Size Fast-Pass Evaluation",
+        description: "Authentic Ziwei dual-core evaluation for male physical attributes, size range, and combat endurance.",
+        inputSchema: ZiweiMaleSizeInputSchema,
+        annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
+    }, async (params) => {
+        const response = await makeApiRequest("ziwei/male-size", params);
+        return {
+            content: [{
+                    type: "text",
+                    text: JSON.stringify(response, null, 2)
                 }]
         };
     });

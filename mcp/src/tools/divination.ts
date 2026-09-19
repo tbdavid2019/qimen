@@ -109,6 +109,15 @@ export const ZiweiInputSchema = z.object({
   conversationHistory: ConversationHistorySchema
 }).strict();
 
+export const ZiweiMaleSizeInputSchema = z.object({
+  date: z.string().describe("Birth date in YYYY-MM-DD format."),
+  time: z.string().optional().default("12:00").describe("Birth time in HH:mm format."),
+  shichen: z.enum(["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]).optional().describe("Traditional birth shichen."),
+  sex: z.enum(["男", "女"]).optional().default("男"),
+  calendar: z.enum(["solar", "lunar"]).optional().default("solar"),
+  leap: z.boolean().optional().default(false).describe("Whether the lunar month is a leap month.")
+}).strict();
+
 // 7. 月老姻緣 (6大正統模式)
 export const YinyuanInputSchema = z.object({
   question: z.string().describe("The user's relationship question."),
@@ -288,6 +297,26 @@ export function registerDivinationTools(server: McpServer) {
             chart: response.chart || response.result || null,
             error: response.error || null
           }, null, 2)
+        }]
+      };
+    }
+  );
+
+  // 6b. Ziwei Male Size
+  server.registerTool(
+    "ziwei_male_size",
+    {
+      title: "Ziwei Male Size Fast-Pass Evaluation",
+      description: "Authentic Ziwei dual-core evaluation for male physical attributes, size range, and combat endurance.",
+      inputSchema: ZiweiMaleSizeInputSchema,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
+    },
+    async (params) => {
+      const response = await makeApiRequest<ServiceResponse>("ziwei/male-size", params);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(response, null, 2)
         }]
       };
     }

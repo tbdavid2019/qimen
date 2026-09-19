@@ -81,6 +81,13 @@ export declare const FengShuiInputSchema: z.ZodObject<{
     matter: z.ZodOptional<z.ZodString>;
     zeriYear: z.ZodOptional<z.ZodNumber>;
     zeriMonth: z.ZodOptional<z.ZodNumber>;
+    heading: z.ZodOptional<z.ZodNumber>;
+    northReference: z.ZodOptional<z.ZodEnum<["magnetic", "true"]>>;
+    declination: z.ZodOptional<z.ZodNumber>;
+    headingSource: z.ZodOptional<z.ZodEnum<["sensor", "manual"]>>;
+    layoutObjects: z.ZodOptional<z.ZodRecord<z.ZodEnum<["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]>, z.ZodArray<z.ZodString, "many">>>;
+    entryPath: z.ZodOptional<z.ZodArray<z.ZodEnum<["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]>, "many">>;
+    pathQuality: z.ZodOptional<z.ZodEnum<["open", "obstructed", "unknown"]>>;
     lang: z.ZodDefault<z.ZodOptional<z.ZodEnum<["zh-tw", "zh-cn"]>>>;
     conversationHistory: z.ZodDefault<z.ZodOptional<z.ZodArray<z.ZodObject<{
         role: z.ZodEnum<["user", "assistant"]>;
@@ -99,8 +106,8 @@ export declare const FengShuiInputSchema: z.ZodObject<{
         role: "user" | "assistant";
         content: string;
     }[];
-    mode: "yangzhai" | "shaqi" | "zeri";
-    facing: "南" | "北" | "東" | "西" | "東南" | "西北" | "東北" | "西南" | "壬山丙向" | "子山午向" | "癸山丁向" | "丑山未向" | "艮山坤向" | "寅山申向" | "甲山庚向" | "卯山酉向" | "乙山辛向" | "辰山戌向" | "巽山乾向" | "巳山亥向" | "丙山壬向" | "午山子向" | "丁山癸向" | "未山丑向" | "坤山艮向" | "申山寅向" | "庚山甲向" | "酉山卯向" | "辛山乙向" | "戌山辰向" | "乾山巽向" | "亥山巳向";
+    mode: "yangzhai" | "shaqi" | "zeri" | "evaluate-layout";
+    facing: "東南" | "南" | "西南" | "東" | "西" | "東北" | "北" | "西北" | "壬山丙向" | "子山午向" | "癸山丁向" | "丑山未向" | "艮山坤向" | "寅山申向" | "甲山庚向" | "卯山酉向" | "乙山辛向" | "辰山戌向" | "巽山乾向" | "巳山亥向" | "丙山壬向" | "午山子向" | "丁山癸向" | "未山丑向" | "坤山艮向" | "申山寅向" | "庚山甲向" | "酉山卯向" | "辛山乙向" | "戌山辰向" | "乾山巽向" | "亥山巳向";
     moveInYear?: number | undefined;
     residentYear?: number | undefined;
     sex?: "男" | "女" | undefined;
@@ -109,6 +116,13 @@ export declare const FengShuiInputSchema: z.ZodObject<{
     matter?: string | undefined;
     zeriYear?: number | undefined;
     zeriMonth?: number | undefined;
+    heading?: number | undefined;
+    northReference?: "magnetic" | "true" | undefined;
+    declination?: number | undefined;
+    headingSource?: "sensor" | "manual" | undefined;
+    layoutObjects?: Partial<Record<"東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北", string[]>> | undefined;
+    entryPath?: ("東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北")[] | undefined;
+    pathQuality?: "unknown" | "open" | "obstructed" | undefined;
 }, {
     question: string;
     lang?: "zh-tw" | "zh-cn" | undefined;
@@ -116,8 +130,8 @@ export declare const FengShuiInputSchema: z.ZodObject<{
         role: "user" | "assistant";
         content: string;
     }[] | undefined;
-    mode?: "yangzhai" | "shaqi" | "zeri" | undefined;
-    facing?: "南" | "北" | "東" | "西" | "東南" | "西北" | "東北" | "西南" | "壬山丙向" | "子山午向" | "癸山丁向" | "丑山未向" | "艮山坤向" | "寅山申向" | "甲山庚向" | "卯山酉向" | "乙山辛向" | "辰山戌向" | "巽山乾向" | "巳山亥向" | "丙山壬向" | "午山子向" | "丁山癸向" | "未山丑向" | "坤山艮向" | "申山寅向" | "庚山甲向" | "酉山卯向" | "辛山乙向" | "戌山辰向" | "乾山巽向" | "亥山巳向" | undefined;
+    mode?: "yangzhai" | "shaqi" | "zeri" | "evaluate-layout" | undefined;
+    facing?: "東南" | "南" | "西南" | "東" | "西" | "東北" | "北" | "西北" | "壬山丙向" | "子山午向" | "癸山丁向" | "丑山未向" | "艮山坤向" | "寅山申向" | "甲山庚向" | "卯山酉向" | "乙山辛向" | "辰山戌向" | "巽山乾向" | "巳山亥向" | "丙山壬向" | "午山子向" | "丁山癸向" | "未山丑向" | "坤山艮向" | "申山寅向" | "庚山甲向" | "酉山卯向" | "辛山乙向" | "戌山辰向" | "乾山巽向" | "亥山巳向" | undefined;
     moveInYear?: number | undefined;
     residentYear?: number | undefined;
     sex?: "男" | "女" | undefined;
@@ -126,6 +140,47 @@ export declare const FengShuiInputSchema: z.ZodObject<{
     matter?: string | undefined;
     zeriYear?: number | undefined;
     zeriMonth?: number | undefined;
+    heading?: number | undefined;
+    northReference?: "magnetic" | "true" | undefined;
+    declination?: number | undefined;
+    headingSource?: "sensor" | "manual" | undefined;
+    layoutObjects?: Partial<Record<"東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北", string[]>> | undefined;
+    entryPath?: ("東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北")[] | undefined;
+    pathQuality?: "unknown" | "open" | "obstructed" | undefined;
+}>;
+export declare const FengShuiLayoutEvaluationSchema: z.ZodObject<{
+    layoutObjects: z.ZodEffects<z.ZodRecord<z.ZodEnum<["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]>, z.ZodArray<z.ZodString, "many">>, Partial<Record<"東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北", string[]>>, Partial<Record<"東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北", string[]>>>;
+    heading: z.ZodOptional<z.ZodNumber>;
+    northReference: z.ZodOptional<z.ZodEnum<["magnetic", "true"]>>;
+    declination: z.ZodOptional<z.ZodNumber>;
+    headingSource: z.ZodOptional<z.ZodEnum<["sensor", "manual"]>>;
+    facing: z.ZodOptional<z.ZodEnum<["南", "北", "東", "西", "東南", "西北", "東北", "西南", "壬山丙向", "子山午向", "癸山丁向", "丑山未向", "艮山坤向", "寅山申向", "甲山庚向", "卯山酉向", "乙山辛向", "辰山戌向", "巽山乾向", "巳山亥向", "丙山壬向", "午山子向", "丁山癸向", "未山丑向", "坤山艮向", "申山寅向", "庚山甲向", "酉山卯向", "辛山乙向", "戌山辰向", "乾山巽向", "亥山巳向"]>>;
+    entryPath: z.ZodOptional<z.ZodArray<z.ZodEnum<["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]>, "many">>;
+    pathQuality: z.ZodOptional<z.ZodEnum<["open", "obstructed", "unknown"]>>;
+    moveInYear: z.ZodOptional<z.ZodNumber>;
+    year: z.ZodOptional<z.ZodNumber>;
+}, "strict", z.ZodTypeAny, {
+    layoutObjects: Partial<Record<"東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北", string[]>>;
+    facing?: "東南" | "南" | "西南" | "東" | "西" | "東北" | "北" | "西北" | "壬山丙向" | "子山午向" | "癸山丁向" | "丑山未向" | "艮山坤向" | "寅山申向" | "甲山庚向" | "卯山酉向" | "乙山辛向" | "辰山戌向" | "巽山乾向" | "巳山亥向" | "丙山壬向" | "午山子向" | "丁山癸向" | "未山丑向" | "坤山艮向" | "申山寅向" | "庚山甲向" | "酉山卯向" | "辛山乙向" | "戌山辰向" | "乾山巽向" | "亥山巳向" | undefined;
+    moveInYear?: number | undefined;
+    year?: number | undefined;
+    heading?: number | undefined;
+    northReference?: "magnetic" | "true" | undefined;
+    declination?: number | undefined;
+    headingSource?: "sensor" | "manual" | undefined;
+    entryPath?: ("東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北")[] | undefined;
+    pathQuality?: "unknown" | "open" | "obstructed" | undefined;
+}, {
+    layoutObjects: Partial<Record<"東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北", string[]>>;
+    facing?: "東南" | "南" | "西南" | "東" | "西" | "東北" | "北" | "西北" | "壬山丙向" | "子山午向" | "癸山丁向" | "丑山未向" | "艮山坤向" | "寅山申向" | "甲山庚向" | "卯山酉向" | "乙山辛向" | "辰山戌向" | "巽山乾向" | "巳山亥向" | "丙山壬向" | "午山子向" | "丁山癸向" | "未山丑向" | "坤山艮向" | "申山寅向" | "庚山甲向" | "酉山卯向" | "辛山乙向" | "戌山辰向" | "乾山巽向" | "亥山巳向" | undefined;
+    moveInYear?: number | undefined;
+    year?: number | undefined;
+    heading?: number | undefined;
+    northReference?: "magnetic" | "true" | undefined;
+    declination?: number | undefined;
+    headingSource?: "sensor" | "manual" | undefined;
+    entryPath?: ("東南" | "南" | "西南" | "東" | "中" | "西" | "東北" | "北" | "西北")[] | undefined;
+    pathQuality?: "unknown" | "open" | "obstructed" | undefined;
 }>;
 export declare const Bazi2InputSchema: z.ZodObject<{
     question: z.ZodString;
@@ -226,6 +281,28 @@ export declare const ZiweiInputSchema: z.ZodObject<{
         role: "user" | "assistant";
         content: string;
     }[] | undefined;
+    sex?: "男" | "女" | undefined;
+    shichen?: "子" | "丑" | "寅" | "卯" | "辰" | "巳" | "午" | "未" | "申" | "酉" | "戌" | "亥" | undefined;
+    calendar?: "solar" | "lunar" | undefined;
+    leap?: boolean | undefined;
+}>;
+export declare const ZiweiMaleSizeInputSchema: z.ZodObject<{
+    date: z.ZodString;
+    time: z.ZodDefault<z.ZodOptional<z.ZodString>>;
+    shichen: z.ZodOptional<z.ZodEnum<["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]>>;
+    sex: z.ZodDefault<z.ZodOptional<z.ZodEnum<["男", "女"]>>>;
+    calendar: z.ZodDefault<z.ZodOptional<z.ZodEnum<["solar", "lunar"]>>>;
+    leap: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
+}, "strict", z.ZodTypeAny, {
+    date: string;
+    time: string;
+    sex: "男" | "女";
+    calendar: "solar" | "lunar";
+    leap: boolean;
+    shichen?: "子" | "丑" | "寅" | "卯" | "辰" | "巳" | "午" | "未" | "申" | "酉" | "戌" | "亥" | undefined;
+}, {
+    date: string;
+    time?: string | undefined;
     sex?: "男" | "女" | undefined;
     shichen?: "子" | "丑" | "寅" | "卯" | "辰" | "巳" | "午" | "未" | "申" | "酉" | "戌" | "亥" | undefined;
     calendar?: "solar" | "lunar" | undefined;

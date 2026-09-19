@@ -211,3 +211,40 @@ test('風水報告 API 端點支援羅盤向首與九宮佈局，並檢測坐向
     assert.equal(dataConflict.success, false);
     assert.equal(dataConflict.code, 'FACING_HEADING_CONFLICT');
 });
+
+test('紫微男生真實尺寸端點 /api/ziwei/male-size 正常運作且不經由 LLM', async () => {
+    const res = await postJson('/api/ziwei/male-size', {
+        date: '1981-08-11',
+        time: '10:00',
+        sex: '男'
+    });
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.success, true);
+    assert.equal(body.tier, '大/中杯');
+    assert.equal(body.cmRange, '11 - 13 cm');
+    assert.match(body.title, /精鋼|鋒刃/);
+    assert.ok(body.advice);
+});
+
+test('紫微男生真實尺寸端點嚴格驗證日期並拒絕偽造宮位', async () => {
+    // 拒絕無效日期 (2026-02-31)
+    const resInvalidDate = await postJson('/api/ziwei/male-size', {
+        date: '2026-02-31',
+        time: '10:00'
+    });
+    assert.equal(resInvalidDate.status, 400);
+    const dataInvalid = await resInvalidDate.json();
+    assert.equal(dataInvalid.success, false);
+    assert.equal(dataInvalid.code, 'INVALID_BIRTH_DATE');
+
+    // 拒絕僅提供偽造 palaces 而缺日期的請求
+    const resNoDate = await postJson('/api/ziwei/male-size', {
+        palaces: [{ branch: '子', name: '疾厄宮', stars: [{ name: '巨門', type: 'major' }] }]
+    });
+    assert.equal(resNoDate.status, 400);
+    const dataNoDate = await resNoDate.json();
+    assert.equal(dataNoDate.success, false);
+    assert.equal(dataNoDate.code, 'MISSING_BIRTH_DATE');
+});
+

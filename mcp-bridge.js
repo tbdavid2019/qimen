@@ -286,6 +286,22 @@ const tools = [
     }
   },
   {
+    name: "ziwei_male_size",
+    description: "紫微斗數男生真實尺寸與體質雙核速測（子位出廠氣象＋疾厄宮實體肉身合參，解鎖公分區間與戰力封號）。",
+    inputSchema: {
+      type: "object",
+      properties: {
+        date: { type: "string", description: "出生日期 YYYY-MM-DD" },
+        time: { type: "string", description: "出生時間 HH:mm" },
+        shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+        sex: { type: "string", enum: ["男", "女"], default: "男", description: "性別" },
+        calendar: { type: "string", enum: ["solar", "lunar"], default: "solar", description: "曆法" },
+        leap: { type: "boolean", default: false, description: "農曆是否閏月" }
+      },
+      required: ["date"]
+    }
+  },
+  {
     name: "answerbook_reading",
     description: "解答之書直接默念取得提醒，或輸入問題後取得答案並由 AI 解讀。",
     inputSchema: {
@@ -364,6 +380,15 @@ rl.on('line', async (line) => {
       if (toolName === 'fengshui_layout_evaluation') {
         try {
           const result = await makeApiRequest('fengshui/evaluate-layout', args);
+          return sendResponse(id, { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }], isError: !result.success });
+        } catch (err) {
+          return sendResponse(id, { content: [{ type: 'text', text: `Failed to connect to divination service: ${err.message}` }], isError: true });
+        }
+      }
+
+      if (toolName === 'ziwei_male_size') {
+        try {
+          const result = await makeApiRequest('ziwei/male-size', args);
           return sendResponse(id, { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }], isError: !result.success });
         } catch (err) {
           return sendResponse(id, { content: [{ type: 'text', text: `Failed to connect to divination service: ${err.message}` }], isError: true });
