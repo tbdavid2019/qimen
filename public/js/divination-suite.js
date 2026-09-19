@@ -579,6 +579,11 @@
     function renderZiwei(chart) {
         if (!chart || !chart.palaces) return;
 
+        const maleSizeCard = document.getElementById('maleSizeResultCard');
+        if (maleSizeCard) maleSizeCard.hidden = true;
+        const spouseCard = document.getElementById('spouseResultCard');
+        if (spouseCard) spouseCard.hidden = true;
+
         const branchPalaceMap = {};
         chart.palaces.forEach((p) => {
             branchPalaceMap[p.branch] = p;
@@ -779,6 +784,102 @@
         const unlockBtn = document.getElementById('btnUnlockFullZiwei');
         if (unlockBtn) {
             unlockBtn.addEventListener('click', () => {
+                const btnChart = document.getElementById('btnModeChart');
+                if (btnChart) btnChart.click();
+                if (form) form.dispatchEvent(new Event('submit'));
+            });
+        }
+    }
+
+    function renderSpouseCard(data) {
+        const spouseCard = document.getElementById('spouseResultCard');
+        if (!spouseCard) return;
+
+        const ageGap = data.ageGap || {};
+        const appearance = data.appearance || {};
+        const personality = data.personality || {};
+        const meeting = data.meetingScenario || {};
+        const tagsHtml = (personality.tags || []).map((t) => `<span class="spouse-tag-pill">${escapeHtml(t)}</span>`).join('');
+
+        spouseCard.innerHTML = `
+            <div class="spouse-hero">
+                <div style="font-size: var(--type-label); font-weight: 700; color: #db2777; margin-bottom: 4px;">
+                    💍 正統紫微夫妻宮 · 未來另一半深度解析
+                </div>
+                <div class="spouse-age-badge">
+                    【${escapeHtml(ageGap.tier || '同齡或差距不大')}】
+                </div>
+                <div style="margin-top: 6px;">
+                    <span class="spouse-tag-pill">🔮 夫妻宮位於【${escapeHtml(data.ganzhi || '')}宮】</span>
+                    <span class="spouse-tag-pill">⭐ 主星：${escapeHtml((data.majorStars || []).join('、') || '無主星')}</span>
+                    ${data.isBorrowed ? '<span class="spouse-tag-pill" style="color: #ea580c;">(借對宮官祿)</span>' : ''}
+                    <span class="spouse-tag-pill">🧠 心智年齡：${escapeHtml(ageGap.psychologicalAge || '默契協調型')}</span>
+                </div>
+            </div>
+
+            <div class="spouse-grid">
+                <div class="spouse-item">
+                    <div class="spouse-item-header">
+                        <span>⏳</span> 年齡差距推定與心智成熟度
+                    </div>
+                    <div class="spouse-item-body">
+                        <strong>年齡評級：</strong>${escapeHtml(ageGap.tier || '')}<br>
+                        ${escapeHtml(ageGap.desc || '')}
+                    </div>
+                </div>
+
+                <div class="spouse-item">
+                    <div class="spouse-item-header">
+                        <span>✨</span> 外貌氣質與體態風采
+                    </div>
+                    <div class="spouse-item-body">
+                        <strong>風格標籤：</strong>${escapeHtml(appearance.style || '')}<br>
+                        <strong>外貌特徵：</strong>${escapeHtml(appearance.features || '')}<br>
+                        <strong>氣場氛圍：</strong>${escapeHtml(appearance.aura || '')}
+                    </div>
+                </div>
+
+                <div class="spouse-item">
+                    <div class="spouse-item-header">
+                        <span>💖</span> 性格脾氣與磨合要點
+                    </div>
+                    <div class="spouse-item-body">
+                        <div style="margin-bottom: 8px;">${tagsHtml}</div>
+                        <strong>優勢特質：</strong>${escapeHtml(personality.strengths || '')}<br>
+                        <strong>相處地雷：</strong>${escapeHtml(personality.weaknesses || '')}
+                    </div>
+                </div>
+
+                <div class="spouse-item">
+                    <div class="spouse-item-header">
+                        <span>🌟</span> 相遇機緣與結緣場合
+                    </div>
+                    <div class="spouse-item-body">
+                        <strong>相遇場景：</strong>${escapeHtml(meeting.places || '')}<br>
+                        <strong>感情磨合：</strong>${escapeHtml(meeting.shaAdvice || '')}
+                    </div>
+                </div>
+            </div>
+
+            <div class="spouse-advice-box">
+                <strong>💡 333 一句提醒·照見當下（月老感情錦囊）：</strong><br>
+                ${escapeHtml(data.relationshipAdvice || data.summary || '')}
+            </div>
+
+            <div class="text-center mt-3">
+                <button type="button" id="btnUnlockFullZiweiSpouse" class="btn suite-btn-primary btn-lg">
+                    👉 想看我的人生大運與完整格局？一鍵解鎖完整紫微命盤
+                </button>
+            </div>
+
+            <div style="font-size: var(--type-caption); color: var(--suite-text-muted); text-align: center; margin-top: 12px;">
+                🏮 本測算依據正統三合派紫微斗數夫妻宮安星訣與星性推導，願傳統智慧照見當下，助你明心見性、攜手良緣。
+            </div>
+        `;
+
+        const unlockBtnSpouse = document.getElementById('btnUnlockFullZiweiSpouse');
+        if (unlockBtnSpouse) {
+            unlockBtnSpouse.addEventListener('click', () => {
                 const btnChart = document.getElementById('btnModeChart');
                 if (btnChart) btnChart.click();
                 if (form) form.dispatchEvent(new Event('submit'));
@@ -1084,6 +1185,36 @@
             return;
         }
 
+        // Fast-Pass for Ziwei Future Spouse (0.1s Deterministic)
+        if (page === 'ziwei' && payload.mode === 'spouse') {
+            if (submitBtn) submitBtn.disabled = true;
+            try {
+                const calcRes = await fetch('/api/ziwei/spouse', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const calcData = await calcRes.json();
+                if (!calcData.success) throw new Error(calcData.error || '未來另一半推算失敗');
+
+                const spouseCard = document.getElementById('spouseResultCard');
+                renderSpouseCard(calcData.result || calcData.spouse || calcData);
+                if (spouseCard) {
+                    spouseCard.hidden = false;
+                    spouseCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                if (visualBoard) visualBoard.hidden = true;
+                if (aiSection) aiSection.hidden = true;
+                const maleSizeCard = document.getElementById('maleSizeResultCard');
+                if (maleSizeCard) maleSizeCard.hidden = true;
+            } catch (err) {
+                alert(`錯誤：${err.message}`);
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+            return;
+        }
+
         // Fast-Pass for Ziwei Male Size (0.1s Deterministic)
         if (page === 'ziwei' && payload.mode === 'male-size') {
             if (submitBtn) submitBtn.disabled = true;
@@ -1104,6 +1235,8 @@
                 }
                 if (visualBoard) visualBoard.hidden = true;
                 if (aiSection) aiSection.hidden = true;
+                const spouseCard = document.getElementById('spouseResultCard');
+                if (spouseCard) spouseCard.hidden = true;
             } catch (err) {
                 alert(`錯誤：${err.message}`);
             } finally {
@@ -1254,35 +1387,44 @@
         updateFengshuiFields();
     }
 
-    // --- Dynamic Mode Switcher for Ziwei Fast-Pass ---
+    // --- Dynamic Mode Switcher for Ziwei Fast-Pass & Canonical Routes ---
     if (page === 'ziwei') {
         const btnModeChart = document.getElementById('btnModeChart');
+        const btnModeSpouse = document.getElementById('btnModeSpouse');
         const btnModeMaleSize = document.getElementById('btnModeMaleSize');
         const ziweiModeInput = document.getElementById('ziweiMode');
+        const spouseBanner = document.getElementById('spouseBanner');
         const maleSizeBanner = document.getElementById('maleSizeBanner');
         const ziweiQuestionGroup = document.getElementById('ziweiQuestionGroup');
+        const spouseResultCard = document.getElementById('spouseResultCard');
         const maleSizeResultCard = document.getElementById('maleSizeResultCard');
 
-        if (btnModeChart && btnModeMaleSize) {
-            btnModeChart.addEventListener('click', () => {
-                btnModeChart.classList.add('active');
-                btnModeMaleSize.classList.remove('active');
-                if (ziweiModeInput) ziweiModeInput.value = 'chart';
-                if (maleSizeBanner) maleSizeBanner.style.display = 'none';
-                if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = '';
-                if (submitBtn) submitBtn.textContent = '✨ 排盤並查看命理解讀';
-                if (maleSizeResultCard) maleSizeResultCard.hidden = true;
-            });
+        function setZiweiMode(mode, updateUrl = true) {
+            btnModeChart?.classList.toggle('active', mode === 'chart');
+            btnModeSpouse?.classList.toggle('active', mode === 'spouse');
+            btnModeMaleSize?.classList.toggle('active', mode === 'male-size');
 
-            btnModeMaleSize.addEventListener('click', () => {
-                btnModeMaleSize.classList.add('active');
-                btnModeChart.classList.remove('active');
-                if (ziweiModeInput) ziweiModeInput.value = 'male-size';
+            if (ziweiModeInput) ziweiModeInput.value = mode;
+
+            if (mode === 'spouse') {
+                if (spouseBanner) spouseBanner.style.display = 'block';
+                if (maleSizeBanner) maleSizeBanner.style.display = 'none';
+                if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = 'none';
+                if (submitBtn) submitBtn.textContent = '💍 3秒解鎖未來另一半';
+                if (visualBoard) visualBoard.hidden = true;
+                if (aiSection) aiSection.hidden = true;
+                if (maleSizeResultCard) maleSizeResultCard.hidden = true;
+                if (updateUrl && window.history?.pushState && location.pathname !== '/ziwei/spouse') {
+                    window.history.pushState({ mode: 'spouse' }, '', '/ziwei/spouse');
+                }
+            } else if (mode === 'male-size') {
                 if (maleSizeBanner) maleSizeBanner.style.display = 'block';
+                if (spouseBanner) spouseBanner.style.display = 'none';
                 if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = 'none';
                 if (submitBtn) submitBtn.textContent = '⚡ 3秒立即速測男生真實尺寸';
                 if (visualBoard) visualBoard.hidden = true;
                 if (aiSection) aiSection.hidden = true;
+                if (spouseResultCard) spouseResultCard.hidden = true;
 
                 // Ensure male radio is checked and active for male size test
                 const maleRadio = form?.querySelector('input[name="sex"][value="男"]');
@@ -1292,7 +1434,69 @@
                     maleRadio.closest('.gender-pill')?.classList.add('active');
                     femaleRadio?.closest('.gender-pill')?.classList.remove('active');
                 }
-            });
+                if (updateUrl && window.history?.pushState && location.pathname !== '/ziwei/male-size') {
+                    window.history.pushState({ mode: 'male-size' }, '', '/ziwei/male-size');
+                }
+            } else {
+                // Default: chart
+                if (spouseBanner) spouseBanner.style.display = 'none';
+                if (maleSizeBanner) maleSizeBanner.style.display = 'none';
+                if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = '';
+                if (submitBtn) submitBtn.textContent = '✨ 排盤並查看命理解讀';
+                if (spouseResultCard) spouseResultCard.hidden = true;
+                if (maleSizeResultCard) maleSizeResultCard.hidden = true;
+                if (updateUrl && window.history?.pushState && location.pathname !== '/ziwei') {
+                    window.history.pushState({ mode: 'chart' }, '', '/ziwei');
+                }
+            }
+        }
+
+        btnModeChart?.addEventListener('click', () => setZiweiMode('chart', true));
+        btnModeSpouse?.addEventListener('click', () => setZiweiMode('spouse', true));
+        btnModeMaleSize?.addEventListener('click', () => setZiweiMode('male-size', true));
+
+        // Support browser Back/Forward (popstate)
+        window.addEventListener('popstate', (e) => {
+            const path = window.location.pathname;
+            if (path === '/ziwei/spouse' || e.state?.mode === 'spouse') {
+                setZiweiMode('spouse', false);
+            } else if (path === '/ziwei/male-size' || e.state?.mode === 'male-size') {
+                setZiweiMode('male-size', false);
+            } else {
+                setZiweiMode('chart', false);
+            }
+        });
+
+        // Initialize mode based on current URL path or query params
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryMode = urlParams.get('mode');
+        const currentPath = window.location.pathname;
+
+        if (currentPath === '/ziwei/spouse' || queryMode === 'spouse' || ziweiModeInput?.value === 'spouse') {
+            setZiweiMode('spouse', false);
+        } else if (currentPath === '/ziwei/male-size' || queryMode === 'male-size' || ziweiModeInput?.value === 'male-size') {
+            setZiweiMode('male-size', false);
+        } else {
+            setZiweiMode('chart', false);
+        }
+
+        // Pre-fill fields from query params if available (e.g. from Yinyuan cross-link)
+        if (urlParams.get('date')) {
+            const dateInput = document.getElementById('ziweiDate');
+            if (dateInput) dateInput.value = urlParams.get('date');
+        }
+        if (urlParams.get('time')) {
+            const timeInput = document.getElementById('ziweiTime');
+            if (timeInput) timeInput.value = urlParams.get('time');
+        }
+        if (urlParams.get('sex')) {
+            const sexVal = urlParams.get('sex');
+            const targetRadio = form?.querySelector(`input[name="sex"][value="${sexVal}"]`);
+            if (targetRadio) {
+                targetRadio.checked = true;
+                form.querySelectorAll('.gender-pill').forEach((p) => p.classList.remove('active'));
+                targetRadio.closest('.gender-pill')?.classList.add('active');
+            }
         }
 
         // Two-way sync between shichen select and time picker

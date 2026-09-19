@@ -248,3 +248,42 @@ test('紫微男生真實尺寸端點嚴格驗證日期並拒絕偽造宮位', as
     assert.equal(dataNoDate.code, 'MISSING_BIRTH_DATE');
 });
 
+test('紫微未來另一半端點 /api/ziwei/spouse 正常運作且不經由 LLM', async () => {
+    const res = await postJson('/api/ziwei/spouse', {
+        date: '1981-08-11',
+        time: '09:00',
+        sex: '男'
+    });
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.success, true);
+    assert.ok(body.spouse);
+    assert.equal(body.spouse.ganzhi, '辛丑');
+    assert.equal(body.spouse.ageGap.tier, '同齡或差距不大 (上下 1-3 歲以內)');
+    assert.ok(body.spouse.appearance.style);
+    assert.ok(body.spouse.relationshipAdvice);
+});
+
+test('紫微 Canonical Routes 直達頁面回傳正確的 Canonical URL 與 SEO 標題', async () => {
+    // 1. /ziwei
+    const resMain = await fetch(`${baseUrl}/ziwei`);
+    assert.equal(resMain.status, 200);
+    const htmlMain = await resMain.text();
+    assert.match(htmlMain, /<link rel="canonical" href="https:\/\/qi\.david888\.com\/ziwei">/);
+    assert.match(htmlMain, /紫微斗數命盤解析/);
+
+    // 2. /ziwei/spouse
+    const resSpouse = await fetch(`${baseUrl}/ziwei/spouse`);
+    assert.equal(resSpouse.status, 200);
+    const htmlSpouse = await resSpouse.text();
+    assert.match(htmlSpouse, /<link rel="canonical" href="https:\/\/qi\.david888\.com\/ziwei\/spouse">/);
+    assert.match(htmlSpouse, /看出你未來另一半/);
+
+    // 3. /ziwei/male-size
+    const resMale = await fetch(`${baseUrl}/ziwei/male-size`);
+    assert.equal(resMale.status, 200);
+    const htmlMale = await resMale.text();
+    assert.match(htmlMale, /<link rel="canonical" href="https:\/\/qi\.david888\.com\/ziwei\/male-size">/);
+    assert.match(htmlMale, /3秒測男生真實尺寸/);
+});
+

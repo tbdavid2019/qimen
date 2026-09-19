@@ -773,6 +773,42 @@
 				return data.summary || JSON.stringify(data);
 			}
 		},
+		ziwei_future_spouse: {
+			name: "ziwei_future_spouse",
+			description: "紫微斗數未來另一半正緣深度解析（夫妻宮主星＋吉煞四化，推導年齡差距區間、長相風格、性格脾氣與相遇契機）。",
+			inputSchema: {
+				type: "object",
+				properties: {
+					date: { type: "string", description: "出生日期 YYYY-MM-DD" },
+					time: { type: "string", description: "出生時間 HH:mm" },
+					shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+					sex: { type: "string", enum: ["男", "女"], description: "命主性別（男看妻，女看夫）" },
+					calendar: { type: "string", enum: ["solar", "lunar"], description: "曆法" },
+					leap: { type: "boolean", description: "農曆是否閏月" }
+				},
+				required: ["date"]
+			},
+			execute: async (args) => {
+				const date = args?.date;
+				if (!date) throw new Error("請提供出生日期 (date)");
+				const payload = {
+					date,
+					time: args?.time || "12:00",
+					shichen: args?.shichen,
+					sex: args?.sex || "男",
+					calendar: args?.calendar || "solar",
+					leap: !!args?.leap
+				};
+				const res = await fetch("/api/ziwei/spouse", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload)
+				});
+				const data = await res.json();
+				if (!data.success) throw new Error(data.error || "測算失敗");
+				return data.summary || JSON.stringify(data.result || data.spouse || data);
+			}
+		},
 		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與解讀（78張牌、6大牌陣與四維透鏡）。", "/api/tarot-question", {
 			type: "object",
 			properties: {
@@ -946,10 +982,11 @@
 				toolDefinitions.fengshui_layout_evaluation,
 				toolDefinitions.switch_theme,
 			];
-		} else if (pathname === "/ziwei") {
+		} else if (pathname === "/ziwei" || pathname.startsWith("/ziwei/")) {
 			toolsToRegister = [
 				toolDefinitions.ziwei_chart,
 				toolDefinitions.ziwei_male_size,
+				toolDefinitions.ziwei_future_spouse,
 				toolDefinitions.switch_theme,
 			];
 		} else if (["/tarot", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {

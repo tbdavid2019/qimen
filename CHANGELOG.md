@@ -4,6 +4,30 @@
 
 ## [2026-09-19]
 
+### 💍 紫微斗數「看出你未來另一半」正緣深度解析 & Canonical Routes 直達體系與月老跨域導流
+
+- **紫微斗數未來另一半解析引擎 (`lib/ziwei.js`)**：
+  - **破解粗糙單星年齡速查盲點**：針對社群「單靠夫妻宮單星斷年齡」無法處理雙主星同宮（如同梁、武貪、紫府等）與性別差異的缺陷，實作正統三合派夫妻宮雙主星、吉煞四化與對宮借星全維度解析。
+  - **多維度正緣畫像**：包含年齡差距區間推定（同齡/上下1-3歲、大3-6歲、小2-5歲、極端差等）、心智成熟度、外貌體態風格標籤（明艷迷人、尊貴雍容、得體優雅、清秀知性等）、性格脾氣與相處地雷、相遇場合與契機，以及月老感情升溫錦囊。
+  - **排盤引擎自動附帶**：`calculateZiweiChart` 全盤排盤結果同步嵌入 `futureSpouse` 物件。
+- **Canonical Routes 直達體系與雙向同步 (`app.js`, `public/js/divination-suite.js`)**：
+  - **伺服器端獨立 Canonical 路由**：
+    - `GET /ziwei`：完整紫微排盤主頁 (Canonical: `https://qi.david888.com/ziwei`)
+    - `GET /ziwei/spouse`：看出你未來另一半直達頁 (Canonical: `https://qi.david888.com/ziwei/spouse`)，具備專屬 SEO 標題與描述
+    - `GET /ziwei/male-size`：男生真實尺寸直達頁 (Canonical: `https://qi.david888.com/ziwei/male-size`)，具備專屬 SEO 標題與描述
+  - **前端 History API 無縫同步**：點擊模式切換藥丸（🔮完整排盤 / 💍未來另一半 / ⚡男生尺寸）時自動執行 `pushState` 更新網址列，支援瀏覽器上一頁/下一頁（`popstate`）即時切換。
+  - **URL 參數預填與深度鏈接**：支援外鏈直達時自動預填 `?date=...&time=...&sex=...` 並自動切換對應模式。
+- **月老姻緣 (`/yinyuan`) 跨模組導流專屬入口**：
+  - 於月老頁面表單前新增「🏮 跨模組熱門推薦」直通卡片，讓月老客群一鍵直達【紫微未來另一半】與【男生真實尺寸】。
+- **Web UI Spacing 與版面呼吸感優化 (`views/ziwei.html`, `public/css/divination-suite.css`)**：
+  - 修復 Bootstrap 3 環境下缺少 `.mt-4` / `.mb-3` 工具類別導致「問題輸入框」與「提交按鈕」黏在一起的間距問題，重構 `.suite-submit-container`，提供舒適的視覺呼吸感。
+  - 新增 `.spouse-banner`、`.spouse-card`、`.spouse-hero`、`.spouse-age-badge`、`.spouse-tag-pill` 等自適應主題樣式。
+- **API、CLI、WebMCP 與測試保障**：
+  - **API 端點**：新增毫秒級確定性端點 `GET /api/ziwei/spouse` 與 `POST /api/ziwei/spouse`，同步登記至 `/api/docs`。
+  - **CLI & Skill**：`ziwei_cli.js` 與 `ask_ziwei.js` 支援 `--spouse` 與 `--mode spouse`；同步更新 `skills/ziwei-consultant/SKILL.md`。
+  - **WebMCP**：`public/js/webmcp.js` 新增 `ziwei_future_spouse` 工具，符合 Chrome WebMCP 協定並在 `/ziwei` 及子路徑宣告。
+  - **自動化測試**：`test/ziwei.test.js`、`test/service-question-routes.test.js`、`test/webmcp.test.js` 全面覆蓋，全套 188 項測試 100% 通過。
+
 ### ⚡ 紫微斗數男生真實尺寸與親密戰鬥力雙核測算引擎 & 快速通關模式 (ziwei-male-size-fastpass)
 
 - **紫微斗數男生真實尺寸與親密戰鬥力雙核測算引擎 (`lib/ziwei.js`)**：

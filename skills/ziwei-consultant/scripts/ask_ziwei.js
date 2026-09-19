@@ -9,7 +9,7 @@ async function readInput() {
 async function main() {
     const input = await readInput();
     const baseUrl = (process.env.QIMEN_API_BASE_URL || 'https://qi.david888.com').replace(/\/$/, '');
-    const endpoint = input.mode === 'male-size' ? '/api/ziwei/male-size' : '/api/ziwei-question';
+    const endpoint = input.mode === 'male-size' ? '/api/ziwei/male-size' : (input.mode === 'spouse' || input.mode === 'future-spouse') ? '/api/ziwei/spouse' : '/api/ziwei-question';
     const response = await fetch(`${baseUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -28,7 +28,7 @@ const {
     validateLayoutInput,
     evaluateZhongzhouLayout
 } = require('./lib/fengshui');
-const { calculateZiweiChart, evaluateMaleSize } = require('./lib/ziwei');
+const { calculateZiweiChart, evaluateMaleSize, evaluateFutureSpouse } = require('./lib/ziwei');
 const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
 const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time');
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
@@ -125,7 +125,38 @@ app.use((req, res, next) => {
 });
 
 // 路由
-app.get('/ziwei', (req, res) => res.render('ziwei', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'ziwei' }));
+function renderZiweiPage(req, res, activeMode = 'chart') {
+    const modes = {
+        chart: {
+            title: '紫微斗數排盤 · 三合飛星命理顧問',
+            description: '線上紫微斗數排盤系統，支援十二宮、十四主星廟旺、生年四化、大限流年與三方四正格局解讀。',
+            canonicalUrl: 'https://qi.david888.com/ziwei'
+        },
+        spouse: {
+            title: '看出你未來另一半 · 紫微夫妻宮正緣年齡差與長相性格解析',
+            description: '運用正統紫微斗數夫妻宮安星訣，3秒精準解讀未來另一半年齡差距、外貌氣質、性格優缺點、相處模式與相逢時機。',
+            canonicalUrl: 'https://qi.david888.com/ziwei/spouse'
+        },
+        'male-size': {
+            title: '3秒測男生真實尺寸 · 紫微斗數出廠規格與體質雙核速測',
+            description: '拒絕單看子位虛標！紫微斗數「子位出廠氣象＋疾厄宮實體肉身」雙核合參，3秒解鎖男生真實尺寸區間與實戰體質。',
+            canonicalUrl: 'https://qi.david888.com/ziwei/male-size'
+        }
+    };
+    const currentMode = req.query.mode && modes[req.query.mode] ? req.query.mode : activeMode;
+    const config = modes[currentMode] || modes.chart;
+    return res.render('ziwei', {
+        enableLLM: !!process.env.LLM_API_KEY,
+        activePage: 'ziwei',
+        activeMode: currentMode,
+        canonicalUrl: config.canonicalUrl,
+        pageTitle: config.title,
+        pageDescription: config.description
+    });
+}
+app.get('/ziwei', (req, res) => renderZiweiPage(req, res, 'chart'));
+app.get('/ziwei/spouse', (req, res) => renderZiweiPage(req, res, 'spouse'));
+app.get('/ziwei/male-size', (req, res) => renderZiweiPage(req, res, 'male-size'));
 app.get('/tarot', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot' }));
 app.get('/fengshui', (req, res) => res.render('fengshui', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'fengshui' }));
 app.get('/bazi2', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2' }));
@@ -169,6 +200,20 @@ const handleZiweiMaleSize = async (req, res) => {
 };
 app.post('/api/ziwei/male-size', handleZiweiMaleSize);
 app.get('/api/ziwei/male-size', handleZiweiMaleSize);
+
+const handleZiweiSpouse = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        if (payload.palaces) delete payload.palaces;
+        const validated = validateZiweiQuestion(payload);
+        const result = evaluateFutureSpouse(validated);
+        // Decouple Discord record from response path so fast-pass never blocks on external network
+        sendModuleRecord('紫微未來另一半', validated, result).catch(() => {});
+        res.json({ success: true, result, spouse: result, ...result });
+    } catch (error) { res.status(error.status || error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
+};
+app.post('/api/ziwei/spouse', handleZiweiSpouse);
+app.get('/api/ziwei/spouse', handleZiweiSpouse);
 
 const handleTarotReading = async (req, res) => {
     try {
@@ -1809,6 +1854,18 @@ app.get('/api/docs', (req, res) => {
                 method: "GET / POST",
                 path: "/api/ziwei/male-size",
                 description: "紫微斗數男生真實尺寸與體質雙核速測（子位出廠氣象＋疾厄宮實體肉身合參）",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" }
+                }
+            },
+            ziweiSpouse: {
+                method: "GET / POST",
+                path: "/api/ziwei/spouse",
+                description: "紫微斗數未來另一半正緣畫像與年齡差深度解析（夫妻宮主星＋吉煞四化）",
                 headers: { "Content-Type": "application/json" },
                 parameters: {
                     date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },

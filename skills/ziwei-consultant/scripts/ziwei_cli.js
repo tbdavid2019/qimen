@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { calculateZiweiChart, evaluateMaleSize } = require(path.join(__dirname, '../../../lib/ziwei.js'));
+const { calculateZiweiChart, evaluateMaleSize, evaluateFutureSpouse } = require(path.join(__dirname, '../../../lib/ziwei.js'));
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -31,6 +31,8 @@ function parseArgs() {
             params.mode = args[++i];
         } else if (arg === '--male-size') {
             params.mode = 'male-size';
+        } else if (arg === '--spouse' || arg === '--future-spouse') {
+            params.mode = 'spouse';
         } else if ((arg === '--date' || arg === '--solar') && args[i + 1]) {
             params.date = args[++i];
             params.calendar = 'solar';
@@ -96,6 +98,8 @@ function run() {
         let result;
         if (inputData.mode === 'male-size') {
             result = evaluateMaleSize(inputData);
+        } else if (inputData.mode === 'spouse' || inputData.mode === 'future-spouse') {
+            result = evaluateFutureSpouse(inputData);
         } else {
             result = calculateZiweiChart(inputData);
         }

@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>紫微斗數排盤 · 三合飛星命理顧問</title>
-    <meta name="description" content="線上紫微斗數排盤系統，支援十二宮、十四主星廟旺、生年四化、大限流年與三方四正格局解讀。">
-    <link rel="canonical" href="https://qi.david888.com/ziwei">
+    <title><%= typeof pageTitle !== 'undefined' ? pageTitle : '紫微斗數排盤 · 三合飛星命理顧問' %></title>
+    <meta name="description" content="<%= typeof pageDescription !== 'undefined' ? pageDescription : '線上紫微斗數排盤系統，支援十二宮、十四主星廟旺、生年四化、大限流年與三方四正格局解讀。' %>">
+    <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : 'https://qi.david888.com/ziwei' %>">
 
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -86,18 +86,28 @@
         <div class="suite-card">
             <!-- Mode Switcher -->
             <div class="ziwei-mode-pills text-center mb-4">
-                <button type="button" class="btn btn-sm ziwei-mode-btn active" data-mode="chart" id="btnModeChart">
+                <button type="button" class="btn btn-sm ziwei-mode-btn <%= (typeof activeMode === 'undefined' || activeMode === 'chart') ? 'active' : '' %>" data-mode="chart" id="btnModeChart">
                     🔮 完整紫微排盤 (深度解讀)
                 </button>
-                <button type="button" class="btn btn-sm ziwei-mode-btn" data-mode="male-size" id="btnModeMaleSize">
+                <button type="button" class="btn btn-sm ziwei-mode-btn <%= (typeof activeMode !== 'undefined' && activeMode === 'spouse') ? 'active' : '' %>" data-mode="spouse" id="btnModeSpouse">
+                    💍 看出你未來另一半 (夫妻宮年齡長相)
+                </button>
+                <button type="button" class="btn btn-sm ziwei-mode-btn <%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? 'active' : '' %>" data-mode="male-size" id="btnModeMaleSize">
                     ⚡ 3秒測男生真實尺寸 (雙核出廠規格)
                 </button>
             </div>
 
             <form id="suiteForm" class="suite-form" toolname="ziwei_chart" tooldescription="紫微斗數排盤與命理解讀" toolautosubmit data-webmcp-tool="analyze_ziwei">
-                <input type="hidden" name="mode" id="ziweiMode" value="chart">
+                <input type="hidden" name="mode" id="ziweiMode" value="<%= typeof activeMode !== 'undefined' ? activeMode : 'chart' %>">
 
-                <div id="maleSizeBanner" class="male-size-banner" style="display: none;">
+                <div id="spouseBanner" class="spouse-banner" style="<%= (typeof activeMode !== 'undefined' && activeMode === 'spouse') ? '' : 'display: none;' %>">
+                    <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px;">💍 專屬模式：未來另一半正緣畫像與年齡差深度解析</div>
+                    <div style="font-size: 13px; color: var(--suite-text-muted);">
+                        運用正統紫微斗數夫妻宮安星訣、三方四正與生年四化，3秒快速解鎖未來伴侶年齡差距區間、外貌氣質畫像、性格地雷與相遇良機！
+                    </div>
+                </div>
+
+                <div id="maleSizeBanner" class="male-size-banner" style="<%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? '' : 'display: none;' %>">
                     <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px;">⚡ 快速通關模式：男生真實尺寸與實戰體質速測</div>
                     <div style="font-size: 13px; color: var(--suite-text-muted);">
                         拒絕網路單看子位的盲目虛標！依據「子位出廠氣象 ＋ 疾厄宮實體肉身」雙核合參，3秒直接解鎖真實尺寸區間（特大杯＞16 / 大中杯11-15 / 小杯＜10）與實戰風格！
@@ -157,20 +167,23 @@
                     </div>
                 </div>
 
-                <div class="mb-3" id="ziweiQuestionGroup">
+                <div class="mb-3" id="ziweiQuestionGroup" style="<%= (typeof activeMode !== 'undefined' && (activeMode === 'male-size' || activeMode === 'spouse')) ? 'display: none;' : '' %>">
                     <label class="suite-form-label" for="ziweiQuestion">想請教命理顧問的問題或諮詢重點</label>
                     <textarea class="form-control suite-textarea" id="ziweiQuestion" name="question" rows="2" placeholder="例如：請幫我看看本命事業格局、適合創業還是公職？未來的財帛與婚姻運勢如何？" data-webmcp-field="question" toolparamdescription="想請教紫微命理顧問的問題"></textarea>
                 </div>
 
-                <div class="text-center mt-4">
+                <div class="text-center suite-submit-container">
                     <button type="submit" id="suiteSubmitBtn" class="btn suite-btn-primary btn-lg">
-                        ✨ 排盤並查看命理解讀
+                        <%= (typeof activeMode !== 'undefined' && activeMode === 'spouse') ? '💍 3秒解鎖未來另一半' : (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? '⚡ 3秒解鎖真實尺寸' : '✨ 排盤並查看命理解讀' %>
                     </button>
                 </div>
             </form>
         </div>
 
         <%- include('partials/ads-mobile.html') %>
+
+        <!-- Spouse Fast-Pass Card Result -->
+        <div id="spouseResultCard" class="spouse-card" hidden></div>
 
         <!-- Male Size Fast-Pass Card Result -->
         <div id="maleSizeResultCard" class="male-size-card" hidden></div>

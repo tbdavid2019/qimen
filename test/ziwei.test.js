@@ -5,6 +5,7 @@ const path = require('node:path');
 const {
     calculateZiweiChart,
     evaluateMaleSize,
+    evaluateFutureSpouse,
     getFiveBureau,
     calcZiweiBranch,
     STAR_BRIGHTNESS,
@@ -179,6 +180,53 @@ test('紫微斗數農曆閏月字串參數 (leap="false") 正確標準化不拋�
 test('紫微斗數當輸入 shichen 且帶預設 time 時，normalized_input.time 一致同步為時辰代表時間', () => {
     const chart = calculateZiweiChart({ date: '1981-08-11', shichen: '巳', time: '12:00', sex: '男' });
     assert.equal(chart.normalized_input.time, '10:00');
+});
+
+test('紫微斗數未來另一半評估（evaluateFutureSpouse）完整解析夫妻宮正緣畫像', () => {
+    // 巳時 (09:00) 乾造：夫妻宮武曲貪狼同宮
+    const spouseSi = evaluateFutureSpouse({ date: '1981-08-11', time: '09:00', sex: '男' });
+    assert.ok(spouseSi, '必須回傳未來另一半評估結果');
+    assert.equal(spouseSi.palace, '丑');
+    assert.equal(spouseSi.ganzhi, '辛丑');
+    assert.deepEqual(spouseSi.majorStars, ['武曲(廟)', '貪狼(廟)']);
+    assert.equal(spouseSi.ageGap.tier, '同齡或差距不大 (上下 1-3 歲以內)');
+    assert.match(spouseSi.ageGap.desc, /武曲金與貪狼木同宮/);
+    assert.equal(spouseSi.ageGap.psychologicalAge, '精明能幹 · 情調平衡型');
+    assert.equal(spouseSi.appearance.style, '明艷迷人 · 電眼桃花');
+    assert.ok(spouseSi.personality.tags.includes('務實幹練'));
+    assert.ok(spouseSi.personality.tags.includes('八面玲瓏'));
+    assert.ok(spouseSi.meetingScenario.places.length > 0);
+    assert.match(spouseSi.summary, /辛丑宮/);
+
+    // 辰時 (08:50) 乾造：夫妻宮天同天梁同宮
+    const spouseChen = evaluateFutureSpouse({ date: '1981-08-11', time: '08:50', sex: '男' });
+    assert.equal(spouseChen.palace, '寅');
+    assert.equal(spouseChen.ganzhi, '庚寅');
+    assert.deepEqual(spouseChen.majorStars, ['天同(利)', '天梁(廟)']);
+    assert.equal(spouseChen.ageGap.tier, '顯著年齡差距 (多大 3-6 歲以上，或小 2-4 歲)');
+    assert.match(spouseChen.ageGap.desc, /天同天梁同宮/);
+});
+
+test('紫微斗數全盤排盤 calculateZiweiChart 自動附帶 futureSpouse 正緣評估', () => {
+    const chart = calculateZiweiChart({ date: '1981-08-11', time: '09:00', sex: '男' });
+    assert.ok(chart.futureSpouse, '全盤排盤結果必須包含 futureSpouse');
+    assert.equal(chart.futureSpouse.palace, '丑');
+    assert.equal(chart.futureSpouse.ageGap.tier, '同齡或差距不大 (上下 1-3 歲以內)');
+});
+
+test('紫微斗數 CLI 支援 --spouse 模式獨立輸出未來另一半 JSON', () => {
+    const cliPath = path.join(__dirname, '../skills/ziwei-consultant/scripts/ziwei_cli.js');
+    const stdout = execSync(`node "${cliPath}" --date 1981-08-11 --time 09:00 --sex 男 --spouse`, { encoding: 'utf-8' });
+    const parsed = JSON.parse(stdout);
+    assert.ok(parsed.ageGap, 'CLI 輸出必須包含 ageGap');
+    assert.equal(parsed.ganzhi, '辛丑');
+    assert.equal(parsed.ageGap.tier, '同齡或差距不大 (上下 1-3 歲以內)');
+});
+
+test('紫微斗數未來另一半支援 female 性別別名且判定為女性命盤看丈夫', () => {
+    const spouseFemale = evaluateFutureSpouse({ date: '1981-08-11', time: '09:00', sex: 'female' });
+    assert.equal(spouseFemale.targetGender, '男性伴侶（丈夫）');
+    assert.match(spouseFemale.summary, /男性伴侶（丈夫）/);
 });
 
 

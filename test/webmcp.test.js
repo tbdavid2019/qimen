@@ -34,6 +34,7 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 		"yinyuan_reading",
 		"answerbook_reading",
 		"ziwei_male_size",
+		"ziwei_future_spouse",
 	];
 
 	for (const toolName of expectedTools) {
@@ -238,7 +239,7 @@ test("風水頁面會保留宣告式報告並註冊確定性佈局評估工具",
 	}
 });
 
-test("紫微頁面會保留宣告式排盤並註冊確定性男生尺寸工具", async () => {
+test("紫微頁面會保留宣告式排盤並註冊確定性男生尺寸與未來另一半工具", async () => {
 	const previousWindow = global.window;
 	const previousDocument = global.document;
 	const registered = [];
@@ -260,8 +261,8 @@ test("紫微頁面會保留宣告式排盤並註冊確定性男生尺寸工具",
 		const WebMCP = require("../public/js/webmcp");
 		WebMCP.resetForTesting();
 		await WebMCP.registerAllTools();
-		assert.deepEqual(registered, ["ziwei_male_size", "switch_theme"]);
-		assert.deepEqual(WebMCP.getRegisteredTools(), ["ziwei_male_size", "switch_theme"]);
+		assert.deepEqual(registered, ["ziwei_male_size", "ziwei_future_spouse", "switch_theme"]);
+		assert.deepEqual(WebMCP.getRegisteredTools(), ["ziwei_male_size", "ziwei_future_spouse", "switch_theme"]);
 	} finally {
 		if (previousWindow === undefined) delete global.window;
 		else global.window = previousWindow;
