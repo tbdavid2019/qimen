@@ -1594,6 +1594,17 @@ body {
     margin-bottom: 4px;
 }
 
+.markdown-body blockquote {
+    margin: 12px 0;
+    padding: 10px 16px;
+    background: #fdfaf6;
+    border-left: 4px solid var(--claude-primary, #cc6b49);
+    color: #5a493d;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
 .markdown-body code {
     background: rgba(0, 0, 0, 0.08);
     padding: 2px 4px;

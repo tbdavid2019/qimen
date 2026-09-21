@@ -145,6 +145,19 @@
                 continue;
             }
 
+            var blockquote = line.match(/^\s*>\s?(.*)$/);
+            if (blockquote) {
+                var quoteLines = [];
+                while (index < lines.length) {
+                    var quoteMatch = lines[index].match(/^\s*>\s?(.*)$/);
+                    if (!quoteMatch) break;
+                    quoteLines.push(renderInline(quoteMatch[1]));
+                    index += 1;
+                }
+                html.push('<blockquote>' + quoteLines.join('<br/>') + '</blockquote>');
+                continue;
+            }
+
             var unordered = line.match(/^\s*[-*]\s+(.*)$/);
             if (unordered) {
                 var unorderedItems = [];

@@ -18,6 +18,16 @@ test('Email Service: simpleMarkdownToEmailHtml 正確轉換語法並跳脫 HTML'
     assert.ok(html.includes('&lt;script&gt;'), 'script 應轉換為實體字元');
 });
 
+test('Email Service: markdownToEmailHtml 支援 Markdown 表格與行內樣式渲染', () => {
+    const tableMd = '### 盤面分析\n\n| 項目 | 狀態 | 吉凶 |\n| :--- | :---: | ---: |\n| 開門 | 乾宮生旺 | 大吉 |\n| 六合 | 相生相助 | 吉 |';
+    const html = simpleMarkdownToEmailHtml(tableMd);
+
+    assert.ok(html.includes('<table style='), '必須包含 table 標籤與行內樣式');
+    assert.ok(html.includes('<th style='), '必須包含 th 與行內樣式');
+    assert.ok(html.includes('<td style='), '必須包含 td 與行內樣式');
+    assert.ok(html.includes('乾宮生旺'), '必須保留儲存格內容');
+});
+
 test('Email Service: generateConversationEmailHtml 完整生成含品牌與對話之郵件模板', () => {
     const html = generateConversationEmailHtml({
         serviceName: '奇門遁甲',
@@ -121,6 +131,8 @@ test('Email Service: sendConversationEmail 成功調用 Resend API Mock', async 
         assert.equal(calledUrl, 'https://api.resend.com/emails');
         assert.equal(authHeader, 'Bearer re_mock_test_key');
         assert.deepEqual(calledBody.to, ['client@example.com']);
+        assert.equal(calledBody.from, '333 一句提醒·照見當下 <onboarding@resend.dev>');
+        assert.ok(calledBody.subject.includes('333 一句提醒·照見當下'));
         assert.ok(calledBody.html.includes('生門落艮八宮'));
 
     } finally {

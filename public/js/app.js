@@ -208,6 +208,10 @@ $(document).ready(function() {
                     }
                     
                     $('#llmResultPanel').show();
+                    if ($('#emailConversation').length) $('#emailConversation').show();
+                    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                        window.lucide.createIcons();
+                    }
                 } else {
                     // 顯示錯誤狀態
                     var fallbackContent = MarkdownRenderer.render(response.fallback || '請稍後再試。');
@@ -463,10 +467,35 @@ $(document).ready(function() {
         });
     });
 
+    // 建構完整匯出紀錄（包含初始奇門盤解讀與後續問答對話）
+    function buildExportHistory() {
+        var exportList = [];
+        if (window.lastQimenAnalysisText) {
+            exportList.push({
+                role: 'assistant',
+                content: window.lastQimenAnalysisText,
+                html: typeof MarkdownRenderer !== 'undefined' ? MarkdownRenderer.render(window.lastQimenAnalysisText) : ''
+            });
+        }
+        if (conversationHistory && conversationHistory.length > 0) {
+            conversationHistory.forEach(function(msg) {
+                exportList.push({
+                    role: msg.role,
+                    content: msg.content,
+                    html: msg.role === 'assistant'
+                        ? (typeof MarkdownRenderer !== 'undefined' ? MarkdownRenderer.render(msg.content) : '')
+                        : ''
+                });
+            });
+        }
+        return exportList;
+    }
+
     // 打開寄送對話紀錄彈窗 (Resend API)
     function openEmailModal() {
-        if (!conversationHistory || conversationHistory.length === 0) {
-            alert('目前尚無對話紀錄可寄送。請先於下方輸入框詢問問題！');
+        var activeHistory = buildExportHistory();
+        if (!activeHistory || activeHistory.length === 0) {
+            alert('目前尚無解盤或對話紀錄可寄送。請先等待排盤解讀完成或於下方輸入框詢問問題！');
             return;
         }
         var savedEmail = '';
@@ -491,6 +520,12 @@ $(document).ready(function() {
         var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         var $alert = $('#emailModalAlert');
         var $btn = $(this);
+
+        var activeHistory = buildExportHistory();
+        if (!activeHistory || activeHistory.length === 0) {
+            $alert.removeClass('alert-success').addClass('alert-danger').html('目前尚無解盤或對話紀錄可寄送！').show();
+            return;
+        }
 
         if (!email || !emailRegex.test(email)) {
             $alert.removeClass('alert-success').addClass('alert-danger').html('請輸入正確的電子郵件格式！').show();
@@ -522,7 +557,7 @@ $(document).ready(function() {
                     dun: dunText,
                     category: purposeText
                 },
-                history: conversationHistory
+                history: activeHistory
             }),
             success: function(resp) {
                 if (resp && resp.success) {

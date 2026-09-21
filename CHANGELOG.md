@@ -4,6 +4,18 @@
 
 ## [2026-09-21]
 
+### 🏷️ 郵件品牌嚴格校正為「333 一句提醒·照見當下」& Markdown-to-HTML 郵件排版引擎深度強化
+
+- **品牌與寄件者名稱嚴格校正 (`lib/email.js`, `test/email.test.js`)**：
+  - **杜絕未經授權名稱**：徹底移除不符品牌規範的名稱，嚴格統一為官方品牌名稱 **「333 一句提醒·照見當下」**。
+  - **動態寄件者名稱解析 (`getFromAddress`)**：無論是預設的 `333 一句提醒·照見當下 <onboarding@resend.dev>` 或是使用者自訂的 `RESEND_FROM_EMAIL`（支援純 Email 或帶有舊名稱之格式），均自動轉換為標準官方品牌名稱。
+  - **信件標題與主頁落款一致化**：預設主旨為 `【333 一句提醒·照見當下】您的奇門遁甲諮詢對話紀錄`，信件頁首與頁尾明確標示「傳統智慧，理性解讀；照見當下，指引行動」官方文化理念。
+- **Markdown-to-HTML 郵件排版與行內樣式全面強化 (`lib/email.js`, `public/js/markdown-renderer.js`, `public/css/style-new.css`, `public/js/app.js`, `views/index.html`)**：
+  - **共用 Markdown 核心渲染 (`public/js/markdown-renderer.js`)**：伺服端郵件服務直接引入權威 `MarkdownRenderer`，並擴充區塊引言（`> ` blockquote）原生解析，讓「一句提醒」等重點標註在網頁與郵件中皆以高質感卡片呈現。
+  - **跨 Email 客戶端行內樣式注入 (`markdownToEmailHtml`)**：解決行動版 Gmail、Apple Mail、Outlook 等郵件應用程式過濾外部 `<style>` 的問題，對表格 (`<table>`, `<th>`, `<td>`)、標題、清單、引言、程式碼區塊等自動注入高對比度的優雅行內 CSS 樣式。
+  - **完整匯出脈絡包含首輪排盤解讀 (`buildExportHistory`)**：前端自動將首輪奇門大師盤面深度解讀與後續所有問答對話打包為完整脈絡發送，首頁解盤面板同步新增「✉️ 寄送解盤」專屬按鈕。
+  - **自動化測試 196 項 100% 通過 (`test/email.test.js`, `test/markdown-renderer.test.js`)**。
+
 ### 🎨 Lucide Icons 全站圖標升級 & ✉️ Resend API 對話紀錄一鍵寄送信箱
 
 - **Lucide Icons 向量圖標全面升級 (`public/js/lucide.min.js`, `views/index.html`, `public/js/app.js`, `public/css/style-new.css`)**：

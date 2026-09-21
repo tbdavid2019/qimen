@@ -246,23 +246,33 @@
                                 <div id="llmTimestamp" class="text-muted qimen-meta">
                                     <!-- 解盤時間將顯示在這裡 -->
                                 </div>
-                                <button type="button" id="copyAnalysisBtn" class="btn btn-default btn-xs qimen-copy-button" style="padding: 5px 11px; border-radius: 4px;" title="複製完整解盤內容">
-                                    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製解盤內容
-                                </button>
+                                <div style="display:inline-flex;gap:6px;">
+                                    <button type="button" id="emailAnalysisBtn" class="btn btn-default btn-xs qimen-copy-button btn-open-email-modal" style="padding: 5px 11px; border-radius: 4px;" title="寄送完整解盤到信箱">
+                                        <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i> 寄送解盤
+                                    </button>
+                                    <button type="button" id="copyAnalysisBtn" class="btn btn-default btn-xs qimen-copy-button" style="padding: 5px 11px; border-radius: 4px;" title="複製完整解盤內容">
+                                        <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製解盤內容
+                                    </button>
+                                </div>
                             </div>
 
                             <div id="llmAnalysisContent" class="llm-analysis-content markdown-body">
                                 <!-- 解盤結果將顯示在這裡 -->
                             </div>
 
-                            <!-- 底部操作列（含右下角複製與重新解盤） -->
+                            <!-- 底部操作列（含右下角複製、寄送與重新解盤） -->
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--claude-border, #eee); padding-top: 15px;">
                                 <button id="reAnalyzeButton" class="btn btn-default">
                                     <i data-lucide="refresh-cw" class="glyphicon glyphicon-refresh"></i> 重新解盤
                                 </button>
-                                <button type="button" id="copyAnalysisBtnBottom" class="btn btn-default btn-sm qimen-copy-button" style="padding: 6px 14px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="複製完整解盤內容">
-                                    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製解盤內容
-                                </button>
+                                <div style="display:inline-flex;gap:6px;">
+                                    <button type="button" id="emailAnalysisBtnBottom" class="btn btn-default btn-sm qimen-copy-button btn-open-email-modal" style="padding: 6px 14px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="寄送完整解盤到信箱">
+                                        <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i> 寄送解盤
+                                    </button>
+                                    <button type="button" id="copyAnalysisBtnBottom" class="btn btn-default btn-sm qimen-copy-button" style="padding: 6px 14px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="複製完整解盤內容">
+                                        <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製解盤內容
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

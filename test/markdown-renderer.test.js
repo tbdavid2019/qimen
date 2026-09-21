@@ -66,3 +66,9 @@ test('原始 HTML 與事件屬性會被 escape', () => {
     assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
     assert.match(html, /&lt;img src=x onerror=alert\(2\)&gt;/);
 });
+
+test('支援區塊引言 (blockquote) 語法', () => {
+    const html = MarkdownRenderer.render('> 一句提醒：**掌握當下**\n> 切勿猶豫不決');
+
+    assert.match(html, /<blockquote>一句提醒：<strong>掌握當下<\/strong><br\/>切勿猶豫不決<\/blockquote>/);
+});
