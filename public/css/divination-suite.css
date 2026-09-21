@@ -2581,4 +2581,34 @@ body.suite-page [style*="font-size:13px"] {
     color: #94a3b8;
 }
 
+/* Lucide Icons Standard Styling */
+.lucide {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.15em;
+    stroke-width: 2;
+    stroke: currentColor;
+    fill: none;
+}
+
+.suite-btn .lucide,
+.btn .lucide {
+    vertical-align: -0.15em;
+    margin-right: 4px;
+}
+
+.suite-copy-btn .lucide {
+    margin-right: 3px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
 

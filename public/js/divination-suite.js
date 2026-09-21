@@ -902,8 +902,16 @@
         function showSuccess() {
             if (btn) {
                 const orig = btn.innerHTML;
-                btn.innerHTML = '✅ 已複製！';
-                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+                btn.innerHTML = '<i data-lucide="check" style="color:#10b981;"></i> 已複製！';
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                        window.lucide.createIcons();
+                    }
+                }, 2000);
             }
         }
         if (navigator.clipboard && window.isSecureContext) {
@@ -941,9 +949,11 @@
             const header = document.createElement('div');
             header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--suite-border, rgba(0,0,0,0.06)); padding-bottom: 6px;';
             header.innerHTML = `
-                <span style="font-size: var(--type-label); font-weight: 600; color: var(--suite-primary, #CC6B49);">🏮 解讀指引</span>
-                <button type="button" class="suite-copy-btn suite-copy-top" style="background: var(--suite-card, #fff); border: 1px solid var(--suite-border, #E8E0D6); border-radius: 6px; padding: 2px 10px; font-size: var(--type-meta); font-weight: 500; cursor: pointer; color: var(--suite-primary, #CC6B49);" title="複製內容">
-                    📋 複製內容
+                <span style="font-size: var(--type-label); font-weight: 600; color: var(--suite-primary, #CC6B49); display: inline-flex; align-items: center; gap: 4px;">
+                    <i data-lucide="sparkles"></i> 解讀指引
+                </span>
+                <button type="button" class="suite-copy-btn suite-copy-top" style="background: var(--suite-card, #fff); border: 1px solid var(--suite-border, #E8E0D6); border-radius: 6px; padding: 2px 10px; font-size: var(--type-meta); font-weight: 500; cursor: pointer; color: var(--suite-primary, #CC6B49); display: inline-flex; align-items: center; gap: 4px;" title="複製內容">
+                    <i data-lucide="copy"></i> 複製內容
                 </button>
             `;
             const copyBtnTop = header.querySelector('.suite-copy-top');
@@ -957,8 +967,8 @@
             const footer = document.createElement('div');
             footer.style.cssText = 'display: flex; justify-content: flex-end; margin-top: 8px; border-top: 1px solid var(--suite-border, rgba(0,0,0,0.04)); padding-top: 6px;';
             footer.innerHTML = `
-                <button type="button" class="suite-copy-btn suite-copy-bottom" style="background: var(--suite-card, #fff); border: 1px solid var(--suite-border, #E8E0D6); border-radius: 6px; padding: 3px 12px; font-size: var(--type-meta); font-weight: 500; cursor: pointer; color: var(--suite-primary, #CC6B49);" title="複製內容">
-                    📋 複製內容
+                <button type="button" class="suite-copy-btn suite-copy-bottom" style="background: var(--suite-card, #fff); border: 1px solid var(--suite-border, #E8E0D6); border-radius: 6px; padding: 3px 12px; font-size: var(--type-meta); font-weight: 500; cursor: pointer; color: var(--suite-primary, #CC6B49); display: inline-flex; align-items: center; gap: 4px;" title="複製內容">
+                    <i data-lucide="copy"></i> 複製內容
                 </button>
             `;
             const copyBtnBottom = footer.querySelector('.suite-copy-bottom');
@@ -973,6 +983,9 @@
             bubble.textContent = content;
         }
         conversationStream.appendChild(bubble);
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
         conversationStream.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
@@ -1524,5 +1537,9 @@
                 }
             }
         });
+
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
     }
 })();

@@ -423,6 +423,10 @@ function bindMeihuaEvents() {
         window.meihuaConversationHistory = [];
     }
     toggleMeihuaLLM(window.enableLLM);
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', bindMeihuaEvents);
