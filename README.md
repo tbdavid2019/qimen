@@ -239,7 +239,8 @@ npm start
 本系統全面導入 [Cloudflare Security Audit Skill](https://github.com/cloudflare/security-audit-skill) 標準進行 6 階段深度安全審計（Reconnaissance, Hunting, Validation, Reporting, Structured JSON, Independent Verification）：
 
 - **零資料庫無狀態架構 (Zero-Storage Architecture)**：無 SQL/NoSQL 資料庫，不儲存使用者生辰八字、姓名或對話歷史，杜絕 SQL Injection 與個資外洩風險。
-- **金鑰隔離與後端封裝**：所有 LLM API Key 嚴格留存於伺服端環境變數，絕不外流至前端 JavaScript Bundle。
+- **金鑰隔離與後端封裝**：所有 LLM API Key 與 Resend 郵件金鑰（`RESEND_API_KEY`）嚴格留存於伺服端環境變數（Vercel Serverless Function 隔離），絕不外流至前端 JavaScript Bundle。
+- **向量圖標標準化 (Lucide Icons)**：全面導入 Lucide SVG 向量圖標系統（含 Emoji 雙層後備），杜絕字型檔遺失產生的 `▯` 缺字框。
 - **安全標頭與 WebMCP 邊界**：伺服器配置 `Permissions-Policy: tools=(self)`、`X-Content-Type-Options: nosniff`、`X-Frame-Options: SAMEORIGIN`，並停用 `X-Powered-By`。
 - **防禦 DoS 與演算法邊界**：地理經緯度與時間計算皆施加嚴格 `Number.isFinite` 邊界校驗與數學取模，杜絕無限迴圈與 ReDoS 風險。
 - **Prompt Injection 防護**：對話歷史嚴格限制僅接受 `user` 與 `assistant` 角色，防止攻擊者注入 `system` / `developer` 角色覆寫提示詞。

@@ -33,6 +33,7 @@ const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatc
 const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time');
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
 const { AnswerBookClient, createAnswerbookQuestionHandler } = require('./lib/answerbook');
+const { sendConversationEmail } = require('./lib/email');
 
 function getHttpErrorStatus(error) {
     return error && error.statusCode === 400 ? 400 : 500;
@@ -751,6 +752,31 @@ app.post('/api/:module/llm-analysis', async (req, res, next) => {
             discord
         });
     } catch (error) { res.status(500).json({ success: false, error: error.message }); }
+});
+
+// 對話紀錄 Email 寄送 API (透過 Resend API)
+app.post('/api/conversation/send-email', async (req, res) => {
+    try {
+        const { email, service, subject, history, chartSummary } = req.body || {};
+        const result = await sendConversationEmail({
+            to: email,
+            serviceName: service || '奇門遁甲',
+            subject: subject,
+            history: history,
+            chartSummary: chartSummary
+        });
+
+        if (!result.success) {
+            return res.status(result.status || 400).json(result);
+        }
+        return res.json(result);
+    } catch (err) {
+        console.error('Email API 錯誤:', err);
+        return res.status(500).json({
+            success: false,
+            error: '伺服器處理郵件發送時發生異常: ' + err.message
+        });
+    }
 });
 
 // 首頁 - 實時排盤

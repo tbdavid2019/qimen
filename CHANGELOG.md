@@ -2,7 +2,30 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
-## [2026-09-19]
+## [2026-09-21]
+
+### 🎨 Lucide Icons 全站圖標升級 & ✉️ Resend API 對話紀錄一鍵寄送信箱
+
+- **Lucide Icons 向量圖標全面升級 (`public/js/lucide.min.js`, `views/index.html`, `public/js/app.js`, `public/css/style-new.css`)**：
+  - **根除符號丟失與 `▯` 缺字框問題**：徹底解決歷史 Bootstrap 3 Glyphicons 缺少字型檔且部分圖標（如 `glyphicon-copy`、`glyphicon-trash`）未設定 fallback 導致瀏覽器渲染出缺字方框 `▯` 的問題。
+  - **本地整合 Lucide 向量 SVG**：引入 `public/js/lucide.min.js`，將「複製內容 (`copy`)」、「清除對話 (`trash-2`)」、「發問 (`message-square`)」、「寄送信箱 (`mail`)」、「重新解盤 (`refresh-cw`)」、「成功已複製 (`check`)」、「載入中 (`loader-2`)」等全面升級為清晰現代的 Lucide SVG 向量圖標。
+  - **雙層彈性容錯防禦**：在 `style-new.css` 中完整補齊所有 Glyphicon 的 Unicode Emoji 後備樣式（包含 `📋`、`🗑️`、`⭐`、`✅`、`📅`、`✉️`），即使未加載 JS 也絕不會出現 `▯` 框框。
+- **Resend API 對話紀錄信箱寄送功能 (`lib/email.js`, `app.js`, `views/index.html`, `public/js/app.js`)**：
+  - **Vercel 環境變數安全隔離**：由伺服端 Node.js 原生讀取 `process.env.RESEND_API_KEY`，在 Vercel Serverless Function 內部安全呼叫 Resend API (`https://api.resend.com/emails`)，API Key 絕對不會傳輸至前端瀏覽器。
+  - **精美響應式 HTML 郵件模板 (`lib/email.js`)**：
+    - 頂部品牌 Header（333 一句提醒 · 照見當下）。
+    - 盤面摘要（排盤時間、遁局、值符、值使、專題用神）。
+    - 對話歷史問答（氣泡對稱排版：使用者問道 👤 與大師解讀 🔮，Markdown 轉精美 Email 排版）。
+    - 底部文化正向指引與品牌落款。
+  - **前端互動彈窗與智慧記憶 (`views/index.html`, `public/js/app.js`)**：
+    - 在輸入框旁與每一則大師解讀卡片新增「✉️ 寄送對話」按鈕。
+    - 點擊開啟簡潔郵件發送彈窗，自動記憶使用者信箱至本地儲存 (`localStorage`)。
+    - 即時表單驗證、按鈕防重複提交載入動態，發送成功自動提示並延遲關閉。
+  - **端到端架構對齊**：
+    - API 端點：`POST /api/conversation/send-email`，支援電子信箱校驗、對話歷史校驗與 Resend API 錯誤轉譯。
+    - WebMCP：註冊 `send_conversation_email` 工具。
+    - 自動化測試：新增 `test/email.test.js`，覆蓋 HTML 轉換、模板生成、參數保護、Resend Mock 與 HTTP 路由驗證。全站測試 194 項 100% 通過。
+
 
 ### 💍 紫微斗數「看出你未來另一半」正緣深度解析 & Canonical Routes 直達體系與月老跨域導流
 

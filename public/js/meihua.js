@@ -432,9 +432,15 @@ function copyTextToClipboard(text, btn) {
     function showSuccess() {
         if (btn) {
             var origHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="glyphicon glyphicon-ok" style="color:#10b981;"></i> 已複製！';
+            btn.innerHTML = '<i data-lucide="check" class="glyphicon glyphicon-ok" style="color:#10b981;"></i> 已複製！';
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
             setTimeout(function() {
                 btn.innerHTML = origHtml;
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
             }, 2000);
         }
     }
@@ -504,13 +510,13 @@ function renderMeihuaConversation() {
             html += '<div class="conversation-msg-header">';
             html += '  <span class="conversation-result-label">🌸 梅花解卦</span>';
             html += `  <button type="button" class="btn btn-default btn-xs meihua-copy-btn conversation-copy-button" data-msg-idx="${index}" title="複製解讀內容">`;
-            html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
+            html += '    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製內容';
             html += '  </button>';
             html += '</div>';
             html += `<div class="conversation-bubble assistant-bubble markdown-body conversation-answer">${MarkdownRenderer.render(msg.content)}</div>`;
             html += '<div style="display: flex; justify-content: flex-end; margin-top: 6px;">';
             html += `  <button type="button" class="btn btn-default btn-xs meihua-copy-btn conversation-copy-button" data-msg-idx="${index}" title="複製解讀內容">`;
-            html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
+            html += '    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製內容';
             html += '  </button>';
             html += '</div>';
             html += '</div>';
@@ -518,6 +524,9 @@ function renderMeihuaConversation() {
     });
     history.innerHTML = html;
     history.style.display = 'block';
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+    }
     history.scrollTop = history.scrollHeight;
 }
 

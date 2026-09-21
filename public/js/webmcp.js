@@ -189,6 +189,41 @@
 			}
 		},
 
+		// 寄送對話紀錄至信箱 (Resend API)
+		send_conversation_email: {
+			name: "send_conversation_email",
+			description: "透過 Resend 郵件服務將目前的占斷排盤結果與問答對話紀錄寄送到使用者的電子信箱。",
+			inputSchema: {
+				type: "object",
+				properties: {
+					email: { type: "string", description: "收件人電子郵件地址，例如 user@example.com" },
+					service: { type: "string", description: "占斷服務名稱，例如 奇門遁甲、梅花易數", default: "奇門遁甲" },
+					subject: { type: "string", description: "可選的自訂郵件標題" },
+					history: { type: "array", description: "對話紀錄陣列，每項包含 role 與 content" }
+				},
+				required: ["email"]
+			},
+			annotations: { readOnlyHint: false, untrustedContentHint: false },
+			execute: async (args) => {
+				const email = args?.email ? String(args.email).trim() : "";
+				if (!email) throw new Error("請提供收件電子信箱 (email)");
+				const payload = {
+					email: email,
+					service: args?.service || "奇門遁甲",
+					subject: args?.subject,
+					history: args?.history || []
+				};
+				const res = await fetch("/api/conversation/send-email", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload)
+				});
+				const data = await res.json();
+				if (!data.success) throw new Error(data.message || data.error || "郵件寄送失敗");
+				return data.message || "郵件寄送成功";
+			}
+		},
+
 		// 3. 奇門遁甲自定義排盤
 		qimen_custom_paipan: {
 			name: "qimen_custom_paipan",

@@ -1733,9 +1733,72 @@ body {
     font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
 }
 
+.glyphicon-copy::before {
+    content: "📋";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-trash::before {
+    content: "🗑️";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-star::before {
+    content: "⭐";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-ok::before {
+    content: "✅";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-calendar::before {
+    content: "📅";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.glyphicon-envelope::before,
+.glyphicon-send::before {
+    content: "✉️";
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
 /* 確保在 Glyphicons 字體不可用時使用後備方案 */
 .glyphicon {
     font-family: 'Glyphicons Halflings', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+/* Lucide Icons Standard Styling */
+.lucide {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.15em;
+    stroke-width: 2;
+    stroke: currentColor;
+    fill: none;
+}
+
+.btn .lucide {
+    vertical-align: -0.15em;
+    margin-right: 4px;
+}
+
+.btn-icon-only .lucide,
+.conversation-copy-button .lucide,
+#clearConversation .lucide,
+#emailConversation .lucide {
+    margin-right: 0;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
 }
 
 @-webkit-keyframes spin2 {

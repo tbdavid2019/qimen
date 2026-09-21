@@ -229,9 +229,15 @@ $(document).ready(function() {
         function showSuccess() {
             if ($btn && $btn.length) {
                 var origHtml = $btn.html();
-                $btn.html('<i class="glyphicon glyphicon-ok" style="color:#10b981;"></i> 已複製！');
+                $btn.html('<i data-lucide="check" class="glyphicon glyphicon-ok" style="color:#10b981;"></i> 已複製！');
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
                 setTimeout(function() {
                     $btn.html(origHtml);
+                    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                        window.lucide.createIcons();
+                    }
                 }, 2000);
             }
         }
@@ -285,10 +291,12 @@ $(document).ready(function() {
     function renderConversationHistory() {
         var $historyDiv = $('#conversationHistory');
         var $clearBtn = $('#clearConversation');
+        var $emailBtn = $('#emailConversation');
         
         if (conversationHistory.length === 0) {
             $historyDiv.hide().empty();
             $clearBtn.hide();
+            if ($emailBtn.length) $emailBtn.hide();
             $('#userQuestion').attr('placeholder', '例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？');
             return;
         }
@@ -305,15 +313,23 @@ $(document).ready(function() {
             } else {
                 html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 20px;">';
                 html += '<div class="conversation-msg-header">';
-                html += '  <span class="conversation-result-label"><i class="glyphicon glyphicon-star"></i> 奇門解讀</span>';
-                html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg conversation-copy-button" data-msg-idx="' + index + '" title="複製此解讀內容">';
-                html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
-                html += '  </button>';
+                html += '  <span class="conversation-result-label"><i data-lucide="sparkles" class="glyphicon glyphicon-star"></i> 奇門解讀</span>';
+                html += '  <div style="display:inline-flex;gap:6px;">';
+                html += '    <button type="button" class="btn btn-default btn-xs btn-open-email-modal conversation-copy-button" title="寄送完整對話紀錄至信箱">';
+                html += '      <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i> 寄送對話';
+                html += '    </button>';
+                html += '    <button type="button" class="btn btn-default btn-xs btn-copy-msg conversation-copy-button" data-msg-idx="' + index + '" title="複製此解讀內容">';
+                html += '      <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製內容';
+                html += '    </button>';
+                html += '  </div>';
                 html += '</div>';
                 html += '<div class="markdown-body conversation-answer">' + MarkdownRenderer.render(msg.content) + '</div>';
-                html += '<div style="display: flex; justify-content: flex-end; margin-top: 6px;">';
+                html += '<div style="display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px;">';
+                html += '  <button type="button" class="btn btn-default btn-xs btn-open-email-modal conversation-copy-button" title="寄送完整對話紀錄至信箱">';
+                html += '    <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i> 寄送對話';
+                html += '  </button>';
                 html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg conversation-copy-button" data-msg-idx="' + index + '" title="複製此解讀內容">';
-                html += '    <i class="glyphicon glyphicon-copy"></i> 複製內容';
+                html += '    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製內容';
                 html += '  </button>';
                 html += '</div>';
                 html += '</div>';
@@ -322,7 +338,13 @@ $(document).ready(function() {
         
         $historyDiv.html(html).show();
         $clearBtn.show();
+        if ($emailBtn.length) $emailBtn.show();
         $('#userQuestion').attr('placeholder', '續問：想了解更多細節？或輸入新問題...');
+        
+        // 渲染 Lucide Icons
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
         
         // 滾動到底部
         $historyDiv.scrollTop($historyDiv[0].scrollHeight);
@@ -367,10 +389,17 @@ $(document).ready(function() {
         var $responseTime = $responseDiv.find('.response-time');
 
         // 顯示載入狀態
-        $button.prop('disabled', true).html('<i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> 分析中...');
+        $button.prop('disabled', true).html('<i data-lucide="loader-2" class="animate-spin glyphicon glyphicon-refresh"></i> 分析中...');
         $('#clearConversation').prop('disabled', true);
+        if ($('#emailConversation').length) $('#emailConversation').prop('disabled', true);
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
         $responseDiv.show();
-        $responseContent.html('<i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i> 正在思考您的問題...');
+        $responseContent.html('<i data-lucide="loader-2" class="animate-spin glyphicon glyphicon-refresh"></i> 正在思考您的問題...');
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
 
         // 準備奇門數據（從頁面獲取）
         var qimenData = window.qimenData || {};
@@ -424,8 +453,110 @@ $(document).ready(function() {
                 $responseContent.html('<div class="alert alert-danger">網路錯誤，請稍後再試：' + error + '</div>');
             },
             complete: function() {
-                $button.prop('disabled', false).html('<i class="glyphicon glyphicon-comment"></i> 詢問');
+                $button.prop('disabled', false).html('<i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 詢問');
                 $('#clearConversation').prop('disabled', false);
+                if ($('#emailConversation').length) $('#emailConversation').prop('disabled', false);
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
+            }
+        });
+    });
+
+    // 打開寄送對話紀錄彈窗 (Resend API)
+    function openEmailModal() {
+        if (!conversationHistory || conversationHistory.length === 0) {
+            alert('目前尚無對話紀錄可寄送。請先於下方輸入框詢問問題！');
+            return;
+        }
+        var savedEmail = '';
+        try {
+            savedEmail = localStorage.getItem('user_consultation_email') || '';
+        } catch (e) {}
+        $('#conversationEmailInput').val(savedEmail);
+        $('#emailModalAlert').hide().empty().removeClass('alert-danger alert-success');
+        $('#btnSubmitSendEmail').prop('disabled', false).html('<i data-lucide="send"></i> 確認發送');
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+        $('#emailConversationModal').modal('show');
+    }
+
+    $('#emailConversation').click(openEmailModal);
+    $(document).on('click', '.btn-open-email-modal', openEmailModal);
+
+    // 發送對話紀錄 Email
+    $('#btnSubmitSendEmail').click(function() {
+        var email = ($('#conversationEmailInput').val() || '').trim();
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        var $alert = $('#emailModalAlert');
+        var $btn = $(this);
+
+        if (!email || !emailRegex.test(email)) {
+            $alert.removeClass('alert-success').addClass('alert-danger').html('請輸入正確的電子郵件格式！').show();
+            return;
+        }
+
+        try {
+            localStorage.setItem('user_consultation_email', email);
+        } catch (e) {}
+
+        $btn.prop('disabled', true).html('<i data-lucide="loader-2" class="animate-spin"></i> 正在寄送...');
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+        $alert.hide().empty();
+
+        var dunText = $('.qimen-summary, #dunType, .current-dun').text().trim() || '奇門遁甲盤';
+        var purposeText = $('#qimenPurpose option:selected').text() || '綜合運勢';
+
+        $.ajax({
+            url: '/api/conversation/send-email',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                email: email,
+                service: '奇門遁甲',
+                chartSummary: {
+                    date: new Date().toLocaleDateString('zh-TW'),
+                    dun: dunText,
+                    category: purposeText
+                },
+                history: conversationHistory
+            }),
+            success: function(resp) {
+                if (resp && resp.success) {
+                    $alert.removeClass('alert-danger').addClass('alert-success')
+                          .html('✅ ' + (resp.message || '對話紀錄已成功發送至您的信箱！')).show();
+                    $btn.html('<i data-lucide="check"></i> 發送成功');
+                    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                        window.lucide.createIcons();
+                    }
+                    setTimeout(function() {
+                        $('#emailConversationModal').modal('hide');
+                        $btn.prop('disabled', false).html('<i data-lucide="send"></i> 確認發送');
+                        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                            window.lucide.createIcons();
+                        }
+                    }, 1800);
+                } else {
+                    $alert.removeClass('alert-success').addClass('alert-danger')
+                          .html('❌ 發送失敗：' + (resp.error || '請稍後再試')).show();
+                    $btn.prop('disabled', false).html('<i data-lucide="send"></i> 重新發送');
+                    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                        window.lucide.createIcons();
+                    }
+                }
+            },
+            error: function(xhr) {
+                var errJson = xhr.responseJSON || {};
+                var errMsg = errJson.error || '網路請求失敗，請檢查網路連線或系統設定。';
+                $alert.removeClass('alert-success').addClass('alert-danger')
+                      .html('❌ 發送失敗：' + errMsg).show();
+                $btn.prop('disabled', false).html('<i data-lucide="send"></i> 重新發送');
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
             }
         });
     });
@@ -436,6 +567,11 @@ $(document).ready(function() {
             $('#askLLMQuestion').click();
         }
     });
+
+    // 初始化頁面上的 Lucide Icons
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+    }
 });
 
 function loadQimenDataFromDom() {

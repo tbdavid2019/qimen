@@ -142,7 +142,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <i class="glyphicon glyphicon-comment"></i> 有特定問題想問？
+                            <i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 有特定問題想問？
                         </h3>
                     </div>
                     <div class="panel-body">
@@ -176,10 +176,13 @@
                                            placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？">
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="submit" id="askLLMQuestion">
-                                            <i class="glyphicon glyphicon-comment"></i> 詢問
+                                            <i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 詢問
+                                        </button>
+                                        <button class="btn btn-info" type="button" id="emailConversation" style="display: none;" title="寄送對話紀錄到 Email">
+                                            <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i>
                                         </button>
                                         <button class="btn btn-warning" type="button" id="clearConversation" style="display: none;" title="清除對話，開始新問題">
-                                            <i class="glyphicon glyphicon-trash"></i>
+                                            <i data-lucide="trash-2" class="glyphicon glyphicon-trash"></i>
                                         </button>
                                     </span>
                                 </div>
@@ -192,7 +195,7 @@
                         </div>
                         
                         <div class="text-muted qimen-meta" style="margin-top: 10px;">
-                            <i class="glyphicon glyphicon-info-sign"></i> 
+                            <i data-lucide="info" class="glyphicon glyphicon-info-sign"></i> 
                             您可以直接詢問關於當前奇門盤的任何問題，系統會基於排盤結果給出建議。<strong>支援續問功能</strong>，會延續對話脈絡。
                         </div>
                     </div>
@@ -208,7 +211,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <i class="glyphicon glyphicon-star"></i> 奇門遁甲解盤
+                            <i data-lucide="sparkles" class="glyphicon glyphicon-star"></i> 奇門遁甲解盤
                         </h3>
                     </div>
                     <div class="panel-body">
@@ -216,10 +219,10 @@
                         <div id="llmInitialPanel" class="text-center">
                             <p class="text-muted">點擊下方按鈕，查看這個奇門盤的解讀</p>
                             <button id="startLLMAnalysis" class="btn btn-primary btn-lg">
-                                <i class="glyphicon glyphicon-star"></i> 開始解盤
+                                <i data-lucide="sparkles" class="glyphicon glyphicon-star"></i> 開始解盤
                             </button>
                             <div class="text-muted qimen-meta" style="margin-top: 10px;">
-                                <i class="glyphicon glyphicon-info-sign"></i> 
+                                <i data-lucide="info" class="glyphicon glyphicon-info-sign"></i> 
                                 系統將根據當前排盤提供個人化的運勢分析和建議
                             </div>
                         </div>
@@ -232,7 +235,7 @@
                                         <span class="sr-only">解盤中...</span>
                                     </div>
                                 </div>
-                                <p><i class="glyphicon glyphicon-hourglass"></i> 正在分析您的奇門盤…</p>
+                                <p><i data-lucide="hourglass" class="glyphicon glyphicon-hourglass"></i> 正在分析您的奇門盤…</p>
                                 <p class="text-muted">這可能需要幾秒鐘時間，請稍候</p>
                             </div>
                         </div>
@@ -244,7 +247,7 @@
                                     <!-- 解盤時間將顯示在這裡 -->
                                 </div>
                                 <button type="button" id="copyAnalysisBtn" class="btn btn-default btn-xs qimen-copy-button" style="padding: 5px 11px; border-radius: 4px;" title="複製完整解盤內容">
-                                    <i class="glyphicon glyphicon-copy"></i> 複製解盤內容
+                                    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製解盤內容
                                 </button>
                             </div>
 
@@ -255,10 +258,10 @@
                             <!-- 底部操作列（含右下角複製與重新解盤） -->
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--claude-border, #eee); padding-top: 15px;">
                                 <button id="reAnalyzeButton" class="btn btn-default">
-                                    <i class="glyphicon glyphicon-refresh"></i> 重新解盤
+                                    <i data-lucide="refresh-cw" class="glyphicon glyphicon-refresh"></i> 重新解盤
                                 </button>
                                 <button type="button" id="copyAnalysisBtnBottom" class="btn btn-default btn-sm qimen-copy-button" style="padding: 6px 14px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="複製完整解盤內容">
-                                    <i class="glyphicon glyphicon-copy"></i> 複製解盤內容
+                                    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製解盤內容
                                 </button>
                             </div>
                         </div>
@@ -273,7 +276,7 @@
                             </div>
                             <div class="text-center" style="margin-top: 15px;">
                                 <button id="retryLLMAnalysis" class="btn btn-warning">
-                                    <i class="glyphicon glyphicon-repeat"></i> 重試
+                                    <i data-lucide="rotate-ccw" class="glyphicon glyphicon-repeat"></i> 重試
                                 </button>
                             </div>
                         </div>
@@ -301,22 +304,22 @@
                     <div class="btn-group" data-toggle="buttons">
                         <label class="btn btn-default <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'active' : '' %>" id="traditionalModeBtn">
                             <input type="radio" name="timeMode" value="traditional" <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'checked' : '' %>> 
-                            <i class="glyphicon glyphicon-time"></i> 傳統模式
+                            <i data-lucide="clock" class="glyphicon glyphicon-time"></i> 傳統模式
                                     <small class="qimen-caption" style="display: block;">以當下時辰起盤（兩小時一盤）</small>
                         </label>
                         <label class="btn btn-default <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'active' : '' %>" id="advancedModeBtn">
                             <input type="radio" name="timeMode" value="advanced" <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'checked' : '' %>> 
-                            <i class="glyphicon glyphicon-dashboard"></i> 進階模式
+                            <i data-lucide="gauge" class="glyphicon glyphicon-dashboard"></i> 進階模式
                                     <small class="qimen-caption" style="display: block;">九宮拆補（13分鐘法）</small>
                         </label>
                     </div>
                     <div id="advancedModeInfo" class="alert alert-info qimen-meta" style="display: none; margin-top: 10px;">
-                        <i class="glyphicon glyphicon-info-sign"></i> 
+                        <i data-lucide="info" class="glyphicon glyphicon-info-sign"></i> 
                         進階模式將每個時辰（2小時）細分為9個時段，每段約13分鐘，提供更精確的時間分析
                     </div>
                     <div class="text-right" style="margin-top: 10px;">
                         <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#customPanModal">
-                            <i class="glyphicon glyphicon-calendar"></i> <%= t('form.customPaipan') %>
+                            <i data-lucide="calendar" class="glyphicon glyphicon-calendar"></i> <%= t('form.customPaipan') %>
                         </button>
                     </div>
                 </div>
@@ -803,6 +806,36 @@
         </div>
     </div>
 
+    <!-- 寄送對話紀錄模態框 (Resend API) -->
+    <div class="modal fade" id="emailConversationModal" tabindex="-1" role="dialog" aria-labelledby="emailModalTitle">
+        <div class="modal-dialog" role="document" style="max-width: 440px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="emailModalTitle" style="display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="mail"></i> 寄送完整對話紀錄
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted" style="font-size: 13.5px; line-height: 1.5; margin-bottom: 16px;">
+                        將本次奇門排盤數據與全部問答對話完整發送到您的電子信箱存檔備份：
+                    </p>
+                    <div class="form-group">
+                        <label for="conversationEmailInput" style="font-weight: 600; margin-bottom: 6px;">收件信箱 (Email)</label>
+                        <input type="email" class="form-control input-lg" id="conversationEmailInput" placeholder="name@example.com" required autocomplete="email">
+                    </div>
+                    <div id="emailModalAlert" class="alert" style="display: none; font-size: 13px; margin-top: 12px; margin-bottom: 0;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="btnSubmitSendEmail">
+                        <i data-lucide="send"></i> 確認發送
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%- include('partials/ads-bottom.html') %>
 
     <%- include('partials/site-footer.html') %>
@@ -819,6 +852,7 @@
     </script>
     
     <script src="js/theme.js"></script>
+    <script src="js/lucide.min.js"></script>
     <script src="js/markdown-renderer.js"></script>
     <script src="js/app.js"></script>
     <script src="js/webmcp.js"></script>
