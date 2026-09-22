@@ -223,6 +223,12 @@ npm install
 
 # 3. 配置環境變數
 cp .env.example .env
+# 編輯 .env 填入金鑰：
+# - LLM 提供商與金鑰（必要）：LLM_PROVIDER=openai, LLM_API_KEY=sk-...
+# - Cloudflare Turnstile 人機驗證（生產環境防刷必要）：
+#   TURNSTILE_SITE_KEY=0x4AAAAAA...
+#   TURNSTILE_SECRET=0x4AAAAAA...
+#   （註：TURNSTILE_HOSTNAMES 為選填，Vercel 部署留空即可）
 
 # 4. 運行單元與整合測試 (100% Pass Rate)
 npm test
@@ -244,7 +250,7 @@ npm start
 - **安全標頭與 WebMCP 邊界**：伺服器配置 `Permissions-Policy: tools=(self)`、`X-Content-Type-Options: nosniff`、`X-Frame-Options: SAMEORIGIN`，並停用 `X-Powered-By`。
 - **防禦 DoS 與演算法邊界**：地理經緯度與時間計算皆施加嚴格 `Number.isFinite` 邊界校驗與數學取模，杜絕無限迴圈與 ReDoS 風險。
 - **Prompt Injection 防護**：對話歷史嚴格限制僅接受 `user` 與 `assistant` 角色，防止攻擊者注入 `system` / `developer` 角色覆寫提示詞。
-- **Cloudflare Turnstile 機器人防護**：網頁端「💬 詢問」與「開始解盤」端點（`/api/llm-analysis`、`/api/meihua/llm-analysis`）以及對話紀錄寄送（`/api/conversation/send-email`）全面整合 Cloudflare Turnstile 人機驗證，防範惡意機器人盜刷消耗珍貴 LLM Token 與郵件轟炸；所有程式化調用占卜問答 API（`POST /api/*-question`）維持純淨開放，外部機器人（Telegram Bot、OpenClaw、CLI）調用永遠暢通無阻。
+- **Cloudflare Turnstile 機器人防護**：全站 8 大服務網頁端「詢問」與「解盤」端點（`/api/llm-analysis`、`/api/meihua/llm-analysis`、`/api/:module/llm-analysis`）以及對話紀錄寄送（`/api/conversation/send-email`）全面整合 Cloudflare Turnstile 人機驗證，防範惡意機器人盜刷消耗珍貴 LLM Token 與郵件轟炸；所有程式化調用占卜問答 API（`POST /api/*-question`）維持純淨開放，外部機器人（Telegram Bot、OpenClaw、CLI）調用永遠暢通無阻。
 - **安全審計產物**：審計報表與機器可讀格式位於 `~/security-audit-skill/qimen/run-1/`（包含 `architecture.md`、`REPORT.md`、`FINDINGS-DETAIL.md` 與符合 JSON Schema 之 `findings.json`）。
 
 ### 🛡️ Cloudflare Turnstile 機器人防護與運維設定合約 (Turnstile Configuration Contract)
@@ -254,7 +260,7 @@ npm start
 #### 1. 防護範圍與端點劃分 (Protection Scope & Boundaries)
 | 端點類別 | 路由端點 | Turnstile 驗證 | 設計理念與外部整合說明 |
 | :--- | :--- | :---: | :--- |
-| **網頁問答與解盤 (Web UI)** | `POST /api/llm-analysis`<br>`POST /api/meihua/llm-analysis` | **強制驗證 (Protected)** | **保護 LLM Token 額度**。前端網頁訪客點擊「💬 詢問」、「開始解盤」或「🌸 梅花解卦」時，必須通過 Turnstile 人機驗證，有效杜絕爬蟲盜刷後端 LLM 額度。支援單次使用與續問自動重置。 |
+| **網頁問答與解盤 (Web UI)** | `POST /api/llm-analysis`<br>`POST /api/meihua/llm-analysis`<br>`POST /api/:module/llm-analysis`<br>*(支援 ziwei, bazi2, tarot, fengshui, yinyuan, answerbook)* | **強制驗證 (Protected)** | **保護 LLM Token 額度**。前端網頁訪客點擊「💬 詢問」、「開始解盤」、「🌸 梅花解卦」或「排盤並查看命理解讀」時，必須通過 Turnstile 人機驗證，有效杜絕爬蟲盜刷後端 LLM 額度。支援單次使用與續問自動重置。 |
 | **對話紀錄寄送** | `POST /api/conversation/send-email` | **強制驗證 (Protected)** | 防止惡意爬蟲、自動化腳本利用 Resend API 進行郵件轟炸（Email Bombing）與垃圾郵件濫發。 |
 | **外部程式化 API (Telegram / OpenClaw / CLI)** | `POST /api/qimen-question`<br>`POST /api/meihua-question`<br>`POST /api/ziwei-question`<br>`POST /api/tarot-question`<br>`POST /api/fengshui-question`<br>`POST /api/bazi2-question`<br>`POST /api/yinyuan-question`<br>`POST /api/answerbook-question` | **100% 零阻擋 (開放)** | **杜絕任何驗證碼阻礙**。外部 Telegram Bot、OpenClaw、CLI 腳本（如 `ask_qimen.js`）與第三方串接程式可直接透過 JSON 呼叫，保證 100% 暢通無阻。 |
 | **安全配置端點** | `GET /api/turnstile/config` | **公開讀取** | 回傳 `{ success: true, enabled: boolean, siteKey: string\|null }`，供前端瀏覽器與 WebMCP 客戶端動態偵測驗證狀態並載入對應金鑰。 |
