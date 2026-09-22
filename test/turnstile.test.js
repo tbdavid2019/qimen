@@ -493,6 +493,36 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
         assert.equal(qimenRes.status, 400, '應正常回傳業務參數驗證 400');
         const qimenData = await qimenRes.json();
         assert.notEqual(qimenData.code, 'TURNSTILE_TOKEN_MISSING');
+
+        // 2b. 測試 /api/meihua-question 外部 API 端點同樣維持 100% 開放
+        const meihuaApiRes = await fetch(`${baseUrl}/api/meihua-question`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+        assert.notEqual(meihuaApiRes.status, 403, '梅花 API 不得被 Turnstile 擋下');
+        assert.equal(meihuaApiRes.status, 400, '梅花 API 應回傳業務驗證 400');
+
+        // 3. 測試前端網頁問答端點 /api/llm-analysis 在啟用時強制要求 Turnstile (防護 LLM Token 遭盜刷)
+        const llmMissingRes = await fetch(`${baseUrl}/api/llm-analysis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userQuestion: '測試問題' })
+        });
+        assert.equal(llmMissingRes.status, 403, '未帶 Turnstile 憑證應被拒絕以保護 LLM Token');
+        const llmMissingData = await llmMissingRes.json();
+        assert.equal(llmMissingData.code, 'TURNSTILE_TOKEN_MISSING');
+        assert.equal(llmMissingData.field, 'turnstile');
+
+        // 3b. 測試梅花解卦端點 /api/meihua/llm-analysis 在啟用時強制要求 Turnstile
+        const meihuaLLMRes = await fetch(`${baseUrl}/api/meihua/llm-analysis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userQuestion: '測試梅花問題' })
+        });
+        assert.equal(meihuaLLMRes.status, 403, '梅花前端解卦未帶 Turnstile 應被拒絕');
+        const meihuaLLMData = await meihuaLLMRes.json();
+        assert.equal(meihuaLLMData.code, 'TURNSTILE_TOKEN_MISSING');
     } finally {
         delete process.env.TURNSTILE_FORCE_ENABLE;
         if (originalSiteKey !== undefined) {
@@ -508,4 +538,19 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
         await new Promise((resolve) => server.close(resolve));
     }
 });
+
+test('Turnstile: 前端頁面模板包含問答防護 Turnstile 元件 (index.html & meihua.html)', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const indexHtml = fs.readFileSync(path.join(__dirname, '../views/index.html'), 'utf8');
+    const meihuaHtml = fs.readFileSync(path.join(__dirname, '../views/meihua.html'), 'utf8');
+
+    // 奇門首頁問答表單包含 question-turnstile
+    assert.ok(indexHtml.includes("widgetId: 'question-turnstile'"), 'index.html 必須包含 question-turnstile');
+    assert.ok(indexHtml.includes("action: 'llm_analysis'"), 'index.html 必須綁定 llm_analysis 操作');
+
+    // 梅花易數問答表單包含 meihua-turnstile
+    assert.ok(meihuaHtml.includes("widgetId: 'meihua-turnstile'"), 'meihua.html 必須包含 meihua-turnstile');
+});
+
 

@@ -244,18 +244,19 @@ npm start
 - **安全標頭與 WebMCP 邊界**：伺服器配置 `Permissions-Policy: tools=(self)`、`X-Content-Type-Options: nosniff`、`X-Frame-Options: SAMEORIGIN`，並停用 `X-Powered-By`。
 - **防禦 DoS 與演算法邊界**：地理經緯度與時間計算皆施加嚴格 `Number.isFinite` 邊界校驗與數學取模，杜絕無限迴圈與 ReDoS 風險。
 - **Prompt Injection 防護**：對話歷史嚴格限制僅接受 `user` 與 `assistant` 角色，防止攻擊者注入 `system` / `developer` 角色覆寫提示詞。
-- **Cloudflare Turnstile 機器人防護**：對話紀錄寄送（`/api/conversation/send-email`）整合 Cloudflare Turnstile Managed 人機驗證，防範惡意郵件轟炸與垃圾郵件濫發；所有核心占卜問答 API（`*-question`）維持開放純淨架構，不干擾外部機器人（如 Telegram Bot、OpenClaw）調用。
+- **Cloudflare Turnstile 機器人防護**：網頁端「💬 詢問」與「開始解盤」端點（`/api/llm-analysis`、`/api/meihua/llm-analysis`）以及對話紀錄寄送（`/api/conversation/send-email`）全面整合 Cloudflare Turnstile 人機驗證，防範惡意機器人盜刷消耗珍貴 LLM Token 與郵件轟炸；所有程式化調用占卜問答 API（`POST /api/*-question`）維持純淨開放，外部機器人（Telegram Bot、OpenClaw、CLI）調用永遠暢通無阻。
 - **安全審計產物**：審計報表與機器可讀格式位於 `~/security-audit-skill/qimen/run-1/`（包含 `architecture.md`、`REPORT.md`、`FINDINGS-DETAIL.md` 與符合 JSON Schema 之 `findings.json`）。
 
 ### 🛡️ Cloudflare Turnstile 機器人防護與運維設定合約 (Turnstile Configuration Contract)
 
-系統於郵件導出與對話寄送端點實作了標準 Cloudflare Turnstile Managed 人機安全驗證，並遵循 **方案 A：精準防護高風險郵件寄送，核心占卜問答 API 全面開放** 的架構原則：
+系統於網頁端 AI 解盤問答與郵件導出端點實作了標準 Cloudflare Turnstile Managed 人機安全驗證，並貫徹 **「網頁詢問防刷保護 LLM Token、外部 API 直通零阻礙」** 的架構合約：
 
 #### 1. 防護範圍與端點劃分 (Protection Scope & Boundaries)
-| 端點類別 | 路由範例 | Turnstile 驗證 | 設計理念與外部整合說明 |
+| 端點類別 | 路由端點 | Turnstile 驗證 | 設計理念與外部整合說明 |
 | :--- | :--- | :---: | :--- |
-| **對話紀錄寄送** | `POST /api/conversation/send-email` | **強制驗證** | 防止惡意爬蟲、自動化腳本利用 Resend API 進行郵件轟炸（Email Bombing）與垃圾郵件濫發。 |
-| **占卜問答 API** | `POST /api/qimen-question`<br>`POST /api/ziwei-question`<br>`POST /api/tarot-question`<br>`POST /api/fengshui-question`<br>`POST /api/bazi2-question`<br>`POST /api/yinyuan-question`<br>`POST /api/answerbook-question`<br>`POST /api/llm-analysis` | **零阻擋 (開放)** | **杜絕任何驗證碼阻礙**。外部 Telegram Bot、OpenClaw、CLI 腳本與第三方串接程式可直接透過 JSON 呼叫，保證 100% 暢通無阻。 |
+| **網頁問答與解盤 (Web UI)** | `POST /api/llm-analysis`<br>`POST /api/meihua/llm-analysis` | **強制驗證 (Protected)** | **保護 LLM Token 額度**。前端網頁訪客點擊「💬 詢問」、「開始解盤」或「🌸 梅花解卦」時，必須通過 Turnstile 人機驗證，有效杜絕爬蟲盜刷後端 LLM 額度。支援單次使用與續問自動重置。 |
+| **對話紀錄寄送** | `POST /api/conversation/send-email` | **強制驗證 (Protected)** | 防止惡意爬蟲、自動化腳本利用 Resend API 進行郵件轟炸（Email Bombing）與垃圾郵件濫發。 |
+| **外部程式化 API (Telegram / OpenClaw / CLI)** | `POST /api/qimen-question`<br>`POST /api/meihua-question`<br>`POST /api/ziwei-question`<br>`POST /api/tarot-question`<br>`POST /api/fengshui-question`<br>`POST /api/bazi2-question`<br>`POST /api/yinyuan-question`<br>`POST /api/answerbook-question` | **100% 零阻擋 (開放)** | **杜絕任何驗證碼阻礙**。外部 Telegram Bot、OpenClaw、CLI 腳本（如 `ask_qimen.js`）與第三方串接程式可直接透過 JSON 呼叫，保證 100% 暢通無阻。 |
 | **安全配置端點** | `GET /api/turnstile/config` | **公開讀取** | 回傳 `{ success: true, enabled: boolean, siteKey: string\|null }`，供前端瀏覽器與 WebMCP 客戶端動態偵測驗證狀態並載入對應金鑰。 |
 
 #### 2. 環境變數規範 (Environment Variables Reference)
@@ -268,15 +269,15 @@ npm start
 | `TURNSTILE_HOSTNAMES` | 選填 | 空 (不限主機) | 允許之來源網域名稱白名單（逗號分隔，例如 `qi.david888.com,localhost,127.0.0.1`）。 |
 | `TURNSTILE_BYPASS_TOKEN`| 選填 | 空 (未配置) | 專屬內部授權旁路權杖。自動化 CI/CD 或內部整合測試可於 HTTP Request 帶上標頭 `x-turnstile-bypass: <TOKEN>` 直通跳過驗證。 |
 
-#### 3. 安全防禦與合約驗證機制 (Security & Verification Mechanics)
-- **嚴格 Fail-Closed 策略**：
-  若設定了 `TURNSTILE_FORCE_ENABLE=true` 但缺少金鑰，或環境中**僅配置單一金鑰**（如設定了 `TURNSTILE_SECRET` 卻遺漏 `TURNSTILE_SITE_KEY`，或反之），中介層嚴格執行 Fail-Closed 策略，主動阻斷請求並回傳 HTTP 503 `TURNSTILE_CONFIG_INCOMPLETE`，絕不因設定失誤而靜默門戶大開。包含 `xxxxxxxx` 範例佔位符號時自動判定為無效金鑰。
+#### 3. 關鍵安全檢驗機制
+- **嚴格 Fail-Closed 防禦**：
+  若設定不完整（例如設定了 `TURNSTILE_SECRET` 卻漏設 `TURNSTILE_SITE_KEY`），中介層嚴格返回 HTTP 503 阻止連線，絕不靜默略過安全防線。
 - **動態主機綁定校驗 (Host Binding Validation)**：
   中介層將當前 HTTP 請求的主機名稱（`req.hostname` / `Host` Header）傳入驗證器，嚴格比對 Cloudflare `siteverify` 回傳之 `hostname`。防止攻擊者於 `localhost` 本機解題獲取 Token 後重播（Replay）至生產環境 `qi.david888.com`。
 - **操作標籤一致性 (Action Validation)**：
-  驗證權杖必須綁定 `action: "send_email"`，杜絕跨表單或跨操作之 Token 挪用。
+  驗證權杖必須綁定 `action: "llm_analysis"`、`"qimen_question"`、`"meihua_question"` 或 `"send_email"`，杜絕跨表單或跨操作之 Token 挪用。
 - **權杖單次使用與即時清理 (Single-use Token & Instant Reset)**：
-  無論郵件發送成功或失敗，前端與 WebMCP 均於 `finally` 區塊立即重置 Turnstile Widget 並清除快取 Token，確保單次驗證權杖絕不重複發送。
+  無論問答解盤成功或失敗，前端與 WebMCP 均於 `complete`/`finally` 區塊立即重置 Turnstile Widget 並清除快取 Token，確保單次驗證權杖絕不重複發送，並讓續問流暢無縫。
 
 ---
 

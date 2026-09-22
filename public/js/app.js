@@ -177,6 +177,21 @@ $(document).ready(function() {
         var qimenData = window.qimenData || {};
         var timeParams = getClientTimeParams();
 
+        // 驗證 Turnstile 人機驗證 (若前端有渲染且啟用)
+        var $qTurnstile = $('#question-turnstile');
+        var questionToken = currentQuestionTurnstileToken;
+        if (!questionToken && window.turnstile && questionTurnstileWidgetId !== null) {
+            try {
+                questionToken = window.turnstile.getResponse(questionTurnstileWidgetId);
+            } catch (e) {}
+        }
+        if (!questionToken && $qTurnstile.length && $qTurnstile.attr('data-sitekey')) {
+            alert('請先勾選並完成上方的人機安全驗證 (Cloudflare Turnstile) 後再點擊開始解盤！');
+            $('#llmLoadingPanel').hide();
+            $('#llmInitialPanel').show();
+            return;
+        }
+
         // 發送請求到 LLM API
         $.ajax({
             url: '/api/llm-analysis',
@@ -190,7 +205,9 @@ $(document).ready(function() {
                 timePrecisionMode: timeParams.timePrecisionMode,
                 userQuestion: '',
                 purpose: '綜合',
-                lang: $('html').attr('lang') || 'zh-tw'
+                lang: $('html').attr('lang') || 'zh-tw',
+                'cf-turnstile-response': questionToken || undefined,
+                turnstileToken: questionToken || undefined
             }),
             success: function(response) {
                 $('#llmLoadingPanel').hide();
@@ -221,8 +238,15 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 $('#llmLoadingPanel').hide();
-                $('#llmErrorContent').html('網路錯誤：' + error);
+                var errorMsg = error;
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMsg = xhr.responseJSON.error;
+                }
+                $('#llmErrorContent').html('解盤失敗：' + errorMsg);
                 $('#llmErrorPanel').show();
+            },
+            complete: function() {
+                resetQuestionTurnstile();
             }
         });
     }
@@ -413,7 +437,27 @@ $(document).ready(function() {
 
         var selectedPurpose = $('#qimenPurpose').val() || $('#purpose').val() || '綜合';
 
-        // 發送請求到 LLM API（帶上對話歷史）
+        // 驗證 Turnstile 人機驗證 (若前端有渲染且啟用)
+        var $qTurnstile = $('#question-turnstile');
+        var questionToken = currentQuestionTurnstileToken;
+        if (!questionToken && window.turnstile && questionTurnstileWidgetId !== null) {
+            try {
+                questionToken = window.turnstile.getResponse(questionTurnstileWidgetId);
+            } catch (e) {}
+        }
+        if (!questionToken && $qTurnstile.length && $qTurnstile.attr('data-sitekey')) {
+            alert('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊詢問！');
+            $button.prop('disabled', false).html('<i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 詢問');
+            $('#clearConversation').prop('disabled', false);
+            if ($('#emailConversation').length) $('#emailConversation').prop('disabled', false);
+            $responseDiv.hide();
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
+            return;
+        }
+
+        // 發送請求到 LLM API（帶上對話歷史與安全權杖）
         $.ajax({
             url: '/api/llm-analysis',
             type: 'POST',
@@ -427,7 +471,9 @@ $(document).ready(function() {
                 userQuestion: question,
                 conversationHistory: conversationHistory,
                 purpose: selectedPurpose,
-                lang: $('html').attr('lang') || 'zh-tw'
+                lang: $('html').attr('lang') || 'zh-tw',
+                'cf-turnstile-response': questionToken || undefined,
+                turnstileToken: questionToken || undefined
             }),
             success: function(response) {
                 if (response.success) {
@@ -456,9 +502,14 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                $responseContent.html('<div class="alert alert-danger">網路錯誤，請稍後再試：' + error + '</div>');
+                var errorMsg = error;
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMsg = xhr.responseJSON.error;
+                }
+                $responseContent.html('<div class="alert alert-danger">解讀失敗：' + errorMsg + '</div>');
             },
             complete: function() {
+                resetQuestionTurnstile();
                 $button.prop('disabled', false).html('<i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 詢問');
                 $('#clearConversation').prop('disabled', false);
                 if ($('#emailConversation').length) $('#emailConversation').prop('disabled', false);
@@ -635,6 +686,81 @@ $(document).ready(function() {
     window.resetEmailTurnstile = resetEmailTurnstile;
 
     $('#emailConversationModal').on('shown.bs.modal', renderEmailTurnstile);
+
+    // 奇門問答 / 解盤 Cloudflare Turnstile 驗證元件
+    var questionTurnstileWidgetId = null;
+    var currentQuestionTurnstileToken = '';
+    var isQuestionTurnstileSolving = false;
+    var questionTurnstileRenderRetries = 0;
+
+    function renderQuestionTurnstile() {
+        var container = document.getElementById('question-turnstile');
+        if (!container) return;
+        var sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript(function(err) {
+            if (err) {
+                console.warn('[Turnstile] Question widget failed to load:', err);
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (questionTurnstileRenderRetries < 20) {
+                    questionTurnstileRenderRetries++;
+                    setTimeout(renderQuestionTurnstile, 250);
+                }
+                return;
+            }
+            questionTurnstileRenderRetries = 0;
+            if (questionTurnstileWidgetId === null) {
+                try {
+                    var action = container.getAttribute('data-action') || 'llm_analysis';
+                    isQuestionTurnstileSolving = true;
+                    questionTurnstileWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: 'auto',
+                        size: 'flexible',
+                        callback: function(token) {
+                            currentQuestionTurnstileToken = token;
+                            isQuestionTurnstileSolving = false;
+                        },
+                        'expired-callback': function() {
+                            currentQuestionTurnstileToken = '';
+                            isQuestionTurnstileSolving = false;
+                        },
+                        'error-callback': function() {
+                            currentQuestionTurnstileToken = '';
+                            isQuestionTurnstileSolving = false;
+                        }
+                    });
+                    window.questionTurnstileWidgetId = questionTurnstileWidgetId;
+                } catch (e) {
+                    console.warn('[Turnstile] Question widget render error:', e);
+                    isQuestionTurnstileSolving = false;
+                }
+            }
+        });
+    }
+
+    function resetQuestionTurnstile() {
+        currentQuestionTurnstileToken = '';
+        isQuestionTurnstileSolving = false;
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            try {
+                if (questionTurnstileWidgetId !== null) {
+                    window.turnstile.reset(questionTurnstileWidgetId);
+                } else {
+                    var container = document.getElementById('question-turnstile');
+                    if (container) window.turnstile.reset(container);
+                }
+            } catch (e) {}
+        }
+    }
+    window.resetQuestionTurnstile = resetQuestionTurnstile;
+
+    // 頁面載入時若有 #question-turnstile 立即初始化
+    renderQuestionTurnstile();
 
     // 發送對話紀錄 Email
     $('#btnSubmitSendEmail').click(function() {

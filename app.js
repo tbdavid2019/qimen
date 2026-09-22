@@ -1089,7 +1089,7 @@ app.post('/api/meihua/qigua', (req, res) => {
 });
 
 // LLM 解盤 API
-app.post('/api/llm-analysis', async (req, res) => {
+app.post('/api/llm-analysis', turnstileMiddleware({ action: ['llm_analysis', 'qimen_question'] }), async (req, res) => {
     let resolvedQimenData = null;
     try {
         const {
@@ -1368,7 +1368,7 @@ app.post('/api/qimen-question', async (req, res) => {
 });
 
 // 梅花易數 LLM 解卦 API
-app.post('/api/meihua/llm-analysis', async (req, res) => {
+app.post('/api/meihua/llm-analysis', turnstileMiddleware({ action: ['llm_analysis', 'meihua_question'] }), async (req, res) => {
     try {
         const {
             meihuaData,

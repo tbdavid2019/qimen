@@ -117,6 +117,9 @@
                     <textarea id="meihuaQuestion" name="question" class="form-control" rows="4"
                               toolparamdescription="針對當前卦象想詢問的具體問題或事項"
                               placeholder="例如：這個卦象對我的事業有什麼提醒？"></textarea>
+                    <div id="meihuaTurnstileWrapper" style="margin-top: 10px; margin-bottom: 6px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'meihua-turnstile', action: 'llm_analysis', explicit: true }) %>
+                    </div>
                     <div style="margin-top: 10px;">
                         <button id="meihuaAsk" type="submit" class="btn btn-primary">
                             🌸 梅花解卦

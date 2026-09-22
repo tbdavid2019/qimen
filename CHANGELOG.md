@@ -4,22 +4,20 @@
 
 ## [2026-09-22]
 
-### 🛡️ Cloudflare Turnstile 機器人防護整合（方案 A：精準防護郵件發送，API 全面開放無阻）
+### 🛡️ Cloudflare Turnstile 機器人防護升級：網頁「詢問」與「解盤」Token 防刷防護，外部 API 全面純淨開放
 
-- **精準邊界防護與 Telegram / OpenClaw 零干擾保證 (`lib/turnstile.js`, `app.js`, `test/turnstile.test.js`)**：
-  - **核心業務 API 完全開放**：所有占卜問答與排盤 API（`/api/*-question`、`/api/*-llm-analysis` 等）維持 100% 開放與零驗證碼阻礙，確保 Telegram Bot、OpenClaw、CLI 腳本與自動化程式永遠暢行無阻，杜絕 403 誤傷。
-  - **郵件寄送端點防護 (`POST /api/conversation/send-email`)**：針對對話紀錄寄送 API 整合 Cloudflare Turnstile `siteverify` 伺服端校驗，有效防範惡意機器人郵件轟炸（Email Bombing）與垃圾郵件濫發。
-  - **設定不完整嚴格 Fail-Closed 防禦 (`lib/turnstile.js`, `app.js`)**：若營運人員或部署腳本僅設定 `TURNSTILE_SECRET` 卻遺漏 `TURNSTILE_SITE_KEY`（或反之），中介層嚴格執行 Fail-Closed 拒絕連線 (503 `TURNSTILE_CONFIG_INCOMPLETE`)，杜絕因部分環境變數遺漏導致防護端點靜默旁路被濫發郵件；並過濾 `xxxxxxxx` 佔位符號。
-  - **智慧降級與本機測試豁免**：未設定 `TURNSTILE_SECRET`、本機開發環境或執行測試（`NODE_ENV=test`）時，系統自動優雅 pass；亦支援 `x-turnstile-bypass` 授權標頭。
-- **前端無感人機驗證、按需載入與動態重置 (`views/partials/turnstile-widget.html`, `views/index.html`, `public/js/app.js`, `public/js/webmcp.js`, `public/css/style-new.css`)**：
-  - **按需載入（Zero Script Bloat）**：將 Turnstile 腳本移出全局廣告頭部（`ads-head.html`），僅在含有郵件彈窗的頁面（`views/index.html`）與按需動態加載，確保八字、紫微、風水、塔羅等其他 7 大服務頁面維持零第三方外連與極速性能。
-  - **寄信彈窗顯式掛載與提早提交防禦**：針對初始隱藏的對話紀錄 Modal (`#emailConversationModal`)，採用顯式掛載避免容器隱藏時自動渲染失敗；於 `shown.bs.modal` 事件觸發時精準調用 `turnstile.render`。若使用者在驗證就緒前快速點擊發送，前端進行友善警告攔截，防止發送空 Token 觸發 403 錯誤與打斷挑戰進度。
-  - **WebMCP `send_conversation_email` 完整對齊與全站註冊**：擴充 WebMCP 工具 inputSchema 支援 `turnstileToken` 參數；在 Chrome `modelContext` 註冊流中將 `send_conversation_email` 納入所有頁面路由註冊清單。當 AI 調用時主動開啟彈窗觸發挑戰並等待解算，跨頁面（含紫微、八字、風水等）支援動態容器掛載與安全清理回收，徹底根除直接調用 403 失敗問題與重複調用無效等待。
-  - **配置端點**：新增 `GET /api/turnstile/config` 提供前端即時讀取 Turnstile 狀態與 Site Key。
-  - **高質感 UI 適配**：新增 `.turnstile-container` 樣式，支援 Dark Mode 自動切換與無縫置中排版。
-- **自動化測試全數通過**：
-  - 新增 `test/turnstile.test.js` 與 `test/webmcp.test.js` 擴充測試，完整覆蓋驗證邏輯、Hostname 白名單、Action 標籤、Replay 過期偵測、Bypass 機制、Fail-Closed 配置防禦、方案 A API 零干擾保證（沙盒環境容錯支援）與 WebMCP 工具驗證契約。
-  - 全套測試 208 項 100% 通過。
+- **網頁端「詢問」與「解盤」LLM Token 防刷防護 (`views/index.html`, `views/meihua.html`, `public/js/app.js`, `public/js/meihua.js`, `app.js`)**：
+  - **奇門遁甲問答與解盤防護**：於首頁 `#qimenQuestionForm` 獨立掛載 `#question-turnstile` 安全元件，前端點擊「💬 詢問」或「開始解盤」時主動校驗 Turnstile 狀態，將憑證注入 `/api/llm-analysis`。成功或失敗後自動調用 `turnstile.reset()`，完美支援流暢續問。
+  - **梅花易數解卦防護**：於 `#meihuaQuestionForm` 掛載 `#meihua-turnstile`，前端點擊「🌸 梅花解卦」時強制校驗，發送至 `/api/meihua/llm-analysis`。
+  - **後端端點中介層保護**：針對 `/api/llm-analysis` 與 `/api/meihua/llm-analysis` 施加 `turnstileMiddleware` 嚴格校驗，有效防範惡意爬蟲無節制調用消耗使用者的珍貴 LLM Token 額度。
+- **外部 API 100% 開放無阻保證 (`app.js`, `test/turnstile.test.js`)**：
+  - 所有供 Telegram Bot、OpenClaw、CLI 腳本（`ask_qimen.js` 等）與第三方調用的專屬 API 端點（`POST /api/qimen-question`、`POST /api/meihua-question`、`POST /api/ziwei-question`、`POST /api/tarot-question`、`POST /api/fengshui-question`、`POST /api/bazi2-question`、`POST /api/yinyuan-question`、`POST /api/answerbook-question`）**絕不掛載 Turnstile**，徹底杜絕 403 誤傷，確保自動化調用永遠暢通無阻。
+- **WebMCP 跨工具對齊 (`public/js/webmcp.js`)**：
+  - `qimen_question` 與 `meihua_question` WebMCP 工具擴充 `turnstileToken` 輸入參數，並支援自動從 DOM 與全域 Widget 提取安全憑證及執行後自動重置。
+- **Google AdSense 全站埋設狀態確認**：
+  - 確認全站 8 大服務頁面（奇門遁甲、梅花易數、紫微斗數、生辰八字、塔羅、風水、月老姻緣、解答之書）均已完整埋入 Google AdSense 代碼（發布商 ID：`ca-pub-5210017545918559`），包含 `ads-head.html` 全局 SDK 載入、`ads-mobile.html` 行動版專屬橫幅與 `ads-bottom.html` 頁底響應式廣告單元。
+- **自動化測試全面覆蓋**：
+  - 擴充 `test/turnstile.test.js`，包含 `/api/llm-analysis` 與 `/api/meihua/llm-analysis` Token 阻擋測試、`*-question` 端點開放驗證，以及模板靜態元件完整性檢驗。全套測試 220 項 100% 通過。
 
 ## [2026-09-21]
 

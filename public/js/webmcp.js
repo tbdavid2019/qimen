@@ -48,6 +48,154 @@
 	}
 
 	/**
+	 * Helper to ensure a valid Turnstile token is acquired for WebMCP tool execution.
+	 * If token is already present or Turnstile is disabled, resolves immediately.
+	 * If missing, dynamically awaits challenge resolution or polls for completed token.
+	 */
+	async function acquireTurnstileToken({
+		containerId,
+		action = "llm_analysis",
+		getWidgetId,
+		setWidgetId,
+		explicitToken
+	} = {}) {
+		let turnstileToken = explicitToken ? String(explicitToken).trim() : "";
+		if (turnstileToken) return turnstileToken;
+
+		let container = typeof document !== "undefined" ? document.getElementById(containerId) : null;
+		let sitekey = container?.getAttribute("data-sitekey");
+
+		if (!sitekey && typeof fetch === "function") {
+			try {
+				const cfgRes = await fetch("/api/turnstile/config");
+				const cfg = await cfgRes.json();
+				if (cfg?.enabled && cfg?.siteKey) {
+					sitekey = cfg.siteKey;
+				}
+			} catch (e) {}
+		}
+
+		if (!sitekey) return "";
+
+		const widgetId = typeof getWidgetId === "function" ? getWidgetId() : null;
+		if (typeof window !== "undefined" && window.turnstile && typeof window.turnstile.getResponse === "function") {
+			try {
+				if (widgetId !== undefined && widgetId !== null) {
+					turnstileToken = window.turnstile.getResponse(widgetId);
+				} else if (container) {
+					turnstileToken = window.turnstile.getResponse(container);
+				}
+			} catch (e) {}
+		}
+		if (!turnstileToken && container) {
+			const existingInput = container.querySelector('input[name="cf-turnstile-response"]');
+			if (existingInput?.value) {
+				turnstileToken = existingInput.value;
+			}
+		}
+		if (turnstileToken) return turnstileToken;
+
+		if (typeof window !== "undefined") {
+			if (!window.turnstile && typeof document !== "undefined") {
+				await new Promise((resolve, reject) => {
+					if (window.turnstile) return resolve();
+					const waitForTurnstile = (timeoutMs, onDone) => {
+						const start = Date.now();
+						const timer = setInterval(() => {
+							if (window.turnstile && typeof window.turnstile.render === "function") {
+								clearInterval(timer);
+								onDone(true);
+							} else if (Date.now() - start > timeoutMs) {
+								clearInterval(timer);
+								onDone(false);
+							}
+						}, 100);
+					};
+					const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+					if (existing) {
+						const onReady = () => {
+							waitForTurnstile(4000, (ready) => {
+								if (ready) resolve();
+								else reject(new Error("Cloudflare Turnstile 驗證元件初始化超時，請於網頁完成驗證或提供 turnstileToken。"));
+							});
+						};
+						if (existing.complete || window.turnstile) onReady();
+						else {
+							existing.addEventListener("load", onReady);
+							existing.addEventListener("error", () => reject(new Error("無法載入 Cloudflare Turnstile 安全驗證元件。")));
+						}
+						return;
+					}
+					const script = document.createElement("script");
+					script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+					script.async = true;
+					script.defer = true;
+					script.onload = () => {
+						waitForTurnstile(4000, (ready) => {
+							if (ready) resolve();
+							else reject(new Error("Cloudflare Turnstile 驗證元件初始化超時，請於網頁完成驗證或提供 turnstileToken。"));
+						});
+					};
+					script.onerror = () => reject(new Error("無法載入 Cloudflare Turnstile 安全驗證元件。"));
+					document.head.appendChild(script);
+				});
+			}
+
+			let activeWidgetId = typeof getWidgetId === "function" ? getWidgetId() : null;
+			if ((activeWidgetId === undefined || activeWidgetId === null) && container && window.turnstile) {
+				await new Promise((resolve) => {
+					try {
+						activeWidgetId = window.turnstile.render(container, {
+							sitekey: sitekey,
+							action: action,
+							theme: "auto",
+							size: "flexible",
+							callback: (t) => {
+								turnstileToken = t;
+								resolve();
+							},
+							"expired-callback": () => { turnstileToken = ""; },
+							"error-callback": () => { turnstileToken = ""; resolve(); }
+						});
+						if (typeof setWidgetId === "function") setWidgetId(activeWidgetId);
+					} catch (e) {
+						resolve();
+					}
+				});
+			}
+
+			if (!turnstileToken) {
+				await new Promise((resolve) => {
+					const start = Date.now();
+					const poll = setInterval(() => {
+						try {
+							const wId = typeof getWidgetId === "function" ? getWidgetId() : activeWidgetId;
+							const t = wId !== undefined && wId !== null
+								? window.turnstile.getResponse(wId)
+								: (container ? window.turnstile.getResponse(container) : "");
+							if (t) {
+								turnstileToken = t;
+								clearInterval(poll);
+								resolve();
+								return;
+							}
+						} catch (e) {}
+						if (Date.now() - start > 6000) {
+							clearInterval(poll);
+							resolve();
+						}
+					}, 150);
+				});
+			}
+		}
+
+		if (!turnstileToken) {
+			throw new Error("請先在瀏覽器畫面中完成 Cloudflare Turnstile 人機驗證挑戰，或於參數中提供有效的 turnstileToken。");
+		}
+		return turnstileToken;
+	}
+
+	/**
 	 * Tool Definitions conforming to Chrome WebMCP Specifications
 	 */
 	const toolDefinitions = {
@@ -172,7 +320,11 @@
 					question: { type: "string", description: "想針對目前盤面詢問的具體問題" },
 					purpose: { type: "string", enum: ["綜合", "求財", "事業", "感情", "考試", "健康", "出行", "官司"], description: "占問事項類別" },
 					conversationHistory: { type: "array", description: "可選的續問對話歷史" },
-					lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" }
+					lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+					turnstileToken: {
+						type: "string",
+						description: "Cloudflare Turnstile 人機驗證權杖 (cf-turnstile-response)。可選；若頁面啟用驗證，工具會嘗試自 DOM 或全域中取得。"
+					}
 				},
 				required: ["question"]
 			},
@@ -180,6 +332,16 @@
 			execute: async (args) => {
 				const question = args?.question ? String(args.question).trim() : "";
 				if (!question) throw new Error("請提供問題內容 (question)");
+
+				const explicitToken = args?.turnstileToken || (args?.["cf-turnstile-response"] ? String(args["cf-turnstile-response"]).trim() : "");
+				const turnstileToken = await acquireTurnstileToken({
+					containerId: "question-turnstile",
+					action: "llm_analysis",
+					getWidgetId: () => typeof window !== "undefined" ? window.questionTurnstileWidgetId : null,
+					setWidgetId: (id) => { if (typeof window !== "undefined") window.questionTurnstileWidgetId = id; },
+					explicitToken
+				});
+
 				const payload = {
 					qimenData: typeof window !== "undefined" ? window.qimenData || {} : {},
 					userQuestion: question,
@@ -187,13 +349,25 @@
 					conversationHistory: args?.conversationHistory || [],
 					lang: args?.lang || "zh-tw"
 				};
-				const res = await fetch("/api/llm-analysis", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload)
-				});
-				const data = await res.json();
-				if (!data.success) throw new Error(data.message || data.error || "奇門解讀失敗");
+				if (turnstileToken) {
+					payload["cf-turnstile-response"] = turnstileToken;
+					payload.turnstileToken = turnstileToken;
+				}
+
+				let data;
+				try {
+					const res = await fetch("/api/llm-analysis", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(payload)
+					});
+					data = await res.json();
+				} finally {
+					if (typeof window !== "undefined" && typeof window.resetQuestionTurnstile === "function") {
+						try { window.resetQuestionTurnstile(); } catch (e) {}
+					}
+				}
+				if (!data?.success) throw new Error(data?.message || data?.error || "奇門解讀失敗");
 				const answer = data.analysis || data.answer || "";
 				if (typeof window !== "undefined") {
 					if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
@@ -932,7 +1106,11 @@
 					question: { type: "string", description: "想針對目前卦象詢問的具體問題" },
 					purpose: { type: "string", enum: ["綜合", "求財", "事業", "感情", "考試", "健康", "出行", "官司"], description: "占問事項類別" },
 					conversationHistory: { type: "array", description: "可選的續問對話歷史" },
-					lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" }
+					lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+					turnstileToken: {
+						type: "string",
+						description: "Cloudflare Turnstile 人機驗證權杖 (cf-turnstile-response)。可選；若頁面啟用驗證，工具會嘗試自 DOM 或全域中取得。"
+					}
 				},
 				required: ["question"]
 			},
@@ -940,6 +1118,15 @@
 			execute: async (args) => {
 				const question = args?.question ? String(args.question).trim() : "";
 				if (!question) throw new Error("請提供問題內容 (question)");
+				const explicitToken = args?.turnstileToken || (args?.["cf-turnstile-response"] ? String(args["cf-turnstile-response"]).trim() : "");
+				const turnstileToken = await acquireTurnstileToken({
+					containerId: "meihua-turnstile",
+					action: "llm_analysis",
+					getWidgetId: () => typeof window !== "undefined" ? window.meihuaTurnstileWidgetId : null,
+					setWidgetId: (id) => { if (typeof window !== "undefined") window.meihuaTurnstileWidgetId = id; },
+					explicitToken
+				});
+
 				let meihuaData = typeof window !== "undefined" ? window.currentMeihuaData : null;
 				if (!meihuaData) {
 					const qiguaRes = await fetch("/api/meihua/qigua", {
@@ -955,19 +1142,33 @@
 						if (typeof window.updateResult === "function") window.updateResult(meihuaData);
 					}
 				}
-				const res = await fetch("/api/meihua/llm-analysis", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						meihuaData,
-						userQuestion: question,
-						purpose: args?.purpose || "綜合",
-						conversationHistory: args?.conversationHistory || [],
-						lang: args?.lang || "zh-tw"
-					})
-				});
-				const data = await res.json();
-				if (!data.success) throw new Error(data.message || data.error || "梅花解讀失敗");
+
+				const payload = {
+					meihuaData,
+					userQuestion: question,
+					purpose: args?.purpose || "綜合",
+					conversationHistory: args?.conversationHistory || [],
+					lang: args?.lang || "zh-tw"
+				};
+				if (turnstileToken) {
+					payload["cf-turnstile-response"] = turnstileToken;
+					payload.turnstileToken = turnstileToken;
+				}
+
+				let data;
+				try {
+					const res = await fetch("/api/meihua/llm-analysis", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(payload)
+					});
+					data = await res.json();
+				} finally {
+					if (typeof window !== "undefined" && typeof window.resetMeihuaTurnstile === "function") {
+						try { window.resetMeihuaTurnstile(); } catch (e) {}
+					}
+				}
+				if (!data?.success) throw new Error(data?.message || data?.error || "梅花解讀失敗");
 				const answer = data.analysis || data.answer || "";
 				if (typeof window !== "undefined") {
 					if (!Array.isArray(window.meihuaConversationHistory)) window.meihuaConversationHistory = [];

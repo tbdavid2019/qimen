@@ -346,6 +346,92 @@ function bindMeihuaEvents() {
     }
 
     var askBtn = document.getElementById('meihuaAsk');
+    // 梅花解卦 Cloudflare Turnstile 人機驗證
+    var meihuaTurnstileWidgetId = null;
+    var currentMeihuaTurnstileToken = '';
+    var meihuaTurnstileRenderRetries = 0;
+
+    function loadTurnstileScript(callback) {
+        if (typeof window.turnstile !== 'undefined' && typeof window.turnstile.render === 'function') {
+            return callback(null);
+        }
+        var existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+        if (existing) {
+            existing.addEventListener('load', function() { callback(null); });
+            existing.addEventListener('error', function(err) { callback(err || new Error('Turnstile script failed to load')); });
+            return;
+        }
+        var script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        script.onload = function() { callback(null); };
+        script.onerror = function(err) { callback(err || new Error('Turnstile script failed to load')); };
+        document.head.appendChild(script);
+    }
+
+    function renderMeihuaTurnstile() {
+        var container = document.getElementById('meihua-turnstile');
+        if (!container) return;
+        var sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript(function(err) {
+            if (err) {
+                console.warn('[Turnstile] Meihua widget failed to load:', err);
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (meihuaTurnstileRenderRetries < 20) {
+                    meihuaTurnstileRenderRetries++;
+                    setTimeout(renderMeihuaTurnstile, 250);
+                }
+                return;
+            }
+            meihuaTurnstileRenderRetries = 0;
+            if (meihuaTurnstileWidgetId === null) {
+                try {
+                    var action = container.getAttribute('data-action') || 'llm_analysis';
+                    meihuaTurnstileWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: 'auto',
+                        size: 'flexible',
+                        callback: function(token) {
+                            currentMeihuaTurnstileToken = token;
+                        },
+                        'expired-callback': function() {
+                            currentMeihuaTurnstileToken = '';
+                        },
+                        'error-callback': function() {
+                            currentMeihuaTurnstileToken = '';
+                        }
+                    });
+                    window.meihuaTurnstileWidgetId = meihuaTurnstileWidgetId;
+                } catch (e) {
+                    console.warn('[Turnstile] Meihua render error:', e);
+                }
+            }
+        });
+    }
+
+    function resetMeihuaTurnstile() {
+        currentMeihuaTurnstileToken = '';
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            try {
+                if (meihuaTurnstileWidgetId !== null) {
+                    window.turnstile.reset(meihuaTurnstileWidgetId);
+                } else {
+                    var container = document.getElementById('meihua-turnstile');
+                    if (container) window.turnstile.reset(container);
+                }
+            } catch (e) {}
+        }
+    }
+    window.resetMeihuaTurnstile = resetMeihuaTurnstile;
+
+    renderMeihuaTurnstile();
+
     if (askBtn) {
         askBtn.addEventListener('click', async function() {
             if (!window.enableLLM) {
@@ -369,6 +455,19 @@ function bindMeihuaEvents() {
                 return;
             }
 
+            // 驗證 Turnstile 人機驗證 (若前端有渲染且啟用)
+            var container = document.getElementById('meihua-turnstile');
+            var mToken = currentMeihuaTurnstileToken;
+            if (!mToken && window.turnstile && meihuaTurnstileWidgetId !== null) {
+                try {
+                    mToken = window.turnstile.getResponse(meihuaTurnstileWidgetId);
+                } catch (e) {}
+            }
+            if (!mToken && container && container.getAttribute('data-sitekey')) {
+                alert('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊梅花解卦！');
+                return;
+            }
+
             askBtn.disabled = true;
             askBtn.textContent = '分析中...';
             document.getElementById('meihuaClear').disabled = true;
@@ -382,7 +481,9 @@ function bindMeihuaEvents() {
                         userQuestion: question,
                         conversationHistory: window.meihuaConversationHistory || [],
                         purpose: '綜合',
-                        lang: 'zh-tw'
+                        lang: 'zh-tw',
+                        'cf-turnstile-response': mToken || undefined,
+                        turnstileToken: mToken || undefined
                     })
                 });
 
@@ -396,11 +497,12 @@ function bindMeihuaEvents() {
                     renderMeihuaConversation();
                     questionInput.value = '';
                 } else {
-                    alert(`解讀失敗: ${result.error || '未知錯誤'}`);
+                    alert(`解讀失敗: ${result.error || result.message || '未知錯誤'}`);
                 }
             } catch (error) {
                 alert(`解讀失敗: ${error.message}`);
             } finally {
+                resetMeihuaTurnstile();
                 askBtn.disabled = false;
                 askBtn.textContent = '🌸 梅花解卦';
                 document.getElementById('meihuaClear').disabled = false;
