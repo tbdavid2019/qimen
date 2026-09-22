@@ -290,9 +290,11 @@ $(document).ready(function() {
     // 對話歷史管理
     var conversationHistory = [];
     var MAX_HISTORY_LENGTH = 10; // 最多保留 10 輪對話
+    window.conversationHistory = conversationHistory;
 
     // 渲染對話歷史
     function renderConversationHistory() {
+        window.conversationHistory = conversationHistory;
         var $historyDiv = $('#conversationHistory');
         var $clearBtn = $('#clearConversation');
         var $emailBtn = $('#emailConversation');
@@ -490,6 +492,7 @@ $(document).ready(function() {
         }
         return exportList;
     }
+    window.buildExportHistory = buildExportHistory;
 
     // 打開寄送對話紀錄彈窗 (Resend API)
     function openEmailModal() {
@@ -514,6 +517,125 @@ $(document).ready(function() {
     $('#emailConversation').click(openEmailModal);
     $(document).on('click', '.btn-open-email-modal', openEmailModal);
 
+    var emailTurnstileWidgetId = null;
+    var currentTurnstileToken = '';
+    var isTurnstileSolving = false;
+    var turnstileRenderRetries = 0;
+
+    function loadTurnstileScript(callback) {
+        if (typeof window.turnstile !== 'undefined' && typeof window.turnstile.render === 'function') {
+            return callback(null);
+        }
+        var existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+        if (existing) {
+            existing.addEventListener('load', function() { callback(null); });
+            existing.addEventListener('error', function(err) { callback(err || new Error('Turnstile script failed to load')); });
+            return;
+        }
+        var script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        script.onload = function() { callback(null); };
+        script.onerror = function(err) { callback(err || new Error('Turnstile script failed to load')); };
+        document.head.appendChild(script);
+    }
+
+    function renderEmailTurnstile() {
+        var container = document.getElementById('email-turnstile');
+        if (!container) return;
+        var sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript(function(err) {
+            if (err) {
+                isTurnstileSolving = false;
+                var $alert = $('#emailModalAlert');
+                $alert.removeClass('alert-success').addClass('alert-warning')
+                    .html('⚠️ 安全驗證元件載入失敗（可能是網路連線不穩或廣告攔截器阻擋），若無法送出請暫時關閉阻擋插件後重試。')
+                    .show();
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (turnstileRenderRetries < 20) {
+                    turnstileRenderRetries++;
+                    setTimeout(renderEmailTurnstile, 250);
+                } else {
+                    turnstileRenderRetries = 0;
+                    isTurnstileSolving = false;
+                    var $alert = $('#emailModalAlert');
+                    $alert.removeClass('alert-success').addClass('alert-warning')
+                        .html('⚠️ 安全驗證元件初始化超時，請重新整理頁面後再試。')
+                        .show();
+                }
+                return;
+            }
+            turnstileRenderRetries = 0;
+            if (emailTurnstileWidgetId === null) {
+                try {
+                    var action = container.getAttribute('data-action') || 'send_email';
+                    isTurnstileSolving = true;
+                    emailTurnstileWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: 'auto',
+                        size: 'flexible',
+                        callback: function(token) {
+                            currentTurnstileToken = token;
+                            isTurnstileSolving = false;
+                            var $alert = $('#emailModalAlert');
+                            if ($alert.hasClass('alert-warning')) {
+                                $alert.hide().empty();
+                            }
+                        },
+                        'expired-callback': function() {
+                            currentTurnstileToken = '';
+                            isTurnstileSolving = false;
+                        },
+                        'error-callback': function() {
+                            currentTurnstileToken = '';
+                            isTurnstileSolving = false;
+                            var $alert = $('#emailModalAlert');
+                            $alert.removeClass('alert-success').addClass('alert-warning')
+                                .html('⚠️ 安全驗證挑戰失敗，請點擊重試。')
+                                .show();
+                        }
+                    });
+                    window.emailTurnstileWidgetId = emailTurnstileWidgetId;
+                } catch (e) {
+                    console.warn('[Turnstile] render error:', e);
+                    isTurnstileSolving = false;
+                }
+            } else {
+                try {
+                    currentTurnstileToken = '';
+                    isTurnstileSolving = true;
+                    window.turnstile.reset(emailTurnstileWidgetId);
+                } catch (e) {
+                    isTurnstileSolving = false;
+                }
+            }
+        });
+    }
+
+    function resetEmailTurnstile() {
+        currentTurnstileToken = '';
+        isTurnstileSolving = false;
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            try {
+                if (emailTurnstileWidgetId !== null) {
+                    window.turnstile.reset(emailTurnstileWidgetId);
+                } else {
+                    var container = document.getElementById('email-turnstile');
+                    if (container) window.turnstile.reset(container);
+                }
+            } catch (e) {}
+        }
+    }
+    window.resetEmailTurnstile = resetEmailTurnstile;
+
+    $('#emailConversationModal').on('shown.bs.modal', renderEmailTurnstile);
+
     // 發送對話紀錄 Email
     $('#btnSubmitSendEmail').click(function() {
         var email = ($('#conversationEmailInput').val() || '').trim();
@@ -529,6 +651,41 @@ $(document).ready(function() {
 
         if (!email || !emailRegex.test(email)) {
             $alert.removeClass('alert-success').addClass('alert-danger').html('請輸入正確的電子郵件格式！').show();
+            return;
+        }
+
+        var emailWidgetContainer = document.getElementById('email-turnstile');
+        var sitekey = emailWidgetContainer ? emailWidgetContainer.getAttribute('data-sitekey') : null;
+        var turnstileToken = '';
+
+        if (emailWidgetContainer) {
+            var inputElem = emailWidgetContainer.querySelector('input[name="cf-turnstile-response"]');
+            if (inputElem && inputElem.value) {
+                turnstileToken = inputElem.value;
+            } else if (window.turnstile && typeof window.turnstile.getResponse === 'function') {
+                try {
+                    if (emailTurnstileWidgetId !== null) {
+                        turnstileToken = window.turnstile.getResponse(emailTurnstileWidgetId);
+                    } else {
+                        turnstileToken = window.turnstile.getResponse(emailWidgetContainer);
+                    }
+                } catch (e) {
+                    try { turnstileToken = window.turnstile.getResponse(); } catch (e2) {}
+                }
+            }
+        }
+        if (!turnstileToken) {
+            turnstileToken = currentTurnstileToken;
+        }
+
+        // 當系統啟用 Turnstile 且驗證尚未就緒時，防禦性提示並等待驗證完成，避免無效 403 請求與 widget 重置
+        if (sitekey && !turnstileToken) {
+            $alert.removeClass('alert-success alert-danger').addClass('alert-warning')
+                  .html('⚠️ 請稍候，人機安全驗證進行中，完成驗證後請再次點擊「確認發送」。').show();
+            $btn.prop('disabled', false).html('<i data-lucide="send"></i> 確認發送');
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
             return;
         }
 
@@ -557,7 +714,8 @@ $(document).ready(function() {
                     dun: dunText,
                     category: purposeText
                 },
-                history: activeHistory
+                history: activeHistory,
+                'cf-turnstile-response': turnstileToken
             }),
             success: function(resp) {
                 if (resp && resp.success) {
@@ -591,6 +749,22 @@ $(document).ready(function() {
                 $btn.prop('disabled', false).html('<i data-lucide="send"></i> 重新發送');
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
                     window.lucide.createIcons();
+                }
+            },
+            complete: function() {
+                currentTurnstileToken = '';
+                if (window.turnstile && typeof window.turnstile.reset === 'function') {
+                    try {
+                        if (emailTurnstileWidgetId !== null) {
+                            window.turnstile.reset(emailTurnstileWidgetId);
+                        } else if (emailWidgetContainer) {
+                            window.turnstile.reset(emailWidgetContainer);
+                        } else {
+                            window.turnstile.reset();
+                        }
+                    } catch (e) {
+                        try { window.turnstile.reset(); } catch (e2) {}
+                    }
                 }
             }
         });

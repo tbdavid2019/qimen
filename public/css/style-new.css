@@ -2162,3 +2162,19 @@ body.suite-page [style*="font-size: 12px"],
 body.suite-page [style*="font-size:12px"] { font-size: var(--type-meta) !important; }
 body.suite-page [style*="font-size: 13px"],
 body.suite-page [style*="font-size:13px"] { font-size: var(--type-label) !important; }
+
+/* Cloudflare Turnstile 人機安全驗證容器樣式 */
+.turnstile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 16px auto;
+    min-height: 65px;
+    width: 100%;
+    max-width: 320px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.turnstile-container:empty {
+    display: none;
+}

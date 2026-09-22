@@ -1,0 +1,10 @@
+<% if ((typeof turnstileEnabled === 'undefined' || turnstileEnabled) && typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
+<div class="turnstile-container">
+    <div class="<%= (typeof explicit !== 'undefined' && explicit) ? 'turnstile-explicit' : 'cf-turnstile' %>"
+         id="<%= typeof widgetId !== 'undefined' ? widgetId : 'cf-turnstile-widget' %>"
+         data-sitekey="<%= turnstileSiteKey %>"
+         data-action="<%= typeof action !== 'undefined' ? action : 'divination_analysis' %>"
+         data-theme="auto"
+         data-size="flexible"></div>
+</div>
+<% } %>

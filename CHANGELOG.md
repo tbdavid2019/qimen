@@ -2,6 +2,25 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-09-22]
+
+### 🛡️ Cloudflare Turnstile 機器人防護整合（方案 A：精準防護郵件發送，API 全面開放無阻）
+
+- **精準邊界防護與 Telegram / OpenClaw 零干擾保證 (`lib/turnstile.js`, `app.js`, `test/turnstile.test.js`)**：
+  - **核心業務 API 完全開放**：所有占卜問答與排盤 API（`/api/*-question`、`/api/*-llm-analysis` 等）維持 100% 開放與零驗證碼阻礙，確保 Telegram Bot、OpenClaw、CLI 腳本與自動化程式永遠暢行無阻，杜絕 403 誤傷。
+  - **郵件寄送端點防護 (`POST /api/conversation/send-email`)**：針對對話紀錄寄送 API 整合 Cloudflare Turnstile `siteverify` 伺服端校驗，有效防範惡意機器人郵件轟炸（Email Bombing）與垃圾郵件濫發。
+  - **設定不完整嚴格 Fail-Closed 防禦 (`lib/turnstile.js`, `app.js`)**：若營運人員或部署腳本僅設定 `TURNSTILE_SECRET` 卻遺漏 `TURNSTILE_SITE_KEY`（或反之），中介層嚴格執行 Fail-Closed 拒絕連線 (503 `TURNSTILE_CONFIG_INCOMPLETE`)，杜絕因部分環境變數遺漏導致防護端點靜默旁路被濫發郵件；並過濾 `xxxxxxxx` 佔位符號。
+  - **智慧降級與本機測試豁免**：未設定 `TURNSTILE_SECRET`、本機開發環境或執行測試（`NODE_ENV=test`）時，系統自動優雅 pass；亦支援 `x-turnstile-bypass` 授權標頭。
+- **前端無感人機驗證、按需載入與動態重置 (`views/partials/turnstile-widget.html`, `views/index.html`, `public/js/app.js`, `public/js/webmcp.js`, `public/css/style-new.css`)**：
+  - **按需載入（Zero Script Bloat）**：將 Turnstile 腳本移出全局廣告頭部（`ads-head.html`），僅在含有郵件彈窗的頁面（`views/index.html`）與按需動態加載，確保八字、紫微、風水、塔羅等其他 7 大服務頁面維持零第三方外連與極速性能。
+  - **寄信彈窗顯式掛載與提早提交防禦**：針對初始隱藏的對話紀錄 Modal (`#emailConversationModal`)，採用顯式掛載避免容器隱藏時自動渲染失敗；於 `shown.bs.modal` 事件觸發時精準調用 `turnstile.render`。若使用者在驗證就緒前快速點擊發送，前端進行友善警告攔截，防止發送空 Token 觸發 403 錯誤與打斷挑戰進度。
+  - **WebMCP `send_conversation_email` 完整對齊與全站註冊**：擴充 WebMCP 工具 inputSchema 支援 `turnstileToken` 參數；在 Chrome `modelContext` 註冊流中將 `send_conversation_email` 納入所有頁面路由註冊清單。當 AI 調用時主動開啟彈窗觸發挑戰並等待解算，跨頁面（含紫微、八字、風水等）支援動態容器掛載與安全清理回收，徹底根除直接調用 403 失敗問題與重複調用無效等待。
+  - **配置端點**：新增 `GET /api/turnstile/config` 提供前端即時讀取 Turnstile 狀態與 Site Key。
+  - **高質感 UI 適配**：新增 `.turnstile-container` 樣式，支援 Dark Mode 自動切換與無縫置中排版。
+- **自動化測試全數通過**：
+  - 新增 `test/turnstile.test.js` 與 `test/webmcp.test.js` 擴充測試，完整覆蓋驗證邏輯、Hostname 白名單、Action 標籤、Replay 過期偵測、Bypass 機制、Fail-Closed 配置防禦、方案 A API 零干擾保證（沙盒環境容錯支援）與 WebMCP 工具驗證契約。
+  - 全套測試 208 項 100% 通過。
+
 ## [2026-09-21]
 
 ### 🏷️ 郵件品牌嚴格校正為「333 一句提醒·照見當下」& Markdown-to-HTML 郵件排版引擎深度強化

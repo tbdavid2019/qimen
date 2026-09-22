@@ -25,8 +25,8 @@
 	 * Show a temporary feedback toast when an agent activates a WebMCP tool
 	 */
 	function showAgentFeedback(message, type) {
-		if (typeof document === "undefined") return;
-		let existing = document.getElementById("webmcp-agent-indicator");
+		if (typeof document === "undefined" || typeof document.createElement !== "function" || !document.body) return;
+		let existing = typeof document.getElementById === "function" ? document.getElementById("webmcp-agent-indicator") : null;
 		if (!existing) {
 			existing = document.createElement("div");
 			existing.id = "webmcp-agent-indicator";
@@ -144,6 +144,15 @@
 						respDiv.style.display = "block";
 					}
 
+					if (typeof window !== "undefined") {
+						if (!window.lastQimenAnalysisText) {
+							window.lastQimenAnalysisText = data.answer;
+						}
+						if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
+						window.conversationHistory.push({ role: "user", content: question });
+						window.conversationHistory.push({ role: "assistant", content: data.answer });
+					}
+
 					showAgentFeedback("奇門解盤完成！");
 					return data.answer;
 				} catch (err) {
@@ -185,7 +194,13 @@
 				});
 				const data = await res.json();
 				if (!data.success) throw new Error(data.message || data.error || "奇門解讀失敗");
-				return data.analysis || data.answer || "";
+				const answer = data.analysis || data.answer || "";
+				if (typeof window !== "undefined") {
+					if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
+					window.conversationHistory.push({ role: "user", content: question });
+					window.conversationHistory.push({ role: "assistant", content: answer });
+				}
+				return answer;
 			}
 		},
 
@@ -199,7 +214,11 @@
 					email: { type: "string", description: "收件人電子郵件地址，例如 user@example.com" },
 					service: { type: "string", description: "占斷服務名稱，例如 奇門遁甲、梅花易數", default: "奇門遁甲" },
 					subject: { type: "string", description: "可選的自訂郵件標題" },
-					history: { type: "array", description: "對話紀錄陣列，每項包含 role 與 content" }
+					history: { type: "array", description: "對話紀錄陣列，每項包含 role 與 content" },
+					turnstileToken: {
+						type: "string",
+						description: "Cloudflare Turnstile 人機驗證權杖 (cf-turnstile-response)。可選；若未提供且頁面啟用驗證，工具將主動觸發挑戰並獲取權杖。"
+					}
 				},
 				required: ["email"]
 			},
@@ -207,20 +226,322 @@
 			execute: async (args) => {
 				const email = args?.email ? String(args.email).trim() : "";
 				if (!email) throw new Error("請提供收件電子信箱 (email)");
+
+				let resolvedHistory = (Array.isArray(args?.history) && args.history.length > 0) ? args.history : null;
+				if (!resolvedHistory && typeof window !== "undefined") {
+					if (typeof window.buildExportHistory === "function") {
+						try { resolvedHistory = window.buildExportHistory(); } catch (e) {}
+					}
+					if ((!resolvedHistory || resolvedHistory.length === 0) && Array.isArray(window.conversationHistory) && window.conversationHistory.length > 0) {
+						resolvedHistory = window.conversationHistory;
+					}
+					if ((!resolvedHistory || resolvedHistory.length === 0) && Array.isArray(window.meihuaConversationHistory) && window.meihuaConversationHistory.length > 0) {
+						resolvedHistory = window.meihuaConversationHistory;
+					}
+					if (!resolvedHistory || resolvedHistory.length === 0) {
+						if (window.lastQimenAnalysisText) {
+							resolvedHistory = [{ role: "assistant", content: window.lastQimenAnalysisText }];
+						} else if (window.currentMeihuaData) {
+							const md = window.currentMeihuaData;
+							const summary = `梅花卦象：${md.bengua?.name || '本卦'}（體：${md.tigua?.name || ''}，用：${md.yonggua?.name || ''}，關係：${md.wuxingRelation || ''}）${md.timing?.timingDesc ? '，應期：' + md.timing.timingDesc : ''}`;
+							resolvedHistory = [{ role: "assistant", content: summary }];
+						} else if (window.lastSuiteResult) {
+							const sr = window.lastSuiteResult;
+							const summary = typeof sr === "string" ? sr : JSON.stringify(sr, null, 2);
+							resolvedHistory = [{ role: "assistant", content: summary }];
+						} else if (typeof document !== "undefined") {
+							const answerbookAns = document.getElementById("answerbookAnswer");
+							const answerbookAnalysis = document.getElementById("answerbookAnalysis");
+							if (answerbookAns && answerbookAns.textContent && answerbookAns.textContent.trim()) {
+								const ans = answerbookAns.textContent.trim();
+								const ana = answerbookAnalysis && answerbookAnalysis.textContent ? answerbookAnalysis.textContent.trim() : "";
+								const fullText = ana ? `【答案】${ans}\n\n【解讀】\n${ana}` : `【解答之書】${ans}`;
+								resolvedHistory = [{ role: "assistant", content: fullText }];
+							} else {
+								const domResponse = document.querySelector("#llmQuestionResponse .response-content, #conversationStream .suite-message-bubble.assistant, #meihuaLLMResponse");
+								if (domResponse && domResponse.textContent && domResponse.textContent.trim()) {
+									resolvedHistory = [{ role: "assistant", content: domResponse.textContent.trim() }];
+								}
+							}
+						}
+					}
+				}
+
+				// Deduplicate: if buildExportHistory prepended an initial assistant analysis that also
+				// appears identically later within a user-assistant conversation turn, remove the orphaned duplicate.
+				if (Array.isArray(resolvedHistory) && resolvedHistory.length > 1) {
+					const first = resolvedHistory[0];
+					if (first && first.role === "assistant" && first.content) {
+						const firstTrimmed = String(first.content).trim();
+						const duplicateLater = resolvedHistory.slice(1).some(
+							(msg) => msg && msg.role === "assistant" && String(msg.content).trim() === firstTrimmed
+						);
+						if (duplicateLater) {
+							resolvedHistory = resolvedHistory.slice(1);
+						}
+					}
+				}
+
+				if (!resolvedHistory || resolvedHistory.length === 0) {
+					throw new Error("目前尚無解盤或對話紀錄可供寄送，請先進行解盤問答或於參數中提供 history。");
+				}
+
+				let turnstileToken = args?.turnstileToken ? String(args.turnstileToken).trim() :
+					(args?.["cf-turnstile-response"] ? String(args["cf-turnstile-response"]).trim() : "");
+
+				let emailContainer = typeof document !== "undefined" ? document.getElementById("email-turnstile") : null;
+				let sitekey = emailContainer?.getAttribute("data-sitekey");
+
+				// 若當前頁面（如紫微、八字、風水等非奇門頁面）沒有靜態的 #email-turnstile，向後端配置查詢有效狀態
+				if (!turnstileToken && !sitekey && typeof fetch === "function") {
+					try {
+						const cfgRes = await fetch("/api/turnstile/config");
+						const cfg = await cfgRes.json();
+						if (cfg?.enabled && cfg?.siteKey) {
+							sitekey = cfg.siteKey;
+						}
+					} catch (e) {}
+				}
+
+				if (!turnstileToken) {
+					const existingInput = emailContainer ? emailContainer.querySelector('input[name="cf-turnstile-response"]') :
+						(typeof document !== "undefined" ? document.querySelector('input[name="cf-turnstile-response"]') : null);
+					if (existingInput?.value) {
+						turnstileToken = existingInput.value;
+					}
+				}
+
+				if (!turnstileToken && typeof window !== "undefined" && window.turnstile && typeof window.turnstile.getResponse === "function") {
+					try {
+						turnstileToken = window.emailTurnstileWidgetId !== undefined && window.emailTurnstileWidgetId !== null
+							? window.turnstile.getResponse(window.emailTurnstileWidgetId)
+							: (emailContainer ? window.turnstile.getResponse(emailContainer) : window.turnstile.getResponse());
+					} catch (e) {}
+				}
+
+				// 若系統啟用 Turnstile 且尚未取得 Token，主動觸發挑戰並等待解算（跨頁面全面支援）
+				if (!turnstileToken && sitekey && typeof window !== "undefined") {
+					let createdFloatingContainer = false;
+					if (!emailContainer && typeof document !== "undefined") {
+						emailContainer = document.getElementById("webmcp-turnstile-floating");
+						if (!emailContainer) {
+							emailContainer = document.createElement("div");
+							emailContainer.id = "webmcp-turnstile-floating";
+							emailContainer.className = "turnstile-container";
+							emailContainer.style.cssText = "position: fixed; bottom: 20px; right: 20px; z-index: 99999; background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);";
+							document.body.appendChild(emailContainer);
+							createdFloatingContainer = true;
+						}
+					}
+
+					if (typeof $ !== "undefined" && $("#emailConversationModal").length) {
+						const $modal = $("#emailConversationModal");
+						if (!$modal.hasClass("in")) {
+							await new Promise((resolve) => {
+								let done = false;
+								const onShown = () => {
+									if (!done) {
+										done = true;
+										resolve();
+									}
+								};
+								$modal.one("shown.bs.modal", onShown);
+								$modal.modal("show");
+								setTimeout(onShown, 800);
+							});
+						}
+					}
+
+					try {
+						// 確保 Turnstile 腳本已載入
+						if (!window.turnstile && typeof document !== "undefined") {
+							await new Promise((resolve, reject) => {
+								if (window.turnstile) return resolve();
+
+								const waitForTurnstile = (timeoutMs, onDone) => {
+									const start = Date.now();
+									const timer = setInterval(() => {
+										if (window.turnstile && typeof window.turnstile.render === "function") {
+											clearInterval(timer);
+											onDone(true);
+										} else if (Date.now() - start > timeoutMs) {
+											clearInterval(timer);
+											onDone(false);
+										}
+									}, 100);
+								};
+
+								const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+								if (existing) {
+									const onReady = () => {
+										waitForTurnstile(4000, (ready) => {
+											if (ready) resolve();
+											else reject(new Error("Cloudflare Turnstile 驗證元件初始化超時，請重試或於參數中提供 turnstileToken。"));
+										});
+									};
+									if (existing.complete || window.turnstile) {
+										onReady();
+									} else {
+										existing.addEventListener("load", onReady);
+										existing.addEventListener("error", () => {
+											reject(new Error("無法載入 Cloudflare Turnstile 安全驗證元件，請檢查廣告攔截器或網路連線。"));
+										});
+									}
+									return;
+								}
+
+								const script = document.createElement("script");
+								script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+								script.async = true;
+								script.defer = true;
+								script.onload = () => {
+									waitForTurnstile(4000, (ready) => {
+										if (ready) resolve();
+										else reject(new Error("Cloudflare Turnstile 驗證元件初始化超時，請重試或於參數中提供 turnstileToken。"));
+									});
+								};
+								script.onerror = () => {
+									reject(new Error("無法載入 Cloudflare Turnstile 安全驗證元件，請檢查廣告攔截器或網路連線。"));
+								};
+								document.head.appendChild(script);
+							});
+						}
+
+						// 若已經有已掛載且仍連線於 DOM 之靜態 Widget，複用現有 Widget 避免 Turnstile 重複 render 錯誤
+						const staticElem = document.getElementById("email-turnstile");
+						const hasValidStaticWidget = Boolean(staticElem && document.body.contains(staticElem) && !createdFloatingContainer);
+
+						// 若為首頁且靜態 Widget 正由 app.js 的 shown.bs.modal 初始化，稍候 widgetId 綁定以避免重複 render
+						if (hasValidStaticWidget && (window.emailTurnstileWidgetId === undefined || window.emailTurnstileWidgetId === null)) {
+							await new Promise((resolve) => {
+								const startWait = Date.now();
+								const pollWidget = setInterval(() => {
+									if (window.emailTurnstileWidgetId !== undefined && window.emailTurnstileWidgetId !== null) {
+										clearInterval(pollWidget);
+										resolve();
+									} else if (Date.now() - startWait > 1200) {
+										clearInterval(pollWidget);
+										resolve();
+									}
+								}, 100);
+							});
+						}
+
+						if (hasValidStaticWidget && window.emailTurnstileWidgetId !== undefined && window.emailTurnstileWidgetId !== null) {
+							let existingTok = "";
+							try {
+								existingTok = window.turnstile.getResponse(window.emailTurnstileWidgetId);
+							} catch (e) {}
+							if (existingTok) {
+								turnstileToken = existingTok;
+							} else {
+								turnstileToken = await new Promise((resolve, reject) => {
+									const startTime = Date.now();
+									const pollTimer = setInterval(() => {
+										let tok = "";
+										try {
+											tok = window.turnstile.getResponse(window.emailTurnstileWidgetId);
+										} catch (e) {}
+										if (tok) {
+											clearInterval(pollTimer);
+											return resolve(tok);
+										}
+										if (Date.now() - startTime > 8000) {
+											clearInterval(pollTimer);
+											reject(new Error("Turnstile 人機安全驗證尚未完成，請在畫面彈窗中完成驗證後再試，或於參數中提供 turnstileToken。"));
+										}
+									}, 250);
+								});
+							}
+						} else if (window.turnstile && typeof window.turnstile.render === "function" && emailContainer) {
+							turnstileToken = await new Promise((resolve, reject) => {
+								let timer = setTimeout(() => {
+									reject(new Error("Turnstile 人機安全驗證尚未完成，請在畫面彈窗中勾選驗證後再試，或於參數中提供 turnstileToken。"));
+								}, 8000);
+
+								try {
+									const widgetId = window.turnstile.render(emailContainer, {
+										sitekey: sitekey,
+										action: emailContainer.getAttribute("data-action") || "send_email",
+										callback: (tok) => {
+											clearTimeout(timer);
+											resolve(tok);
+										},
+										"error-callback": () => {
+											clearTimeout(timer);
+											reject(new Error("Turnstile 人機驗證挑戰失敗，請重試。"));
+										},
+										"expired-callback": () => {}
+									});
+									if (!createdFloatingContainer) {
+										window.emailTurnstileWidgetId = widgetId;
+									}
+								} catch (renderErr) {
+									const startTime = Date.now();
+									const pollTimer = setInterval(() => {
+										let tok = "";
+										try {
+											tok = window.turnstile.getResponse(emailContainer);
+										} catch (e) {}
+										if (tok) {
+											clearTimeout(timer);
+											clearInterval(pollTimer);
+											return resolve(tok);
+										}
+										if (Date.now() - startTime > 7500) {
+											clearTimeout(timer);
+											clearInterval(pollTimer);
+											reject(new Error("Turnstile 人機安全驗證尚未完成，請在畫面彈窗中完成驗證後再試，或於參數中提供 turnstileToken。"));
+										}
+									}, 250);
+								}
+							});
+						}
+					} finally {
+						if (createdFloatingContainer && emailContainer) {
+							try {
+								if (window.turnstile && typeof window.turnstile.remove === "function") {
+									window.turnstile.remove(emailContainer);
+								}
+							} catch (e) {}
+							try { emailContainer.remove(); } catch (e) {}
+						}
+					}
+				}
+
 				const payload = {
 					email: email,
 					service: args?.service || "奇門遁甲",
 					subject: args?.subject,
-					history: args?.history || []
+					history: resolvedHistory,
+					"cf-turnstile-response": turnstileToken
 				};
-				const res = await fetch("/api/conversation/send-email", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload)
-				});
-				const data = await res.json();
-				if (!data.success) throw new Error(data.message || data.error || "郵件寄送失敗");
-				return data.message || "郵件寄送成功";
+				try {
+					const res = await fetch("/api/conversation/send-email", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(payload)
+					});
+					const data = await res.json();
+					if (!data.success) throw new Error(data.message || data.error || "郵件寄送失敗");
+					return data.message || "郵件寄送成功";
+				} finally {
+					// 每次寄送後（無論成功或失敗），重置 Turnstile widget 避免重複使用已消耗之 single-use token，並清除 UI 快取
+					if (typeof window !== "undefined") {
+						if (typeof window.resetEmailTurnstile === "function") {
+							try { window.resetEmailTurnstile(); } catch (e) {}
+						} else if (window.turnstile && typeof window.turnstile.reset === "function") {
+							if (window.emailTurnstileWidgetId !== undefined && window.emailTurnstileWidgetId !== null) {
+								try { window.turnstile.reset(window.emailTurnstileWidgetId); } catch (e) {}
+							} else if (typeof document !== "undefined") {
+								const staticElem = document.getElementById("email-turnstile");
+								if (staticElem) {
+									try { window.turnstile.reset(staticElem); } catch (e) {}
+								}
+							}
+						}
+					}
+				}
 			}
 		},
 
@@ -465,8 +786,11 @@
 					throw new Error(data.message || "梅花起卦失敗");
 				}
 
-				if (typeof window !== "undefined" && typeof window.updateResult === "function") {
-					window.updateResult(data.data);
+				if (typeof window !== "undefined") {
+					window.currentMeihuaData = data.data;
+					if (typeof window.updateResult === "function") {
+						window.updateResult(data.data);
+					}
 				}
 
 				showAgentFeedback(`梅花起卦成功：${data.data.bengua.name}`);
@@ -532,8 +856,11 @@
 					throw new Error(data.message || "梅花數字起卦失敗");
 				}
 
-				if (typeof window !== "undefined" && typeof window.updateResult === "function") {
-					window.updateResult(data.data);
+				if (typeof window !== "undefined") {
+					window.currentMeihuaData = data.data;
+					if (typeof window.updateResult === "function") {
+						window.updateResult(data.data);
+					}
 				}
 
 				showAgentFeedback(`梅花起卦成功：${data.data.bengua.name}`);
@@ -583,8 +910,11 @@
 					throw new Error(data.message || "梅花漢字起卦失敗");
 				}
 
-				if (typeof window !== "undefined" && typeof window.updateResult === "function") {
-					window.updateResult(data.data);
+				if (typeof window !== "undefined") {
+					window.currentMeihuaData = data.data;
+					if (typeof window.updateResult === "function") {
+						window.updateResult(data.data);
+					}
 				}
 
 				showAgentFeedback(`梅花起卦成功：${data.data.bengua.name}`);
@@ -638,7 +968,13 @@
 				});
 				const data = await res.json();
 				if (!data.success) throw new Error(data.message || data.error || "梅花解讀失敗");
-				return data.analysis || data.answer || "";
+				const answer = data.analysis || data.answer || "";
+				if (typeof window !== "undefined") {
+					if (!Array.isArray(window.meihuaConversationHistory)) window.meihuaConversationHistory = [];
+					window.meihuaConversationHistory.push({ role: "user", content: question });
+					window.meihuaConversationHistory.push({ role: "assistant", content: answer });
+				}
+				return answer;
 			}
 		},
 
@@ -727,6 +1063,12 @@
 					return `解卦失敗：${errMsg}`;
 				}
 
+				if (typeof window !== "undefined") {
+					if (!Array.isArray(window.meihuaConversationHistory)) window.meihuaConversationHistory = [];
+					window.meihuaConversationHistory.push({ role: "user", content: question });
+					window.meihuaConversationHistory.push({ role: "assistant", content: data.answer });
+				}
+
 				showAgentFeedback("梅花解卦完成！");
 				return data.answer;
 			},
@@ -744,6 +1086,18 @@
 				const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(args || {}) });
 				const data = await response.json();
 				if (!response.ok || !data.success) throw new Error(data.message || data.error || "計算失敗");
+
+				const answerText = data.answer || data.analysis || "";
+				const userQuestion = args?.question ? String(args.question).trim() : (args?.name ? `${args.name} 的測算` : "術數測算分析");
+				if (typeof window !== "undefined") {
+					if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
+					if (answerText) {
+						window.conversationHistory.push({ role: "user", content: userQuestion });
+						window.conversationHistory.push({ role: "assistant", content: answerText });
+					}
+					window.lastSuiteResult = data.result || data.reading || data.report || data.chart || null;
+				}
+
 				return JSON.stringify({
 					answer: data.answer || null,
 					analysis: data.analysis || null,
@@ -805,7 +1159,14 @@
 				});
 				const data = await res.json();
 				if (!data.success) throw new Error(data.error || "測算失敗");
-				return data.summary || JSON.stringify(data);
+				const summary = data.summary || JSON.stringify(data);
+				if (typeof window !== "undefined") {
+					if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
+					window.conversationHistory.push({ role: "user", content: "紫微男生真實尺寸速測" });
+					window.conversationHistory.push({ role: "assistant", content: summary });
+					window.lastSuiteResult = data;
+				}
+				return summary;
 			}
 		},
 		ziwei_future_spouse: {
@@ -841,7 +1202,14 @@
 				});
 				const data = await res.json();
 				if (!data.success) throw new Error(data.error || "測算失敗");
-				return data.summary || JSON.stringify(data.result || data.spouse || data);
+				const summary = data.summary || JSON.stringify(data.result || data.spouse || data);
+				if (typeof window !== "undefined") {
+					if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
+					window.conversationHistory.push({ role: "user", content: "紫微未來另一半正緣解析" });
+					window.conversationHistory.push({ role: "assistant", content: summary });
+					window.lastSuiteResult = data;
+				}
+				return summary;
 			}
 		},
 		tarot_reading: createSuiteTool("tarot_reading", "塔羅牌陣抽牌與解讀（78張牌、6大牌陣與四維透鏡）。", "/api/tarot-question", {
@@ -1010,12 +1378,14 @@
 				toolDefinitions.meihua_question,
 				toolDefinitions.meihua_divination,
 				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email,
 			];
 		} else if (pathname === "/fengshui") {
 			toolsToRegister = [
 				toolDefinitions.fengshui_report,
 				toolDefinitions.fengshui_layout_evaluation,
 				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email,
 			];
 		} else if (pathname === "/ziwei" || pathname.startsWith("/ziwei/")) {
 			toolsToRegister = [
@@ -1023,12 +1393,13 @@
 				toolDefinitions.ziwei_male_size,
 				toolDefinitions.ziwei_future_spouse,
 				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email,
 			];
 		} else if (["/tarot", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
 			const suiteTool = { "/tarot": "tarot_reading", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
-			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme];
+			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme, toolDefinitions.send_conversation_email];
 		} else {
-			// Default / or /custom
+			// Default / or /custom (具備對話紀錄與 #emailConversationModal)
 			toolsToRegister = [
 				toolDefinitions.qimen_divination,
 				toolDefinitions.qimen_question,
@@ -1036,6 +1407,7 @@
 				toolDefinitions.get_current_pan,
 				toolDefinitions.switch_time_mode,
 				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email,
 				toolDefinitions.meihua_qigua_time,
 				toolDefinitions.meihua_qigua_numbers,
 				toolDefinitions.meihua_qigua_text,

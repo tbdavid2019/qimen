@@ -13,6 +13,7 @@
 
     let lastResult = null;
     let conversationHistory = [];
+    window.conversationHistory = conversationHistory;
 
     const escapeHtml = (str) => String(str || '')
         .replace(/&/g, '&amp;')
@@ -1263,6 +1264,7 @@
         aiLoading.hidden = false;
         conversationStream.innerHTML = '';
         conversationHistory = [];
+        window.conversationHistory = conversationHistory;
 
         try {
             // Step 1: Run Calculation
@@ -1295,6 +1297,7 @@
             if (aiData.success && aiData.analysis) {
                 conversationHistory.push({ role: 'user', content: userQuestion });
                 conversationHistory.push({ role: 'assistant', content: aiData.analysis });
+                window.conversationHistory = conversationHistory;
                 appendMessage('assistant', aiData.analysis);
                 if (followUpForm) followUpForm.hidden = false;
             } else {
@@ -1339,6 +1342,7 @@
             if (aiData.success && aiData.analysis) {
                 conversationHistory.push({ role: 'user', content: question });
                 conversationHistory.push({ role: 'assistant', content: aiData.analysis });
+                window.conversationHistory = conversationHistory;
                 appendMessage('assistant', aiData.analysis);
             } else {
                 appendMessage('assistant', `⚠️ 解讀失敗：${aiData.error || '無法取得回應'}`);

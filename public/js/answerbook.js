@@ -62,6 +62,14 @@
                 analysisBox.innerHTML = renderMarkdown(data.analysis);
                 analysisCard.hidden = false;
             }
+            if (typeof window !== 'undefined') {
+                if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
+                if (question) {
+                    window.conversationHistory.push({ role: 'user', content: question });
+                }
+                const answerText = data.analysis ? `【答案】${data.answer}\n\n【解讀】\n${data.analysis}` : `【解答之書】${data.answer}`;
+                window.conversationHistory.push({ role: 'assistant', content: answerText });
+            }
             statusBox.textContent = data.analysisSuccess === false ? '原始答案已取得，但文字解讀暫時不可用。' : (mode === 'question' ? '已完成解答與文字解讀。' : '已取得原始答案。');
             resultBox.hidden = false;
         } catch (error) {

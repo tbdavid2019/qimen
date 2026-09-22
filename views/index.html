@@ -834,6 +834,7 @@
                         <label for="conversationEmailInput" style="font-weight: 600; margin-bottom: 6px;">收件信箱 (Email)</label>
                         <input type="email" class="form-control input-lg" id="conversationEmailInput" placeholder="name@example.com" required autocomplete="email">
                     </div>
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'email-turnstile', action: 'send_email', explicit: true }) %>
                     <div id="emailModalAlert" class="alert" style="display: none; font-size: 13px; margin-top: 12px; margin-bottom: 0;"></div>
                 </div>
                 <div class="modal-footer">

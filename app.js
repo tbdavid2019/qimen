@@ -34,6 +34,7 @@ const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
 const { AnswerBookClient, createAnswerbookQuestionHandler } = require('./lib/answerbook');
 const { sendConversationEmail } = require('./lib/email');
+const { turnstileMiddleware, getSiteKey, isTurnstileEnabled, getTurnstileConfigError } = require('./lib/turnstile');
 
 function getHttpErrorStatus(error) {
     return error && error.statusCode === 400 ? 400 : 500;
@@ -121,8 +122,23 @@ app.use((req, res, next) => {
     res.locals.t = (key) => i18n.t(key);
     res.locals.currentLang = i18n.getCurrentLanguage();
     res.locals.availableLanguages = i18n.getAvailableLanguages();
+    const turnstileActive = isTurnstileEnabled();
+    res.locals.turnstileEnabled = turnstileActive;
+    res.locals.turnstileSiteKey = turnstileActive ? getSiteKey() : '';
     
     next();
+});
+
+// Cloudflare Turnstile 前端配置端點
+app.get('/api/turnstile/config', (req, res) => {
+    const configError = getTurnstileConfigError();
+    const enabled = isTurnstileEnabled();
+    res.json({
+        success: !configError,
+        siteKey: enabled ? getSiteKey() : null,
+        enabled: enabled,
+        error: configError || null
+    });
 });
 
 // 路由
@@ -755,7 +771,7 @@ app.post('/api/:module/llm-analysis', async (req, res, next) => {
 });
 
 // 對話紀錄 Email 寄送 API (透過 Resend API)
-app.post('/api/conversation/send-email', async (req, res) => {
+app.post('/api/conversation/send-email', turnstileMiddleware({ action: 'send_email' }), async (req, res) => {
     try {
         const { email, service, subject, history, chartSummary } = req.body || {};
         const result = await sendConversationEmail({
