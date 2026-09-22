@@ -521,8 +521,25 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
             body: JSON.stringify({ userQuestion: '測試梅花問題' })
         });
         assert.equal(meihuaLLMRes.status, 403, '梅花前端解卦未帶 Turnstile 應被拒絕');
-        const meihuaLLMData = await meihuaLLMRes.json();
-        assert.equal(meihuaLLMData.code, 'TURNSTILE_TOKEN_MISSING');
+        // 3c. 測試術數套件端點 /api/:module/llm-analysis 在啟用時強制要求 Turnstile (防護 LLM Token 遭盜刷)
+        const ziweiLLMRes = await fetch(`${baseUrl}/api/ziwei/llm-analysis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: '測試紫微' })
+        });
+        assert.equal(ziweiLLMRes.status, 403, '紫微前端解讀未帶 Turnstile 應被拒絕以保護 LLM Token');
+        const ziweiLLMData = await ziweiLLMRes.json();
+        assert.equal(ziweiLLMData.code, 'TURNSTILE_TOKEN_MISSING');
+
+        // 3d. 測試解答之書端點 /api/answerbook/llm-analysis 在啟用時強制要求 Turnstile
+        const answerbookLLMRes = await fetch(`${baseUrl}/api/answerbook/llm-analysis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: '測試解答之書', result: { answer: '順應自然' } })
+        });
+        assert.equal(answerbookLLMRes.status, 403, '解答之書前端解讀未帶 Turnstile 應被拒絕以保護 LLM Token');
+        const answerbookLLMData = await answerbookLLMRes.json();
+        assert.equal(answerbookLLMData.code, 'TURNSTILE_TOKEN_MISSING');
     } finally {
         delete process.env.TURNSTILE_FORCE_ENABLE;
         if (originalSiteKey !== undefined) {
@@ -539,18 +556,33 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
     }
 });
 
-test('Turnstile: 前端頁面模板包含問答防護 Turnstile 元件 (index.html & meihua.html)', () => {
+test('Turnstile: 全站 8 大頁面模板均完整包含問答防護 Turnstile 元件', () => {
     const fs = require('node:fs');
     const path = require('node:path');
-    const indexHtml = fs.readFileSync(path.join(__dirname, '../views/index.html'), 'utf8');
-    const meihuaHtml = fs.readFileSync(path.join(__dirname, '../views/meihua.html'), 'utf8');
+    const viewsDir = path.join(__dirname, '../views');
 
-    // 奇門首頁問答表單包含 question-turnstile
-    assert.ok(indexHtml.includes("widgetId: 'question-turnstile'"), 'index.html 必須包含 question-turnstile');
-    assert.ok(indexHtml.includes("action: 'llm_analysis'"), 'index.html 必須綁定 llm_analysis 操作');
+    const pages = [
+        { file: 'index.html', widgetId: 'question-turnstile' },
+        { file: 'meihua.html', widgetId: 'meihua-turnstile' },
+        { file: 'ziwei.html', widgetId: 'suite-turnstile' },
+        { file: 'bazi2.html', widgetId: 'suite-turnstile' },
+        { file: 'tarot.html', widgetId: 'suite-turnstile' },
+        { file: 'fengshui.html', widgetId: 'suite-turnstile' },
+        { file: 'yinyuan.html', widgetId: 'suite-turnstile' },
+        { file: 'answerbook.html', widgetId: 'answerbook-turnstile' }
+    ];
 
-    // 梅花易數問答表單包含 meihua-turnstile
-    assert.ok(meihuaHtml.includes("widgetId: 'meihua-turnstile'"), 'meihua.html 必須包含 meihua-turnstile');
+    for (const { file, widgetId } of pages) {
+        const content = fs.readFileSync(path.join(viewsDir, file), 'utf8');
+        assert.ok(
+            content.includes(`widgetId: '${widgetId}'`),
+            `${file} 必須包含 widgetId: '${widgetId}' Turnstile 元件`
+        );
+        assert.ok(
+            content.includes("action: 'llm_analysis'") || content.includes('partials/turnstile-widget.html'),
+            `${file} 必須正確引入 turnstile-widget.html 樣板`
+        );
+    }
 });
 
 

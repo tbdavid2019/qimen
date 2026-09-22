@@ -192,6 +192,10 @@
                     <textarea class="form-control suite-textarea" id="ziweiQuestion" name="question" rows="2" placeholder="例如：請幫我看看本命事業格局、適合創業還是公職？未來的財帛與婚姻運勢如何？" data-webmcp-field="question" toolparamdescription="想請教紫微命理顧問的問題"></textarea>
                 </div>
 
+                <div id="suiteTurnstileWrapper" style="margin-top: 12px; margin-bottom: 14px; <%= (typeof activeMode !== 'undefined' && (activeMode === 'male-size' || activeMode === 'spouse')) ? 'display: none;' : '' %>">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'suite-turnstile', action: 'llm_analysis', explicit: true }) %>
+                </div>
+
                 <div class="text-center suite-submit-container">
                     <button type="submit" id="suiteSubmitBtn" class="btn suite-btn-primary btn-lg">
                         <%= (typeof activeMode !== 'undefined' && activeMode === 'spouse') ? '💍 3秒解鎖未來另一半' : (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? '⚡ 3秒解鎖真實尺寸' : '✨ 排盤並查看命理解讀' %>
@@ -223,6 +227,9 @@
             <div id="suiteConversation" class="suite-conversation-list"></div>
 
             <form id="suiteFollowUpForm" class="suite-followup-form mt-4" hidden>
+                <div id="suiteFollowUpTurnstileWrapper" style="margin-bottom: 12px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
+                </div>
                 <div class="input-group">
                     <input type="text" id="suiteFollowUpInput" class="form-control suite-input" placeholder="對命盤有任何疑問？繼續追問…">
                     <span class="input-group-btn">

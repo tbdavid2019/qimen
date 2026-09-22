@@ -4,12 +4,14 @@
 
 ## [2026-09-22]
 
-### 🛡️ Cloudflare Turnstile 機器人防護升級：網頁「詢問」與「解盤」Token 防刷防護，外部 API 全面純淨開放
+### 🛡️ Cloudflare Turnstile 機器人防護升級：全站 8 大模組網頁「詢問」與「解盤」Token 全面防刷防護，外部 API 維持純淨開放
 
-- **網頁端「詢問」與「解盤」LLM Token 防刷防護 (`views/index.html`, `views/meihua.html`, `public/js/app.js`, `public/js/meihua.js`, `app.js`)**：
-  - **奇門遁甲問答與解盤防護**：於首頁 `#qimenQuestionForm` 獨立掛載 `#question-turnstile` 安全元件，前端點擊「💬 詢問」或「開始解盤」時主動校驗 Turnstile 狀態，將憑證注入 `/api/llm-analysis`。成功或失敗後自動調用 `turnstile.reset()`，完美支援流暢續問。
+- **全站 8 大服務前端「詢問」與「解盤」LLM Token 防刷防護 (`views/*.html`, `public/js/app.js`, `public/js/meihua.js`, `public/js/divination-suite.js`, `public/js/answerbook.js`, `app.js`)**：
+  - **奇門遁甲問答與解盤防護**：於首頁 `#qimenQuestionForm` 獨立掛載 `#question-turnstile` 安全元件，前端點擊「💬 詢問」或「開始解盤」時主動校驗 Turnstile 狀態，將憑證注入 `/api/llm-analysis`。成功或失敗後自動調用 `turnstile.reset()`，支援流暢續問。
   - **梅花易數解卦防護**：於 `#meihuaQuestionForm` 掛載 `#meihua-turnstile`，前端點擊「🌸 梅花解卦」時強制校驗，發送至 `/api/meihua/llm-analysis`。
-  - **後端端點中介層保護**：針對 `/api/llm-analysis` 與 `/api/meihua/llm-analysis` 施加 `turnstileMiddleware` 嚴格校驗，有效防範惡意爬蟲無節制調用消耗使用者的珍貴 LLM Token 額度。
+  - **術數套件全面防護 (紫微、八字、塔羅、風水、月老)**：於 `ziwei.html`、`bazi2.html`、`tarot.html`、`fengshui.html`、`yinyuan.html` 之主表單 (`#suiteForm`) 與追問表單 (`#suiteFollowUpForm`) 均掛載 Turnstile 安全驗證元件。前端 `public/js/divination-suite.js` 於排盤解讀與後續追問時強制校驗憑證，並自動重置元件。紫微快速測算模式（未來另一半、男生真實尺寸）因屬確定性演算法不耗費 LLM Token，智慧隱藏驗證元件以保持秒開極速體驗。
+  - **解答之書解讀防護**：於 `answerbook.html` 嵌入 `#answerbook-turnstile`，`public/js/answerbook.js` 於「💬 輸入問題並解讀」模式下強制人機驗證，防護文字解讀 LLM Token。
+  - **後端端點中介層保護**：針對 `/api/llm-analysis`、`/api/meihua/llm-analysis` 以及所有術數套件解讀端點 `/api/:module/llm-analysis` 施加 `turnstileMiddleware` 嚴格校驗，有效防範惡意爬蟲無節制調用消耗使用者的珍貴 LLM Token 額度。
 - **外部 API 100% 開放無阻保證 (`app.js`, `test/turnstile.test.js`)**：
   - 所有供 Telegram Bot、OpenClaw、CLI 腳本（`ask_qimen.js` 等）與第三方調用的專屬 API 端點（`POST /api/qimen-question`、`POST /api/meihua-question`、`POST /api/ziwei-question`、`POST /api/tarot-question`、`POST /api/fengshui-question`、`POST /api/bazi2-question`、`POST /api/yinyuan-question`、`POST /api/answerbook-question`）**絕不掛載 Turnstile**，徹底杜絕 403 誤傷，確保自動化調用永遠暢通無阻。
 - **WebMCP 跨工具對齊 (`public/js/webmcp.js`)**：
@@ -17,7 +19,7 @@
 - **Google AdSense 全站埋設狀態確認**：
   - 確認全站 8 大服務頁面（奇門遁甲、梅花易數、紫微斗數、生辰八字、塔羅、風水、月老姻緣、解答之書）均已完整埋入 Google AdSense 代碼（發布商 ID：`ca-pub-5210017545918559`），包含 `ads-head.html` 全局 SDK 載入、`ads-mobile.html` 行動版專屬橫幅與 `ads-bottom.html` 頁底響應式廣告單元。
 - **自動化測試全面覆蓋**：
-  - 擴充 `test/turnstile.test.js`，包含 `/api/llm-analysis` 與 `/api/meihua/llm-analysis` Token 阻擋測試、`*-question` 端點開放驗證，以及模板靜態元件完整性檢驗。全套測試 220 項 100% 通過。
+  - 擴充 `test/turnstile.test.js`，包含 `/api/llm-analysis`、`/api/meihua/llm-analysis`、`/api/:module/llm-analysis` Token 阻擋測試、`*-question` 端點開放驗證，以及全站 8 大頁面模板靜態元件完整性檢驗。全套測試 220 項 100% 通過。
 
 ## [2026-09-21]
 

@@ -383,6 +383,10 @@
                            placeholder="例如：主臥室與書房該如何安排？客廳財位佈置有何建議？或如何化解路沖？">
                 </div>
 
+                <div id="suiteTurnstileWrapper" style="margin-top: 12px; margin-bottom: 14px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'suite-turnstile', action: 'llm_analysis', explicit: true }) %>
+                </div>
+
                 <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
                     <span>✨ 生成風水格局並請教堪輿顧問</span>
                 </button>
@@ -407,6 +411,9 @@
                 <div id="suiteConversation" class="suite-conversation-stream"></div>
 
                 <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
+                    <div id="suiteFollowUpTurnstileWrapper" style="margin-bottom: 12px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
+                    </div>
                     <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向堪輿子先生追問（例如：床頭與書桌該如何擺放？如何移形易位？）">
                     <button type="submit" class="suite-follow-up-btn">追問</button>
                 </form>

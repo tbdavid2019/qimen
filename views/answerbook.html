@@ -77,6 +77,9 @@
                     <label for="answerbookQuestion">想請解答之書回應的問題</label>
                     <textarea id="answerbookQuestion" name="question" class="form-control input-lg" rows="3" toolparamdescription="想詢問的具體問題；省略問題則為直接默念模式" placeholder="例如：我現在適合接受這份工作嗎？"></textarea>
                 </div>
+                <div id="answerbookTurnstileWrapper" style="margin-top: 12px; margin-bottom: 14px;" hidden>
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'answerbook-turnstile', action: 'llm_analysis', explicit: true }) %>
+                </div>
                 <button type="submit" id="answerbookSubmit" class="suite-btn-submit"><span>📖 默念後取得解答</span></button>
             </form>
 

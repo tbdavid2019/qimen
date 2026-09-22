@@ -498,6 +498,10 @@
                            placeholder="例如：我和他近期常常溝通不良，該如何改善？或我未來的正緣會在何時以何種方式相遇？">
                 </div>
 
+                <div id="suiteTurnstileWrapper" style="margin-top: 12px; margin-bottom: 14px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'suite-turnstile', action: 'llm_analysis', explicit: true }) %>
+                </div>
+
                 <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
                     <span>🏮 取得月老指引</span>
                 </button>
@@ -522,6 +526,9 @@
                 <div id="suiteConversation" class="suite-conversation-stream"></div>
 
                 <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
+                    <div id="suiteFollowUpTurnstileWrapper" style="margin-bottom: 12px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
+                    </div>
                     <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向月老追問（例如：具體該如何突破目前僵局？）">
                     <button type="submit" class="suite-follow-up-btn">追問</button>
                 </form>

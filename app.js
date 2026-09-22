@@ -740,12 +740,18 @@ const answerbookQuestionHandler = createAnswerbookQuestionHandler({
 app.post('/api/answerbook-question', answerbookQuestionHandler);
 app.get('/api/answerbook-question', answerbookQuestionHandler);
 
-app.post('/api/:module/llm-analysis', async (req, res, next) => {
-    const modules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
-    if (!Object.prototype.hasOwnProperty.call(modules, req.params.module)) {
-        return next();
+const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
+
+app.post('/api/:module/llm-analysis', (req, res, next) => {
+    if (!Object.prototype.hasOwnProperty.call(suiteModules, req.params.module)) {
+        return next('route');
     }
-    const moduleName = modules[req.params.module];
+    return turnstileMiddleware({ action: ['llm_analysis', 'divination_analysis'] })(req, res, next);
+}, async (req, res, next) => {
+    if (!Object.prototype.hasOwnProperty.call(suiteModules, req.params.module)) {
+        return next('route');
+    }
+    const moduleName = suiteModules[req.params.module];
     try {
         const { result, question = '', conversationHistory = [] } = req.body || {};
         if (!result) return res.status(400).json({ success: false, error: '缺少計算結果' });

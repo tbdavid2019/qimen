@@ -1179,6 +1179,145 @@
         return { question };
     }
 
+    // --- Cloudflare Turnstile Verification ---
+    let suiteTurnstileWidgetId = null;
+    let currentSuiteTurnstileToken = '';
+    let suiteTurnstileRenderRetries = 0;
+
+    let suiteFollowUpWidgetId = null;
+    let currentFollowUpTurnstileToken = '';
+    let suiteFollowUpRenderRetries = 0;
+
+    function loadTurnstileScript(callback) {
+        if (typeof window.turnstile !== 'undefined' && typeof window.turnstile.render === 'function') {
+            return callback(null);
+        }
+        const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+        if (existing) {
+            existing.addEventListener('load', () => callback(null));
+            existing.addEventListener('error', (err) => callback(err || new Error('Turnstile script failed to load')));
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => callback(null);
+        script.onerror = (err) => callback(err || new Error('Turnstile script failed to load'));
+        document.head.appendChild(script);
+    }
+
+    function renderSuiteTurnstile() {
+        const container = document.getElementById('suite-turnstile');
+        if (!container || typeof container.getAttribute !== 'function') return;
+        const sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript((err) => {
+            if (err) {
+                console.warn('[Turnstile] Suite widget failed to load:', err);
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (suiteTurnstileRenderRetries < 20) {
+                    suiteTurnstileRenderRetries++;
+                    setTimeout(renderSuiteTurnstile, 250);
+                }
+                return;
+            }
+            suiteTurnstileRenderRetries = 0;
+            if (suiteTurnstileWidgetId === null) {
+                try {
+                    const action = (typeof container.getAttribute === 'function' ? container.getAttribute('data-action') : null) || 'llm_analysis';
+                    suiteTurnstileWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: 'auto',
+                        size: 'flexible',
+                        callback: (token) => { currentSuiteTurnstileToken = token; },
+                        'expired-callback': () => { currentSuiteTurnstileToken = ''; },
+                        'error-callback': () => { currentSuiteTurnstileToken = ''; }
+                    });
+                    window.suiteTurnstileWidgetId = suiteTurnstileWidgetId;
+                } catch (e) {
+                    console.warn('[Turnstile] Suite render error:', e);
+                }
+            }
+        });
+    }
+
+    function renderSuiteFollowUpTurnstile() {
+        const container = document.getElementById('suite-followup-turnstile');
+        if (!container || typeof container.getAttribute !== 'function') return;
+        const sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript((err) => {
+            if (err) {
+                console.warn('[Turnstile] Followup widget failed to load:', err);
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (suiteFollowUpRenderRetries < 20) {
+                    suiteFollowUpRenderRetries++;
+                    setTimeout(renderSuiteFollowUpTurnstile, 250);
+                }
+                return;
+            }
+            suiteFollowUpRenderRetries = 0;
+            if (suiteFollowUpWidgetId === null) {
+                try {
+                    const action = (typeof container.getAttribute === 'function' ? container.getAttribute('data-action') : null) || 'llm_analysis';
+                    suiteFollowUpWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: 'auto',
+                        size: 'flexible',
+                        callback: (token) => { currentFollowUpTurnstileToken = token; },
+                        'expired-callback': () => { currentFollowUpTurnstileToken = ''; },
+                        'error-callback': () => { currentFollowUpTurnstileToken = ''; }
+                    });
+                    window.suiteFollowUpWidgetId = suiteFollowUpWidgetId;
+                } catch (e) {
+                    console.warn('[Turnstile] Followup render error:', e);
+                }
+            }
+        });
+    }
+
+    function resetSuiteTurnstile() {
+        currentSuiteTurnstileToken = '';
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            try {
+                if (suiteTurnstileWidgetId !== null) {
+                    window.turnstile.reset(suiteTurnstileWidgetId);
+                } else {
+                    const container = document.getElementById('suite-turnstile');
+                    if (container) window.turnstile.reset(container);
+                }
+            } catch (e) {}
+        }
+    }
+
+    function resetSuiteFollowUpTurnstile() {
+        currentFollowUpTurnstileToken = '';
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            try {
+                if (suiteFollowUpWidgetId !== null) {
+                    window.turnstile.reset(suiteFollowUpWidgetId);
+                } else {
+                    const container = document.getElementById('suite-followup-turnstile');
+                    if (container) window.turnstile.reset(container);
+                }
+            } catch (e) {}
+        }
+    }
+
+    window.resetSuiteTurnstile = resetSuiteTurnstile;
+    window.resetSuiteFollowUpTurnstile = resetSuiteFollowUpTurnstile;
+
+    renderSuiteTurnstile();
+
     // --- One-Click Main Flow ---
 
     const endpointMap = {
@@ -1259,6 +1398,17 @@
             return;
         }
 
+        // 驗證 Turnstile 人機驗證 (若前端有渲染且啟用)
+        let sToken = currentSuiteTurnstileToken;
+        if (!sToken && window.turnstile && suiteTurnstileWidgetId !== null) {
+            try { sToken = window.turnstile.getResponse(suiteTurnstileWidgetId); } catch (e) {}
+        }
+        const suiteTurnstileElem = document.getElementById('suite-turnstile');
+        if (!sToken && suiteTurnstileElem && typeof suiteTurnstileElem.getAttribute === 'function' && suiteTurnstileElem.getAttribute('data-sitekey')) {
+            alert('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊查看命理解讀！');
+            return;
+        }
+
         if (submitBtn) submitBtn.disabled = true;
         aiSection.hidden = false;
         aiLoading.hidden = false;
@@ -1279,7 +1429,7 @@
             lastResult = calcData.reading || calcData.report || calcData.chart || calcData.result;
             renderVisual(lastResult, payload);
 
-            // Step 2: 自動取得解讀
+            // Step 2: 自動取得解讀 (帶上 Turnstile 安全憑證)
             const userQuestion = payload.question || '請為我進行全盤解讀與具體指引。';
             const aiRes = await fetch(`/api/${page}/llm-analysis`, {
                 method: 'POST',
@@ -1287,7 +1437,9 @@
                 body: JSON.stringify({
                     result: lastResult,
                     question: userQuestion,
-                    conversationHistory: []
+                    conversationHistory: [],
+                    'cf-turnstile-response': sToken || undefined,
+                    turnstileToken: sToken || undefined
                 })
             });
 
@@ -1299,7 +1451,10 @@
                 conversationHistory.push({ role: 'assistant', content: aiData.analysis });
                 window.conversationHistory = conversationHistory;
                 appendMessage('assistant', aiData.analysis);
-                if (followUpForm) followUpForm.hidden = false;
+                if (followUpForm) {
+                    followUpForm.hidden = false;
+                    renderSuiteFollowUpTurnstile();
+                }
             } else {
                 appendMessage('assistant', `⚠️ 解讀暫不可用：${aiData.error || '請稍後重試'}`);
             }
@@ -1307,6 +1462,7 @@
             aiLoading.hidden = true;
             alert(`錯誤：${err.message}`);
         } finally {
+            resetSuiteTurnstile();
             if (submitBtn) submitBtn.disabled = false;
         }
     });
@@ -1317,6 +1473,20 @@
         e.preventDefault();
         const question = followUpInput.value.trim();
         if (!question || !lastResult) return;
+
+        // 驗證追問 Turnstile 人機驗證
+        const followUpTurnstileElem = document.getElementById('suite-followup-turnstile') || document.getElementById('suite-turnstile');
+        let fuToken = currentFollowUpTurnstileToken;
+        if (!fuToken && window.turnstile && suiteFollowUpWidgetId !== null) {
+            try { fuToken = window.turnstile.getResponse(suiteFollowUpWidgetId); } catch (e) {}
+        }
+        if (!fuToken && window.turnstile && suiteTurnstileWidgetId !== null) {
+            try { fuToken = window.turnstile.getResponse(suiteTurnstileWidgetId); } catch (e) {}
+        }
+        if (!fuToken && followUpTurnstileElem && typeof followUpTurnstileElem.getAttribute === 'function' && followUpTurnstileElem.getAttribute('data-sitekey')) {
+            alert('請先完成人機安全驗證 (Cloudflare Turnstile) 後再發送追問！');
+            return;
+        }
 
         followUpInput.value = '';
         appendMessage('user', question);
@@ -1333,7 +1503,9 @@
                 body: JSON.stringify({
                     result: lastResult,
                     question,
-                    conversationHistory
+                    conversationHistory,
+                    'cf-turnstile-response': fuToken || undefined,
+                    turnstileToken: fuToken || undefined
                 })
             });
             const aiData = await aiRes.json();
@@ -1350,6 +1522,8 @@
         } catch (err) {
             if (typingBubble.parentNode) conversationStream.removeChild(typingBubble);
             appendMessage('assistant', `⚠️ 網路異常：${err.message}`);
+        } finally {
+            resetSuiteFollowUpTurnstile();
         }
     });
 
@@ -1423,10 +1597,13 @@
 
             if (ziweiModeInput) ziweiModeInput.value = mode;
 
+            const turnstileWrapper = document.getElementById('suiteTurnstileWrapper');
+
             if (mode === 'spouse') {
                 if (spouseBanner) spouseBanner.style.display = 'block';
                 if (maleSizeBanner) maleSizeBanner.style.display = 'none';
                 if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = 'none';
+                if (turnstileWrapper) turnstileWrapper.style.display = 'none';
                 if (submitBtn) submitBtn.textContent = '💍 3秒解鎖未來另一半';
                 if (visualBoard) visualBoard.hidden = true;
                 if (aiSection) aiSection.hidden = true;
@@ -1438,6 +1615,7 @@
                 if (maleSizeBanner) maleSizeBanner.style.display = 'block';
                 if (spouseBanner) spouseBanner.style.display = 'none';
                 if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = 'none';
+                if (turnstileWrapper) turnstileWrapper.style.display = 'none';
                 if (submitBtn) submitBtn.textContent = '⚡ 3秒立即速測男生真實尺寸';
                 if (visualBoard) visualBoard.hidden = true;
                 if (aiSection) aiSection.hidden = true;
@@ -1459,6 +1637,7 @@
                 if (spouseBanner) spouseBanner.style.display = 'none';
                 if (maleSizeBanner) maleSizeBanner.style.display = 'none';
                 if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = '';
+                if (turnstileWrapper) turnstileWrapper.style.display = '';
                 if (submitBtn) submitBtn.textContent = '✨ 排盤並查看命理解讀';
                 if (spouseResultCard) spouseResultCard.hidden = true;
                 if (maleSizeResultCard) maleSizeResultCard.hidden = true;

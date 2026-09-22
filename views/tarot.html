@@ -129,6 +129,10 @@
                     </select>
                 </div>
 
+                <div id="suiteTurnstileWrapper" style="margin-top: 12px; margin-bottom: 14px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'suite-turnstile', action: 'llm_analysis', explicit: true }) %>
+                </div>
+
                 <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
                     <span>✨ 開始占卜並查看解讀</span>
                 </button>
@@ -153,6 +157,9 @@
                 <div id="suiteConversation" class="suite-conversation-stream"></div>
 
                 <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
+                    <div id="suiteFollowUpTurnstileWrapper" style="margin-bottom: 12px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
+                    </div>
                     <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向塔羅顧問進一步追問（例如：逆位牌具體提醒我什麼？）">
                     <button type="submit" class="suite-follow-up-btn">追問</button>
                 </form>
