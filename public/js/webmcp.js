@@ -1338,6 +1338,7 @@
 				includeChars: { type: "array", items: { type: "string", minLength: 1, maxLength: 1 }, description: "必須出現在名字中的字" },
 				excludeChars: { type: "array", items: { type: "string", minLength: 1, maxLength: 1 }, description: "名字中不可出現的字" },
 				desiredElements: { type: "array", items: { type: "string", enum: ["木", "火", "土", "金", "水"] }, description: "排序偏好的字五行" },
+				nameStyle: { type: "string", enum: ["auto", "feminine", "masculine", "neutral"], default: "auto", description: "命名風格排序；auto 參照 birthData.sex，未提供則用中性。屬風格偏好，不判定性別。" },
 				profile: { type: "string", enum: ["taiwanKangxi", "modern"] },
 				birthData: { type: "object", description: "選填八字資料；僅於本站本地計算喜用五行", properties: { date: { type: "string", format: "date" }, sex: { type: "string", enum: ["男", "女"] }, time: { type: "string" }, shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, allowUnknownHour: { type: "boolean" } } }
 			}, required: ["surname"]
@@ -1346,6 +1347,11 @@
 			type: "object", properties: {
 				name: { type: "string", minLength: 2, maxLength: 8, description: "完整中文姓名" },
 				surname: { type: "string", minLength: 1, maxLength: 7, description: "驗名可選的明確姓氏；取名時最多 3 字" },
+				givenNameLength: { type: "integer", minimum: 1, maximum: 4, description: "取名模式名字字數" },
+				includeChars: { type: "array", items: { type: "string", minLength: 1, maxLength: 1 }, description: "生成名字必須包含的字" },
+				excludeChars: { type: "array", items: { type: "string", minLength: 1, maxLength: 1 }, description: "生成名字排除的字" },
+				desiredElements: { type: "array", items: { type: "string", enum: ["木", "火", "土", "金", "水"] }, description: "生成名字的五行排序偏好" },
+				nameStyle: { type: "string", enum: ["auto", "feminine", "masculine", "neutral"], default: "auto", description: "命名風格排序；auto 參照 birthData.sex，未提供則用中性；不是性別判定。" },
 				mode: { type: "string", enum: ["verify", "generate"] },
 				question: { type: "string", maxLength: 1000, description: "補充問題" },
 				profile: { type: "string", enum: ["taiwanKangxi", "modern"] },

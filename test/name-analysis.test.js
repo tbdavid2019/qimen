@@ -71,6 +71,20 @@ test('命名候選長度、硬性字條件、排除條件與結果穩定', () =>
   assert.throws(() => generateNames({ surname: '王', givenNameLength: 5 }), { code: 'INVALID_GIVEN_NAME_LENGTH' });
 });
 
+test('依排盤性別套用可覆寫的命名風格，女生候選不再以男性風格字堆榜', () => {
+  const female = generateNames({ surname: '江', givenNameLength: 2, birthData: { sex: '女' }, limit: 20 });
+  const male = generateNames({ surname: '江', givenNameLength: 2, birthData: { sex: '男' }, limit: 20 });
+  const neutral = generateNames({ surname: '江', givenNameLength: 2, limit: 20 });
+  assert.equal(female.nameStyle.effective, 'feminine');
+  assert.equal(male.nameStyle.effective, 'masculine');
+  assert.equal(neutral.nameStyle.effective, 'neutral');
+  assert.ok(female.candidates.some((candidate) => candidate.name === '江婉婷'));
+  assert.ok(female.candidates.every((candidate) => candidate.preferences.nameStyle.conflictingCharacters.length === 0));
+  assert.ok(male.candidates.some((candidate) => candidate.name === '江浩然'));
+  assert.equal(generateNames({ surname: '江', nameStyle: 'neutral' }).nameStyle.effective, 'neutral');
+  assert.throws(() => generateNames({ surname: '江', nameStyle: 'girl' }), { code: 'INVALID_NAME_STYLE' });
+});
+
 test('指定字可出現在名字任意位置，並依所選筆畫口徑檢查字庫', () => {
   const result = generateNames({ surname: '王', givenNameLength: 3, includeChars: ['月'], profile: 'modern', limit: 50 });
   assert.equal(result.candidates.length, 50);
@@ -92,6 +106,9 @@ test('姓名分析頁展示生辰性別欄位、分層結果與明確 Turnstile 
   const js = fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'name-analysis.js'), 'utf8');
   assert.match(html, /id="birthDate"/);
   assert.match(html, /id="birthSex"/);
+  assert.match(html, /id="nameStyle"/);
+  assert.match(js, /nameStyle: byId\('nameStyle'\)\.value/);
+  assert.match(fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'webmcp.js'), 'utf8'), /nameStyle: \{ type: "string", enum: \["auto", "feminine", "masculine", "neutral"\]/);
   assert.match(html, /id="name-turnstile"[^>]*data-action="llm_analysis"/);
   assert.match(html, /navbar-ex1-collapse/);
   assert.match(js, /name-bazi-section/);
@@ -111,6 +128,12 @@ test('HTTP 驗名、取名與本地八字 lens 共用核心引擎', async (t) =>
   const docs = await docsResponse.json();
   assert.equal(docs.endpoints.nameAnalysisVerify.path, '/api/name-analysis/verify');
   assert.equal(docs.endpoints.nameAnalysisGenerate.path, '/api/name-analysis/generate');
+  assert.deepEqual(docs.endpoints.nameAnalysisGenerate.parameters.nameStyle.enum, ['auto', 'feminine', 'masculine', 'neutral']);
+  assert.equal(docs.endpoints.nameStyleProfiles.path, '/data/name-analysis/name-style-profiles.json');
+  const styleProfilesResponse = await fetch(`${base}/data/name-analysis/name-style-profiles.json`);
+  const styleProfiles = await styleProfilesResponse.json();
+  assert.equal(styleProfilesResponse.status, 200);
+  assert.ok(styleProfiles.profiles.feminine.patterns.includes('婉婷'));
   const verify = await fetch(`${base}/api/name-analysis/verify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: '歐陽明月清風', surname: '歐陽' }) });
   const verified = await verify.json();
   assert.equal(verify.status, 200);
@@ -126,6 +149,12 @@ test('HTTP 驗名、取名與本地八字 lens 共用核心引擎', async (t) =>
   assert.equal(baziSummary.fourPillars[3].value, '未知');
   assert.ok(baziSummary.fiveElements.counts);
   assert.equal(JSON.stringify(generated.result).includes('1981-08-11'), false);
+  const femaleResponse = await fetch(`${base}/api/name-analysis/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ surname: '江', givenNameLength: 2, limit: 20, birthData: { date: '2017-11-04', time: '02:30', sex: '女', calendar: 'solar' } }) });
+  const femaleResult = await femaleResponse.json();
+  assert.equal(femaleResponse.status, 200);
+  assert.equal(femaleResult.result.nameStyle.effective, 'feminine');
+  assert.ok(femaleResult.result.candidates.some((candidate) => candidate.name === '江婉婷'));
+  assert.ok(femaleResult.result.candidates.every((candidate) => candidate.preferences.nameStyle.conflictingCharacters.length === 0));
   const questionResponse = await fetch(`${base}/api/name-analysis-question`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: '王小明', surname: '王', birthData: { date: '1981-08-11', time: '10:00', sex: '男' } }) });
   const questioned = await questionResponse.json();
   assert.equal(questionResponse.status, 200);

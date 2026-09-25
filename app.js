@@ -144,6 +144,7 @@ app.get('/api/turnstile/config', (req, res) => {
 });
 
 app.get('/data/name-analysis/method-profiles.json', (req, res) => res.type('application/json').sendFile(path.join(__dirname, 'data/name-analysis/method-profiles.json')));
+app.get('/data/name-analysis/name-style-profiles.json', (req, res) => res.type('application/json').sendFile(path.join(__dirname, 'data/name-analysis/name-style-profiles.json')));
 app.get('/name-analysis', (req, res) => res.render('name-analysis', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'name-analysis' }));
 app.post('/api/name-analysis/verify', async (req, res) => {
     try {
@@ -1820,15 +1821,16 @@ app.get('/api/docs', (req, res) => {
             },
             nameAnalysisGenerate: {
                 method: "POST", path: "/api/name-analysis/generate", description: "依姓氏與條件產生 1–4 字名字候選。",
-                parameters: { surname: { type: "string", required: true, minLength: 1, maxLength: 3 }, givenNameLength: { type: "integer", required: false, minimum: 1, maximum: 4, default: 2 }, includeChars: { type: "array", items: "single Han character" }, excludeChars: { type: "array", items: "single Han character" }, desiredElements: { type: "array", items: ["木", "火", "土", "金", "水"] }, profile: { type: "string", enum: ["taiwanKangxi", "modern"] }, limit: { type: "integer", maximum: 50 }, birthData: { type: "object", required: false, description: "選填：date、sex、time/shichen 或 allowUnknownHour；本地計算後作為偏好排序。" } },
+                parameters: { surname: { type: "string", required: true, minLength: 1, maxLength: 3 }, givenNameLength: { type: "integer", required: false, minimum: 1, maximum: 4, default: 2 }, includeChars: { type: "array", items: "single Han character" }, excludeChars: { type: "array", items: "single Han character" }, desiredElements: { type: "array", items: ["木", "火", "土", "金", "水"] }, nameStyle: { type: "string", enum: ["auto", "feminine", "masculine", "neutral"], default: "auto", description: "命名風格；auto 參照 birthData.sex，沒有性別資料則中性。僅為常見命名風格排序，不代表性別判定。" }, profile: { type: "string", enum: ["taiwanKangxi", "modern"] }, limit: { type: "integer", maximum: 50 }, birthData: { type: "object", required: false, description: "選填：date、sex、time/shichen 或 allowUnknownHour；本地計算後作為偏好排序。" } },
                 errors: ["INVALID_SURNAME", "INVALID_GIVEN_NAME_LENGTH", "INVALID_CHAR_CONSTRAINT", "TOO_MANY_REQUIRED_CHARS"]
             },
             nameAnalysisQuestion: {
                 method: "POST", path: "/api/name-analysis-question", description: "重算驗名或命名結果；提供 question 且設定 LLM 時，姓名與確定性分析結果會傳至設定的 LLM；出生日期與時間不放入提示，派生五行摘要可能會傳入。",
-                parameters: { mode: { type: "string", enum: ["verify", "generate"], default: "verify" }, name: { type: "string", required: false }, surname: { type: "string", required: false }, question: { type: "string", required: false, maxLength: 1000 }, profile: { type: "string", enum: ["taiwanKangxi", "modern"] }, birthData: { type: "object", required: false, description: "選填八字欄位；LLM 僅接收派生的五行摘要，不接收出生資料。" } },
+                parameters: { mode: { type: "string", enum: ["verify", "generate"], default: "verify" }, name: { type: "string", required: false }, surname: { type: "string", required: false }, givenNameLength: { type: "integer", minimum: 1, maximum: 4 }, includeChars: { type: "array", items: "single Han character" }, excludeChars: { type: "array", items: "single Han character" }, desiredElements: { type: "array", items: ["木", "火", "土", "金", "水"] }, nameStyle: { type: "string", enum: ["auto", "feminine", "masculine", "neutral"], default: "auto" }, question: { type: "string", required: false, maxLength: 1000 }, profile: { type: "string", enum: ["taiwanKangxi", "modern"] }, birthData: { type: "object", required: false, description: "選填八字欄位；LLM 僅接收派生的五行摘要，不接收出生資料。" } },
                 notes: ["未配置 LLM 或未提供 question 時只回傳確定性結果。", "缺失欄位不得推斷；三字以上名字使用標示的延伸五格算法。"]
             },
             nameMethodProfiles: { method: "GET", path: "/data/name-analysis/method-profiles.json", description: "姓名方法與來源版本清單。" },
+            nameStyleProfiles: { method: "GET", path: "/data/name-analysis/name-style-profiles.json", description: "取名風格排序字表、風格組合與方法限制。" },
             qimenQuestion: {
                 method: "POST",
                 path: "/api/qimen-question",

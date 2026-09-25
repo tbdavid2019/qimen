@@ -32,6 +32,13 @@ This merged form index contains 1,349 surname spellings (including 106 compound 
 - This is an independently authored starter pool of commonly used, generally constructive given-name characters. It was assembled for deterministic candidate enumeration and is not copied from an upstream repository or represented as a complete lexicon, frequency list, or quality judgment.
 - Each candidate is still checked against the licensed Han-character dictionary, base-set eligibility, requested hard constraints, and selected method profile before output.
 
+## `name-style-profiles.json`
+
+- Independently authored project data. The feminine, masculine, and neutral character lists are editorial soft-ranking preferences based on contemporary Chinese naming conventions, not a statistical gender classifier or a claim that any character belongs to one gender.
+- Explicit user preference takes precedence. `auto` uses the supplied birth-chart sex only as a conventional style suggestion; when no sex is supplied, it uses the neutral profile. Users can override it.
+- Each candidate reports which style-associated characters it matches or conflicts with. The lists affect ordering only and do not remove valid requested characters.
+- A published Chinese character gender-frequency dataset was reviewed as a possible evidence source, but its non-commercial/share-alike license is incompatible with this project's redistribution and commercial use; none of its data or implementation is included.
+
 ## Method profiles and uncovered methods
 
 - `method-profiles.json` documents the supported stroke profiles, five-grid arithmetic, three-talents mapping, and provenance for each calculation.

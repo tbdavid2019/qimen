@@ -19,6 +19,7 @@ function parseArgs(args) {
   if (out.include) out.includeChars = [...out.include];
   if (out.exclude) out.excludeChars = [...out.exclude];
   if (out.element) out.desiredElements = out.element.split(',').filter(Boolean);
+  if (out['name-style']) out.nameStyle = out['name-style'];
   if (out.limit) out.limit = Number(out.limit);
   if (out['birth-date']) out.birthData = { ...(out.birthData || {}), date: out['birth-date'] };
   if (out['birth-sex']) out.birthData = { ...(out.birthData || {}), sex: out['birth-sex'] };

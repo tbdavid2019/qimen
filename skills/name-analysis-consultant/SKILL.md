@@ -17,13 +17,14 @@ node skills/name-analysis-consultant/scripts/name_analysis_cli.js --verify --nam
 ### 產生命名候選
 
 ```sh
-node skills/name-analysis-consultant/scripts/name_analysis_cli.js --generate --surname 歐陽 --length 3 --include 安 --exclude 凶 --element 木 --limit 20
+node skills/name-analysis-consultant/scripts/name_analysis_cli.js --generate --surname 歐陽 --length 3 --include 安 --exclude 凶 --element 木 --name-style feminine --limit 20
 ```
 
 - `--surname`：1–3 個漢字。
 - `--length`：名字部分 1–4 個漢字；完整姓名最長 7 個漢字。
 - `--include`、`--exclude`：字串中的每個漢字視為一項硬條件。
 - `--element`：以逗號分隔的五行偏好，例如 `木,水`；只影響候選排序，缺失五行不補猜。
+- `--name-style`：`auto`（預設）、`feminine`、`masculine` 或 `neutral`。`auto` 參照已提供的 `birthData.sex`／`--birth-sex` 作常見命名風格排序；沒有性別資料時採中性。可以明確覆寫。這是文化風格偏好，不是性別判定或限制；每個候選會回報相符及風格不同的字。
 - `--limit`：最多 50，預設 20。
 - `--profile`：`taiwanKangxi` 或 `modern`。
 - 可選八字參考：`--birth-date 1990-01-02 --birth-sex 女 --birth-calendar lunar --leap-month --birth-time 13:20 --zi-mode early_late`。如不清楚出生時間，使用 `--unknown-hour` 明確改用三柱參考。出生資料以本地既有 Node.js 八字算法計算；未提供出生地座標時不作真太陽時校正。
@@ -40,7 +41,7 @@ echo '{"mode":"verify","name":"歐陽明月清風","profile":"taiwanKangxi"}' | 
 - 筆畫、字音、字義、部首、字形與可得五行來自已標示版本的字庫。沒有資料時明確回報缺漏。多音字不做語境消歧。
 - 五格與 81 數理為傳統算法之一，按數字 1–81 循環查表。三才以末位數分五行。三字以上名字採標示的延伸算法，各流派口徑不同。
 - 生肖部首喜忌未啟用，因目前未找到權利與完整性均明確的資料源。出生資料不是此功能必需輸入，也不應要求使用者提供。
-- 若使用者明確提供出生資料，可選擇本地八字喜用五行對照。候選只將符合字列出並作軟性排序，不計算單一適配分數；性別化用字偏好與風格分類未啟用。
+- 若使用者明確提供出生資料，可選擇本地八字喜用五行對照。候選只將符合字列出並作軟性排序，不計算單一適配分數。命名風格採專案編輯整理的當代用字傾向，並在方法檔與每筆候選中揭露；不將其當成性別身份判斷。字表來源與限制見 `data/name-analysis/SOURCES.md`。
 - 命名候選只使用專案獨立整理的常用姓名字池並依可檢視條件排序。候選不是單一吉凶總分，也不保證適合個人；請自行確認語意、讀音、書寫與家族文化。
 
 ## 資料來源與授權

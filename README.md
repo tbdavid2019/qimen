@@ -170,7 +170,7 @@
 | **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri/evaluate-layout), `facing`, `heading`, `northReference`, `declination`, `headingSource`, `layoutObjects`, `entryPath`, `pathQuality`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question`, `POST /api/fengshui/evaluate-layout`, `POST /api/fengshui/report` | `skills/fengshui-consultant/scripts/fengshui_cli.js` & `ask_fengshui.js` | `fengshui_report`, `fengshui_layout_evaluation` |
 | **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (4種視角), `time_factor`, `seed`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
 | **解答之書** | `mode` (direct/question), `question`, `conversationHistory` | `/answerbook` | `POST /api/answerbook-question` | `skills/answerbook-consultant/scripts/ask_answerbook.js` | `answerbook_reading` |
-| **中文姓名分析** | 驗名 `name` (2–8 字), `surname`, `profile`; 取名 `givenNameLength` (1–4), `includeChars`, `excludeChars`, `desiredElements`, `birthData`, `limit` | `/name-analysis` | `POST /api/name-analysis/verify`, `/api/name-analysis/generate`, `/api/name-analysis-question` | `skills/name-analysis-consultant/scripts/name_analysis_cli.js` | `name_analysis_verify`, `name_analysis_generate`, `name_analysis_question` |
+| **中文姓名分析** | 驗名 `name` (2–8 字), `surname`, `profile`; 取名 `givenNameLength` (1–4), `includeChars`, `excludeChars`, `desiredElements`, `nameStyle`, `birthData`, `limit` | `/name-analysis` | `POST /api/name-analysis/verify`, `/api/name-analysis/generate`, `/api/name-analysis-question` | `skills/name-analysis-consultant/scripts/name_analysis_cli.js` | `name_analysis_verify`, `name_analysis_generate`, `name_analysis_question` |
 | **時間範圍校正** | `startDate`, `endDate`, `timezone`, `precision` | `/` | `GET/POST /api/time/range` | `lib/civil-time.js` | `date_range_normalize` |
 
 ---
@@ -180,12 +180,12 @@
 姓名模組以本地 Node.js 計算，驗證 2–8 個漢字姓名；取名時可指定 1–4 個名字字，所以完整姓名可超過三字。複姓可以手動指定，也能由索引提出切分建議；若有多個可能，回報替代切分。驗名和取名都可選 `taiwanKangxi`（台灣常用康熙筆畫）或 `modern` 筆畫口徑。結果分層呈現逐字字義／讀音／五行、五格與三才；缺漏筆畫、五行、讀音或字義會標示缺漏，不會用預設值填補。
 
 - 驗名：`POST /api/name-analysis/verify`，JSON 範例 `{"name":"歐陽明月清風","profile":"taiwanKangxi"}`。可選 `surname` 明確指定姓氏。
-- 取名：`POST /api/name-analysis/generate`，JSON 範例 `{"surname":"歐陽","givenNameLength":3,"includeChars":["安"],"excludeChars":["凶"],"desiredElements":["木"],"limit":20}`。
+- 取名：`POST /api/name-analysis/generate`，JSON 範例 `{"surname":"歐陽","givenNameLength":3,"includeChars":["安"],"excludeChars":["凶"],"desiredElements":["木"],"nameStyle":"feminine","limit":20}`。`nameStyle` 支援 `auto`（預設，參照已提供的 `birthData.sex`，無性別資料時中性）、`feminine`、`masculine`、`neutral`。這是可覆寫的常見命名風格排序，不代表性別判定；候選會列出風格相符／不同的字。
 - 問答：`POST /api/name-analysis-question`，傳入驗名或取名參數並可附 `question`（最多 1,000 字）。沒有設定 LLM 或未提供問題時只回傳確定性結果。驗名與取名的完整輸入和結果送至 Discord webhook；若使用補充解讀，姓名及確定性分析結果會送至設定的 LLM，原始出生日期與時間不加入 LLM prompt，衍生八字摘要可能包含在分析結果中。
-- 數理：五格採 `data/name-analysis/method-profiles.json` 所列版本；81 數理與三才分項呈現，不合併成單一「命運分數」。名字部分超過兩字時標示延伸算法，生肖部首喜忌則因缺乏可驗證來源而未啟用。
+- 數理：五格採 `data/name-analysis/method-profiles.json` 所列版本；81 數理與三才分項呈現，不合併成單一「命運分數」。名字部分超過兩字時標示延伸算法，生肖部首喜忌則因缺乏可驗證來源而未啟用。風格字表可由 `GET /data/name-analysis/name-style-profiles.json` 讀取，方法／來源可由 `GET /data/name-analysis/method-profiles.json` 讀取。
 - 命名候選字來自專案獨立整理的常用姓名字池，依可用字義/筆畫資料與明確偏好排序，並非姓名品質或未來結果的客觀評級。結果應一併考量讀音、多音字、字義、書寫、家庭與個人偏好。
-- 可選 `birthData` 以本地既有 `lib/bazi2.js` 計算；需提供日期、排盤性別，以及出生時間/時辰或明確標示未知，可指定曆法、農曆閏月及子時換日口徑。結果列出四柱、日主、五行分布、強弱依據與喜忌參考，缺時辰時明示時柱未知。出生日期與時間不加入 LLM prompt；姓名驗證／取名輸入與完整結果會送至 Discord webhook。若使用補充解讀，姓名、結果與派生八字摘要（含排盤性別與四柱）會送至設定的 LLM。缺出生地時不做真太陽時校正。尚未啟用性別化字風格及生肖部首規則，避免推測用字偏好或套用無來源分類。
-- CLI 範例：`node skills/name-analysis-consultant/scripts/name_analysis_cli.js --verify --name 王小明 --surname 王`；取名範例：`node skills/name-analysis-consultant/scripts/name_analysis_cli.js --generate --surname 王 --length 3 --include 安`。也接受 JSON stdin。來源授權與欄位清單見 `data/name-analysis/SOURCES.md`。
+- 可選 `birthData` 以本地既有 `lib/bazi2.js` 計算；需提供日期、排盤性別，以及出生時間/時辰或明確標示未知，可指定曆法、農曆閏月及子時換日口徑。結果列出四柱、日主、五行分布、強弱依據與喜忌參考，缺時辰時明示時柱未知。出生日期與時間不加入 LLM prompt；姓名驗證／取名輸入與完整結果會送至 Discord webhook。若使用補充解讀，姓名、結果與派生八字摘要（含排盤性別與四柱）會送至設定的 LLM。缺出生地時不做真太陽時校正。性別化風格與生肖部首規則分開處理：風格用字為可覆寫排序偏好，生肖規則因缺乏可驗證來源而未啟用。
+- CLI 範例：`node skills/name-analysis-consultant/scripts/name_analysis_cli.js --verify --name 王小明 --surname 王`；取名範例：`node skills/name-analysis-consultant/scripts/name_analysis_cli.js --generate --surname 王 --length 3 --name-style feminine --include 安`。也接受 JSON stdin。來源授權與欄位清單見 `data/name-analysis/SOURCES.md`。
 
 補充問答的 `mode` 請明確指定 `verify` 或 `generate`；驗名需 `name`，取名需 `surname`。紫微純排盤 API `POST /api/ziwei/chart` 可設 `skipRecord: true` 僅回傳命盤、不送 Discord 紀錄；CLI 可用 `skills/ziwei-consultant/scripts/ziwei_cli.js` 直接取得不經 LLM 的排盤。
 

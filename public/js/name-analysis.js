@@ -238,6 +238,7 @@
         includeChars: [...byId('includeChars').value.trim()],
         excludeChars: [...byId('excludeChars').value.trim()],
         desiredElements: byId('desiredElements').value ? [byId('desiredElements').value] : [],
+        nameStyle: byId('nameStyle').value,
         birthData: birth
       };
       lastRequest = { ...body, mode: 'generate' };
@@ -257,8 +258,10 @@
       if (mode === 'verify') {
         results.innerHTML = renderAnalysis(data.result);
       } else {
-        const cards = data.result.candidates.map((candidate, index) => `<div class="name-candidate-rank"><span>候選 ${String(index + 1).padStart(2, '0')}</span>${renderAnalysis(candidate.analysis)}</div>`).join('');
-        results.innerHTML = cards || '<div class="name-empty-state">目前條件下找不到完整候選。請放寬條件或調整字數後重試。</div>';
+        const style = data.result.nameStyle;
+        const styleIntro = style ? `<div class="name-data-note"><b>命名風格：${esc(style.label)}</b>　依${style.requested === 'auto' ? '排盤性別建議' : '你選擇的偏好'}排序。${esc(style.notice)}</div>` : '';
+        const cards = data.result.candidates.map((candidate, index) => `<div class="name-candidate-rank"><span>候選 ${String(index + 1).padStart(2, '0')} · ${esc(candidate.preferences?.nameStyle?.label || '')}${candidate.preferences?.nameStyle?.conflictingCharacters?.length ? ` · 風格不同字：${esc(candidate.preferences.nameStyle.conflictingCharacters.join('、'))}` : ''}</span>${renderAnalysis(candidate.analysis)}</div>`).join('');
+        results.innerHTML = styleIntro + (cards || '<div class="name-empty-state">目前條件下找不到完整候選。請放寬條件或調整字數後重試。</div>');
       }
       status.textContent = mode === 'verify' ? '姓名與生辰資料已整理完成。' : `已依條件整理 ${data.result.candidates.length} 個候選。`;
       await showQuestionForm();

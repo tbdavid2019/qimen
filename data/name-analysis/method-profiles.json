@@ -26,9 +26,15 @@
       "threeTalents": "same final-digit mapping as taiwanKangxi"
     }
   },
+  "nameStyle": {
+    "id": "editorially-curated-contemporary-name-style-ordering-v1",
+    "source": "name-style-profiles.json",
+    "behavior": "Soft ranking only. Explicit nameStyle wins; auto references birthData.sex when supplied and otherwise selects neutral.",
+    "limitations": "Common contemporary naming associations are culturally and temporally variable. This is not a gender classifier, identity judgment, or empirical frequency model. Users can choose feminine, masculine, or neutral style explicitly.",
+    "license": "Independently authored project data; see SOURCES.md."
+  },
   "unsupported": {
-    "zodiacRadicalAssociations": "Not enabled: no reviewed complete source with confirmed redistribution rights and documented method.",
-    "genderedStyles": "Not enabled: current name-character pool does not carry validated gender or style metadata; preferences are not inferred."
+    "zodiacRadicalAssociations": "Not enabled: no reviewed complete source with confirmed redistribution rights and documented method."
   },
   "optionalBirthDataLens": {
     "id": "local-bazi-useful-element-alignment-v1",
