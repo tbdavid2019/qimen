@@ -85,6 +85,27 @@ test('依排盤性別套用可覆寫的命名風格，女生候選不再以男�
   assert.throws(() => generateNames({ surname: '江', nameStyle: 'girl' }), { code: 'INVALID_NAME_STYLE' });
 });
 
+test('CCNC 聚合語料只作性別風格軟性排序，長名字仍支援且不暴露原始姓名', () => {
+  const profile = require('../data/name-analysis/name-corpus-profile.json');
+  assert.equal(profile.totals.rows, 3658109);
+  assert.equal(profile.source.license, 'GPL-3.0-only');
+  assert.ok(profile.characters['婷'].f > profile.characters['婷'].m);
+  assert.ok(profile.characters['浩'].m > profile.characters['浩'].f);
+  assert.ok(profile.pairs['婉婷'].f > 0);
+  assert.equal(JSON.stringify(profile).includes('歐陽明月清風'), false);
+
+  const female = generateNames({ surname: '江', givenNameLength: 2, birthData: { sex: '女' }, limit: 20 });
+  assert.equal(female.ranking.corpus.examples, 3658109);
+  assert.match(female.ranking.method, /ccnc/);
+  assert.ok(female.candidates.every((candidate) => candidate.preferences.nameStyle.corpusEvidence.source === profile.source.name));
+  assert.ok(female.candidates.some((candidate) => candidate.preferences.nameStyle.corpusEvidence.firstPair?.pair === '婉婷'));
+
+  const long = generateNames({ surname: '歐陽', givenNameLength: 3, nameStyle: 'neutral', limit: 5 });
+  assert.ok(long.candidates.length > 0);
+  assert.ok(long.candidates.every((candidate) => [...candidate.givenName].length === 3));
+  assert.ok(long.candidates.every((candidate) => candidate.preferences.nameStyle.corpusEvidence.characters.length === 3));
+});
+
 test('指定字可出現在名字任意位置，並依所選筆畫口徑檢查字庫', () => {
   const result = generateNames({ surname: '王', givenNameLength: 3, includeChars: ['月'], profile: 'modern', limit: 50 });
   assert.equal(result.candidates.length, 50);
@@ -133,10 +154,16 @@ test('HTTP 驗名、取名與本地八字 lens 共用核心引擎', async (t) =>
   assert.equal(docs.endpoints.nameAnalysisGenerate.path, '/api/name-analysis/generate');
   assert.deepEqual(docs.endpoints.nameAnalysisGenerate.parameters.nameStyle.enum, ['auto', 'feminine', 'masculine', 'neutral']);
   assert.equal(docs.endpoints.nameStyleProfiles.path, '/data/name-analysis/name-style-profiles.json');
+  assert.equal(docs.endpoints.nameCorpusProfile.path, '/data/name-analysis/name-corpus-profile.json');
+  assert.match(docs.endpoints.nameAnalysisGenerate.description, /CCNC/);
   const styleProfilesResponse = await fetch(`${base}/data/name-analysis/name-style-profiles.json`);
   const styleProfiles = await styleProfilesResponse.json();
   assert.equal(styleProfilesResponse.status, 200);
   assert.ok(styleProfiles.profiles.feminine.patterns.includes('婉婷'));
+  const corpusResponse = await fetch(`${base}/data/name-analysis/name-corpus-profile.json`);
+  const corpusProfile = await corpusResponse.json();
+  assert.equal(corpusResponse.status, 200);
+  assert.equal(corpusProfile.totals.rows, 3658109);
   const verify = await fetch(`${base}/api/name-analysis/verify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: '歐陽明月清風', surname: '歐陽' }) });
   const verified = await verify.json();
   assert.equal(verify.status, 200);

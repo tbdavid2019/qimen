@@ -24,7 +24,7 @@ node skills/name-analysis-consultant/scripts/name_analysis_cli.js --generate --s
 - `--length`：名字部分 1–4 個漢字；完整姓名最長 7 個漢字。
 - `--include`、`--exclude`：字串中的每個漢字視為一項硬條件。
 - `--element`：以逗號分隔的五行偏好，例如 `木,水`；只影響候選排序，缺失五行不補猜。
-- `--name-style`：`auto`（預設）、`feminine`、`masculine` 或 `neutral`。`auto` 參照已提供的 `birthData.sex`／`--birth-sex` 作常見命名風格排序；沒有性別資料時採中性。可以明確覆寫。這是文化風格偏好，不是性別判定或限制；每個候選會回報相符及風格不同的字。
+- `--name-style`：`auto`（預設）、`feminine`、`masculine` 或 `neutral`。`auto` 參照已提供的 `birthData.sex`／`--birth-sex` 作常見命名風格排序；沒有性別資料時採中性。排序結合獨立整理的風格字表與 CCNC 365 萬筆語料的聚合用字／相鄰字組統計，不是性別分類器；可以明確覆寫，也不會把其他名字排除。每個候選會回報相符及風格不同的字、統計參考數。來源範圍與授權見 `data/name-analysis/SOURCES.md`。
 - `--limit`：最多 50，預設 20。
 - `--profile`：`taiwanKangxi` 或 `modern`。
 - 可選八字參考：`--birth-date 1990-01-02 --birth-sex 女 --birth-calendar lunar --leap-month --birth-time 13:20 --zi-mode early_late`。如不清楚出生時間，使用 `--unknown-hour` 明確改用三柱參考。出生資料以本地既有 Node.js 八字算法計算；未提供出生地座標時不作真太陽時校正。

@@ -173,6 +173,13 @@
 | **中文姓名分析** | 驗名 `name` (2–8 字), `surname`, `profile`; 取名 `givenNameLength` (1–4), `includeChars`, `excludeChars`, `desiredElements`, `nameStyle`, `birthData`, `limit` | `/name-analysis` | `POST /api/name-analysis/verify`, `/api/name-analysis/generate`, `/api/name-analysis-question` | `skills/name-analysis-consultant/scripts/name_analysis_cli.js` | `name_analysis_verify`, `name_analysis_generate`, `name_analysis_question` |
 | **時間範圍校正** | `startDate`, `endDate`, `timezone`, `precision` | `/` | `GET/POST /api/time/range` | `lib/civil-time.js` | `date_range_normalize` |
 
+### 分析結果寄送
+
+- 奇門以外八個服務頁面會在收到有效的計算或解讀結果後顯示「寄送本次結果」。寄送內容取自最近一次成功 API 回應，包含完整結構化結果與解讀，支援姓名驗證／候選、紫微純排盤與專題測算、梅花、八字、塔羅牌陣與生命靈數、風水、月老及解答之書。
+- 郵件由 `POST /api/conversation/send-email` 經 Resend 寄出；啟用 Cloudflare Turnstile 時需附 `cf-turnstile-response`（action `send_email`）。頁面會記住收件信箱於目前瀏覽器的 localStorage，不會將郵件地址寫入分析結果。
+- WebMCP `send_conversation_email` 可接收 `email`、`service`、`subject`、`history`；未提供 `history` 時會使用頁面現存的完整結果／對話作為寄送內容，並依 Turnstile 設定完成驗證。
+- 寄送結果資料上限為 900 KiB；超過時 API 回傳 HTTP 413。奇門保留原有盤面摘要與完整多輪對話寄送按鈕。
+
 ---
 
 ### 中文姓名命名與驗證
@@ -180,10 +187,10 @@
 姓名模組以本地 Node.js 計算，驗證 2–8 個漢字姓名；取名時可指定 1–4 個名字字，所以完整姓名可超過三字。複姓可以手動指定，也能由索引提出切分建議；若有多個可能，回報替代切分。驗名和取名都可選 `taiwanKangxi`（台灣常用康熙筆畫）或 `modern` 筆畫口徑。結果分層呈現逐字字義／讀音／五行、五格與三才；缺漏筆畫、五行、讀音或字義會標示缺漏，不會用預設值填補。
 
 - 驗名：`POST /api/name-analysis/verify`，JSON 範例 `{"name":"歐陽明月清風","profile":"taiwanKangxi"}`。可選 `surname` 明確指定姓氏。
-- 取名：`POST /api/name-analysis/generate`，JSON 範例 `{"surname":"歐陽","givenNameLength":3,"includeChars":["安"],"excludeChars":["凶"],"desiredElements":["木"],"nameStyle":"feminine","limit":20}`。`nameStyle` 支援 `auto`（預設，參照已提供的 `birthData.sex`，無性別資料時中性）、`feminine`、`masculine`、`neutral`。這是可覆寫的常見命名風格排序，不代表性別判定；候選會列出風格相符／不同的字。
+- 取名：`POST /api/name-analysis/generate`，JSON 範例 `{"surname":"歐陽","givenNameLength":3,"includeChars":["安"],"excludeChars":["凶"],"desiredElements":["木"],"nameStyle":"feminine","limit":20}`。`nameStyle` 支援 `auto`（預設，參照已提供的 `birthData.sex`，無性別資料時中性）、`feminine`、`masculine`、`neutral`。候選排序結合編輯整理的風格字表、CCNC 365 萬筆姓名語料中按標註性別統計的用字與名字字組，以及明確條件；只是可覆寫的軟性習慣，不代表性別判定。候選會列出風格相符／不同的字及語料觀察數。
 - 問答：`POST /api/name-analysis-question`，傳入驗名或取名參數並可附 `question`（最多 1,000 字）。沒有設定 LLM 或未提供問題時只回傳確定性結果。驗名與取名的完整輸入和結果送至 Discord webhook；若使用補充解讀，姓名及確定性分析結果會送至設定的 LLM，原始出生日期與時間不加入 LLM prompt，衍生八字摘要可能包含在分析結果中。
 - 數理：五格採 `data/name-analysis/method-profiles.json` 所列版本；81 數理與三才分項呈現，不合併成單一「命運分數」。名字部分超過兩字時標示延伸算法，生肖部首喜忌則因缺乏可驗證來源而未啟用。風格字表可由 `GET /data/name-analysis/name-style-profiles.json` 讀取，方法／來源可由 `GET /data/name-analysis/method-profiles.json` 讀取。
-- 命名候選字來自專案獨立整理的常用姓名字池，依可用字義/筆畫資料與明確偏好排序，並非姓名品質或未來結果的客觀評級。結果應一併考量讀音、多音字、字義、書寫、家庭與個人偏好。
+- 命名候選字取自專案整理且符合字義／筆畫資料的字池，排序參考來源與限制見 `data/name-analysis/SOURCES.md`。CCNC 是中國大陸來源且以一至二字名字為主；長名字僅使用字頻與首兩字的相鄰字統計。語料量不等於台灣新生兒頻率，這些統計不是個人性別判定或姓名品質評分。統計檔可由 `GET /data/name-analysis/name-corpus-profile.json` 查閱，來源授權為 GPL-3.0 並保留授權全文；專案及衍生統計採 AGPL-3.0。
 - 可選 `birthData` 以本地既有 `lib/bazi2.js` 計算；需提供日期、排盤性別，以及出生時間/時辰或明確標示未知，可指定曆法、農曆閏月及子時換日口徑。結果列出四柱、日主、五行分布、強弱依據與喜忌參考，缺時辰時明示時柱未知。出生日期與時間不加入 LLM prompt；姓名驗證／取名輸入與完整結果會送至 Discord webhook。若使用補充解讀，姓名、結果與派生八字摘要（含排盤性別與四柱）會送至設定的 LLM。缺出生地時不做真太陽時校正。性別化風格與生肖部首規則分開處理：風格用字為可覆寫排序偏好，生肖規則因缺乏可驗證來源而未啟用。
 - CLI 範例：`node skills/name-analysis-consultant/scripts/name_analysis_cli.js --verify --name 王小明 --surname 王`；取名範例：`node skills/name-analysis-consultant/scripts/name_analysis_cli.js --generate --surname 王 --length 3 --name-style feminine --include 安`。也接受 JSON stdin。來源授權與欄位清單見 `data/name-analysis/SOURCES.md`。
 
@@ -289,7 +296,7 @@ npm start
 - **安全標頭與 WebMCP 邊界**：伺服器配置 `Permissions-Policy: tools=(self)`、`X-Content-Type-Options: nosniff`、`X-Frame-Options: SAMEORIGIN`，並停用 `X-Powered-By`。
 - **防禦 DoS 與演算法邊界**：地理經緯度與時間計算皆施加嚴格 `Number.isFinite` 邊界校驗與數學取模，杜絕無限迴圈與 ReDoS 風險。
 - **Prompt Injection 防護**：對話歷史嚴格限制僅接受 `user` 與 `assistant` 角色，防止攻擊者注入 `system` / `developer` 角色覆寫提示詞。
-- **Cloudflare Turnstile 機器人防護**：全站 8 大服務網頁端「詢問」與「解盤」端點（`/api/llm-analysis`、`/api/meihua/llm-analysis`、`/api/:module/llm-analysis`）以及對話紀錄寄送（`/api/conversation/send-email`）全面整合 Cloudflare Turnstile 人機驗證，防範惡意機器人盜刷消耗珍貴 LLM Token 與郵件轟炸；所有程式化調用占卜問答 API（`POST /api/*-question`）維持純淨開放，外部機器人（Telegram Bot、OpenClaw、CLI）調用永遠暢通無阻。
+- **Cloudflare Turnstile 機器人防護**：全站 8 大服務網頁端「詢問」與「解盤」端點（`/api/llm-analysis`、`/api/meihua/llm-analysis`、`/api/:module/llm-analysis`）以及對話／結果寄送（`/api/conversation/send-email`）全面整合 Cloudflare Turnstile 人機驗證，防範惡意機器人盜刷消耗珍貴 LLM Token 與郵件轟炸；所有程式化調用占卜問答 API（`POST /api/*-question`）維持純淨開放，外部機器人（Telegram Bot、OpenClaw、CLI）調用永遠暢通無阻。
 - **安全審計產物**：審計報表與機器可讀格式位於 `~/security-audit-skill/qimen/run-1/`（包含 `architecture.md`、`REPORT.md`、`FINDINGS-DETAIL.md` 與符合 JSON Schema 之 `findings.json`）。
 
 ### 🛡️ Cloudflare Turnstile 機器人防護與運維設定合約 (Turnstile Configuration Contract)
@@ -300,7 +307,7 @@ npm start
 | 端點類別 | 路由端點 | Turnstile 驗證 | 設計理念與外部整合說明 |
 | :--- | :--- | :---: | :--- |
 | **網頁問答與解盤 (Web UI)** | `POST /api/llm-analysis`<br>`POST /api/meihua/llm-analysis`<br>`POST /api/:module/llm-analysis`<br>*(支援 ziwei, bazi2, tarot, fengshui, yinyuan, answerbook)* | **強制驗證 (Protected)** | **保護 LLM Token 額度**。前端網頁訪客點擊「💬 詢問」、「開始解盤」、「🌸 梅花解卦」或「排盤並查看命理解讀」時，必須通過 Turnstile 人機驗證，有效杜絕爬蟲盜刷後端 LLM 額度。支援單次使用與續問自動重置。 |
-| **對話紀錄寄送** | `POST /api/conversation/send-email` | **強制驗證 (Protected)** | 防止惡意爬蟲、自動化腳本利用 Resend API 進行郵件轟炸（Email Bombing）與垃圾郵件濫發。 |
+| **對話與結果寄送** | `POST /api/conversation/send-email` | **強制驗證 (Protected)** | 奇門寄送完整排盤與對話；其他模組寄送最近一次 API 計算結果與解讀。防止惡意腳本利用 Resend API 濫發郵件。 |
 | **外部程式化 API (Telegram / OpenClaw / CLI)** | `POST /api/qimen-question`<br>`POST /api/meihua-question`<br>`POST /api/ziwei-question`<br>`POST /api/tarot-question`<br>`POST /api/fengshui-question`<br>`POST /api/bazi2-question`<br>`POST /api/yinyuan-question`<br>`POST /api/answerbook-question` | **100% 零阻擋 (開放)** | **杜絕任何驗證碼阻礙**。外部 Telegram Bot、OpenClaw、CLI 腳本（如 `ask_qimen.js`）與第三方串接程式可直接透過 JSON 呼叫，保證 100% 暢通無阻。 |
 | **安全配置端點** | `GET /api/turnstile/config` | **公開讀取** | 回傳 `{ success: true, enabled: boolean, siteKey: string\|null }`，供前端瀏覽器與 WebMCP 客戶端動態偵測驗證狀態並載入對應金鑰。 |
 

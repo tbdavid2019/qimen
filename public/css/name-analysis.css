@@ -71,7 +71,8 @@
 
 .name-result-card, .name-candidate-rank { min-width: 0; overflow: hidden; border: 1.5px solid #b9e8d4; border-radius: 17px; background: #fff; box-shadow: 0 9px 25px rgba(15, 71, 52, .07); }
 .name-candidate-rank { padding: 12px; }
-.name-candidate-rank > span { display: inline-flex; margin: 3px 4px 12px; padding: 5px 10px; border-radius: 18px; background: #d1fae5; color: #047857; font-size: 12px; font-weight: 850; }
+.name-candidate-rank > span { display: inline-flex; margin: 3px 4px 12px; padding: 5px 10px; border-radius: 18px; background: #d1fae5; color: #047857; font-size: 15px; font-weight: 850; }
+.name-corpus-evidence { margin: 0 4px 12px; padding: 10px 12px; border-radius: 12px; background: #fff8e8; color: #71541b; font-size: 15px; line-height: 1.55; overflow-wrap: anywhere; }
 .name-result-hero { display: flex; align-items: center; gap: 14px; padding: 22px clamp(16px, 3vw, 30px); background: linear-gradient(110deg, #effdf7, #f5fffb 65%, #ecfdf5); border-bottom: 1px solid #dcefe6; }
 .name-result-mark { display: grid; flex: 0 0 54px; width: 54px; height: 54px; place-items: center; border-radius: 16px; color: #fff; background: linear-gradient(145deg, #10b981, #047857); box-shadow: 0 7px 17px rgba(5, 150, 105, .22); font-size: 27px; font-weight: 900; }
 .name-kicker { color: #07805c; font-size: 10px; font-weight: 900; letter-spacing: .12em; }
@@ -156,6 +157,7 @@
 [data-theme="dark"] .name-section-heading h2, [data-theme="dark"] .name-question-heading h2 { color: #e1f2e8; }
 [data-theme="dark"] .name-section-heading p, [data-theme="dark"] .name-field label, [data-theme="dark"] .name-inline-check { color: #c1d4ca; }
 [data-theme="dark"] .name-result-card, [data-theme="dark"] .name-candidate-rank { border-color: #176d51; background: #101b20; }
+[data-theme="dark"] .name-corpus-evidence { background: rgba(234,179,8,.13); color: #f5dc99; }
 [data-theme="dark"] .name-result-hero, [data-theme="dark"] .name-character-card, [data-theme="dark"] .name-grid-cell, [data-theme="dark"] .name-bazi-section { background: linear-gradient(145deg, #142720, #111e1a); }
 [data-theme="dark"] .name-result-hero h2, [data-theme="dark"] .name-section-title h3, [data-theme="dark"] .name-grid-cell strong, [data-theme="dark"] .name-result-heading h3 { color: #e4f2e9; }
 [data-theme="dark"] .name-character-card, [data-theme="dark"] .name-grid-cell, [data-theme="dark"] .name-element-panel, [data-theme="dark"] .name-useful-panel, [data-theme="dark"] .name-pillar, [data-theme="dark"] .name-bazi-facts > span { border-color: #285441; background-color: #14211b; }

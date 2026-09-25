@@ -1,0 +1,33 @@
+<div id="suiteResultEmailLauncher" class="suite-email-launcher" hidden>
+  <button type="button" id="suiteResultEmailOpen" class="suite-email-open">✉️ 寄送本次結果</button>
+</div>
+<dialog id="suiteResultEmailDialog" class="suite-email-dialog" aria-labelledby="suiteResultEmailTitle">
+  <form method="dialog" class="suite-email-card">
+    <button type="submit" class="suite-email-close" aria-label="關閉">×</button>
+    <h2 id="suiteResultEmailTitle">寄送分析結果</h2>
+    <p>將目前頁面最近一次完整結果寄到你的信箱。資料只用於本次寄送。</p>
+    <label for="suiteResultEmailInput">收件信箱</label>
+    <input id="suiteResultEmailInput" type="email" autocomplete="email" placeholder="name@example.com" required>
+    <%- include('turnstile-widget.html', { widgetId: 'suite-result-email-turnstile', action: 'send_email', explicit: true }) %>
+    <div id="suiteResultEmailStatus" class="suite-email-status" role="status" aria-live="polite"></div>
+    <div class="suite-email-actions">
+      <button type="submit" class="suite-email-cancel">取消</button>
+      <button type="button" id="suiteResultEmailSend" class="suite-email-send">確認寄送 ➔</button>
+    </div>
+  </form>
+</dialog>
+<style>
+  .suite-email-launcher{position:fixed;z-index:1040;right:18px;bottom:calc(18px + env(safe-area-inset-bottom))}
+  body.has-suite-email-result{padding-bottom:76px}
+  .suite-email-open,.suite-email-send{border:0;border-radius:24px;padding:12px 20px;color:#fff;background:linear-gradient(135deg,#e8794f,#bd5033);font-weight:800;box-shadow:0 8px 24px rgba(189,80,51,.28);cursor:pointer}
+  .suite-email-dialog{width:min(440px,calc(100vw - 28px));max-width:none;border:0;border-radius:20px;padding:0;box-shadow:0 24px 80px rgba(25,32,48,.25);color:#263241}
+  .suite-email-dialog::backdrop{background:rgba(20,28,40,.48)}
+  .suite-email-card{position:relative;padding:24px;display:grid;gap:12px;background:var(--suite-card-bg,#fff);border:1px solid rgba(189,80,51,.2);border-radius:20px}
+  .suite-email-card h2{margin:0;font-size:21px;font-weight:800}.suite-email-card p{margin:0;line-height:1.55;color:#667085}
+  .suite-email-card label{font-weight:700}.suite-email-card input{width:100%;min-height:48px;padding:10px 12px;border:1px solid #d7dce5;border-radius:10px;font-size:16px}
+  .suite-email-close{position:absolute;right:12px;top:8px;border:0;background:none;font-size:28px;color:#667085;cursor:pointer}
+  .suite-email-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:4px}.suite-email-cancel{border:1px solid #d7dce5;border-radius:22px;padding:10px 16px;background:transparent}
+  .suite-email-status{min-height:22px;font-size:14px}.suite-email-status[data-state="error"]{color:#b42318}.suite-email-status[data-state="success"]{color:#067647}
+  @media(max-width:767px){.suite-email-launcher{right:12px;bottom:12px}.suite-email-open{min-height:48px;font-size:15px}}
+  [data-theme="dark"] .suite-email-card{background:#202734;color:#f4f5f7}[data-theme="dark"] .suite-email-card p{color:#c1c8d2}
+</style>

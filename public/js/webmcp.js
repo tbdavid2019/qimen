@@ -1331,7 +1331,7 @@
 				birthData: { type: "object", description: "選填八字資料；出生日期、性別與出生時間/未知時辰選項；在本站以本地八字算法計算", properties: { date: { type: "string", format: "date" }, sex: { type: "string", enum: ["男", "女"] }, time: { type: "string", description: "HH:mm" }, shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, leap: { type: "boolean", description: "農曆是否閏月" }, ziMode: { type: "string", enum: ["early_late", "next_day"], description: "子時換日口徑" }, allowUnknownHour: { type: "boolean" } } }
 			}, required: ["name"]
 		}),
-		name_analysis_generate: createSuiteTool("name_analysis_generate", "依姓氏與明確條件產生中文姓名候選，名可為 1 至 4 字。", "/api/name-analysis/generate", {
+		name_analysis_generate: createSuiteTool("name_analysis_generate", "依姓氏與明確條件產生中文姓名候選，名可為 1 至 4 字；性別風格採 CCNC 聚合語料與整理字表作軟性排序，不判定個人性別。", "/api/name-analysis/generate", {
 			type: "object", properties: {
 				surname: { type: "string", minLength: 1, maxLength: 3, description: "姓氏，1 至 3 個漢字" },
 				givenNameLength: { type: "integer", minimum: 1, maximum: 4, description: "名字字數" },

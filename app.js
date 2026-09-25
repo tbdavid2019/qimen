@@ -95,8 +95,8 @@ app.get('/llms.txt', (req, res) => res.type('text/plain').sendFile(path.join(__d
 app.get('/data/fengshui/layout-catalog.json', (req, res) => {
     res.type('application/json').sendFile(path.join(__dirname, 'data/fengshui/layout-catalog.json'));
 });
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // 安全標頭與 WebMCP / 感測器權限政策
 app.disable('x-powered-by');
@@ -145,6 +145,7 @@ app.get('/api/turnstile/config', (req, res) => {
 
 app.get('/data/name-analysis/method-profiles.json', (req, res) => res.type('application/json').sendFile(path.join(__dirname, 'data/name-analysis/method-profiles.json')));
 app.get('/data/name-analysis/name-style-profiles.json', (req, res) => res.type('application/json').sendFile(path.join(__dirname, 'data/name-analysis/name-style-profiles.json')));
+app.get('/data/name-analysis/name-corpus-profile.json', (req, res) => res.type('application/json').sendFile(path.join(__dirname, 'data/name-analysis/name-corpus-profile.json')));
 app.get('/name-analysis', (req, res) => res.render('name-analysis', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'name-analysis' }));
 app.post('/api/name-analysis/verify', async (req, res) => {
     try {
@@ -921,6 +922,9 @@ app.post('/api/:module/llm-analysis', (req, res, next) => {
 app.post('/api/conversation/send-email', turnstileMiddleware({ action: 'send_email' }), async (req, res) => {
     try {
         const { email, service, subject, history, chartSummary } = req.body || {};
+        if (Array.isArray(history) && Buffer.byteLength(JSON.stringify(history), 'utf8') > 900 * 1024) {
+            return res.status(413).json({ success: false, error: '寄送內容超過安全大小上限，請縮小結果後再寄送。' });
+        }
         const result = await sendConversationEmail({
             to: email,
             serviceName: service || '奇門遁甲',
@@ -1820,7 +1824,7 @@ app.get('/api/docs', (req, res) => {
                 errors: ["INVALID_NAME", "INVALID_SURNAME", "SURNAME_REQUIRED", "INVALID_PROFILE"]
             },
             nameAnalysisGenerate: {
-                method: "POST", path: "/api/name-analysis/generate", description: "依姓氏與條件產生 1–4 字名字候選。",
+                method: "POST", path: "/api/name-analysis/generate", description: "依姓氏與條件產生 1–4 字名字候選；命名風格排序結合編輯整理字表及 CCNC 語料字頻／字組統計，僅作軟性參考。",
                 parameters: { surname: { type: "string", required: true, minLength: 1, maxLength: 3 }, givenNameLength: { type: "integer", required: false, minimum: 1, maximum: 4, default: 2 }, includeChars: { type: "array", items: "single Han character" }, excludeChars: { type: "array", items: "single Han character" }, desiredElements: { type: "array", items: ["木", "火", "土", "金", "水"] }, nameStyle: { type: "string", enum: ["auto", "feminine", "masculine", "neutral"], default: "auto", description: "命名風格；auto 參照 birthData.sex，沒有性別資料則中性。僅為常見命名風格排序，不代表性別判定。" }, profile: { type: "string", enum: ["taiwanKangxi", "modern"] }, limit: { type: "integer", maximum: 50 }, birthData: { type: "object", required: false, description: "選填：date、sex、time/shichen 或 allowUnknownHour；本地計算後作為偏好排序。" } },
                 errors: ["INVALID_SURNAME", "INVALID_GIVEN_NAME_LENGTH", "INVALID_CHAR_CONSTRAINT", "TOO_MANY_REQUIRED_CHARS"]
             },
@@ -1831,6 +1835,7 @@ app.get('/api/docs', (req, res) => {
             },
             nameMethodProfiles: { method: "GET", path: "/data/name-analysis/method-profiles.json", description: "姓名方法與來源版本清單。" },
             nameStyleProfiles: { method: "GET", path: "/data/name-analysis/name-style-profiles.json", description: "取名風格排序字表、風格組合與方法限制。" },
+            nameCorpusProfile: { method: "GET", path: "/data/name-analysis/name-corpus-profile.json", description: "CCNC 中文姓名語料的性別標記字頻及名字相鄰字組聚合統計；不含完整姓名，僅作排序參考。" },
             qimenQuestion: {
                 method: "POST",
                 path: "/api/qimen-question",

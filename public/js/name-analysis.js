@@ -259,8 +259,15 @@
         results.innerHTML = renderAnalysis(data.result);
       } else {
         const style = data.result.nameStyle;
-        const styleIntro = style ? `<div class="name-data-note"><b>命名風格：${esc(style.label)}</b>　依${style.requested === 'auto' ? '出生性別的常見用字傾向' : '你選擇的用字傾向'}排序；這只調整候選先後，不限制可選名字，也不判斷個人性別。你可以隨時更改偏好。</div>` : '';
-        const cards = data.result.candidates.map((candidate, index) => `<div class="name-candidate-rank"><span>候選 ${String(index + 1).padStart(2, '0')} · ${esc(candidate.preferences?.nameStyle?.label || '')}${candidate.preferences?.nameStyle?.conflictingCharacters?.length ? ` · 風格不同字：${esc(candidate.preferences.nameStyle.conflictingCharacters.join('、'))}` : ''}</span>${renderAnalysis(candidate.analysis)}</div>`).join('');
+        const styleIntro = style ? `<div class="name-data-note"><b>命名風格：${esc(style.label)}</b>　依${style.requested === 'auto' ? '出生性別的常見用字傾向' : '你選擇的用字傾向'}排序；這只調整候選先後，不限制可選名字，也不判斷個人性別。你可以隨時更改偏好。姓名語料取自 365 萬筆 CCNC，主要反映中國大陸一至二字名字，只作參考排序。</div>` : '';
+        const cards = data.result.candidates.map((candidate, index) => {
+          const stylePreference = candidate.preferences?.nameStyle || {};
+          const corpus = stylePreference.corpusEvidence;
+          const charCounts = corpus?.characters?.map((item) => `${esc(item.char)}（女 ${Number(item.feminineExamples || 0).toLocaleString()}／男 ${Number(item.masculineExamples || 0).toLocaleString()}）`).join('　') || '';
+          const pairCounts = corpus?.firstPair ? `；名字字組「${esc(corpus.firstPair.pair)}」：女 ${Number(corpus.firstPair.feminineExamples || 0).toLocaleString()} 次／男 ${Number(corpus.firstPair.masculineExamples || 0).toLocaleString()} 次` : '';
+          const evidence = corpus ? `<div class="name-corpus-evidence">語料觀察（非性別判定）：${charCounts}${pairCounts}</div>` : '';
+          return `<div class="name-candidate-rank"><span>候選 ${String(index + 1).padStart(2, '0')} · ${esc(stylePreference.label || '')}${stylePreference.conflictingCharacters?.length ? ` · 風格不同字：${esc(stylePreference.conflictingCharacters.join('、'))}` : ''} · 語料排序 ${Number(stylePreference.corpusScore || 0) > 0 ? '+' : ''}${Number(stylePreference.corpusScore || 0)}</span>${evidence}${renderAnalysis(candidate.analysis)}</div>`;
+        }).join('');
         results.innerHTML = styleIntro + (cards || '<div class="name-empty-state">目前條件下找不到完整候選。請放寬條件或調整字數後重試。</div>');
       }
       status.textContent = mode === 'verify' ? '姓名與生辰資料已整理完成。' : `已依條件整理 ${data.result.candidates.length} 個候選。`;

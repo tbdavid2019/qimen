@@ -52,6 +52,16 @@ test('Email Service: generateConversationEmailHtml 完整生成含品牌與對�
     assert.ok(html.includes('開門在乾宮生旺'), '應包含大師解讀內容');
 });
 
+test('Email Service: 忽略客戶端提供的原始 HTML 郵件內容', () => {
+    const html = generateConversationEmailHtml({
+        serviceName: '姓名分析',
+        history: [{ role: 'assistant', content: '姓名結果安全呈現', html: '<img src=x onerror="alert(1)"><script>alert(2)</script>' }]
+    });
+    assert.ok(html.includes('姓名結果安全呈現'));
+    assert.ok(!html.includes('<img src=x onerror='));
+    assert.ok(!html.includes('<script>alert(2)</script>'));
+});
+
 test('Email Service: sendConversationEmail 驗證必要參數與未設定 API Key 時的防護', async () => {
     const originalKey = process.env.RESEND_API_KEY;
     try {
@@ -147,6 +157,8 @@ test('Email Service: sendConversationEmail 成功調用 Resend API Mock', async 
 
 test('HTTP Route: POST /api/conversation/send-email 驗證與處理', async () => {
     const http = require('node:http');
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'test';
     const app = require('../app');
 
     const server = http.createServer(app);
@@ -184,6 +196,14 @@ test('HTTP Route: POST /api/conversation/send-email 驗證與處理', async () =
         assert.equal(resNoEmail.status, 400);
         const dataNoEmail = await resNoEmail.json();
         assert.equal(dataNoEmail.success, false);
+
+        const resOversized = await fetch(`${baseUrl}/api/conversation/send-email`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ email: 'user@example.com', history: [{ role: 'assistant', content: 'x'.repeat(901 * 1024) }] })
+        });
+        assert.equal(resOversized.status, 413);
+        assert.equal((await resOversized.json()).success, false);
 
         // 3. 成功寄送 (Mock Fetch)
         global.fetch = async (url, options) => {
@@ -224,6 +244,8 @@ test('HTTP Route: POST /api/conversation/send-email 驗證與處理', async () =
         } else {
             delete process.env.RESEND_API_KEY;
         }
+        if (originalNodeEnv !== undefined) process.env.NODE_ENV = originalNodeEnv;
+        else delete process.env.NODE_ENV;
         await new Promise((resolve) => server.close(resolve));
     }
 });

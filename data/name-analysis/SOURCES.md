@@ -37,13 +37,20 @@ This merged form index contains 1,349 surname spellings (including 106 compound 
 - Independently authored project data. The feminine, masculine, and neutral character lists are editorial soft-ranking preferences based on contemporary Chinese naming conventions, not a statistical gender classifier or a claim that any character belongs to one gender.
 - Explicit user preference takes precedence. `auto` uses the supplied birth-chart sex only as a conventional style suggestion; when no sex is supplied, it uses the neutral profile. Users can override it.
 - Each candidate reports which style-associated characters it matches or conflicts with. The lists affect ordering only and do not remove valid requested characters.
-- A published Chinese character gender-frequency dataset was reviewed as a possible evidence source, but its non-commercial/share-alike license is incompatible with this project's redistribution and commercial use; none of its data or implementation is included.
+
+## `name-corpus-profile.json`
+
+- Source: [`jaaack-wang/ccnc`](https://github.com/jaaack-wang/ccnc), `ccnc.txt.zip`, CCNC snapshot downloaded 2026-09-25. Repository license: GPL-3.0; full notice is preserved in `licenses/CCNC-GPL-3.0.txt`. This project is AGPL-3.0; the derived profile and this project remain AGPL-3.0.
+- Source archive SHA-256: `e259e12397749528eecb91513c61dc6b6bc3d2bc9f555523436f59ff0eb6a8c5`. Extracted corpus SHA-256: `33dc8e3fc922ef3c9446c01515aad37c6891f6745395df215e3f7cdfee3e5177`.
+- The CCNC source contains 3,658,109 labelled name samples (2,054,134 M; 1,509,650 F; 94,325 U). The checked-in profile contains only aggregate male/female/unknown character counts and frequent adjacent given-name pairs; individual full names are not included. Rebuild with `node scripts/build-name-corpus-profile.js /path/to/ccnc.txt` after extracting `ccnc.txt` from the upstream archive.
+- The source corpus is mostly one- or two-character given names and reflects mainland Chinese sources. Its observed counts are soft ordering signals only; they are not a Taiwanese newborn frequency table, a gender classifier, eligibility rules, or a quality score. Longer names use character signals; the pair evidence applies only to the first two given-name characters.
+- CCNC incorporates examples from the NameMoe Chinese Names Corpus. The overlapping NameMoe rows are not added a second time, to avoid double-counting shared source names.
 
 ## Method profiles and uncovered methods
 
 - `method-profiles.json` documents the supported stroke profiles, five-grid arithmetic, three-talents mapping, and provenance for each calculation.
 - Five-grid categories were transcribed from the MIT-licensed `babyname/fate` dataset. The rules are independently implemented. These conventions differ across schools; three-character-or-longer given names use an explicitly labeled extension.
-- Candidate generation uses an independently curated character pool plus the Shunshi source data; its ordering is a convenience for presenting candidates and is not a measured name-quality score.
+- Candidate generation combines an independently curated character pool, Shunshi dictionary data, editorial style preferences, CCNC aggregate gender-labelled character/bigram counts, and explicit user preferences. All signals only order otherwise valid names; the resulting order is not a measured name-quality score.
 - Zodiac/radical word associations are not enabled. The reviewed repositories do not establish a complete, redistributable and well-sourced data set for those associations. We do not infer a zodiac association from a radical or ship unsourced rules.
 - Name reading supports dictionary glosses and pinyin from the MIT-licensed Shunshi data. Polyphonic readings are not context-resolved and are displayed as reference data.
 
