@@ -49,11 +49,19 @@ test('塔羅生命靈數正確歸約計算並對應大阿爾克那靈魂象徵�
     assert.equal(res1.soulCard.nameEn, 'The High Priestess');
     assert.equal(res1.soulCard.image, 'major_02.jpg');
     assert.ok(res1.soulCard.summary.includes('深藏智慧'));
+    assert.equal(res1.lifeProfile.title, '協調與感受');
+    assert.equal(res1.birthdayNumber.number, 2);
+    assert.equal(res1.digitGrid.counts[1], 4);
+    assert.equal(res1.digitGrid.counts[2], 2);
+    assert.ok(res1.digitGrid.missingNumbers.some((item) => item.number === 3));
+    assert.match(res1.method.limitations, /不代表缺少相應能力/);
 
     // 1990-05-15: 1+9+9+0+0+5+1+5 = 30 -> 3 (皇后)
     const res2 = calculateTarotNumerology('1990-05-15');
     assert.equal(res2.lifeNumber, 3);
     assert.equal(res2.soulCard.name, '皇后');
+    assert.ok(res2.digitGrid.connections.some((line) => line.pattern === '159'));
+    assert.ok(res2.digitGrid.connections.find((line) => line.pattern === '159').reinforced);
 
     // 錯誤輸入處理與真實西曆有效性驗證
     const errRes = calculateTarotNumerology('bad-date');
@@ -98,6 +106,14 @@ test('塔羅 API /api/tarot/numerology 與 /api/tarot/cards 正常運作', async
         assert.equal(dataNum.success, true);
         assert.equal(dataNum.lifeNumber, 2);
         assert.equal(dataNum.soulCard.name, '女祭司');
+        assert.ok(dataNum.lifeProfile.essence);
+        assert.equal(dataNum.digitGrid.cells.length, 9);
+        assert.ok(Array.isArray(dataNum.digitGrid.connections));
+        assert.equal(dataNum.birthDate, '1981-08-11');
+
+        const getNumerology = await fetch(`${baseUrl}/api/tarot/numerology?birthDate=1981-08-11`);
+        assert.equal(getNumerology.status, 200);
+        assert.equal((await getNumerology.json()).lifeNumber, 2);
 
         // 2. GET /api/tarot/cards
         const resCards = await fetch(`${baseUrl}/api/tarot/cards?suit=major`);
@@ -115,4 +131,3 @@ test('塔羅 API /api/tarot/numerology 與 /api/tarot/cards 正常運作', async
         await new Promise((resolve) => server.close(resolve));
     }
 });
-

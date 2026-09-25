@@ -46,3 +46,7 @@ echo '{"mode":"verify","name":"歐陽明月清風","profile":"taiwanKangxi"}' | 
 ## 資料來源與授權
 
 詳細來源、欄位、版本與授權見 `data/name-analysis/SOURCES.md`。隨專案再散布時保留 `data/name-analysis/licenses/` 下的原授權聲明。引擎以 Node.js 獨立實作，沒有 Python 或外部線上命名服務相依。
+
+## 網站紀錄與資料傳送
+
+網站的姓名驗證、取名及補充分析會把完整請求輸入、計算結果與可用的完整 AI 回覆送至已設定的 Discord webhook，並附 JSON 紀錄；Turnstile 驗證權杖會排除。若執行補充分析，姓名與確定性分析結果會送至設定的 LLM，原始出生日期與時間不放入 LLM prompt。CLI 本地執行不經由 Discord webhook。

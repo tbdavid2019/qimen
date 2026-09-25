@@ -1,32 +1,142 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>中文姓名分析與命名｜333</title>
-  <meta name="description" content="中文姓名驗證與命名，支援複姓及多字名，分開呈現字義、讀音、筆畫與傳統姓名數理。">
+  <meta name="description" content="中文姓名驗證與命名，支援複姓、多字名、字義讀音、姓名數理與本地八字五行參考。">
   <link rel="canonical" href="https://qi.david888.com/name-analysis">
-  <link rel="stylesheet" href="/css/bootstrap.min.css"><link rel="stylesheet" href="/css/style-new.css"><link rel="stylesheet" href="/css/dark-mode.css"><link rel="stylesheet" href="/css/divination-suite.css"><link rel="stylesheet" href="/css/name-analysis.css">
-  <script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style-new.css">
+  <link rel="stylesheet" href="/css/dark-mode.css">
+  <link rel="stylesheet" href="/css/divination-suite.css">
+  <link rel="stylesheet" href="/css/name-analysis.css">
+  <script>(function(){try{var t=localStorage.getItem('theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
 </head>
-<body class="suite-page" data-suite="name-analysis">
-  <nav class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-header"><a class="navbar-brand" href="/">333 一句提醒·照見當下</a></div><div class="collapse navbar-collapse"><ul class="nav navbar-nav"><li><a href="/">奇門遁甲</a></li><li><a href="/ziwei">紫微斗數</a></li><li><a href="/meihua">梅花易數</a></li><li><a href="/bazi2">八字命理</a></li><li><a href="/fengshui">易經風水</a></li><li><a href="/tarot">韋特塔羅</a></li><li><a href="/yinyuan">月老姻緣</a></li><li class="active"><a href="/name-analysis">姓名分析</a></li><li><a href="/answerbook">解答之書</a></li></ul></div></nav>
+<body class="suite-page" data-suite="name-analysis" data-llm-enabled="<%= enableLLM ? 'true' : 'false' %>">
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">切換導航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">333 一句提醒·照見當下</a>
+    </div>
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/">奇門遁甲</a></li>
+        <li><a href="/ziwei">紫微斗數</a></li>
+        <li><a href="/meihua">梅花易數</a></li>
+        <li><a href="/bazi2">八字命理</a></li>
+        <li><a href="/fengshui">易經風水</a></li>
+        <li><a href="/tarot">韋特塔羅</a></li>
+        <li><a href="/yinyuan">月老姻緣</a></li>
+        <li><a href="/answerbook">解答之書</a></li>
+        <li class="active"><a href="/name-analysis">姓名分析</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="#" id="darkModeToggle" class="dark-mode-toggle"
+             data-label-light="暗黑" data-label-dark="明亮"
+             data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式"
+             role="button" aria-pressed="false">
+            <span class="dark-mode-label">暗黑</span>
+          </a>
+        </li>
+        <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">888人生K線</a></li>
+      </ul>
+    </div>
+  </nav>
+
   <main class="suite-container name-analysis">
-    <section class="suite-hero"><span class="suite-hero-badge">🪷 取名與驗名 · 多字名也支援</span><h1>中文姓名分析</h1><p class="suite-hero-subtitle">分開檢視字義、讀音、筆畫與傳統數理；結果提供參考，選名仍以好讀、好寫、合乎心意為先。</p></section>
-    <section class="suite-card name-card">
-      <div class="name-tabs"><button type="button" class="name-tab active" data-mode="verify">🔎 驗證現有名字</button><button type="button" class="name-tab" data-mode="generate">✨ 開始取名</button></div>
+    <header class="suite-hero name-hero">
+      <span class="suite-hero-badge">🪷 取名與驗名 · 支援多字名</span>
+      <h1>中文姓名分析</h1>
+      <p class="suite-hero-subtitle">先看姓名本身，再選填生辰與性別查看八字五行參考。字義、讀音、筆畫、五格和八字資料分開呈現。</p>
+    </header>
+
+    <section class="suite-card name-card" aria-label="姓名分析輸入">
+      <div class="name-tabs" role="tablist" aria-label="姓名分析模式">
+        <button type="button" class="name-tab active" data-mode="verify" role="tab" aria-selected="true">🔎 驗證現有名字</button>
+        <button type="button" class="name-tab" data-mode="generate" role="tab" aria-selected="false">✨ 開始取名</button>
+      </div>
       <form id="nameForm" toolname="name_analysis_verify" tooldescription="驗證中文姓名或依姓氏與條件產生命名候選，支援 2 至 8 字姓名。">
-        <label for="fullName">完整姓名（2–8 個漢字）</label><input id="fullName" name="name" class="form-control input-lg" maxlength="8" autocomplete="off" placeholder="例如：歐陽明月清風" toolparamdescription="驗名使用完整姓名，2 至 8 個漢字；取名模式可留空。">
-        <div class="name-fields"><div><label for="surname">姓氏</label><input id="surname" name="surname" class="form-control" maxlength="7" placeholder="可留空，由字庫提示姓氏切分" toolparamdescription="驗名可明確指定姓氏；取名模式支援 1 至 3 字姓氏。留空時使用姓名索引推測，可能提示切分歧義。"></div>
-          <div id="lengthField" hidden><label for="givenNameLength">名字字數</label><select id="givenNameLength" name="givenNameLength" class="form-control"><option value="1">1 字</option><option value="2" selected>2 字</option><option value="3">3 字</option><option value="4">4 字</option></select></div>
-          <div><label for="profile">筆畫口徑</label><select id="profile" name="profile" class="form-control" toolparamdescription="taiwanKangxi 康熙筆畫；modern 現代筆畫。"><option value="taiwanKangxi">台灣常用・康熙筆畫</option><option value="modern">現代筆畫</option></select></div></div>
-        <div id="constraintFields" hidden class="name-fields"><div><label for="includeChars">希望包含字（選填）</label><input id="includeChars" class="form-control" maxlength="4" placeholder="例如：安樂"></div><div><label for="excludeChars">排除字（選填）</label><input id="excludeChars" class="form-control" maxlength="20" placeholder="不想使用的字"></div><div><label for="desiredElements">偏好字五行（資料可得時排序）</label><select id="desiredElements" class="form-control"><option value="">不指定</option><option>木</option><option>火</option><option>土</option><option>金</option><option>水</option></select></div></div>
-        <details class="name-birth-details"><summary>選填：參照本地八字喜用五行</summary><p>只有明確填入此區才計算，並須提供出生日期與排盤性別；時辰不詳時可勾選未知時辰。日期與性別只送到本站計算；若使用下方 AI 補充解讀，姓名和分析結果會送至已設定的 LLM，出生日期與時間不會送入提示。此參考不代表命名適配分數。</p><div class="name-fields"><div><label for="birthDate">出生日期</label><input id="birthDate" type="date" class="form-control"></div><div><label for="birthSex">排盤性別（填生日時必填）</label><select id="birthSex" class="form-control"><option value="">未提供</option><option value="男">男</option><option value="女">女</option></select></div><div><label for="birthTime">出生時間</label><input id="birthTime" type="time" class="form-control"></div><div><label for="birthCalendar">曆法</label><select id="birthCalendar" class="form-control"><option value="solar">公曆</option><option value="lunar">農曆</option></select></div><div id="birthLeapField" hidden><label class="name-unknown-hour"><input id="birthLeap" type="checkbox"> 農曆閏月</label></div><div><label for="birthZiMode">子時換日</label><select id="birthZiMode" class="form-control"><option value="early_late">早晚子時分日</option><option value="next_day">晚子時算次日</option></select></div></div><label class="name-unknown-hour"><input id="unknownBirthHour" type="checkbox"> 我不清楚出生時辰</label></details>
+        <section class="name-form-section">
+          <div class="name-section-heading"><span class="name-step">01</span><div><h2>姓名資料</h2><p>驗名請填完整姓名；取名時提供姓氏與名字字數。</p></div></div>
+          <div class="name-input-grid">
+            <div class="name-field name-field-full" id="fullNameField">
+              <label for="fullName">完整姓名 <span>2–8 個漢字</span></label>
+              <input id="fullName" name="name" class="form-control" maxlength="8" autocomplete="off" placeholder="例如：歐陽明月清風" toolparamdescription="驗名使用完整姓名，2 至 8 個漢字；取名模式可留空。">
+            </div>
+            <div class="name-field">
+              <label for="surname">姓氏 <span>可明確指定複姓</span></label>
+              <input id="surname" name="surname" class="form-control" maxlength="7" placeholder="例如：王、歐陽" toolparamdescription="驗名可明確指定姓氏；取名模式支援 1 至 3 字姓氏。留空時使用姓名索引推測，可能提示切分歧義。">
+            </div>
+            <div class="name-field">
+              <label for="profile">筆畫口徑</label>
+              <select id="profile" name="profile" class="form-control" toolparamdescription="taiwanKangxi 康熙筆畫；modern 現代筆畫。">
+                <option value="taiwanKangxi">台灣常用・康熙筆畫</option><option value="modern">現代筆畫</option>
+              </select>
+            </div>
+            <div id="lengthField" class="name-field" hidden>
+              <label for="givenNameLength">名字字數</label>
+              <select id="givenNameLength" name="givenNameLength" class="form-control"><option value="1">1 字</option><option value="2" selected>2 字</option><option value="3">3 字</option><option value="4">4 字</option></select>
+            </div>
+          </div>
+        </section>
+
+        <section class="name-form-section name-birth-section">
+          <div class="name-section-heading"><span class="name-step">02</span><div><h2>生辰與性別 <span class="name-optional-tag">選填</span></h2><p>提供後會在本站排八字，列出四柱、日主、五行強弱與姓名用字對照。</p></div></div>
+          <div class="name-input-grid name-birth-grid">
+            <div class="name-field"><label for="birthDate">出生日期</label><input id="birthDate" type="date" class="form-control"></div>
+            <div class="name-field"><label for="birthSex">排盤性別 <span>填出生日期時必填</span></label><select id="birthSex" class="form-control"><option value="">請選擇</option><option value="男">男</option><option value="女">女</option></select></div>
+            <div class="name-field"><label for="birthCalendar">生日曆法</label><select id="birthCalendar" class="form-control"><option value="solar">公曆</option><option value="lunar">農曆</option></select></div>
+            <div class="name-field"><label for="birthTime">出生時間</label><input id="birthTime" type="time" class="form-control"><span class="name-field-help">不清楚時請勾選「未知時辰」</span></div>
+            <div class="name-field"><label for="birthZiMode">子時換日口徑</label><select id="birthZiMode" class="form-control"><option value="early_late">早晚子時分日</option><option value="next_day">晚子時算次日</option></select></div>
+            <div id="birthLeapField" class="name-field name-inline-check" hidden><label><input id="birthLeap" type="checkbox"> 農曆閏月</label></div>
+          </div>
+          <label class="name-inline-check name-unknown-hour"><input id="unknownBirthHour" type="checkbox"> 我不清楚出生時辰</label>
+          <p class="name-privacy-note">出生資料會用於本站八字計算，姓名驗證／取名的輸入與完整結果會送至 Discord webhook。AI 補充解讀會傳送姓名與派生八字摘要（含排盤性別、四柱與五行分布），不傳送原始出生日期或時間。</p>
+        </section>
+
+        <section id="constraintFields" class="name-form-section name-preferences" hidden>
+          <div class="name-section-heading"><span class="name-step">03</span><div><h2>取名條件</h2><p>指定字是必要條件；五行偏好用來排序候選。</p></div></div>
+          <div class="name-input-grid">
+            <div class="name-field"><label for="includeChars">希望包含字</label><input id="includeChars" class="form-control" maxlength="4" placeholder="例如：安樂"></div>
+            <div class="name-field"><label for="excludeChars">排除字</label><input id="excludeChars" class="form-control" maxlength="20" placeholder="不想使用的字"></div>
+            <div class="name-field"><label for="desiredElements">偏好字五行</label><select id="desiredElements" class="form-control"><option value="">不指定</option><option>木</option><option>火</option><option>土</option><option>金</option><option>水</option></select></div>
+          </div>
+        </section>
+
         <div class="name-submit suite-submit-container"><button id="submitName" type="submit" class="btn name-submit-btn">立即分析姓名 ➔</button></div>
       </form>
-      <div id="nameStatus" class="name-status" role="status" aria-live="polite"></div><div id="nameResults" class="name-results" aria-live="polite"></div>
-      <form id="nameQuestionForm" class="name-question" hidden><label for="nameQuestion">想再了解什麼？（選填，不必提供出生資料）</label><textarea id="nameQuestion" class="form-control" rows="2" maxlength="1000" placeholder="例如：這個名字有哪些優點和需要確認的地方？"></textarea><div id="nameTurnstileWrapper" style="margin-top: 8px; margin-bottom: 8px;"><%- include('partials/turnstile-widget.html', { widgetId: 'name-turnstile', action: 'llm_analysis' }) %></div><button class="btn name-question-btn" type="submit">取得補充解讀 ➔</button><div id="nameQuestionAnswer" role="status"></div></form>
-      <p class="name-source-note">資料來源、算法版本與限制：<a href="/data/name-analysis/method-profiles.json">查看方法檔</a>。選填出生資料只在本站處理、不保存，原始日期與時間不送入 LLM；若要求 AI 補充解讀，姓名及分析結果會傳至本站設定的 LLM 服務。生肖部首喜忌未納入，避免使用來源不明的規則。</p>
+      <div id="nameStatus" class="name-status" role="status" aria-live="polite"></div>
+      <div id="nameResults" class="name-results" aria-live="polite"></div>
+      <form id="nameQuestionForm" class="name-question" hidden>
+        <div class="name-question-heading"><span>✦</span><div><h2>想再多了解一點？</h2><p>可請 AI 解釋姓名資料與八字五行參考。</p></div></div>
+        <label for="nameQuestion">你的問題</label>
+        <textarea id="nameQuestion" class="form-control" rows="2" maxlength="1000" placeholder="例如：這個名字有哪些優點和需要確認的地方？"></textarea>
+        <div id="nameTurnstileWrapper" class="name-turnstile-wrap" hidden>
+          <div id="name-turnstile" class="turnstile-explicit" data-action="llm_analysis" data-sitekey="<%= turnstileSiteKey || '' %>"></div>
+          <p id="nameTurnstileNote" class="name-turnstile-note" role="status"></p>
+        </div>
+        <button class="btn name-question-btn" type="submit">取得補充解讀 ➔</button>
+        <div id="nameQuestionAnswer" class="name-question-answer" role="status" aria-live="polite"></div>
+      </form>
+      <p class="name-source-note">資料來源與算法限制：<a href="/data/name-analysis/method-profiles.json">查看方法檔</a>。生肖部首喜忌未納入，避免套用來源不明的規則。</p>
     </section>
   </main>
-  <script src="/js/webmcp.js"></script><script src="/js/name-analysis.js"></script>
-</body></html>
+  <%- include('partials/ads-bottom.html') %>
+  <%- include('partials/site-footer.html') %>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/markdown-renderer.js"></script>
+  <script src="/js/webmcp.js"></script>
+  <script src="/js/name-analysis.js"></script>
+</body>
+</html>

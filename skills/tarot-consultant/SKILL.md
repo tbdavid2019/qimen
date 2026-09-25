@@ -61,7 +61,7 @@ node skills/tarot-consultant/scripts/tarot_cli.js --spread three --seed 12345 --
 
 ### 生命靈數與靈魂象徵牌 (`tarot_numerology.js`)
 
-計算西元出生年月日之生命靈數（1~9）與大阿爾克那靈魂原型象徵牌：
+計算西元出生年月日之生命靈數（1~9）與大阿爾克那靈魂原型象徵牌，並回傳生日數、生日數字九宮格、未出現數字的反思提示及 12 組數字連線觀察。九宮格屬文化反思工具，不是心理測量；缺數不代表能力不足，也不應作為命運判斷：
 
 ```bash
 node skills/tarot-consultant/scripts/tarot_numerology.js --birth-date 1981-08-11
@@ -69,7 +69,9 @@ node skills/tarot-consultant/scripts/tarot_numerology.js --birth-date 1981-08-11
 node skills/tarot-consultant/scripts/tarot_cli.js --birth-date 1981-08-11
 ```
 
-亦可透過 API 發送 `POST /api/tarot/numerology`（參數：`birthDate`）獲取結構化靈數結果，或透過 WebMCP 工具 `tarot_numerology` 呼叫。
+亦可透過 API 發送 `POST /api/tarot/numerology`（參數：`birthDate`）或 `GET /api/tarot/numerology?birthDate=YYYY-MM-DD` 獲取結構化靈數結果，或透過 WebMCP 工具 `tarot_numerology` 呼叫。
+
+網頁有獨立直達路由 `/tarot/numerology`，可在不使用 AI 的情況下完成計算。每次計算的輸入與完整結果會依本站紀錄機制送至 Discord webhook；若提出 AI 補充問題，完整計算資料會送至設定的 LLM。
 
 ---
 

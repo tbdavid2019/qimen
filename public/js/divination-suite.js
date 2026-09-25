@@ -115,38 +115,79 @@
     function renderTarotNumerology(numerologyData) {
         if (!numerologyData || !numerologyData.soulCard) return;
         const soul = numerologyData.soulCard;
+        const profile = numerologyData.lifeProfile || {};
+        const birthday = numerologyData.birthdayNumber || {};
+        const digitGrid = numerologyData.digitGrid || {};
         const imgPath = soul.imageUrl || (soul.image ? `/images/tarot/cards/${soul.image}` : '');
         const kwUp = soul.keywords ? soul.keywords.upright : null;
         const kwRev = soul.keywords ? soul.keywords.reversed : null;
+        const gridCells = (digitGrid.cells || []).map((cell) => `
+            <div class="numerology-grid-cell ${cell.present ? 'is-present' : 'is-empty'} count-${Math.min(cell.count, 4)}">
+                <strong>${cell.number}</strong>
+                ${cell.present ? `<span class="numerology-grid-count">${cell.count} 次</span>` : '<span class="numerology-grid-count">未出現</span>'}
+            </div>`).join('');
+        const missingNumbers = digitGrid.missingNumbers || [];
+        const connections = digitGrid.connections || [];
+        const connectionsMarkup = connections.length
+            ? connections.map((line) => `<article class="numerology-line-card ${line.reinforced ? 'is-reinforced' : ''}">
+                <div><span class="numerology-line-pattern">${escapeHtml(line.pattern.split('').join(' · '))}</span><h5>${escapeHtml(line.title)}</h5></div>
+                <p>${escapeHtml(line.description)}</p>${line.reinforced ? '<small>盤面中重複出現</small>' : ''}
+              </article>`).join('')
+            : '<p class="numerology-empty-note">目前沒有形成完整連線。這只表示依本頁算法，對應數字沒有同時出現在生日盤面中；不代表缺少某種能力。</p>';
 
         visualBoard.innerHTML = `
             <div class="suite-board-title">🔢 生命靈數與靈魂象徵牌</div>
             <div class="tarot-numerology-board">
-                <div class="num-sub-label">你的生命靈數</div>
-                <div class="tarot-num-big">${escapeHtml(String(numerologyData.lifeNumber))}</div>
-
-                <div class="tarot-num-card-center">
-                    <div class="tarot-num-img-wrap tarot-card-interactive" id="numerologySoulCardClick">
-                        ${imgPath ? `<img src="${escapeHtml(imgPath)}" alt="${escapeHtml(soul.name)}" class="tarot-num-card-img">` : ''}
+                <section class="numerology-identity-card">
+                    <div class="numerology-identity-number">
+                        <span class="num-sub-label">你的生命數</span>
+                        <strong class="tarot-num-big">${escapeHtml(String(numerologyData.lifeNumber))}</strong>
+                        <span class="numerology-date-label">${escapeHtml(numerologyData.birthDate || '')}</span>
                     </div>
-                    <div class="tarot-num-card-title">
-                        靈魂象徵牌 · ${escapeHtml(soul.name)} <small>(${escapeHtml(soul.nameEn || '')})</small>
+                    <div class="tarot-num-card-center">
+                        <div class="tarot-num-img-wrap tarot-card-interactive" id="numerologySoulCardClick">
+                            ${imgPath ? `<img src="${escapeHtml(imgPath)}" alt="${escapeHtml(soul.name)}" class="tarot-num-card-img">` : ''}
+                        </div>
+                        <div class="tarot-num-card-title">靈魂象徵牌 · ${escapeHtml(soul.name)} <small>(${escapeHtml(soul.nameEn || '')})</small></div>
+                        <div class="numerology-astro-tags">${escapeHtml(soul.astro?.element || '')}${soul.astro?.element && soul.astro?.planet ? '・' : ''}${escapeHtml(soul.astro?.planet || '')}</div>
                     </div>
-                </div>
+                    <div class="numerology-birthday-card"><span>生日數</span><strong>${escapeHtml(String(birthday.number || '—'))}</strong><b>${escapeHtml(birthday.title || '')}</b><small>由出生日歸約</small></div>
+                </section>
 
-                <div class="tarot-num-summary-box">
-                    <div class="tarot-num-summary-quote">「${escapeHtml(soul.summary || '')}」</div>
-                </div>
+                <section class="numerology-life-profile">
+                    <div class="numerology-section-heading"><span>01</span><div><h3>${escapeHtml(profile.title || `${numerologyData.lifeNumber} 號生命數`)}｜核心傾向</h3><p>${escapeHtml(profile.essence || soul.summary || '')}</p></div></div>
+                    <div class="numerology-insight-grid">
+                        <article class="numerology-insight-card insight-strength"><span>容易發揮</span><p>${escapeHtml(profile.strength || '')}</p></article>
+                        <article class="numerology-insight-card insight-balance"><span>壓力提醒</span><p>${escapeHtml(profile.overuse || '')}</p></article>
+                        <article class="numerology-insight-card insight-relationship"><span>關係互動</span><p>${escapeHtml(profile.relationships || '')}</p></article>
+                        <article class="numerology-insight-card insight-work"><span>工作發揮</span><p>${escapeHtml(profile.work || '')}</p></article>
+                    </div>
+                    <div class="numerology-practice"><b>今天可以試：</b>${escapeHtml(profile.practice || '')}<span><b>自我提問：</b>${escapeHtml(profile.reflection || '')}</span></div>
+                </section>
 
                 <div class="tarot-num-formula">
                     🧮 計算歷程：<strong>${escapeHtml(numerologyData.formula || numerologyData.steps?.join(' ➔ ') || '')}</strong>
                 </div>
 
-                <div class="tarot-num-tip">
-                    💡 以西元出生年月日各數位相加至個位數，即為生命靈數（1~9 對應大阿爾克那九大靈魂原型）
-                </div>
+                <section class="numerology-grid-section">
+                    <div class="numerology-section-heading"><span>02</span><div><h3>生日數字九宮格</h3><p>生日原始數字＋第一輪總和數字＋最終生命數。格中次數只表示數字出現次數，不等於特質分數。</p></div></div>
+                    <div class="numerology-grid-layout">
+                        <div class="numerology-digit-grid">${gridCells}</div>
+                        <aside class="numerology-grid-reading">
+                            <h4>盤面空缺數</h4>
+                            ${missingNumbers.length
+                                ? `<div class="numerology-missing-list">${missingNumbers.map((item) => `<article><b>${item.number}</b><span>${escapeHtml(item.reflection)}</span></article>`).join('')}</div>`
+                                : '<p>依此計算方式，1–9 都有出現。這不是能力完整度測驗。</p>'}
+                            <p class="numerology-grid-caution">空缺只指生日盤面沒有該數字，不代表你缺少某種能力；請把提問當作自我觀察線索。</p>
+                        </aside>
+                    </div>
+                    <div class="numerology-lines-heading"><h4>九宮格連線</h4><span>${connections.length} 條形成</span></div>
+                    <div class="numerology-lines-grid">${connectionsMarkup}</div>
+                </section>
 
                 ${kwUp ? `
+                <section class="numerology-tarot-lens">
+                    <div class="numerology-section-heading"><span>03</span><div><h3>塔羅原型的另一個視角</h3><p>生命數與大阿爾克那牌義並列參考，不把兩套系統混成單一分數。</p></div></div>
                 <div class="tarot-num-traits-grid">
                     <div class="tarot-trait-card trait-upright">
                         <div class="tarot-trait-title">✨ 正位賦能 · 天賦特質</div>
@@ -165,7 +206,9 @@
                         </div>
                     </div>
                 </div>
+                </section>
                 ` : ''}
+                <p class="numerology-method-note">${escapeHtml(numerologyData.method?.limitations || numerologyData.note || '')} 九宮格與連線依頁面列明的計數口徑計算；不同生命靈數流派可能採用不同算法。</p>
             </div>
         `;
         visualBoard.hidden = false;
@@ -1996,6 +2039,7 @@
         const btnModeMaleSize = document.getElementById('btnModeMaleSize');
         const ziweiModeInput = document.getElementById('ziweiMode');
         const chartOnlyButton = document.getElementById('ziweiChartOnlyBtn');
+        const actionRow = document.getElementById('ziweiSubmitActions');
         const spouseBanner = document.getElementById('spouseBanner');
         const maleSizeBanner = document.getElementById('maleSizeBanner');
         const ziweiQuestionGroup = document.getElementById('ziweiQuestionGroup');
@@ -2003,6 +2047,7 @@
         const maleSizeResultCard = document.getElementById('maleSizeResultCard');
 
         function setZiweiMode(mode, updateUrl = true) {
+            actionRow?.classList.toggle('single-action', mode !== 'chart');
             btnModeChart?.classList.toggle('active', mode === 'chart');
             btnModeSpouse?.classList.toggle('active', mode === 'spouse');
             btnModeMaleSize?.classList.toggle('active', mode === 'male-size');

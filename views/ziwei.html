@@ -197,11 +197,11 @@
                     <%- include('partials/turnstile-widget.html', { widgetId: 'suite-turnstile', action: 'llm_analysis', explicit: true }) %>
                 </div>
 
-                <div class="text-center suite-submit-container">
+                <div id="ziweiSubmitActions" class="ziwei-submit-actions single-action suite-submit-container">
                     <button type="submit" id="suiteSubmitBtn" class="btn suite-btn-primary btn-lg">
                         <%= (typeof activeMode !== 'undefined' && activeMode === 'spouse') ? '💍 3秒解鎖未來另一半' : (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? '⚡ 3秒解鎖真實尺寸' : '✨ 排盤並查看命理解讀' %>
                     </button>
-                    <button type="button" id="ziweiChartOnlyBtn" class="btn suite-btn-secondary btn-lg" style="margin-top: 10px;" <%= (typeof activeMode !== 'undefined' && activeMode !== 'chart') ? 'hidden' : '' %>>
+                    <button type="button" id="ziweiChartOnlyBtn" class="btn suite-btn-secondary btn-lg" <%= (typeof activeMode !== 'undefined' && activeMode !== 'chart') ? 'hidden' : '' %>>
                         🧭 只排命盤（不使用 AI）
                     </button>
                 </div>

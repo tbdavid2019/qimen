@@ -1459,7 +1459,7 @@
 		},
 		tarot_numerology: {
 			name: "tarot_numerology",
-			description: "計算西元出生年月日之生命靈數（1~9）與大阿爾克那靈魂象徵牌、天賦特質與人生課題。",
+			description: "計算生命數、生日數、生日數字九宮格、缺數反思提示、已形成的數字連線與大阿爾克那原型；只作文化反思，不作診斷或命運定論。",
 			parameters: {
 				type: "object",
 				properties: {
@@ -1479,10 +1479,12 @@
 				});
 				const data = await res.json();
 				if (!data.success) throw new Error(data.error || "生命靈數計算失敗");
-				const summary = `【生命靈數 ${data.lifeNumber}】靈魂象徵牌：${data.soulCard?.name}（${data.soulCard?.nameEn}）。\n計算歷程：${data.formula}\n特質解析：${data.soulCard?.summary}`;
+				const lines = data.digitGrid?.connections || [];
+				const missing = data.digitGrid?.missingNumbers || [];
+				const summary = `【生命數 ${data.lifeNumber}｜${data.lifeProfile?.title || data.soulCard?.name}】靈魂象徵牌：${data.soulCard?.name}（${data.soulCard?.nameEn}）。\n核心傾向：${data.lifeProfile?.essence || data.soulCard?.summary}\n生日數：${data.birthdayNumber?.number || "—"}（${data.birthdayNumber?.title || ""}）\n計算歷程：${data.formula}\n生日盤面空缺數：${missing.map((item) => item.number).join("、") || "無"}\n形成連線：${lines.map((line) => `${line.pattern} ${line.title}`).join("、") || "無"}\n自我提問：${data.lifeProfile?.reflection || "—"}\n提醒：生日九宮格是文化反思線索，不代表能力缺失或命運定論。`;
 				if (typeof window !== "undefined") {
 					if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
-					window.conversationHistory.push({ role: "user", content: `計算出生日期 ${birthDate} 的生命靈數` });
+					window.conversationHistory.push({ role: "user", content: "計算生命數、生日數與生日數字九宮格" });
 					window.conversationHistory.push({ role: "assistant", content: summary });
 					window.lastSuiteResult = data;
 				}

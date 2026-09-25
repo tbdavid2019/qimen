@@ -145,12 +145,25 @@ app.get('/api/turnstile/config', (req, res) => {
 
 app.get('/data/name-analysis/method-profiles.json', (req, res) => res.type('application/json').sendFile(path.join(__dirname, 'data/name-analysis/method-profiles.json')));
 app.get('/name-analysis', (req, res) => res.render('name-analysis', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'name-analysis' }));
-app.post('/api/name-analysis/verify', (req, res) => {
-    try { const body = req.body || {}; const baziLens = resolveNameBirthLens(body.birthData); res.json({ success: true, result: nameAnalysis.analyzeName({ ...body, baziLens: baziLens || undefined }) }); }
+app.post('/api/name-analysis/verify', async (req, res) => {
+    try {
+        const body = req.body || {};
+        const baziLens = resolveNameBirthLens(body.birthData);
+        const result = nameAnalysis.analyzeName({ ...body, baziLens: baziLens || undefined });
+        const discord = await sendModuleRecord('中文姓名驗名', body, result);
+        res.json({ success: true, result, discord });
+    }
     catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
 });
-app.post('/api/name-analysis/generate', (req, res) => {
-    try { const body = req.body || {}; const baziLens = resolveNameBirthLens(body.birthData); const desiredElements = Array.isArray(body.desiredElements) && body.desiredElements.length ? body.desiredElements : (baziLens?.usefulElements || []); res.json({ success: true, result: nameAnalysis.generateNames({ ...body, desiredElements, baziLens: baziLens || undefined }) }); }
+app.post('/api/name-analysis/generate', async (req, res) => {
+    try {
+        const body = req.body || {};
+        const baziLens = resolveNameBirthLens(body.birthData);
+        const desiredElements = Array.isArray(body.desiredElements) && body.desiredElements.length ? body.desiredElements : (baziLens?.usefulElements || []);
+        const result = nameAnalysis.generateNames({ ...body, desiredElements, baziLens: baziLens || undefined });
+        const discord = await sendModuleRecord('中文姓名取名', body, result);
+        res.json({ success: true, result, discord });
+    }
     catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
 });
 app.post('/api/name-analysis-question', async (req, res) => {
@@ -160,9 +173,17 @@ app.post('/api/name-analysis-question', async (req, res) => {
         const calculatedInput = { ...body, baziLens: baziLens || undefined, desiredElements: Array.isArray(body.desiredElements) && body.desiredElements.length ? body.desiredElements : (baziLens?.usefulElements || []) };
         const result = body.mode === 'generate' ? nameAnalysis.generateNames(calculatedInput) : nameAnalysis.analyzeName(calculatedInput);
         const followup = String(body.question || '').slice(0, 1000);
-        if (!followup || !process.env.LLM_API_KEY) return res.json({ success: true, result, analysis: null, llmAvailable: !!process.env.LLM_API_KEY });
+        if (!followup || !process.env.LLM_API_KEY) {
+            const discord = await sendModuleRecord('中文姓名分析', body, result);
+            return res.json({ success: true, result, analysis: null, llmAvailable: !!process.env.LLM_API_KEY, discord });
+        }
 
-        if (isTurnstileEnabled()) {
+        const isTestMode = process.env.NODE_ENV === 'test' || process.env.npm_lifecycle_event === 'test';
+        if (!isTestMode) {
+            const configError = getTurnstileConfigError();
+            if (configError || !isTurnstileEnabled()) {
+                return res.status(503).json({ success: false, error: 'AI 補充解讀的人機驗證尚未啟用，請稍後再試。', code: 'TURNSTILE_NOT_CONFIGURED' });
+            }
             const token = body.turnstileToken || body['cf-turnstile-response'] || req.headers['cf-turnstile-response'];
             const turnstileCheck = await verifyTurnstile({
                 token,
@@ -180,7 +201,9 @@ app.post('/api/name-analysis-question', async (req, res) => {
 
         const boundedResult = nameAnalysis.formatQuestionPrompt(result, followup);
         const analysis = await llmService.analyzeService('nameAnalysis', boundedResult, { userQuestion: followup, language: body.lang || 'zh-tw' });
-        res.json({ success: true, result, analysis: analysis.analysis || analysis.fallback || null, metadata: analysis.success ? { provider: analysis.provider, model: analysis.model } : null });
+        const { turnstileToken: _turnstileToken, 'cf-turnstile-response': _cfTurnstileResponse, ...recordInput } = body;
+        const discord = await sendModuleRecord('中文姓名分析', recordInput, result, analysis.analysis || analysis.fallback || '');
+        res.json({ success: true, result, analysis: analysis.analysis || analysis.fallback || null, metadata: analysis.success ? { provider: analysis.provider, model: analysis.model } : null, discord });
     } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
 });
 
@@ -257,9 +280,9 @@ const handleZiweiMaleSize = async (req, res) => {
         if (payload.palaces) delete payload.palaces;
         const validated = validateZiweiQuestion(payload);
         const result = evaluateMaleSize(validated);
-        // Decouple Discord record from response path so fast-pass never blocks on external network
-        sendModuleRecord('紫微男生尺寸', validated, result).catch(() => {});
-        res.json({ success: true, result, ...result });
+        // Wait for Discord's wait=true confirmation before returning webhook status.
+        const discord = await sendModuleRecord('紫微男生尺寸', validated, result);
+        res.json({ success: true, result, ...result, discord });
     } catch (error) { res.status(error.status || error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
 };
 app.post('/api/ziwei/male-size', handleZiweiMaleSize);
@@ -271,9 +294,9 @@ const handleZiweiSpouse = async (req, res) => {
         if (payload.palaces) delete payload.palaces;
         const validated = validateZiweiQuestion(payload);
         const result = evaluateFutureSpouse(validated);
-        // Decouple Discord record from response path so fast-pass never blocks on external network
-        sendModuleRecord('紫微未來另一半', validated, result).catch(() => {});
-        res.json({ success: true, result, spouse: result, ...result });
+        // Wait for Discord's wait=true confirmation before returning webhook status.
+        const discord = await sendModuleRecord('紫微未來另一半', validated, result);
+        res.json({ success: true, result, spouse: result, ...result, discord });
     } catch (error) { res.status(error.status || error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
 };
 app.post('/api/ziwei/spouse', handleZiweiSpouse);
@@ -298,8 +321,8 @@ const handleTarotNumerology = async (req, res) => {
         if (numerology.error) {
             return res.status(400).json({ success: false, error: numerology.error });
         }
-        sendModuleRecord('塔羅生命靈數', payload, numerology).catch(() => {});
-        res.json({ success: true, numerology, result: numerology, ...numerology });
+        const discord = await sendModuleRecord('塔羅生命靈數', payload, numerology);
+        res.json({ success: true, numerology, result: numerology, ...numerology, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
 };
 app.post('/api/tarot/numerology', handleTarotNumerology);
@@ -361,7 +384,7 @@ const handleFengshuiReport = async (req, res) => {
 app.post('/api/fengshui/report', handleFengshuiReport);
 app.get('/api/fengshui/report', handleFengshuiReport);
 
-const handleEvaluateLayout = (req, res) => {
+const handleEvaluateLayout = async (req, res) => {
     try {
         const body = { ...(req.query || {}), ...(req.body || {}) };
         let layoutObjects = body.layoutObjects;
@@ -393,9 +416,11 @@ const handleEvaluateLayout = (req, res) => {
             layoutObjects,
             entryPath
         });
+        const discord = await sendModuleRecord('風水佈局評估', body, report);
 
         res.json({
             success: true,
+            discord,
             orientation: report.orientation || null,
             chart: {
                 period: report.period,
@@ -421,20 +446,22 @@ const handleEvaluateLayout = (req, res) => {
 app.post('/api/fengshui/evaluate-layout', handleEvaluateLayout);
 app.get('/api/fengshui/evaluate-layout', handleEvaluateLayout);
 app.get('/api/fengshui/shaqi-list', (req, res) => res.json({ success: true, list: getAllShaQiLibrary() }));
-app.get('/api/fengshui/luantou', (req, res) => {
+app.get('/api/fengshui/luantou', async (req, res) => {
     try {
         const payload = { ...(req.query || {}), ...(req.body || {}) };
         const list = payload.shaList ? (Array.isArray(payload.shaList) ? payload.shaList : String(payload.shaList).split(',')) : [payload.shaType || '天斬煞'];
         const result = diagnoseLuantou(list);
-        res.json({ success: true, result });
+        const discord = await sendModuleRecord('風水巒頭診斷', payload, result);
+        res.json({ success: true, result, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
 });
-app.post('/api/fengshui/luantou', (req, res) => {
+app.post('/api/fengshui/luantou', async (req, res) => {
     try {
         const payload = { ...(req.query || {}), ...(req.body || {}) };
         const list = payload.shaList ? (Array.isArray(payload.shaList) ? payload.shaList : String(payload.shaList).split(',')) : [payload.shaType || '天斬煞'];
         const result = diagnoseLuantou(list);
-        res.json({ success: true, result });
+        const discord = await sendModuleRecord('風水巒頭診斷', payload, result);
+        res.json({ success: true, result, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
 });
 
@@ -709,6 +736,18 @@ function resolveNameBirthLens(birthData) {
     const usefulElements = [...new Set(matches.map((text) => text.slice(1, -1)))];
     return {
         usefulElements,
+        summary: {
+            sex: validated.sex,
+            fourPillars: chart.fourPillars.map(({ label, value }) => ({ label, value })),
+            dayMaster: chart.dayMaster,
+            strength: chart.strengthAnalysis?.strength || null,
+            strengthBasis: [chart.strengthAnalysis?.isDeLing, chart.strengthAnalysis?.deDi, chart.strengthAnalysis?.deShi].filter(Boolean),
+            fiveElements: chart.fiveElements,
+            usefulGod: chart.strengthAnalysis?.usefulGod || null,
+            tabooGod: chart.strengthAnalysis?.tabooGod || null,
+            startingLuckAge: chart.profile?.startYunAge || null,
+            firstLuckCycle: chart.luckCycles?.[0]?.ganzhi || null
+        },
         assumptions: {
             source: '本地 lib/bazi2.js 計算；不連線傳送出生資料',
             calendar: validated.calendar,
@@ -1039,7 +1078,7 @@ app.get('/custom', async (req, res) => {
 });
 
 // API接口 - 獲取奇門排盤數據
-app.get('/api/qimen', (req, res) => {
+app.get('/api/qimen', async (req, res) => {
     // 獲取請求參數
     const type = req.query.type || '四柱';
     const method = req.query.method || '時家';
@@ -1096,7 +1135,8 @@ app.get('/api/qimen', (req, res) => {
             translations: i18n.getAllTranslations(),
             currentLang: i18n.getCurrentLanguage()
         };
-        res.json(result);
+        const discord = await sendModuleRecord('奇門遁甲排盤', { type, method, date: dateStr, time: timeStr, location, purpose, timePrecisionMode }, result);
+        res.json({ ...result, discord });
     } catch (error) {
         console.error('API排盤錯誤:', error);
         const statusCode = getHttpErrorStatus(error);
@@ -1110,7 +1150,7 @@ app.get('/api/qimen', (req, res) => {
 });
 
 // 梅花易數起卦 API
-app.post('/api/meihua/qigua', (req, res) => {
+app.post('/api/meihua/qigua', async (req, res) => {
     try {
         const {
             method = 'time',
@@ -1134,7 +1174,8 @@ app.post('/api/meihua/qigua', (req, res) => {
                 cuogua: meihuaText.getHexagramText(result.cuogua?.num),
                 zonggua: meihuaText.getHexagramText(result.zonggua?.num)
             };
-            return res.json({ success: true, data: result });
+            const discord = await sendModuleRecord('梅花易數起卦', req.body || {}, result);
+            return res.json({ success: true, data: result, discord });
         }
 
         if (method === 'number') {
@@ -1159,7 +1200,8 @@ app.post('/api/meihua/qigua', (req, res) => {
                 cuogua: meihuaText.getHexagramText(result.cuogua?.num),
                 zonggua: meihuaText.getHexagramText(result.zonggua?.num)
             };
-            return res.json({ success: true, data: result });
+            const discord = await sendModuleRecord('梅花易數起卦', req.body || {}, result);
+            return res.json({ success: true, data: result, discord });
         }
 
         if (method === 'text' || method === 'character') {
@@ -1178,7 +1220,8 @@ app.post('/api/meihua/qigua', (req, res) => {
                 cuogua: meihuaText.getHexagramText(result.cuogua?.num),
                 zonggua: meihuaText.getHexagramText(result.zonggua?.num)
             };
-            return res.json({ success: true, data: result });
+            const discord = await sendModuleRecord('梅花易數起卦', req.body || {}, result);
+            return res.json({ success: true, data: result, discord });
         }
 
         return res.status(400).json({ success: false, error: '不支援的起卦方式' });
@@ -1259,10 +1302,11 @@ app.post('/api/llm-analysis', turnstileMiddleware({ action: ['llm_analysis', 'qi
         }
 
         resolvedQimenData = qimenData;
+        const webhookContext = { purpose, conversationHistory, lang, userDateTime, timestamp, timezoneOffset, timePrecisionMode };
 
         // 如果有用戶問題，先發送到 Discord
         if (userQuestion && userQuestion.trim()) {
-            const questionResult = await discordWebhook.sendUserQuestion(userQuestion.trim(), qimenData);
+            const questionResult = await discordWebhook.sendUserQuestion(userQuestion.trim(), qimenData, webhookContext);
             if (questionResult.success) {
                 console.log('User question sent to Discord successfully');
             } else if (questionResult.reason !== 'Discord webhook not configured') {
@@ -1282,7 +1326,8 @@ app.post('/api/llm-analysis', turnstileMiddleware({ action: ['llm_analysis', 'qi
             const analysisDiscordResult = await discordWebhook.sendLLMAnalysis(
                 analysisResult.analysis, 
                 qimenData, 
-                userQuestion.trim()
+                userQuestion.trim(),
+                webhookContext
             );
             if (analysisDiscordResult.success) {
                 console.log('LLM analysis sent to Discord successfully');
@@ -1392,7 +1437,8 @@ app.post('/api/qimen-question', async (req, res) => {
         }
 
         // 發送問題到 Discord
-        const questionResult = await discordWebhook.sendUserQuestion(question.trim(), qimenPan);
+        const webhookContext = { datetime, mode, purpose, timezone, lang };
+        const questionResult = await discordWebhook.sendUserQuestion(question.trim(), qimenPan, webhookContext);
         let discordQuestionSent = false;
         if (questionResult.success) {
             discordQuestionSent = true;
@@ -1426,7 +1472,8 @@ app.post('/api/qimen-question', async (req, res) => {
             const analysisDiscordResult = await discordWebhook.sendLLMAnalysis(
                 analysisResult.analysis,
                 qimenPan,
-                question.trim()
+                question.trim(),
+                webhookContext
             );
             if (analysisDiscordResult.success) {
                 discordAnalysisSent = true;
@@ -1490,9 +1537,11 @@ app.post('/api/meihua/llm-analysis', turnstileMiddleware({ action: ['llm_analysi
         }
 
         if (userQuestion && userQuestion.trim()) {
-            const questionResult = await discordWebhook.sendUserQuestion(userQuestion.trim(), null);
+            const questionResult = await discordWebhook.sendUserQuestion(userQuestion.trim(), meihuaData, req.body || {});
             if (questionResult.success) {
                 console.log('Meihua question sent to Discord successfully');
+            } else if (questionResult.reason !== 'Discord webhook not configured') {
+                console.warn('Failed to send Meihua question to Discord:', questionResult.reason);
             }
         }
 
@@ -1506,11 +1555,14 @@ app.post('/api/meihua/llm-analysis', turnstileMiddleware({ action: ['llm_analysi
         if (analysisResult.success && analysisResult.analysis) {
             const analysisDiscordResult = await discordWebhook.sendLLMAnalysis(
                 analysisResult.analysis,
-                null,
-                userQuestion.trim()
+                meihuaData,
+                userQuestion.trim(),
+                req.body || {}
             );
             if (analysisDiscordResult.success) {
                 console.log('Meihua analysis sent to Discord successfully');
+            } else if (analysisDiscordResult.reason !== 'Discord webhook not configured') {
+                console.warn('Failed to send Meihua analysis to Discord:', analysisDiscordResult.reason);
             }
         }
 
@@ -1611,11 +1663,13 @@ app.post('/api/meihua-question', async (req, res) => {
             zonggua: meihuaText.getHexagramText(meihuaData.zonggua?.num)
         };
 
-        const questionResult = await discordWebhook.sendUserQuestion(question.trim(), null);
+        const questionResult = await discordWebhook.sendUserQuestion(question.trim(), meihuaData, req.body || {});
         let discordQuestionSent = false;
         if (questionResult.success) {
             discordQuestionSent = true;
             console.log('Meihua API question sent to Discord successfully');
+        } else if (questionResult.reason !== 'Discord webhook not configured') {
+            console.warn('Failed to send Meihua API question to Discord:', questionResult.reason);
         }
 
         const analysisResult = await llmService.analyzeMeihua(meihuaData, {
@@ -1628,12 +1682,15 @@ app.post('/api/meihua-question', async (req, res) => {
         if (analysisResult.success && analysisResult.analysis) {
             const analysisDiscordResult = await discordWebhook.sendLLMAnalysis(
                 analysisResult.analysis,
-                null,
-                question.trim()
+                meihuaData,
+                question.trim(),
+                req.body || {}
             );
             if (analysisDiscordResult.success) {
                 discordAnalysisSent = true;
                 console.log('Meihua API analysis sent to Discord successfully');
+            } else if (analysisDiscordResult.reason !== 'Discord webhook not configured') {
+                console.warn('Failed to send Meihua API analysis to Discord:', analysisDiscordResult.reason);
             }
         }
 

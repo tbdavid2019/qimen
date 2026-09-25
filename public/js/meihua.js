@@ -189,15 +189,17 @@ function bindMeihuaEvents() {
             params = getLocalTimeParams(new Date());
         }
 
+        var input = {
+            method: 'time',
+            userDateTime: params.userDateTime,
+            timestamp: params.timestamp,
+            timezoneOffset: params.timezoneOffset
+        };
+        window.currentMeihuaInput = input;
         var response = await fetch('/api/meihua/qigua', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                method: 'time',
-                userDateTime: params.userDateTime,
-                timestamp: params.timestamp,
-                timezoneOffset: params.timezoneOffset
-            })
+            body: JSON.stringify(input)
         });
 
         var result = await response.json();
@@ -227,15 +229,12 @@ function bindMeihuaEvents() {
         var num2 = parseNumberInput('meihuaNum2');
         var num3 = parseNumberInput('meihuaNum3');
 
+        var input = { method: 'number', num1: num1, num2: num2, num3: num3 };
+        window.currentMeihuaInput = input;
         var response = await fetch('/api/meihua/qigua', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                method: 'number',
-                num1: num1,
-                num2: num2,
-                num3: num3
-            })
+            body: JSON.stringify(input)
         });
 
         var result = await response.json();
@@ -255,14 +254,12 @@ function bindMeihuaEvents() {
             throw new Error('請輸入占測文字或詞語');
         }
 
+        var input = { method: 'text', text: text, hour: new Date().getHours() };
+        window.currentMeihuaInput = input;
         var response = await fetch('/api/meihua/qigua', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                method: 'text',
-                text: text,
-                hour: new Date().getHours()
-            })
+            body: JSON.stringify(input)
         });
 
         var result = await response.json();
@@ -478,6 +475,7 @@ function bindMeihuaEvents() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         meihuaData: window.currentMeihuaData,
+                        qiguaInput: window.currentMeihuaInput || null,
                         userQuestion: question,
                         conversationHistory: window.meihuaConversationHistory || [],
                         purpose: '綜合',

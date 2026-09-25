@@ -87,6 +87,18 @@ test('補充問答封裝計算結果與限制，不會自行補齊缺漏資料',
   assert.match(prompt.instruction, /不得推斷缺失/);
 });
 
+test('姓名分析頁展示生辰性別欄位、分層結果與明確 Turnstile 元件', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'views', 'name-analysis.html'), 'utf8');
+  const js = fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'name-analysis.js'), 'utf8');
+  assert.match(html, /id="birthDate"/);
+  assert.match(html, /id="birthSex"/);
+  assert.match(html, /id="name-turnstile"[^>]*data-action="llm_analysis"/);
+  assert.match(html, /navbar-ex1-collapse/);
+  assert.match(js, /name-bazi-section/);
+  assert.match(js, /window\.turnstile\.render/);
+  assert.match(js, /請先完成 Cloudflare 人機驗證/);
+});
+
 test('HTTP 驗名、取名與本地八字 lens 共用核心引擎', async (t) => {
   const server = app.listen(0);
   await new Promise((resolve) => server.once('listening', resolve));
@@ -103,11 +115,16 @@ test('HTTP 驗名、取名與本地八字 lens 共用核心引擎', async (t) =>
   const verified = await verify.json();
   assert.equal(verify.status, 200);
   assert.equal(verified.result.givenName, '明月清風');
-  const generatedResponse = await fetch(`${base}/api/name-analysis/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ surname: '王', givenNameLength: 3, limit: 3, birthData: { date: '1981-08-11', time: '10:00', sex: '男', calendar: 'solar' } }) });
+  const generatedResponse = await fetch(`${base}/api/name-analysis/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ surname: '王', givenNameLength: 3, limit: 3, birthData: { date: '1981-08-11', sex: '男', calendar: 'solar', allowUnknownHour: true } }) });
   const generated = await generatedResponse.json();
   assert.equal(generatedResponse.status, 200);
   assert.equal(generated.result.candidates.length, 3);
   assert.ok(generated.result.baziLens.usefulElements.length > 0);
+  const baziSummary = generated.result.candidates[0].analysis.baziLens.summary;
+  assert.equal(baziSummary.sex, '男');
+  assert.equal(baziSummary.fourPillars.length, 4);
+  assert.equal(baziSummary.fourPillars[3].value, '未知');
+  assert.ok(baziSummary.fiveElements.counts);
   assert.equal(JSON.stringify(generated.result).includes('1981-08-11'), false);
   const questionResponse = await fetch(`${base}/api/name-analysis-question`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: '王小明', surname: '王', birthData: { date: '1981-08-11', time: '10:00', sex: '男' } }) });
   const questioned = await questionResponse.json();

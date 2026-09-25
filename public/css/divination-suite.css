@@ -2618,14 +2618,21 @@ body.suite-page [style*="font-size:13px"] {
 /* Mode Switcher Grid */
 .tarot-mode-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
     margin-bottom: 24px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .tarot-mode-card {
     display: flex;
     align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
     border-radius: 14px;
     padding: 13px 14px;
     cursor: pointer;
@@ -2635,6 +2642,27 @@ body.suite-page [style*="font-size:13px"] {
     text-align: left;
     width: 100%;
     outline: none !important;
+}
+
+.tarot-mode-card > *,
+.tarot-mode-content {
+    min-width: 0;
+}
+
+.tarot-mode-header {
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.tarot-mode-title,
+.tarot-mode-desc {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.tarot-mode-badge {
+    white-space: normal;
+    flex: 0 1 auto;
 }
 
 /* Mode 1: Spread Reading (Mystic Violet) */
@@ -3297,4 +3325,148 @@ body.suite-page [style*="font-size:13px"] {
     }
 }
 
+/* Regression guard: fixed 1fr tracks and non-wrapping badges overflow the card. */
+.tarot-mode-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
 
+.tarot-mode-card,
+.tarot-mode-card > *,
+.tarot-mode-content,
+.tarot-mode-header,
+.tarot-mode-title,
+.tarot-mode-desc {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.tarot-mode-card { overflow: hidden; }
+.tarot-mode-header { flex-wrap: wrap; }
+.tarot-mode-title,
+.tarot-mode-desc { overflow-wrap: anywhere; }
+.tarot-mode-badge { flex: 0 1 auto; white-space: normal; }
+
+@media (max-width: 768px) {
+    .tarot-mode-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Match both standalone chart actions and honor hidden state in grid layout. */
+.ziwei-submit-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 14px;
+}
+
+.ziwei-submit-actions.single-action { grid-template-columns: minmax(0, 1fr); }
+.ziwei-submit-actions > .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 58px;
+    height: 100%;
+    margin: 0 !important;
+    white-space: normal;
+}
+.ziwei-submit-actions > .btn[hidden] { display: none !important; }
+
+@media (max-width: 767px) {
+    .ziwei-submit-actions { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Western life-numerology report: date grid, patterns and balanced guidance. */
+.numerology-identity-card {
+    display: grid;
+    grid-template-columns: minmax(100px, .7fr) minmax(170px, 1fr) minmax(115px, .7fr);
+    align-items: center;
+    gap: 20px;
+    padding: 22px;
+    border: 1.5px solid #f4c75e;
+    border-radius: 16px;
+    background: linear-gradient(130deg, #fff9e8, #fff1c6 54%, #fffaf0);
+    box-shadow: 0 8px 24px rgba(180, 116, 15, .12);
+    text-align: center;
+}
+.numerology-identity-number { display: grid; justify-items: center; gap: 3px; }
+.numerology-identity-number .tarot-num-big { margin: 0; color: #a45b08; font-size: clamp(58px, 8vw, 82px); line-height: 1; }
+.numerology-date-label { color: #8a6d3f; font-size: 12px; font-weight: 750; letter-spacing: .08em; }
+.numerology-identity-card .tarot-num-card-center { margin: 0; }
+.numerology-astro-tags { margin-top: 5px; color: #8a6d3f; font-size: 11px; }
+.numerology-birthday-card { display: grid; justify-items: center; gap: 4px; padding: 13px 9px; border: 1px solid #f3db9a; border-radius: 12px; background: rgba(255,255,255,.68); }
+.numerology-birthday-card > span, .numerology-birthday-card small { color: #907955; font-size: 10px; }
+.numerology-birthday-card strong { color: #a45b08; font-size: 34px; line-height: 1; }
+.numerology-birthday-card b { color: #775526; font-size: 12px; }
+.numerology-section-heading { display: flex; align-items: flex-start; gap: 11px; margin: 0 0 16px; }
+.numerology-section-heading > span { display: grid; flex: 0 0 30px; width: 30px; height: 30px; place-items: center; border-radius: 9px; color: #8c5804; background: #ffedb5; font-size: 11px; font-weight: 900; }
+.numerology-section-heading h3 { margin: 0; color: var(--suite-text); font-size: 17px; font-weight: 850; }
+.numerology-section-heading p { margin: 4px 0 0; color: var(--suite-text-muted); font-size: 12px; line-height: 1.55; }
+.numerology-life-profile, .numerology-grid-section, .numerology-tarot-lens { margin-top: 17px; padding: 19px; border: 1px solid rgba(217, 160, 43, .35); border-radius: 14px; background: linear-gradient(145deg, rgba(255,251,235,.8), rgba(255,255,255,.84)); }
+.numerology-insight-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.numerology-insight-card { min-width: 0; padding: 13px; border: 1px solid #ece6d7; border-left: 3px solid #d9a02b; border-radius: 10px; background: #fff; }
+.numerology-insight-card span { display: inline-flex; margin-bottom: 6px; padding: 3px 8px; border-radius: 12px; color: #80570f; background: #fff2ca; font-size: 10px; font-weight: 850; }
+.numerology-insight-card p { margin: 0; color: #4a4a43; font-size: 12px; line-height: 1.65; }
+.insight-strength { border-left-color: #16966c; }.insight-strength span { color: #11684e; background: #dff7e9; }
+.insight-balance { border-left-color: #df7c54; }.insight-balance span { color: #9a472a; background: #fff0e7; }
+.insight-relationship { border-left-color: #d66781; }.insight-relationship span { color: #9b3e58; background: #ffe9ef; }
+.insight-work { border-left-color: #5b88c5; }.insight-work span { color: #365f95; background: #e9f2ff; }
+.numerology-practice { display: grid; gap: 7px; margin-top: 11px; padding: 12px 14px; border-radius: 10px; background: #f7f4eb; color: #514a3c; font-size: 12px; line-height: 1.6; }
+.numerology-practice b { color: #76530e; }
+.numerology-num-traits-grid { margin-top: 12px; }
+.numerology-grid-section { background: linear-gradient(145deg, rgba(245,249,255,.94), rgba(255,255,255,.9)); border-color: rgba(120, 157, 200, .35); }
+.numerology-grid-section .numerology-section-heading > span { color: #365f95; background: #e3efff; }
+.numerology-grid-layout { display: grid; grid-template-columns: minmax(225px, .75fr) minmax(0, 1.25fr); gap: 15px; align-items: start; }
+.numerology-digit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; max-width: 350px; width: 100%; margin-inline: auto; }
+.numerology-grid-cell { display: grid; align-content: center; justify-items: center; aspect-ratio: 1; min-width: 0; border: 1px solid #dbe5f0; border-radius: 11px; background: #f6f9fc; }
+.numerology-grid-cell strong { color: #65758a; font-size: clamp(20px, 3vw, 29px); line-height: 1; }
+.numerology-grid-count { margin-top: 5px; color: #8291a2; font-size: 9px; }
+.numerology-grid-cell.is-present { border-color: #eacb72; background: linear-gradient(145deg, #fff9e8, #ffefbf); }
+.numerology-grid-cell.is-present strong { color: #8f5b0c; }
+.numerology-grid-cell.count-2 { box-shadow: inset 0 0 0 2px rgba(219, 161, 46, .16); }
+.numerology-grid-cell.count-3, .numerology-grid-cell.count-4 { border-color: #dda82e; box-shadow: inset 0 0 0 3px rgba(219, 161, 46, .24); }
+.numerology-grid-reading { min-width: 0; padding: 13px; border: 1px solid #e1e9f2; border-radius: 11px; background: #fff; }
+.numerology-grid-reading h4, .numerology-lines-heading h4 { margin: 0; color: #334e6f; font-size: 13px; font-weight: 850; }
+.numerology-missing-list { display: grid; gap: 6px; margin-top: 10px; }
+.numerology-missing-list article { display: grid; grid-template-columns: 27px minmax(0,1fr); align-items: start; gap: 7px; color: #596b7b; font-size: 11px; line-height: 1.5; }
+.numerology-missing-list article b { display: grid; width: 24px; height: 24px; place-items: center; border-radius: 7px; color: #526980; background: #eaf0f6; }
+.numerology-grid-reading > p { color: #5e7081; font-size: 11px; line-height: 1.55; }
+.numerology-grid-reading .numerology-grid-caution { margin: 10px 0 0; padding: 9px; border-radius: 8px; background: #f2f6fa; color: #718092; font-size: 10px; }
+.numerology-lines-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 17px 0 9px; }
+.numerology-lines-heading > span { color: #607995; font-size: 10px; }
+.numerology-lines-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+.numerology-line-card { min-width: 0; padding: 11px; border: 1px solid #e1e9f2; border-radius: 10px; background: #fff; }
+.numerology-line-card > div { display: flex; align-items: center; gap: 8px; }
+.numerology-line-pattern { flex: 0 0 auto; color: #fff; background: #6483a6; border-radius: 8px; padding: 4px 6px; font-size: 9px; font-weight: 850; }
+.numerology-line-card h5 { margin: 0; color: #3c5875; font-size: 11px; font-weight: 850; }
+.numerology-line-card p { margin: 7px 0 0; color: #647487; font-size: 10px; line-height: 1.55; }
+.numerology-line-card small { display: inline-block; margin-top: 6px; color: #916100; font-size: 9px; }
+.numerology-line-card.is-reinforced { border-color: #e8ca72; background: #fffaf0; }
+.numerology-empty-note { margin: 0; padding: 12px; border-radius: 9px; background: #f4f7fa; color: #647487; font-size: 11px; line-height: 1.6; }
+.numerology-tarot-lens { border-color: rgba(171, 139, 234, .35); background: linear-gradient(145deg, rgba(248,244,255,.92), rgba(255,255,255,.9)); }
+.numerology-tarot-lens .numerology-section-heading > span { color: #6741a0; background: #eee5ff; }
+.numerology-method-note { margin: 14px 2px 0; color: var(--suite-text-muted); font-size: 10px; line-height: 1.6; }
+
+[data-theme="dark"] .numerology-identity-card { border-color: rgba(234, 190, 79, .56); background: linear-gradient(130deg, rgba(76, 55, 16, .55), rgba(50, 42, 27, .68)); }
+[data-theme="dark"] .numerology-identity-number .tarot-num-big, [data-theme="dark"] .numerology-birthday-card strong { color: #f6d675; }
+[data-theme="dark"] .numerology-date-label, [data-theme="dark"] .numerology-birthday-card > span, [data-theme="dark"] .numerology-birthday-card small, [data-theme="dark"] .numerology-astro-tags { color: #d8c594; }
+[data-theme="dark"] .numerology-birthday-card, [data-theme="dark"] .numerology-insight-card, [data-theme="dark"] .numerology-grid-reading, [data-theme="dark"] .numerology-line-card { background: rgba(20, 28, 34, .92); border-color: rgba(255,255,255,.13); }
+[data-theme="dark"] .numerology-life-profile, [data-theme="dark"] .numerology-grid-section, [data-theme="dark"] .numerology-tarot-lens { background: linear-gradient(145deg, rgba(35, 32, 24, .72), rgba(18, 24, 29, .9)); border-color: rgba(255,255,255,.13); }
+[data-theme="dark"] .numerology-insight-card p, [data-theme="dark"] .numerology-grid-reading h4, [data-theme="dark"] .numerology-lines-heading h4, [data-theme="dark"] .numerology-line-card h5 { color: #e2e9ef; }
+[data-theme="dark"] .numerology-practice, [data-theme="dark"] .numerology-grid-caution, [data-theme="dark"] .numerology-empty-note { background: rgba(255,255,255,.07) !important; color: #becbd5 !important; }
+[data-theme="dark"] .numerology-line-card p, [data-theme="dark"] .numerology-grid-reading > p, [data-theme="dark"] .numerology-missing-list article { color: #c4d0da; }
+[data-theme="dark"] .numerology-grid-cell { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.13); }
+[data-theme="dark"] .numerology-grid-cell.is-present { background: linear-gradient(145deg, rgba(115, 78, 15, .38), rgba(83, 60, 21, .5)); border-color: rgba(234, 190, 79, .48); }
+
+@media (max-width: 767px) {
+    .numerology-identity-card { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; padding: 15px; }
+    .numerology-identity-card .tarot-num-card-center { grid-column: 1 / -1; grid-row: 1; }
+    .numerology-identity-number { grid-column: 1; grid-row: 2; }
+    .numerology-birthday-card { grid-column: 2; grid-row: 2; }
+    .numerology-life-profile, .numerology-grid-section, .numerology-tarot-lens { padding: 14px; }
+    .numerology-insight-grid, .numerology-grid-layout, .numerology-lines-grid { grid-template-columns: minmax(0,1fr); }
+}

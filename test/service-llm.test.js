@@ -25,6 +25,14 @@ test('共用服務 LLM 分析會使用模組專用提示詞與對話歷史', asy
     assert.deepEqual(captured.history, [{ role: 'user', content: '前一題' }]);
 });
 
+test('生命靈數 LLM 提示保留出生日期及完整計算脈絡', () => {
+    const service = new LLMAnalysisService({ provider: 'openai', model: 'test-model' });
+    const numerology = require('../lib/tarot').calculateTarotNumerology('1981-08-11');
+    const { prompt } = service.formatTarotPrompt(numerology, '想知道如何發揮長處');
+    assert.match(prompt, /1981-08-11/);
+    assert.match(prompt, /1\+9\+8\+1\+0\+8\+1\+1/);
+});
+
 test('解答之書 LLM 分析使用專用角色與原始答案', async () => {
     const service = new LLMAnalysisService({ provider: 'openai', model: 'test-model' });
     let captured;

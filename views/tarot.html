@@ -190,7 +190,8 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="suite-form-label" for="tarotBirthDate">出生日期（西元年月日）<span style="color:#f43f5e;">*</span></label>
-                            <input type="date" class="form-control input-lg" id="tarotBirthDate" name="birthDate" value="1995-08-18">
+                            <input type="date" class="form-control input-lg" id="tarotBirthDate" name="birthDate" required>
+                            <small class="numerology-privacy-note">生日用於本站計算；本次輸入與完整結果會送至 Discord webhook。若使用 AI 補充解讀，計算資料也會傳至設定的 LLM。</small>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="suite-form-label" for="tarotNumerologyQuestion">想針對天賦特質詢問的事（選填）</label>
