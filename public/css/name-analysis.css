@@ -174,4 +174,5 @@
     .name-result-section { padding-block: 16px; }
     .name-bazi-section { padding: 13px; }
     .name-question { padding: 15px; }
+    .name-element-bar { grid-template-columns: 24px minmax(30px, 1fr) 24px 40px; gap: 8px; }
 }

@@ -3470,3 +3470,145 @@ body.suite-page [style*="font-size:13px"] {
     .numerology-life-profile, .numerology-grid-section, .numerology-tarot-lens { padding: 14px; }
     .numerology-insight-grid, .numerology-grid-layout, .numerology-lines-grid { grid-template-columns: minmax(0,1fr); }
 }
+
+/* Minimum readable type across every suite module, including generated result cards. */
+body.suite-page :where(p, li, td, th, dd, dt, summary) {
+    font-size: max(18px, var(--type-reading)) !important;
+    line-height: 1.65;
+}
+body.suite-page :where(
+    small, .small, .text-muted,
+    .answerbook-answer-raw, .answerbook-status,
+    .bazi-element-pill, .bazi-god-cell, .bazi-hidden-cell, .bazi-pillar-head,
+    .compass-badge, .compass-dir-label, .compass-meta-line, .compass-tilt-alert,
+    .cross-link-badge, .cross-link-desc, .element-item, .fengshui-dir-title, .fengshui-star-badge, .fortune-scroll-badge,
+    .fs-action-item, .fs-action-priority, .fs-add-path-btn, .fs-badge-feature, .fs-btn-action, .fs-btn-clear, .fs-cat-btn,
+    .fs-cell-stars-preview, .fs-cell-tag, .fs-compass-desc, .fs-empty-hint, .fs-entry-path-title, .fs-eval-rating-badge,
+    .fs-finding-desc, .fs-finding-item, .fs-finding-rec, .fs-finding-title, .fs-grid-tag, .fs-info-pill, .fs-item-hint,
+    .fs-item-pill, .fs-missing-box, .fs-num-input, .fs-orientation-info-row, .fs-palace-header, .fs-path-arrow,
+    .fs-path-prompt, .fs-path-quality-row, .fs-path-step, .fs-quality-select, .fs-quote-cite, .fs-selection-banner,
+    .fs-sit-face-tag, .fs-slider-label, .fs-start-compass-btn, .fs-step2-badge, .fs-step2-footer-note,
+    .fs-step2-subtext, .fs-tag-remove, .fs-unit,
+    .gallery-chip, .gender-pill, .luck-cycle-age, .male-size-advice-box, .male-size-item-body, .male-size-item-header,
+    .mode-card-badge, .mode-card-desc,
+    .name-assumption-note, .name-bazi-facts, .name-candidate-rank, .name-character-gloss, .name-character-pronunciation,
+    .name-character-role, .name-data-note, .name-element-bar, .name-element-panel, .name-element-tag, .name-extended-tag,
+    .name-field-help, .name-gloss-disclaimer, .name-grid-cell, .name-grid-label, .name-grid-rating, .name-inline-check,
+    .name-kicker, .name-match-tag, .name-method-note, .name-muted, .name-optional-tag, .name-privacy-note,
+    .name-profile-pill, .name-result-disclaimer, .name-section-title, .name-segmentation-line, .name-segmentation-warning,
+    .name-sex-pill, .name-source-note, .name-step, .name-stroke-tag, .name-tab, .name-talents-row, .name-turnstile-note,
+    .name-useful-panel,
+    .num-sub-label, .numerology-astro-tags, .numerology-birthday-card, .numerology-date-label, .numerology-empty-note,
+    .numerology-grid-caution, .numerology-grid-count, .numerology-grid-reading, .numerology-insight-card,
+    .numerology-line-card, .numerology-line-pattern, .numerology-lines-heading, .numerology-method-note,
+    .numerology-missing-list, .numerology-practice, .numerology-section-heading,
+    .site-footer-provider, .spouse-advice-box, .spouse-item-body, .spouse-item-header, .spouse-tag-pill,
+    .suite-chip-radio, .suite-follow-up-btn, .suite-follow-up-input, .suite-hero-badge, .suite-tag,
+    .tarot-card-attr, .tarot-card-en, .tarot-click-hint, .tarot-gallery-en, .tarot-gallery-name, .tarot-kw-box,
+    .tarot-kw-pill, .tarot-major-tag, .tarot-modal-astro, .tarot-modal-summary, .tarot-mode-badge, .tarot-mode-desc,
+    .tarot-num-formula, .tarot-num-tip, .tarot-trait-desc, .tarot-trait-title,
+    .ziwei-brightness, .ziwei-cell-footer, .ziwei-footer-note, .ziwei-sihua-badge
+) {
+    font-size: max(15px, var(--type-caption)) !important;
+    line-height: 1.5;
+}
+body.suite-page label,
+body.suite-page input,
+body.suite-page select,
+body.suite-page textarea,
+body.suite-page button,
+body.suite-page .btn,
+body.suite-page .navbar-inverse .navbar-nav > li > a,
+body.suite-page .navbar-inverse .dark-mode-toggle {
+    font-size: max(16px, var(--type-label)) !important;
+}
+body.suite-page .suite-chip-radio span { font-size: max(15px, var(--type-caption)) !important; }
+body.suite-page label span,
+body.suite-page b,
+body.suite-page .numerology-section-heading > span,
+body.suite-page .numerology-insight-card span,
+body.suite-page .numerology-birthday-card > span,
+body.suite-page .numerology-birthday-card b,
+body.suite-page .numerology-grid-count,
+body.suite-page .numerology-lines-heading > span,
+body.suite-page .numerology-line-pattern,
+body.suite-page .name-section-title > span,
+body.suite-page .name-bazi-facts > span,
+body.suite-page .name-bazi-facts strong {
+    font-size: max(15px, var(--type-caption)) !important;
+}
+body.suite-page .numerology-section-heading h3,
+body.suite-page .numerology-grid-reading h4,
+body.suite-page .numerology-lines-heading h4,
+body.suite-page .numerology-line-card h5,
+body.suite-page .name-element-panel h4,
+body.suite-page .name-useful-panel h4 {
+    font-size: max(18px, var(--type-label)) !important;
+}
+
+@media (max-width: 767px) {
+    body.suite-page :where(p, li, td, th, dd, dt, summary) {
+        font-size: max(19px, var(--type-reading)) !important;
+        line-height: 1.7;
+    }
+    body.suite-page :where(
+        small, .small, .text-muted,
+        .answerbook-answer-raw, .answerbook-status,
+        .bazi-element-pill, .bazi-god-cell, .bazi-hidden-cell, .bazi-pillar-head,
+        .compass-badge, .compass-dir-label, .compass-meta-line, .compass-tilt-alert,
+        .cross-link-badge, .cross-link-desc, .element-item, .fengshui-dir-title, .fengshui-star-badge, .fortune-scroll-badge,
+        .fs-action-item, .fs-action-priority, .fs-add-path-btn, .fs-badge-feature, .fs-btn-action, .fs-btn-clear, .fs-cat-btn,
+        .fs-cell-stars-preview, .fs-cell-tag, .fs-compass-desc, .fs-empty-hint, .fs-entry-path-title, .fs-eval-rating-badge,
+        .fs-finding-desc, .fs-finding-item, .fs-finding-rec, .fs-finding-title, .fs-grid-tag, .fs-info-pill, .fs-item-hint,
+        .fs-item-pill, .fs-missing-box, .fs-num-input, .fs-orientation-info-row, .fs-palace-header, .fs-path-arrow,
+        .fs-path-prompt, .fs-path-quality-row, .fs-path-step, .fs-quality-select, .fs-quote-cite, .fs-selection-banner,
+        .fs-sit-face-tag, .fs-slider-label, .fs-start-compass-btn, .fs-step2-badge, .fs-step2-footer-note,
+        .fs-step2-subtext, .fs-tag-remove, .fs-unit,
+        .gallery-chip, .gender-pill, .luck-cycle-age, .male-size-advice-box, .male-size-item-body, .male-size-item-header,
+        .mode-card-badge, .mode-card-desc,
+        .name-assumption-note, .name-bazi-facts, .name-candidate-rank, .name-character-gloss, .name-character-pronunciation,
+        .name-character-role, .name-data-note, .name-element-bar, .name-element-panel, .name-element-tag, .name-extended-tag,
+        .name-field-help, .name-gloss-disclaimer, .name-grid-cell, .name-grid-label, .name-grid-rating, .name-inline-check,
+        .name-kicker, .name-match-tag, .name-method-note, .name-muted, .name-optional-tag, .name-privacy-note,
+        .name-profile-pill, .name-result-disclaimer, .name-section-title, .name-segmentation-line, .name-segmentation-warning,
+        .name-sex-pill, .name-source-note, .name-step, .name-stroke-tag, .name-tab, .name-talents-row, .name-turnstile-note,
+        .name-useful-panel,
+        .num-sub-label, .numerology-astro-tags, .numerology-birthday-card, .numerology-date-label, .numerology-empty-note,
+        .numerology-grid-caution, .numerology-grid-count, .numerology-grid-reading, .numerology-insight-card,
+        .numerology-line-card, .numerology-line-pattern, .numerology-lines-heading, .numerology-method-note,
+        .numerology-missing-list, .numerology-practice, .numerology-section-heading,
+        .site-footer-provider, .spouse-advice-box, .spouse-item-body, .spouse-item-header, .spouse-tag-pill,
+        .suite-chip-radio, .suite-follow-up-btn, .suite-follow-up-input, .suite-hero-badge, .suite-tag,
+        .tarot-card-attr, .tarot-card-en, .tarot-click-hint, .tarot-gallery-en, .tarot-gallery-name, .tarot-kw-box,
+        .tarot-kw-pill, .tarot-major-tag, .tarot-modal-astro, .tarot-modal-summary, .tarot-mode-badge, .tarot-mode-desc,
+        .tarot-num-formula, .tarot-num-tip, .tarot-trait-desc, .tarot-trait-title,
+        .ziwei-brightness, .ziwei-cell-footer, .ziwei-footer-note, .ziwei-sihua-badge
+    ) {
+        font-size: max(15px, var(--type-caption)) !important;
+    }
+    body.suite-page label,
+    body.suite-page input,
+    body.suite-page select,
+    body.suite-page textarea,
+    body.suite-page button,
+    body.suite-page .btn,
+    body.suite-page .navbar-inverse .navbar-nav > li > a,
+    body.suite-page .navbar-inverse .dark-mode-toggle {
+        font-size: max(16px, var(--type-label)) !important;
+    }
+    body.suite-page .navbar-inverse .navbar-nav > li > a { min-height: 44px; }
+    body.suite-page :where(
+        .answerbook-answer-raw, .cross-link-desc, .fs-compass-desc, .fs-empty-hint, .fs-finding-desc, .fs-finding-item,
+        .fs-finding-rec, .fs-missing-box, .fs-orientation-info-row, .fs-path-prompt, .fs-selection-banner,
+        .fs-step2-subtext, .male-size-advice-box, .male-size-item-body, .name-assumption-note, .name-character-gloss,
+        .name-character-pronunciation, .name-data-note, .name-gloss-disclaimer, .name-inline-check, .name-method-note,
+        .name-privacy-note, .name-result-disclaimer, .name-segmentation-line, .name-segmentation-warning,
+        .name-source-note, .name-talents-row, .name-turnstile-note, .name-useful-panel, .numerology-empty-note,
+        .numerology-grid-caution, .numerology-missing-list, .numerology-method-note, .numerology-practice,
+        .spouse-advice-box, .spouse-item-body, .tarot-mode-desc, .tarot-modal-summary, .tarot-num-tip,
+        .tarot-trait-desc, .ziwei-footer-note
+    ) {
+        font-size: max(19px, var(--type-reading)) !important;
+        line-height: 1.7;
+    }
+}
