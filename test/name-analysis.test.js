@@ -123,7 +123,10 @@ test('HTTP 驗名、取名與本地八字 lens 共用核心引擎', async (t) =>
   const base = `http://127.0.0.1:${server.address().port}`;
   const pageResponse = await fetch(`${base}/name-analysis`);
   assert.equal(pageResponse.status, 200);
-  assert.match(await pageResponse.text(), /驗證現有名字/);
+  const pageHtml = await pageResponse.text();
+  assert.match(pageHtml, /驗證現有名字/);
+  assert.match(pageHtml, /pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/);
+  assert.match(pageHtml, /data-ad-slot="7969966570"/);
   const docsResponse = await fetch(`${base}/api/docs`);
   const docs = await docsResponse.json();
   assert.equal(docs.endpoints.nameAnalysisVerify.path, '/api/name-analysis/verify');

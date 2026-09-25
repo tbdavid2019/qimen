@@ -2,7 +2,7 @@
 .name-analysis {
     width: min(1120px, calc(100% - 32px));
     max-width: 1120px;
-    margin: 94px auto 48px;
+    margin: 0 auto 48px;
 }
 
 .name-hero {
@@ -164,7 +164,7 @@
 [data-theme="dark"] .name-question-answer { background: #17221f; color: #dcebe2; }
 
 @media (max-width: 767px) {
-    .name-analysis { width: calc(100% - 22px); margin: 82px auto 30px; }
+    .name-analysis { width: calc(100% - 22px); margin: 0 auto 30px; }
     .name-tabs { gap: 8px; margin-bottom: 18px; }
     .name-tab { min-height: 48px; padding: 8px; font-size: 13px; }
     .name-input-grid, .name-bazi-detail-grid, .name-bazi-overview { grid-template-columns: minmax(0, 1fr); }

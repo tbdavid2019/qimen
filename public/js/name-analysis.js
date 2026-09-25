@@ -259,7 +259,7 @@
         results.innerHTML = renderAnalysis(data.result);
       } else {
         const style = data.result.nameStyle;
-        const styleIntro = style ? `<div class="name-data-note"><b>命名風格：${esc(style.label)}</b>　依${style.requested === 'auto' ? '排盤性別建議' : '你選擇的偏好'}排序。${esc(style.notice)}</div>` : '';
+        const styleIntro = style ? `<div class="name-data-note"><b>命名風格：${esc(style.label)}</b>　依${style.requested === 'auto' ? '出生性別的常見用字傾向' : '你選擇的用字傾向'}排序；這只調整候選先後，不限制可選名字，也不判斷個人性別。你可以隨時更改偏好。</div>` : '';
         const cards = data.result.candidates.map((candidate, index) => `<div class="name-candidate-rank"><span>候選 ${String(index + 1).padStart(2, '0')} · ${esc(candidate.preferences?.nameStyle?.label || '')}${candidate.preferences?.nameStyle?.conflictingCharacters?.length ? ` · 風格不同字：${esc(candidate.preferences.nameStyle.conflictingCharacters.join('、'))}` : ''}</span>${renderAnalysis(candidate.analysis)}</div>`).join('');
         results.innerHTML = styleIntro + (cards || '<div class="name-empty-state">目前條件下找不到完整候選。請放寬條件或調整字數後重試。</div>');
       }

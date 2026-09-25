@@ -1913,14 +1913,16 @@ body.suite-page [style*="font-size:13px"] {
 /* Ziwei Mode Selector Grid (Punchy & Prominent UI) */
 .ziwei-mode-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
     margin-bottom: 24px;
+    min-width: 0;
 }
 
 .ziwei-mode-card {
     display: flex;
     align-items: center;
+    min-width: 0;
     border-radius: 14px;
     padding: 13px 14px;
     cursor: pointer;
@@ -2053,6 +2055,7 @@ body.suite-page [style*="font-size:13px"] {
     gap: 6px;
     margin-bottom: 3px;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .mode-card-title {
@@ -2098,9 +2101,8 @@ body.suite-page [style*="font-size:13px"] {
     font-weight: 500;
     line-height: 1.35;
     color: #4b5563;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 [data-theme="dark"] .mode-card-desc {

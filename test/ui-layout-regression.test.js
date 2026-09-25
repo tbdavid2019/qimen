@@ -36,3 +36,23 @@ test('姓名分析導覽列沿用全站共用導航順序與結構', () => {
   assert.ok(nav(nameHtml), '姓名頁應包含全站 navbar');
   assert.equal(nav(nameHtml), nav(tarotHtml));
 });
+
+test('紫微模式卡在長文字與窄螢幕下不會撐破容器', () => {
+  const css = read('public/css/divination-suite.css');
+  assert.match(css, /\.ziwei-mode-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.match(css, /\.ziwei-mode-card\s*\{[^}]*min-width:\s*0/s);
+  assert.match(css, /\.mode-card-desc\s*\{[^}]*white-space:\s*normal/s);
+  assert.match(css, /\.mode-card-desc\s*\{[^}]*overflow-wrap:\s*anywhere/s);
+});
+
+test('姓名頁沒有重複導覽留白、載入 AdSense 並提供手機廣告位', () => {
+  const css = read('public/css/name-analysis.css');
+  const html = read('views/name-analysis.html');
+  const js = read('public/js/name-analysis.js');
+  assert.match(css, /\.name-analysis\s*\{[^}]*margin:\s*0\s+auto/s);
+  assert.match(html, /include\('partials\/ads-head\.html'\)/);
+  assert.match(html, /include\('partials\/ads-mobile\.html'\)/);
+  assert.match(html, /include\('partials\/ads-bottom\.html'\)/);
+  assert.doesNotMatch(js, /\$\{esc\(style\.notice\)\}/);
+  assert.match(js, /不限制可選名字，也不判斷個人性別/);
+});

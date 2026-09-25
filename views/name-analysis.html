@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="/css/divination-suite.css">
   <link rel="stylesheet" href="/css/name-analysis.css">
   <script>(function(){try{var t=localStorage.getItem('theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <%- include('partials/ads-head.html') %>
 </head>
 <body class="suite-page" data-suite="name-analysis" data-llm-enabled="<%= enableLLM ? 'true' : 'false' %>">
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -130,6 +131,7 @@
       </form>
       <p class="name-source-note">資料來源與算法限制：<a href="/data/name-analysis/method-profiles.json">查看方法檔</a>。生肖部首喜忌未納入，避免套用來源不明的規則。</p>
     </section>
+    <%- include('partials/ads-mobile.html') %>
   </main>
   <%- include('partials/ads-bottom.html') %>
   <%- include('partials/site-footer.html') %>
