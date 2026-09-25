@@ -53,6 +53,7 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --time 10:00
 
 #### Canonical Routes 直達體系與 API
 - 完整排盤直達：`GET /ziwei` (Canonical: `https://qi.david888.com/ziwei`)
+- 純排盤 JSON：`POST /api/ziwei/chart`，傳入出生日期等排盤資料；設 `skipRecord: true` 可只取得確定性命盤，不呼叫 LLM 且不送出 Discord 紀錄。
 - 未來另一半直達：`GET /ziwei/spouse` (Canonical: `https://qi.david888.com/ziwei/spouse`)，支援 `POST /api/ziwei/spouse`
 - 男生真實尺寸直達：`GET /ziwei/male-size` (Canonical: `https://qi.david888.com/ziwei/male-size`)，支援 `POST /api/ziwei/male-size`
 

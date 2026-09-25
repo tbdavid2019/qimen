@@ -15,7 +15,7 @@ const LLMAnalysisService = require('./lib/llm-analysis');
 const DiscordWebhook = require('./lib/discord-webhook');
 const APITimeHandler = require('./lib/api-time-handler');
 const { parseCivilTime } = require('./lib/civil-time');
-const { drawCards, SPREADS: TAROT_SPREADS } = require('./lib/tarot');
+const { drawCards, SPREADS: TAROT_SPREADS, calculateTarotNumerology, getAllTarotCards } = require('./lib/tarot');
 const { calculateBazi } = require('./lib/bazi2');
 const {
     calculateFengShui,
@@ -34,7 +34,8 @@ const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
 const { AnswerBookClient, createAnswerbookQuestionHandler } = require('./lib/answerbook');
 const { sendConversationEmail } = require('./lib/email');
-const { turnstileMiddleware, getSiteKey, isTurnstileEnabled, getTurnstileConfigError } = require('./lib/turnstile');
+const { turnstileMiddleware, verifyTurnstile, getSiteKey, isTurnstileEnabled, getTurnstileConfigError } = require('./lib/turnstile');
+const nameAnalysis = require('./lib/name-analysis');
 
 function getHttpErrorStatus(error) {
     return error && error.statusCode === 400 ? 400 : 500;
@@ -89,6 +90,7 @@ app.engine('html', require('ejs').renderFile);
 
 // 靜態文件服務
 app.use(express.static(path.join(__dirname, 'public')));
+app.get('/llms.txt', (req, res) => res.type('text/plain').sendFile(path.join(__dirname, 'llms.txt')));
 // Browser UI consumes the same versioned catalog used by the Node evaluator.
 app.get('/data/fengshui/layout-catalog.json', (req, res) => {
     res.type('application/json').sendFile(path.join(__dirname, 'data/fengshui/layout-catalog.json'));
@@ -141,6 +143,47 @@ app.get('/api/turnstile/config', (req, res) => {
     });
 });
 
+app.get('/data/name-analysis/method-profiles.json', (req, res) => res.type('application/json').sendFile(path.join(__dirname, 'data/name-analysis/method-profiles.json')));
+app.get('/name-analysis', (req, res) => res.render('name-analysis', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'name-analysis' }));
+app.post('/api/name-analysis/verify', (req, res) => {
+    try { const body = req.body || {}; const baziLens = resolveNameBirthLens(body.birthData); res.json({ success: true, result: nameAnalysis.analyzeName({ ...body, baziLens: baziLens || undefined }) }); }
+    catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
+});
+app.post('/api/name-analysis/generate', (req, res) => {
+    try { const body = req.body || {}; const baziLens = resolveNameBirthLens(body.birthData); const desiredElements = Array.isArray(body.desiredElements) && body.desiredElements.length ? body.desiredElements : (baziLens?.usefulElements || []); res.json({ success: true, result: nameAnalysis.generateNames({ ...body, desiredElements, baziLens: baziLens || undefined }) }); }
+    catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
+});
+app.post('/api/name-analysis-question', async (req, res) => {
+    try {
+        const body = req.body || {};
+        const baziLens = resolveNameBirthLens(body.birthData);
+        const calculatedInput = { ...body, baziLens: baziLens || undefined, desiredElements: Array.isArray(body.desiredElements) && body.desiredElements.length ? body.desiredElements : (baziLens?.usefulElements || []) };
+        const result = body.mode === 'generate' ? nameAnalysis.generateNames(calculatedInput) : nameAnalysis.analyzeName(calculatedInput);
+        const followup = String(body.question || '').slice(0, 1000);
+        if (!followup || !process.env.LLM_API_KEY) return res.json({ success: true, result, analysis: null, llmAvailable: !!process.env.LLM_API_KEY });
+
+        if (isTurnstileEnabled()) {
+            const token = body.turnstileToken || body['cf-turnstile-response'] || req.headers['cf-turnstile-response'];
+            const turnstileCheck = await verifyTurnstile({
+                token,
+                currentHost: req.get('host'),
+                expectedAction: ['llm_analysis', 'name_analysis_question']
+            });
+            if (!turnstileCheck.success) {
+                return res.status(turnstileCheck.status || 403).json({
+                    success: false,
+                    error: turnstileCheck.error || '人機安全驗證失敗',
+                    code: turnstileCheck.code || 'TURNSTILE_VERIFICATION_FAILED'
+                });
+            }
+        }
+
+        const boundedResult = nameAnalysis.formatQuestionPrompt(result, followup);
+        const analysis = await llmService.analyzeService('nameAnalysis', boundedResult, { userQuestion: followup, language: body.lang || 'zh-tw' });
+        res.json({ success: true, result, analysis: analysis.analysis || analysis.fallback || null, metadata: analysis.success ? { provider: analysis.provider, model: analysis.model } : null });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
+});
+
 // 路由
 function renderZiweiPage(req, res, activeMode = 'chart') {
     const modes = {
@@ -174,7 +217,9 @@ function renderZiweiPage(req, res, activeMode = 'chart') {
 app.get('/ziwei', (req, res) => renderZiweiPage(req, res, 'chart'));
 app.get('/ziwei/spouse', (req, res) => renderZiweiPage(req, res, 'spouse'));
 app.get('/ziwei/male-size', (req, res) => renderZiweiPage(req, res, 'male-size'));
-app.get('/tarot', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot' }));
+app.get('/tarot', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: req.query.mode || 'spread' }));
+app.get('/tarot/numerology', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: 'numerology' }));
+app.get('/tarot/gallery', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: 'gallery' }));
 app.get('/fengshui', (req, res) => res.render('fengshui', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'fengshui' }));
 app.get('/bazi2', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2' }));
 app.get('/yinyuan', (req, res) => res.render('yinyuan', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'yinyuan' }));
@@ -195,9 +240,11 @@ const handleZiweiChart = async (req, res) => {
     try {
         const payload = { ...(req.query || {}), ...(req.body || {}) };
         if (payload.palaces) delete payload.palaces;
+        const skipRecord = payload.skipRecord === true || payload.skipRecord === 'true';
+        delete payload.skipRecord;
         const validated = validateZiweiQuestion(payload);
         const chart = calculateZiweiChart(validated);
-        const discord = await sendModuleRecord('紫微斗數', validated, chart);
+        const discord = skipRecord ? null : await sendModuleRecord('紫微斗數', validated, chart);
         res.json({ success: true, chart, discord });
     } catch (error) { res.status(error.status || error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
 };
@@ -242,6 +289,30 @@ const handleTarotReading = async (req, res) => {
 };
 app.post('/api/tarot/reading', handleTarotReading);
 app.get('/api/tarot/reading', handleTarotReading);
+
+const handleTarotNumerology = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const birthDate = payload.birthDate || payload.birth_date || payload.date;
+        const numerology = calculateTarotNumerology(birthDate);
+        if (numerology.error) {
+            return res.status(400).json({ success: false, error: numerology.error });
+        }
+        sendModuleRecord('塔羅生命靈數', payload, numerology).catch(() => {});
+        res.json({ success: true, numerology, result: numerology, ...numerology });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+};
+app.post('/api/tarot/numerology', handleTarotNumerology);
+app.get('/api/tarot/numerology', handleTarotNumerology);
+
+const handleTarotCards = (req, res) => {
+    try {
+        const suit = req.query.suit || 'all';
+        const cards = getAllTarotCards(suit);
+        res.json({ success: true, count: cards.length, cards });
+    } catch (error) { res.status(400).json({ success: false, error: error.message }); }
+};
+app.get('/api/tarot/cards', handleTarotCards);
 
 const handleFengshuiReport = async (req, res) => {
     try {
@@ -625,6 +696,31 @@ function validateBaziQuestion(body) {
     return { ...body, calendar, time, sex: body.sex || '男' };
 }
 
+function resolveNameBirthLens(birthData) {
+    if (birthData == null || birthData === '') return null;
+    if (!birthData || typeof birthData !== 'object' || Array.isArray(birthData)) throw validationError('出生資料須為 JSON 物件', 'INVALID_BIRTH_DATA', 'birthData');
+    if (!birthData.date || !['男', '女'].includes(birthData.sex)) throw validationError('八字參考需提供出生日期與排盤性別；若不提供性別，請留空整個出生資料區。', 'INCOMPLETE_BIRTH_DATA', 'birthData');
+    const hasKnownTime = Boolean(birthData.time || birthData.shichen);
+    if (!hasKnownTime && birthData.allowUnknownHour !== true) throw validationError('請提供出生時間或明確勾選未知時辰', 'MISSING_BIRTH_TIME', 'birthData');
+    const validated = validateBaziQuestion({ ...birthData, allowUnknownHour: !hasKnownTime });
+    if (!hasKnownTime) validated.time = '';
+    const chart = calculateBazi(validated);
+    const matches = String(chart.strengthAnalysis?.usefulGod || '').match(/\[([木火土金水])\]/g) || [];
+    const usefulElements = [...new Set(matches.map((text) => text.slice(1, -1)))];
+    return {
+        usefulElements,
+        assumptions: {
+            source: '本地 lib/bazi2.js 計算；不連線傳送出生資料',
+            calendar: validated.calendar,
+            lunarLeapMonth: validated.calendar === 'lunar' && Boolean(validated.leap),
+            birthHour: hasKnownTime ? '使用者提供' : '未知；以三柱參考',
+            ziMode: validated.ziMode || 'early_late',
+            sexProvidedForCalculation: true,
+            solarTimeCorrection: '未提供出生地座標，因此未作真太陽時校正'
+        }
+    };
+}
+
 function validateYinyuanQuestion(body) {
     const mode = body.mode || 'fortune';
     if (!YINYUAN_MODES.has(mode)) {
@@ -742,21 +838,17 @@ app.get('/api/answerbook-question', answerbookQuestionHandler);
 
 const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
 
-app.post('/api/:module/llm-analysis', (req, res, next) => {
-    if (!Object.prototype.hasOwnProperty.call(suiteModules, req.params.module)) {
-        return next('route');
+const handleSuiteModuleLlmAnalysis = async (req, res) => {
+    const moduleKey = req.params.module || (req.path && req.path.includes('/tarot/') ? 'tarot' : null);
+    if (!moduleKey || !Object.prototype.hasOwnProperty.call(suiteModules, moduleKey)) {
+        return res.status(404).json({ success: false, error: '不支援的服務模組' });
     }
-    return turnstileMiddleware({ action: ['llm_analysis', 'divination_analysis'] })(req, res, next);
-}, async (req, res, next) => {
-    if (!Object.prototype.hasOwnProperty.call(suiteModules, req.params.module)) {
-        return next('route');
-    }
-    const moduleName = suiteModules[req.params.module];
+    const moduleName = suiteModules[moduleKey];
     try {
         const { result, question = '', conversationHistory = [] } = req.body || {};
         if (!result) return res.status(400).json({ success: false, error: '缺少計算結果' });
 
-        const aiResult = await llmService.analyzeService(req.params.module, result, {
+        const aiResult = await llmService.analyzeService(moduleKey, result, {
             userQuestion: question,
             conversationHistory
         });
@@ -774,7 +866,16 @@ app.post('/api/:module/llm-analysis', (req, res, next) => {
             discord
         });
     } catch (error) { res.status(500).json({ success: false, error: error.message }); }
-});
+};
+
+// 明確註冊 /api/tarot/llm-analysis 及通用參數路由 /api/:module/llm-analysis
+app.post('/api/tarot/llm-analysis', (req, res, next) => { req.params.module = 'tarot'; next(); }, turnstileMiddleware({ action: ['llm_analysis', 'divination_analysis'] }), handleSuiteModuleLlmAnalysis);
+app.post('/api/:module/llm-analysis', (req, res, next) => {
+    if (!Object.prototype.hasOwnProperty.call(suiteModules, req.params.module)) {
+        return next('route');
+    }
+    return turnstileMiddleware({ action: ['llm_analysis', 'divination_analysis'] })(req, res, next);
+}, handleSuiteModuleLlmAnalysis);
 
 // 對話紀錄 Email 寄送 API (透過 Resend API)
 app.post('/api/conversation/send-email', turnstileMiddleware({ action: 'send_email' }), async (req, res) => {
@@ -1655,6 +1756,22 @@ app.get('/api/docs', (req, res) => {
         description: "提供奇門、梅花、塔羅、風水、生辰八字2、姻緣與解答之書服務的 RESTful API",
         baseUrl: `${req.protocol}://${req.get('host')}`,
         endpoints: {
+            nameAnalysisVerify: {
+                method: "POST", path: "/api/name-analysis/verify", description: "驗證 2–8 個漢字中文姓名；姓名邊界可明確指定，或由姓氏索引提示切分。",
+                parameters: { name: { type: "string", required: true, minLength: 2, maxLength: 8 }, surname: { type: "string", required: false, description: "姓名開頭的明確姓氏" }, profile: { type: "string", required: false, enum: ["taiwanKangxi", "modern"], default: "taiwanKangxi" }, birthData: { type: "object", required: false, description: "選填：本地八字計算；date、sex 與 time/shichen 或 allowUnknownHour。出生資料不進入 LLM prompt。" } },
+                errors: ["INVALID_NAME", "INVALID_SURNAME", "SURNAME_REQUIRED", "INVALID_PROFILE"]
+            },
+            nameAnalysisGenerate: {
+                method: "POST", path: "/api/name-analysis/generate", description: "依姓氏與條件產生 1–4 字名字候選。",
+                parameters: { surname: { type: "string", required: true, minLength: 1, maxLength: 3 }, givenNameLength: { type: "integer", required: false, minimum: 1, maximum: 4, default: 2 }, includeChars: { type: "array", items: "single Han character" }, excludeChars: { type: "array", items: "single Han character" }, desiredElements: { type: "array", items: ["木", "火", "土", "金", "水"] }, profile: { type: "string", enum: ["taiwanKangxi", "modern"] }, limit: { type: "integer", maximum: 50 }, birthData: { type: "object", required: false, description: "選填：date、sex、time/shichen 或 allowUnknownHour；本地計算後作為偏好排序。" } },
+                errors: ["INVALID_SURNAME", "INVALID_GIVEN_NAME_LENGTH", "INVALID_CHAR_CONSTRAINT", "TOO_MANY_REQUIRED_CHARS"]
+            },
+            nameAnalysisQuestion: {
+                method: "POST", path: "/api/name-analysis-question", description: "重算驗名或命名結果；提供 question 且設定 LLM 時，姓名與確定性分析結果會傳至設定的 LLM；出生日期與時間不放入提示，派生五行摘要可能會傳入。",
+                parameters: { mode: { type: "string", enum: ["verify", "generate"], default: "verify" }, name: { type: "string", required: false }, surname: { type: "string", required: false }, question: { type: "string", required: false, maxLength: 1000 }, profile: { type: "string", enum: ["taiwanKangxi", "modern"] }, birthData: { type: "object", required: false, description: "選填八字欄位；LLM 僅接收派生的五行摘要，不接收出生資料。" } },
+                notes: ["未配置 LLM 或未提供 question 時只回傳確定性結果。", "缺失欄位不得推斷；三字以上名字使用標示的延伸五格算法。"]
+            },
+            nameMethodProfiles: { method: "GET", path: "/data/name-analysis/method-profiles.json", description: "姓名方法與來源版本清單。" },
             qimenQuestion: {
                 method: "POST",
                 path: "/api/qimen-question",
@@ -1895,7 +2012,8 @@ app.get('/api/docs', (req, res) => {
                     date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
                     time: { type: "string", required: false, description: "出生時間（HH:mm）" },
                     shichen: { type: "string", required: false, description: "傳統時辰地支" },
-                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" }
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
+                    skipRecord: { type: "boolean", required: false, description: "true 時只計算並回傳命盤，不送出 Discord 紀錄。" }
                 }
             },
             ziweiMaleSize: {

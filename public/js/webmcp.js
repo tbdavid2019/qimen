@@ -1277,14 +1277,15 @@
 
 	};
 
-	function createSuiteTool(name, description, endpoint, inputSchema) {
+	function createSuiteTool(name, description, endpoint, inputSchema, defaultPayload = {}) {
 		return {
 			name,
 			description,
 			inputSchema,
 			annotations: { readOnlyHint: false, untrustedContentHint: false },
 			execute: async (args) => {
-				const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(args || {}) });
+				const payload = Object.assign({}, defaultPayload, args || {});
+				const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
 				const data = await response.json();
 				if (!response.ok || !data.success) throw new Error(data.message || data.error || "計算失敗");
 
@@ -1311,6 +1312,49 @@
 	}
 
 	Object.assign(toolDefinitions, {
+		ziwei_chart_only: createSuiteTool("ziwei_chart_only", "只計算並回傳紫微斗數命盤，不呼叫 LLM，也不送出 Discord 紀錄。", "/api/ziwei/chart", {
+			type: "object", properties: {
+				date: { type: "string", format: "date", description: "出生日期 YYYY-MM-DD" },
+				time: { type: "string", description: "出生時間 HH:mm" },
+				shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] },
+				sex: { type: "string", enum: ["男", "女"] },
+				calendar: { type: "string", enum: ["solar", "lunar"] },
+				leap: { type: "boolean", description: "農曆是否閏月" },
+				skipRecord: { type: "boolean", default: true, description: "略過 Discord 紀錄；純排盤工具預設開啟" }
+			}, required: ["date"]
+		}, { skipRecord: true }),
+		name_analysis_verify: createSuiteTool("name_analysis_verify", "驗證 2 至 8 字中文姓名，回報字義、讀音、資料可得時的筆畫五格，並提示姓氏切分歧義。", "/api/name-analysis/verify", {
+			type: "object", properties: {
+				name: { type: "string", minLength: 2, maxLength: 8, description: "完整中文姓名，2 至 8 個漢字" },
+				surname: { type: "string", minLength: 1, maxLength: 7, description: "可選，明確指定姓名開頭姓氏；驗名最長為 7 字，取名姓氏最長為 3 字" },
+				profile: { type: "string", enum: ["taiwanKangxi", "modern"], description: "筆畫口徑" },
+				birthData: { type: "object", description: "選填八字資料；出生日期、性別與出生時間/未知時辰選項；在本站以本地八字算法計算", properties: { date: { type: "string", format: "date" }, sex: { type: "string", enum: ["男", "女"] }, time: { type: "string", description: "HH:mm" }, shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, leap: { type: "boolean", description: "農曆是否閏月" }, ziMode: { type: "string", enum: ["early_late", "next_day"], description: "子時換日口徑" }, allowUnknownHour: { type: "boolean" } } }
+			}, required: ["name"]
+		}),
+		name_analysis_generate: createSuiteTool("name_analysis_generate", "依姓氏與明確條件產生中文姓名候選，名可為 1 至 4 字。", "/api/name-analysis/generate", {
+			type: "object", properties: {
+				surname: { type: "string", minLength: 1, maxLength: 3, description: "姓氏，1 至 3 個漢字" },
+				givenNameLength: { type: "integer", minimum: 1, maximum: 4, description: "名字字數" },
+				includeChars: { type: "array", items: { type: "string", minLength: 1, maxLength: 1 }, description: "必須出現在名字中的字" },
+				excludeChars: { type: "array", items: { type: "string", minLength: 1, maxLength: 1 }, description: "名字中不可出現的字" },
+				desiredElements: { type: "array", items: { type: "string", enum: ["木", "火", "土", "金", "水"] }, description: "排序偏好的字五行" },
+				profile: { type: "string", enum: ["taiwanKangxi", "modern"] },
+				birthData: { type: "object", description: "選填八字資料；僅於本站本地計算喜用五行", properties: { date: { type: "string", format: "date" }, sex: { type: "string", enum: ["男", "女"] }, time: { type: "string" }, shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, allowUnknownHour: { type: "boolean" } } }
+			}, required: ["surname"]
+		}),
+		name_analysis_question: createSuiteTool("name_analysis_question", "根據確定性姓名分析資料回答補充問題；不需要出生資料。", "/api/name-analysis-question", {
+			type: "object", properties: {
+				name: { type: "string", minLength: 2, maxLength: 8, description: "完整中文姓名" },
+				surname: { type: "string", minLength: 1, maxLength: 7, description: "驗名可選的明確姓氏；取名時最多 3 字" },
+				mode: { type: "string", enum: ["verify", "generate"] },
+				question: { type: "string", maxLength: 1000, description: "補充問題" },
+				profile: { type: "string", enum: ["taiwanKangxi", "modern"] },
+				birthData: { type: "object", description: "選填八字資料；只計算必要五行摘要並傳入解讀，不傳出生日期本身", properties: { date: { type: "string", format: "date" }, sex: { type: "string", enum: ["男", "女"] }, time: { type: "string" }, shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, allowUnknownHour: { type: "boolean" } } }
+			}, required: ["question", "mode"], oneOf: [
+				{ properties: { mode: { const: "verify" } }, required: ["name"] },
+				{ properties: { mode: { const: "generate" } }, required: ["surname"] }
+			]
+		}),
 		ziwei_chart: createSuiteTool("ziwei_chart", "紫微斗數安星排盤、十二宮位、十四主星廟旺、生年四化、大限流年與命理解讀。", "/api/ziwei-question", {
 			type: "object",
 			properties: {
@@ -1407,6 +1451,38 @@
 				if (typeof window !== "undefined") {
 					if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
 					window.conversationHistory.push({ role: "user", content: "紫微未來另一半正緣解析" });
+					window.conversationHistory.push({ role: "assistant", content: summary });
+					window.lastSuiteResult = data;
+				}
+				return summary;
+			}
+		},
+		tarot_numerology: {
+			name: "tarot_numerology",
+			description: "計算西元出生年月日之生命靈數（1~9）與大阿爾克那靈魂象徵牌、天賦特質與人生課題。",
+			parameters: {
+				type: "object",
+				properties: {
+					birthDate: { type: "string", description: "西元出生年月日（YYYY-MM-DD 或 YYYY/MM/DD）" },
+					question: { type: "string", description: "想針對天賦特質詢問的事（可選）" }
+				},
+				required: ["birthDate"]
+			},
+			execute: async (args) => {
+				const birthDate = args.birthDate || args.date;
+				if (!birthDate) throw new Error("請提供出生年月日 (birthDate)");
+				const payload = { birthDate, question: args.question || "" };
+				const res = await fetch("/api/tarot/numerology", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload)
+				});
+				const data = await res.json();
+				if (!data.success) throw new Error(data.error || "生命靈數計算失敗");
+				const summary = `【生命靈數 ${data.lifeNumber}】靈魂象徵牌：${data.soulCard?.name}（${data.soulCard?.nameEn}）。\n計算歷程：${data.formula}\n特質解析：${data.soulCard?.summary}`;
+				if (typeof window !== "undefined") {
+					if (!Array.isArray(window.conversationHistory)) window.conversationHistory = [];
+					window.conversationHistory.push({ role: "user", content: `計算出生日期 ${birthDate} 的生命靈數` });
 					window.conversationHistory.push({ role: "assistant", content: summary });
 					window.lastSuiteResult = data;
 				}
@@ -1590,14 +1666,24 @@
 			];
 		} else if (pathname === "/ziwei" || pathname.startsWith("/ziwei/")) {
 			toolsToRegister = [
+				toolDefinitions.ziwei_chart_only,
 				toolDefinitions.ziwei_chart,
 				toolDefinitions.ziwei_male_size,
 				toolDefinitions.ziwei_future_spouse,
 				toolDefinitions.switch_theme,
 				toolDefinitions.send_conversation_email,
 			];
-		} else if (["/tarot", "/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
-			const suiteTool = { "/tarot": "tarot_reading", "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
+		} else if (pathname === "/name-analysis") {
+			toolsToRegister = [toolDefinitions.name_analysis_verify, toolDefinitions.name_analysis_generate, toolDefinitions.name_analysis_question, toolDefinitions.switch_theme, toolDefinitions.send_conversation_email];
+		} else if (pathname === "/tarot" || pathname.startsWith("/tarot/")) {
+			toolsToRegister = [
+				toolDefinitions.tarot_reading,
+				toolDefinitions.tarot_numerology,
+				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email
+			];
+		} else if (["/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
+			const suiteTool = { "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
 			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme, toolDefinitions.send_conversation_email];
 		} else {
 			// Default / or /custom (具備對話紀錄與 #emailConversationModal)

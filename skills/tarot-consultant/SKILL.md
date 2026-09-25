@@ -59,6 +59,18 @@ node skills/tarot-consultant/scripts/tarot_cli.js --spread three --seed 12345 --
 
 支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（必填）、`--spread single|three|diamond|moon|horseshoe|celtic`、`--variant timeline|situation|relationship|decision`、`--seed`、`--time-factor morning|afternoon|night`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
+### 生命靈數與靈魂象徵牌 (`tarot_numerology.js`)
+
+計算西元出生年月日之生命靈數（1~9）與大阿爾克那靈魂原型象徵牌：
+
+```bash
+node skills/tarot-consultant/scripts/tarot_numerology.js --birth-date 1981-08-11
+# 或透過 tarot_cli.js
+node skills/tarot-consultant/scripts/tarot_cli.js --birth-date 1981-08-11
+```
+
+亦可透過 API 發送 `POST /api/tarot/numerology`（參數：`birthDate`）獲取結構化靈數結果，或透過 WebMCP 工具 `tarot_numerology` 呼叫。
+
 ---
 
 ## 解讀結構

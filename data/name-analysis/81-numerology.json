@@ -1,0 +1,331 @@
+{
+  "version": "traditional-81-v1",
+  "source": "babyname/fate internal/wuge/dayan.go",
+  "license": "MIT; see licenses/babyname-fate-MIT.txt",
+  "entries": [
+    {
+      "number": 1,
+      "classification": "吉"
+    },
+    {
+      "number": 2,
+      "classification": "凶"
+    },
+    {
+      "number": 3,
+      "classification": "吉"
+    },
+    {
+      "number": 4,
+      "classification": "凶"
+    },
+    {
+      "number": 5,
+      "classification": "吉"
+    },
+    {
+      "number": 6,
+      "classification": "吉"
+    },
+    {
+      "number": 7,
+      "classification": "吉"
+    },
+    {
+      "number": 8,
+      "classification": "半吉"
+    },
+    {
+      "number": 9,
+      "classification": "凶"
+    },
+    {
+      "number": 10,
+      "classification": "凶"
+    },
+    {
+      "number": 11,
+      "classification": "吉"
+    },
+    {
+      "number": 12,
+      "classification": "凶"
+    },
+    {
+      "number": 13,
+      "classification": "吉"
+    },
+    {
+      "number": 14,
+      "classification": "凶"
+    },
+    {
+      "number": 15,
+      "classification": "吉"
+    },
+    {
+      "number": 16,
+      "classification": "吉"
+    },
+    {
+      "number": 17,
+      "classification": "半吉"
+    },
+    {
+      "number": 18,
+      "classification": "半吉"
+    },
+    {
+      "number": 19,
+      "classification": "凶"
+    },
+    {
+      "number": 20,
+      "classification": "凶"
+    },
+    {
+      "number": 21,
+      "classification": "吉"
+    },
+    {
+      "number": 22,
+      "classification": "凶"
+    },
+    {
+      "number": 23,
+      "classification": "吉"
+    },
+    {
+      "number": 24,
+      "classification": "吉"
+    },
+    {
+      "number": 25,
+      "classification": "半吉"
+    },
+    {
+      "number": 26,
+      "classification": "凶"
+    },
+    {
+      "number": 27,
+      "classification": "凶"
+    },
+    {
+      "number": 28,
+      "classification": "凶"
+    },
+    {
+      "number": 29,
+      "classification": "吉"
+    },
+    {
+      "number": 30,
+      "classification": "半吉"
+    },
+    {
+      "number": 31,
+      "classification": "吉"
+    },
+    {
+      "number": 32,
+      "classification": "吉"
+    },
+    {
+      "number": 33,
+      "classification": "吉"
+    },
+    {
+      "number": 34,
+      "classification": "凶"
+    },
+    {
+      "number": 35,
+      "classification": "吉"
+    },
+    {
+      "number": 36,
+      "classification": "半吉"
+    },
+    {
+      "number": 37,
+      "classification": "吉"
+    },
+    {
+      "number": 38,
+      "classification": "半吉"
+    },
+    {
+      "number": 39,
+      "classification": "半吉"
+    },
+    {
+      "number": 40,
+      "classification": "凶"
+    },
+    {
+      "number": 41,
+      "classification": "吉"
+    },
+    {
+      "number": 42,
+      "classification": "凶"
+    },
+    {
+      "number": 43,
+      "classification": "凶"
+    },
+    {
+      "number": 44,
+      "classification": "凶"
+    },
+    {
+      "number": 45,
+      "classification": "吉"
+    },
+    {
+      "number": 46,
+      "classification": "凶"
+    },
+    {
+      "number": 47,
+      "classification": "吉"
+    },
+    {
+      "number": 48,
+      "classification": "吉"
+    },
+    {
+      "number": 49,
+      "classification": "半吉"
+    },
+    {
+      "number": 50,
+      "classification": "半吉"
+    },
+    {
+      "number": 51,
+      "classification": "半吉"
+    },
+    {
+      "number": 52,
+      "classification": "吉"
+    },
+    {
+      "number": 53,
+      "classification": "凶"
+    },
+    {
+      "number": 54,
+      "classification": "凶"
+    },
+    {
+      "number": 55,
+      "classification": "半吉"
+    },
+    {
+      "number": 56,
+      "classification": "凶"
+    },
+    {
+      "number": 57,
+      "classification": "吉"
+    },
+    {
+      "number": 58,
+      "classification": "半吉"
+    },
+    {
+      "number": 59,
+      "classification": "凶"
+    },
+    {
+      "number": 60,
+      "classification": "凶"
+    },
+    {
+      "number": 61,
+      "classification": "吉"
+    },
+    {
+      "number": 62,
+      "classification": "凶"
+    },
+    {
+      "number": 63,
+      "classification": "吉"
+    },
+    {
+      "number": 64,
+      "classification": "凶"
+    },
+    {
+      "number": 65,
+      "classification": "吉"
+    },
+    {
+      "number": 66,
+      "classification": "凶"
+    },
+    {
+      "number": 67,
+      "classification": "吉"
+    },
+    {
+      "number": 68,
+      "classification": "吉"
+    },
+    {
+      "number": 69,
+      "classification": "凶"
+    },
+    {
+      "number": 70,
+      "classification": "凶"
+    },
+    {
+      "number": 71,
+      "classification": "半吉"
+    },
+    {
+      "number": 72,
+      "classification": "半吉"
+    },
+    {
+      "number": 73,
+      "classification": "半吉"
+    },
+    {
+      "number": 74,
+      "classification": "凶"
+    },
+    {
+      "number": 75,
+      "classification": "凶"
+    },
+    {
+      "number": 76,
+      "classification": "凶"
+    },
+    {
+      "number": 77,
+      "classification": "半吉"
+    },
+    {
+      "number": 78,
+      "classification": "凶"
+    },
+    {
+      "number": 79,
+      "classification": "凶"
+    },
+    {
+      "number": 80,
+      "classification": "凶"
+    },
+    {
+      "number": 81,
+      "classification": "吉"
+    }
+  ]
+}

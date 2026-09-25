@@ -2,6 +2,52 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-09-25]
+
+### LLM 導覽索引
+
+- 新增根目錄 `llms.txt`，依 llmstxt.org 提案格式列出目前所有功能模組、網頁入口、API、WebMCP、MCP Bridge、CLI Skills 與資料來源，並由 `/llms.txt` 提供純文字存取。
+- 補充紫微顧問 Skill 的確定性純排盤 API 與 `skipRecord` 行為說明。
+
+### 🃏 韋特塔羅牌 78 張原版牌庫高清視覺升級 & 🔢 塔羅生命靈數（西洋靈數 · 靈魂本命牌）模組上線
+
+- **78 張萊德·偉特塔羅牌原創插畫全數抓取與本地化部署 (`public/images/tarot/cards/`, `data/tarot_cards.json`)**：
+  - 成功自來源站抓取並無損儲存完整 78 張偉特塔羅牌高清插畫（625x1082 解析度，共 13.7MB），包含 22 張大阿爾克那（`major_00.jpg` ~ `major_21.jpg`）與 56 張小阿爾克那（權杖 `wands_01~14`、聖杯 `cups_01~14`、寶劍 `swords_01~14`、錢幣 `coins_01~14`）。
+  - 建立結構化牌庫資料庫 `data/tarot_cards.json`，涵蓋中文繁體名稱、英文名、所屬牌組、大牌標記、占星對應（星座/行星/四大元素）、正逆位核心主題詞彙（`theme`）與詳細釋義（`upright` / `reversed`）。
+  - 修復繁體牌名標準化：將宮廷牌 `侍從` 與 `騎士` 統一規範，徹底解決牌義對齊問題。
+- **塔羅占卜介面極致視覺升級與互動體驗 (`views/tarot.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)**：
+  - **牌卡真實立體投影與正逆位翻轉**：所有抽牌結果卡片完整展示真實牌卡高清插畫。逆位（`Reversed`）牌卡自動套用 `transform: rotate(180deg)` 真實翻轉動畫，搭配琥珀與紫羅蘭漸層微光暈。
+  - **卡牌資訊雙語化與關鍵字提煉**：牌卡上方清晰標示中英文牌名、位置名稱、正/逆位高對比彩色膠囊徽章，並提煉 3~4 個核心關鍵詞。
+  - **全螢幕卡牌 Lightbox 燈箱預覽**：點擊任何抽出的卡牌或圖鑑卡片，即彈出高畫質原畫燈箱（Lightbox），展示占星符號、元素歸屬、正位/逆位詳解與象徵意涵。
+- **塔羅生命靈數（西洋靈數 · 靈魂本命牌）全新模組 (`lib/tarot.js`, `app.js`, `lib/llm-analysis.js`)**：
+  - **正統西洋靈數歸約演算法**：以使用者的西元出生年月日（YYYY-MM-DD）進行數字逐位相加連續歸約（如 1981-08-11 ➔ 1+9+8+1+0+8+1+1=29 ➔ 2+9=11 ➔ 1+1=2），精準對應大阿爾克那 1~9 號靈魂象徵牌（1 魔術師、2 女祭司、3 皇后、4 皇帝、5 教皇、6 戀人、7 戰車、8 力量、9 隱士）。
+  - **確定性純算 API 端點**：新增 `POST /api/tarot/numerology` 與 `GET /api/tarot/numerology?birthDate=YYYY-MM-DD`，秒級回傳計算步驟、靈魂象徵牌卡資料、天賦核心特質、課題與盲點。
+  - **AI 靈魂天賦特質解讀**：整合 `formatTarotPrompt` 針對生命靈數模式產出專屬諮詢 Prompt，由 LLM 從「靈魂本質與天賦超能力」、「感情與人際相處模式」、「人生盲點與突破建議」深度剖析。
+- **78 張全牌庫圖鑑模式 (`/tarot/gallery`)**：
+  - 新增全牌庫檢視介面，支援依大阿爾克那、權杖、聖杯、寶劍、錢幣分類篩選，每張卡牌均可即時點擊檢視高畫質原畫與正逆位牌義。
+- **全介面 5 層標準端到端對齊 (Full-Stack 5-Layer Parameter Alignment)**：
+  1. **Web UI**：`views/tarot.html` 增設「🔮 經典牌陣占卜」、「🔢 測出你的生命靈數」、「🗂️ 78張全牌庫圖鑑」3 模式切換卡片與直達路由 `/tarot`, `/tarot/numerology`, `/tarot/gallery`。
+  2. **API Endpoint**：`app.js` 新增 `/api/tarot/numerology` 與 `/api/tarot/cards`。
+  3. **CLI & Skill**：新增獨立腳本 `skills/tarot-consultant/scripts/tarot_numerology.js`，升級 `tarot_cli.js` 支援 `--numerology` 與 `--birth-date`，同步修訂 `skills/tarot-consultant/SKILL.md`。
+  4. **WebMCP**：`public/js/webmcp.js` 註冊 `tarot_numerology` 工具至 Chrome WebMCP 標準。
+  5. **文檔與測試**：更新 `README.md`、`CHANGELOG.md`，自動化測試 237 項 100% 通過。
+- **Codex Code Review 全面審查與強固修正**：
+  - **日曆真實性嚴格校驗 (`lib/tarot.js`)**：新增西曆真實年月日有效性檢驗（支援閏年二月、大小月天數校驗，嚴格阻擋 `1981-99-99` 或 `2023-02-29` 等無效日期）。
+  - **生命靈數 AI 解讀與追問流程修復 (`public/js/divination-suite.js`)**：移除未定義之函式，改為呼叫標準 `/api/tarot/llm-analysis`，無縫串接 Turnstile 安全校驗與對話紀錄流。
+  - **端點明確性強化 (`app.js`)**：明確註冊 `/api/tarot/llm-analysis` 端點別名，杜絕動態參數路由之辨識歧義。
+  - **WebMCP 工具預設行為強固 (`public/js/webmcp.js`)**：升級 `createSuiteTool` 支援 `defaultPayload`，確保 `ziwei_chart_only` 在未傳入可選參數時一律嚴格執行 `skipRecord: true`。
+  - **姓名分析問答防護 (`app.js`, `views/name-analysis.html`, `public/js/name-analysis.js`)**：為 `/api/name-analysis-question` 補充 Cloudflare Turnstile 人機防刷機制。
+  - **審查通過**：獲 Codex review 複審通過（`I found no definite code defects in the changes reviewed`）。
+
+### 中文姓名命名與驗證模組
+
+- 新增支援 2–8 字姓名驗證、明確或索引建議姓氏切分、複姓與 1–4 字名字候選。
+- 新增分開呈現的康熙/現代筆畫、字義、讀音、字形、可得五行、五格與 81 數理；長名字五格標示為延伸算法，缺漏欄位保留為未知。
+- 加入可選的本地八字喜用五行對照，不向 LLM 傳送出生日期；未啟用來源不足的生肖部首與性別化用字評分。
+- 新增 `/name-analysis`、姓名驗證/命名/補充問答 API、獨立 Node.js CLI、顧問 Skill 與 WebMCP 工具。
+- 增加來源與授權清單。生肖部首喜忌未啟用；姓名問答不要求出生資料。另增紫微免 AI 排盤入口並修正紫微解讀頁載入 Markdown renderer。
+- Code review 修正取名指定字位置、現代筆畫字池、WebMCP 問答必填條件與八字性別提示；補充 LLM 資料傳送範圍說明，並讓紫微純排盤略過 Discord 紀錄。
+
 ## [2026-09-22]
 
 ### 🛡️ Cloudflare Turnstile 機器人防護升級：全站 8 大模組網頁「詢問」與「解盤」Token 全面防刷防護，外部 API 維持純淨開放

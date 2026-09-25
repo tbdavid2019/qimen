@@ -108,10 +108,14 @@
 - **確定性純算 API 端點 (`POST /api/fengshui/evaluate-layout`)**：純演算法評估室內格局，不呼叫 LLM，供 Agent 與外部系統直接查詢。
   - 官方 MCP 提供 `fengshui_layout_evaluation`；WebMCP 與 bridge 使用同一方向宮位／canonical ID／最多 9 段入路契約。
 
-### 7. 🃏 韋特塔羅解讀 (`/tarot` & `/api/tarot-question`)
-- **78 張完整韋特牌庫**：22 張大阿爾克那 + 56 張小阿爾克那（權杖/火、聖杯/水、寶劍/風、錢幣/土），支援正逆位與自訂牌組/種子抽牌。
-- **6 大牌陣**：單張指引（`single`）、三牌陣（`three`：時間線/現狀/感情關係變體）、五牌鑽石（`diamond`）、月亮週期（`moon`）、七星馬蹄（`horseshoe`）、十牌凱爾特十字（`celtic`）。
+### 7. 🃏 韋特塔羅與生命靈數雙核心 (`/tarot`, `/tarot/numerology`, `/tarot/gallery`)
+- **78 張完整原創偉特牌庫與高清視覺**：22 張大阿爾克那 + 56 張小阿爾克那（權杖/火、聖杯/水、寶劍/風、錢幣/土），全數配備 625x1082 高畫質插畫、逆位 180° 翻轉動畫、中英雙語牌名、正逆位關鍵字提煉與全螢幕 Lightbox 原畫燈箱。
+- **6 大占卜牌陣**：單張指引（`single`）、三牌陣（`three`：時間線/現狀/感情關係變體）、五牌鑽石（`diamond`）、月亮週期（`moon`）、七星馬蹄（`horseshoe`）、十牌凱爾特十字（`celtic`）。
 - **四維透鏡與能量矩陣**：鏡子（現狀）、窗戶（盲點）、門（突破路徑）、錨（核心價值）；大牌佔比、四大元素分佈、牌性生剋、經典牌對組合檢測與具體行動清單。
+- **塔羅生命靈數（靈魂本命牌）模組 (`/tarot/numerology` & `/api/tarot/numerology`)**：
+  - 依出生西元年月日連加歸約至 1~9 個位數，精準對應大阿爾克那 1~9 號靈魂象徵牌（魔術師、女祭司、皇后、皇帝、教皇、戀人、戰車、力量、隱士）。
+  - 提供確定性秒級純算 API、靈魂核心特質、天賦超能力、盲點提醒與 AI 靈魂諮詢解讀。
+- **78 張全牌庫圖鑑 (`/tarot/gallery` & `/api/tarot/cards`)**：全牌庫分類篩選（大牌、權杖、聖杯、寶劍、錢幣），點選牌卡即可檢視高清原畫、占星對應與正逆位牌義。
 
 ### 8. 📖 解答之書 (`/answerbook` & `/api/answerbook-question`)
 - **雙模式運作**：
@@ -154,11 +158,30 @@
 | **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri/evaluate-layout), `facing`, `heading`, `northReference`, `declination`, `headingSource`, `layoutObjects`, `entryPath`, `pathQuality`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question`, `POST /api/fengshui/evaluate-layout`, `POST /api/fengshui/report` | `skills/fengshui-consultant/scripts/fengshui_cli.js` & `ask_fengshui.js` | `fengshui_report`, `fengshui_layout_evaluation` |
 | **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (4種視角), `time_factor`, `seed`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
 | **解答之書** | `mode` (direct/question), `question`, `conversationHistory` | `/answerbook` | `POST /api/answerbook-question` | `skills/answerbook-consultant/scripts/ask_answerbook.js` | `answerbook_reading` |
+| **中文姓名分析** | 驗名 `name` (2–8 字), `surname`, `profile`; 取名 `givenNameLength` (1–4), `includeChars`, `excludeChars`, `desiredElements`, `birthData`, `limit` | `/name-analysis` | `POST /api/name-analysis/verify`, `/api/name-analysis/generate`, `/api/name-analysis-question` | `skills/name-analysis-consultant/scripts/name_analysis_cli.js` | `name_analysis_verify`, `name_analysis_generate`, `name_analysis_question` |
 | **時間範圍校正** | `startDate`, `endDate`, `timezone`, `precision` | `/` | `GET/POST /api/time/range` | `lib/civil-time.js` | `date_range_normalize` |
 
 ---
 
+### 中文姓名命名與驗證
+
+姓名模組以本地 Node.js 計算，驗證 2–8 個漢字姓名；取名時可指定 1–4 個名字字，所以完整姓名可超過三字。複姓可以手動指定，也能由索引提出切分建議；若有多個可能，回報替代切分。驗名和取名都可選 `taiwanKangxi`（台灣常用康熙筆畫）或 `modern` 筆畫口徑。缺漏筆畫、五行、讀音或字義會標示缺漏，不會用預設值填補。
+
+- 驗名：`POST /api/name-analysis/verify`，JSON 範例 `{"name":"歐陽明月清風","profile":"taiwanKangxi"}`。可選 `surname` 明確指定姓氏。
+- 取名：`POST /api/name-analysis/generate`，JSON 範例 `{"surname":"歐陽","givenNameLength":3,"includeChars":["安"],"excludeChars":["凶"],"desiredElements":["木"],"limit":20}`。
+- 問答：`POST /api/name-analysis-question`，傳入驗名或取名參數並可附 `question`（最多 1,000 字）。沒有設定 LLM 或未提供問題時只回傳確定性結果。若提供補充問題且已設定 LLM，完整姓名及確定性分析結果會送至設定的 LLM；出生日期與時間不放入提示，衍生的喜用五行摘要與計算假設可能包含於分析結果。原始出生資料只送到本站計算且不保存。
+- 數理：五格採 `data/name-analysis/method-profiles.json` 所列版本；81 數理與三才分項呈現，不合併成單一「命運分數」。名字部分超過兩字時標示延伸算法，生肖部首喜忌則因缺乏可驗證來源而未啟用。
+- 命名候選字來自專案獨立整理的常用姓名字池，依可用字義/筆畫資料與明確偏好排序，並非姓名品質或未來結果的客觀評級。結果應一併考量讀音、多音字、字義、書寫、家庭與個人偏好。
+- 可選 `birthData` 以本地既有 `lib/bazi2.js` 計算喜用五行對照；需提供日期、性別，以及出生時間/時辰或明確標示未知，可指定曆法、農曆閏月及子時換日口徑。出生日期與時間不加入 LLM prompt；若使用補充解讀，姓名、結果與派生喜用五行摘要會送至設定的 LLM。缺出生地時不做真太陽時校正。尚未啟用性別化字風格及生肖部首規則，避免推測用字偏好或套用無來源分類。
+- CLI 範例：`node skills/name-analysis-consultant/scripts/name_analysis_cli.js --verify --name 王小明 --surname 王`；取名範例：`node skills/name-analysis-consultant/scripts/name_analysis_cli.js --generate --surname 王 --length 3 --include 安`。也接受 JSON stdin。來源授權與欄位清單見 `data/name-analysis/SOURCES.md`。
+
+補充問答的 `mode` 請明確指定 `verify` 或 `generate`；驗名需 `name`，取名需 `surname`。紫微純排盤 API `POST /api/ziwei/chart` 可設 `skipRecord: true` 僅回傳命盤、不送 Discord 紀錄；CLI 可用 `skills/ziwei-consultant/scripts/ziwei_cli.js` 直接取得不經 LLM 的排盤。
+
+---
+
 ## 🤖 外部調用與 AI Agent 整合
+
+LLM 導覽索引位於 [`llms.txt`](https://qi.david888.com/llms.txt)，列出功能模組、API、WebMCP、MCP Bridge、CLI Skills 與資料來源。
 
 ### 1. WebMCP (Chrome 瀏覽器標準 In-Browser AI Tools)
 本系統支援 Chrome WebMCP 規範：
@@ -196,6 +219,10 @@ node skills/fengshui-consultant/scripts/ask_fengshui.js '{"mode":"zeri","matter"
 
 # 紫微斗數十二宮排盤
 node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen 巳 --sex male
+
+# 中文姓名驗證與命名
+node skills/name-analysis-consultant/scripts/name_analysis_cli.js --verify --name 歐陽明月清風
+node skills/name-analysis-consultant/scripts/name_analysis_cli.js --generate --surname 歐陽 --length 3 --include 安
 
 # 紫微斗數未來另一半正緣年齡差與特質速測（免等 LLM）
 node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen 巳 --sex male --spouse

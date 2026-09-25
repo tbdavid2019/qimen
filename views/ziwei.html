@@ -56,6 +56,7 @@
                 <li><a href="/tarot">韋特塔羅</a></li>
                 <li><a href="/yinyuan">月老姻緣</a></li>
                 <li><a href="/answerbook">解答之書</a></li>
+                <li><a href="/name-analysis">姓名分析</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -200,6 +201,9 @@
                     <button type="submit" id="suiteSubmitBtn" class="btn suite-btn-primary btn-lg">
                         <%= (typeof activeMode !== 'undefined' && activeMode === 'spouse') ? '💍 3秒解鎖未來另一半' : (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? '⚡ 3秒解鎖真實尺寸' : '✨ 排盤並查看命理解讀' %>
                     </button>
+                    <button type="button" id="ziweiChartOnlyBtn" class="btn suite-btn-secondary btn-lg" style="margin-top: 10px;" <%= (typeof activeMode !== 'undefined' && activeMode !== 'chart') ? 'hidden' : '' %>>
+                        🧭 只排命盤（不使用 AI）
+                    </button>
                 </div>
             </form>
         </div>
@@ -255,6 +259,7 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/theme.js"></script>
     <script src="/js/lucide.min.js"></script>
+    <script src="/js/markdown-renderer.js"></script>
     <script src="/js/divination-suite.js"></script>
     <script src="/js/webmcp.js"></script>
 </body>

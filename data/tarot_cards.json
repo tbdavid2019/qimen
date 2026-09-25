@@ -1,0 +1,2121 @@
+{
+  "cards": [
+    {
+      "id": 0,
+      "key": "愚者",
+      "name": "愚者",
+      "nameEn": "The Fool",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_00.jpg",
+      "imageUrl": "/images/tarot/cards/major_00.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "靈性",
+          "action": "前進",
+          "direction": "不切實際"
+        },
+        "reversed": {
+          "theme": "無知",
+          "action": "徘徊",
+          "direction": "危險"
+        }
+      },
+      "astro": {
+        "element": "風",
+        "planet": "天王星",
+        "note": "意外"
+      }
+    },
+    {
+      "id": 1,
+      "key": "魔术师",
+      "name": "魔術師",
+      "nameEn": "The Magician",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_01.jpg",
+      "imageUrl": "/images/tarot/cards/major_01.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "技能",
+          "action": "實現",
+          "direction": "計劃"
+        },
+        "reversed": {
+          "theme": "伎倆",
+          "action": "操弄",
+          "direction": "欺騙"
+        }
+      },
+      "astro": {
+        "element": "風",
+        "planet": "水星",
+        "note": "聰明才智、說、學習、旅行"
+      }
+    },
+    {
+      "id": 2,
+      "key": "女祭司",
+      "name": "女祭司",
+      "nameEn": "The High Priestess",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_02.jpg",
+      "imageUrl": "/images/tarot/cards/major_02.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "奧秘",
+          "action": "揭示",
+          "direction": "智慧"
+        },
+        "reversed": {
+          "theme": "秘密",
+          "action": "隱藏",
+          "direction": "嫉妒"
+        }
+      },
+      "astro": {
+        "element": "水",
+        "planet": "月亮",
+        "note": "內心感受、內在、周期性的反反覆覆"
+      }
+    },
+    {
+      "id": 3,
+      "key": "女皇",
+      "name": "皇后",
+      "nameEn": "The Empress",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_03.jpg",
+      "imageUrl": "/images/tarot/cards/major_03.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "活力",
+          "action": "創造",
+          "direction": "豐足"
+        },
+        "reversed": {
+          "theme": "過度",
+          "action": "失控",
+          "direction": "野蠻"
+        }
+      },
+      "astro": {
+        "element": "土",
+        "planet": "金星",
+        "note": "好財、感情、漂亮"
+      }
+    },
+    {
+      "id": 4,
+      "key": "皇帝",
+      "name": "皇帝",
+      "nameEn": "The Emperor",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_04.jpg",
+      "imageUrl": "/images/tarot/cards/major_04.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "責任",
+          "action": "領導",
+          "direction": "穩固"
+        },
+        "reversed": {
+          "theme": "不負責",
+          "action": "武斷",
+          "direction": "壓制"
+        }
+      },
+      "astro": {
+        "element": "火",
+        "planet": "白羊座",
+        "note": "宮主星：火星"
+      }
+    },
+    {
+      "id": 5,
+      "key": "教皇",
+      "name": "教皇",
+      "nameEn": "The Hierophant",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_05.jpg",
+      "imageUrl": "/images/tarot/cards/major_05.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "規範",
+          "action": "教導",
+          "direction": "正統"
+        },
+        "reversed": {
+          "theme": "保守",
+          "action": "固執",
+          "direction": "狹隘"
+        }
+      },
+      "astro": {
+        "element": "土",
+        "planet": "金牛座",
+        "note": "宮主星：金星"
+      }
+    },
+    {
+      "id": 6,
+      "key": "恋人",
+      "name": "戀人",
+      "nameEn": "The Lovers",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_06.jpg",
+      "imageUrl": "/images/tarot/cards/major_06.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "愛情",
+          "action": "結合",
+          "direction": "幸福"
+        },
+        "reversed": {
+          "theme": "不和",
+          "action": "分離",
+          "direction": "挫折"
+        }
+      },
+      "astro": {
+        "element": "風",
+        "planet": "雙子座",
+        "note": "宮主星：水星"
+      }
+    },
+    {
+      "id": 7,
+      "key": "战车",
+      "name": "戰車",
+      "nameEn": "The Chariot",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_07.jpg",
+      "imageUrl": "/images/tarot/cards/major_07.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "統治",
+          "action": "實現",
+          "direction": "勝利"
+        },
+        "reversed": {
+          "theme": "反抗",
+          "action": "放縱",
+          "direction": "失敗"
+        }
+      },
+      "astro": {
+        "element": "水",
+        "planet": "巨蟹座",
+        "note": "宮主星：月亮"
+      }
+    },
+    {
+      "id": 8,
+      "key": "力量",
+      "name": "力量",
+      "nameEn": "Strength",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_08.jpg",
+      "imageUrl": "/images/tarot/cards/major_08.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "勇氣",
+          "action": "征服",
+          "direction": "意志力"
+        },
+        "reversed": {
+          "theme": "困惑",
+          "action": "濫用",
+          "direction": "軟弱"
+        }
+      },
+      "astro": {
+        "element": "火",
+        "planet": "獅子座",
+        "note": "宮主星：太陽"
+      }
+    },
+    {
+      "id": 9,
+      "key": "隐士",
+      "name": "隱者",
+      "nameEn": "The Hermit",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_09.jpg",
+      "imageUrl": "/images/tarot/cards/major_09.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "審慎",
+          "action": "反省",
+          "direction": "離群索居"
+        },
+        "reversed": {
+          "theme": "背叛",
+          "action": "隱瞞",
+          "direction": "害怕孤單"
+        }
+      },
+      "astro": {
+        "element": "土",
+        "planet": "處女座",
+        "note": "宮主星：水星"
+      }
+    },
+    {
+      "id": 10,
+      "key": "命运之轮",
+      "name": "命運之輪",
+      "nameEn": "Wheel of Fortune",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_10.jpg",
+      "imageUrl": "/images/tarot/cards/major_10.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "優勢",
+          "action": "隨緣",
+          "direction": "進步"
+        },
+        "reversed": {
+          "theme": "逆勢",
+          "action": "重複",
+          "direction": "變化"
+        }
+      },
+      "astro": {
+        "element": "火",
+        "planet": "木星",
+        "note": "吉，雙魚＋射手的宮主星"
+      }
+    },
+    {
+      "id": 11,
+      "key": "正义",
+      "name": "正義",
+      "nameEn": "Justice",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_11.jpg",
+      "imageUrl": "/images/tarot/cards/major_11.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "公平",
+          "action": "糾正",
+          "direction": "真理"
+        },
+        "reversed": {
+          "theme": "不公平",
+          "action": "抑制",
+          "direction": "偏見"
+        }
+      },
+      "astro": {
+        "element": "風",
+        "planet": "天秤座",
+        "note": "宮主星：金星"
+      }
+    },
+    {
+      "id": 12,
+      "key": "倒吊人",
+      "name": "倒吊人",
+      "nameEn": "The Hanged Man",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_12.jpg",
+      "imageUrl": "/images/tarot/cards/major_12.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "懸置",
+          "action": "放下",
+          "direction": "耐心"
+        },
+        "reversed": {
+          "theme": "顛倒",
+          "action": "痛苦",
+          "direction": "犧牲"
+        }
+      },
+      "astro": {
+        "element": "水",
+        "planet": "海王星",
+        "note": ""
+      }
+    },
+    {
+      "id": 13,
+      "key": "死神",
+      "name": "死神",
+      "nameEn": "Death",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_13.jpg",
+      "imageUrl": "/images/tarot/cards/major_13.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "重生",
+          "action": "改變",
+          "direction": "結束"
+        },
+        "reversed": {
+          "theme": "停滯",
+          "action": "延遲",
+          "direction": "不確定"
+        }
+      },
+      "astro": {
+        "element": "水",
+        "planet": "天蠍座",
+        "note": "宮主星：冥王星"
+      }
+    },
+    {
+      "id": 14,
+      "key": "节制",
+      "name": "節制",
+      "nameEn": "Temperance",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_14.jpg",
+      "imageUrl": "/images/tarot/cards/major_14.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "中庸",
+          "action": "協調",
+          "direction": "適度"
+        },
+        "reversed": {
+          "theme": "矛盾",
+          "action": "極端",
+          "direction": "不相容"
+        }
+      },
+      "astro": {
+        "element": "火",
+        "planet": "射手座",
+        "note": "宮主星：木星"
+      }
+    },
+    {
+      "id": 15,
+      "key": "恶魔",
+      "name": "惡魔",
+      "nameEn": "The Devil",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_15.jpg",
+      "imageUrl": "/images/tarot/cards/major_15.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "激情",
+          "action": "渴望",
+          "direction": "縱慾"
+        },
+        "reversed": {
+          "theme": "缺德",
+          "action": "自私",
+          "direction": "沉淪"
+        }
+      },
+      "astro": {
+        "element": "土",
+        "planet": "摩羯座",
+        "note": "宮主星：土星，保守"
+      }
+    },
+    {
+      "id": 16,
+      "key": "高塔",
+      "name": "高塔",
+      "nameEn": "The Tower",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_16.jpg",
+      "imageUrl": "/images/tarot/cards/major_16.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "混亂",
+          "action": "崩潰",
+          "direction": "意外"
+        },
+        "reversed": {
+          "theme": "困難",
+          "action": "束縛",
+          "direction": "脅迫"
+        }
+      },
+      "astro": {
+        "element": "火",
+        "planet": "火星",
+        "note": "對立、衝突"
+      }
+    },
+    {
+      "id": 17,
+      "key": "星星",
+      "name": "星星",
+      "nameEn": "The Star",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_17.jpg",
+      "imageUrl": "/images/tarot/cards/major_17.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "希望",
+          "action": "寧靜",
+          "direction": "樂觀"
+        },
+        "reversed": {
+          "theme": "失望",
+          "action": "挫折",
+          "direction": "無能為力"
+        }
+      },
+      "astro": {
+        "element": "風",
+        "planet": "水瓶座",
+        "note": "宮主星：土星"
+      }
+    },
+    {
+      "id": 18,
+      "key": "月亮",
+      "name": "月亮",
+      "nameEn": "The Moon",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_18.jpg",
+      "imageUrl": "/images/tarot/cards/major_18.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "潛伏",
+          "action": "威脅",
+          "direction": "擔憂"
+        },
+        "reversed": {
+          "theme": "不安",
+          "action": "迷惑",
+          "direction": "善變"
+        }
+      },
+      "astro": {
+        "element": "水",
+        "planet": "雙魚座",
+        "note": "宮主星：木星，木星有擴張之意"
+      }
+    },
+    {
+      "id": 19,
+      "key": "太阳",
+      "name": "太陽",
+      "nameEn": "The Sun",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_19.jpg",
+      "imageUrl": "/images/tarot/cards/major_19.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "完美",
+          "action": "高興",
+          "direction": "合諧"
+        },
+        "reversed": {
+          "theme": "滿意",
+          "action": "享受",
+          "direction": "惰性"
+        }
+      },
+      "astro": {
+        "element": "火",
+        "planet": "太陽",
+        "note": ""
+      }
+    },
+    {
+      "id": 20,
+      "key": "审判",
+      "name": "審判",
+      "nameEn": "Judgement",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_20.jpg",
+      "imageUrl": "/images/tarot/cards/major_20.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "更新",
+          "action": "解決",
+          "direction": "真理"
+        },
+        "reversed": {
+          "theme": "決定",
+          "action": "懲罰",
+          "direction": "報應"
+        }
+      },
+      "astro": {
+        "element": "水",
+        "planet": "冥王星",
+        "note": ""
+      }
+    },
+    {
+      "id": 21,
+      "key": "世界",
+      "name": "世界",
+      "nameEn": "The World",
+      "suit": "major",
+      "isMajor": true,
+      "image": "major_21.jpg",
+      "imageUrl": "/images/tarot/cards/major_21.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "成功",
+          "action": "實現",
+          "direction": "完整"
+        },
+        "reversed": {
+          "theme": "延遲",
+          "action": "妨礙",
+          "direction": "中斷"
+        }
+      },
+      "astro": {
+        "element": "土",
+        "planet": "土星",
+        "note": ""
+      }
+    },
+    {
+      "id": 22,
+      "key": "权杖Ace",
+      "name": "權杖一",
+      "nameEn": "1 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_01.jpg",
+      "imageUrl": "/images/tarot/cards/wands_01.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "能量起源",
+          "action": "開始",
+          "direction": "創造力"
+        },
+        "reversed": {
+          "theme": "力不從心",
+          "action": "衰弱",
+          "direction": "頹廢"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 23,
+      "key": "权杖二",
+      "name": "權杖二",
+      "nameEn": "2 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_02.jpg",
+      "imageUrl": "/images/tarot/cards/wands_02.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "統治權",
+          "action": "評估",
+          "direction": "計劃決定"
+        },
+        "reversed": {
+          "theme": "傲慢",
+          "action": "猶豫",
+          "direction": "無從選擇"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 24,
+      "key": "权杖三",
+      "name": "權杖三",
+      "nameEn": "3 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_03.jpg",
+      "imageUrl": "/images/tarot/cards/wands_03.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "遠見",
+          "action": "合作計劃",
+          "direction": "探索新領域"
+        },
+        "reversed": {
+          "theme": "自作主張",
+          "action": "濫用權力",
+          "direction": "計劃不周"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 25,
+      "key": "权杖四",
+      "name": "權杖四",
+      "nameEn": "4 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_04.jpg",
+      "imageUrl": "/images/tarot/cards/wands_04.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "穩固",
+          "action": "歡慶",
+          "direction": "合諧"
+        },
+        "reversed": {
+          "theme": "中斷",
+          "action": "不滿足",
+          "direction": "不可靠"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 26,
+      "key": "权杖五",
+      "name": "權杖五",
+      "nameEn": "5 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_05.jpg",
+      "imageUrl": "/images/tarot/cards/wands_05.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "鬥爭",
+          "action": "反抗",
+          "direction": "艱辛"
+        },
+        "reversed": {
+          "theme": "衝突",
+          "action": "混亂",
+          "direction": "暴力"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 27,
+      "key": "权杖六",
+      "name": "權杖六",
+      "nameEn": "6 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_06.jpg",
+      "imageUrl": "/images/tarot/cards/wands_06.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "勝利",
+          "action": "進展",
+          "direction": "好消息"
+        },
+        "reversed": {
+          "theme": "驕傲",
+          "action": "空虛",
+          "direction": "壞消息"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 28,
+      "key": "权杖七",
+      "name": "權杖七",
+      "nameEn": "7 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_07.jpg",
+      "imageUrl": "/images/tarot/cards/wands_07.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "英勇",
+          "action": "防禦",
+          "direction": "反敗為勝"
+        },
+        "reversed": {
+          "theme": "缺乏自信",
+          "action": "爭吵",
+          "direction": "疑惑自卑"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 29,
+      "key": "权杖八",
+      "name": "權杖八",
+      "nameEn": "8 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_08.jpg",
+      "imageUrl": "/images/tarot/cards/wands_08.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "迅速",
+          "action": "傳達",
+          "direction": "快速完成"
+        },
+        "reversed": {
+          "theme": "失控",
+          "action": "草率行動",
+          "direction": "欲速則不達"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 30,
+      "key": "权杖九",
+      "name": "權杖九",
+      "nameEn": "9 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_09.jpg",
+      "imageUrl": "/images/tarot/cards/wands_09.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "警覺",
+          "action": "勇敢的捍衛",
+          "direction": "防守備戰"
+        },
+        "reversed": {
+          "theme": "放棄",
+          "action": "萎靡不振",
+          "direction": "逆境"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 31,
+      "key": "权杖十",
+      "name": "權杖十",
+      "nameEn": "10 of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_10.jpg",
+      "imageUrl": "/images/tarot/cards/wands_10.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "疲累",
+          "action": "壓抑",
+          "direction": "沉重負擔"
+        },
+        "reversed": {
+          "theme": "困難",
+          "action": "打擊",
+          "direction": "惡意復仇"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 32,
+      "key": "权杖侍从",
+      "name": "權杖侍者",
+      "nameEn": "Page of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_page.jpg",
+      "imageUrl": "/images/tarot/cards/wands_page.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "勇敢的女孩",
+          "action": "熱情",
+          "direction": "膽量"
+        },
+        "reversed": {
+          "theme": "膚淺的女孩",
+          "action": "急躁",
+          "direction": "不穩定"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 33,
+      "key": "权杖骑士",
+      "name": "權杖騎士",
+      "nameEn": "Knight of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_knight.jpg",
+      "imageUrl": "/images/tarot/cards/wands_knight.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "敏捷的年輕人",
+          "action": "熱心",
+          "direction": "康愾大方"
+        },
+        "reversed": {
+          "theme": "狹隘的年輕人",
+          "action": "偏執",
+          "direction": "傲慢"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 34,
+      "key": "权杖皇后",
+      "name": "權杖王后",
+      "nameEn": "Queen of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_queen.jpg",
+      "imageUrl": "/images/tarot/cards/wands_queen.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "適應力強的女人",
+          "action": "堅持",
+          "direction": "魅力無窮"
+        },
+        "reversed": {
+          "theme": "頑固的女人",
+          "action": "對抗",
+          "direction": "蠻橫霸道"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 35,
+      "key": "权杖国王",
+      "name": "權杖國王",
+      "nameEn": "King of Wands",
+      "suit": "wands",
+      "isMajor": false,
+      "image": "wands_king.jpg",
+      "imageUrl": "/images/tarot/cards/wands_king.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "積極的男人",
+          "action": "活耀",
+          "direction": "強烈衝動"
+        },
+        "reversed": {
+          "theme": "審慎的男人",
+          "action": "控制",
+          "direction": "嚴肅"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 36,
+      "key": "圣杯Ace",
+      "name": "聖杯一",
+      "nameEn": "1 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_01.jpg",
+      "imageUrl": "/images/tarot/cards/cups_01.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "新感情",
+          "action": "喜悅",
+          "direction": "快樂滿足"
+        },
+        "reversed": {
+          "theme": "抑鬱悲傷",
+          "action": "拒絕",
+          "direction": "沒有安全感"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 37,
+      "key": "圣杯二",
+      "name": "聖杯二",
+      "nameEn": "2 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_02.jpg",
+      "imageUrl": "/images/tarot/cards/cups_02.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "愛情友情",
+          "action": "吸引",
+          "direction": "合作結合"
+        },
+        "reversed": {
+          "theme": "不平等",
+          "action": "不信賴",
+          "direction": "分離拆夥"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 38,
+      "key": "圣杯三",
+      "name": "聖杯三",
+      "nameEn": "3 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_03.jpg",
+      "imageUrl": "/images/tarot/cards/cups_03.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "慶祝豐收",
+          "action": "分享喜悅",
+          "direction": "團隊合諧"
+        },
+        "reversed": {
+          "theme": "放縱慾望",
+          "action": "朋友背叛",
+          "direction": "樂極生悲"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 39,
+      "key": "圣杯四",
+      "name": "聖杯四",
+      "nameEn": "4 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_04.jpg",
+      "imageUrl": "/images/tarot/cards/cups_04.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "漠不關心",
+          "action": "不滿足",
+          "direction": "喜新厭舊"
+        },
+        "reversed": {
+          "theme": "發現新目標",
+          "action": "活力再現",
+          "direction": "機會增加"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 40,
+      "key": "圣杯五",
+      "name": "聖杯五",
+      "nameEn": "5 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_05.jpg",
+      "imageUrl": "/images/tarot/cards/cups_05.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "失落感",
+          "action": "挫敗遺憾",
+          "direction": "悲傷後悔"
+        },
+        "reversed": {
+          "theme": "背叛",
+          "action": "求解脫",
+          "direction": "得到改變"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 41,
+      "key": "圣杯六",
+      "name": "聖杯六",
+      "nameEn": "6 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_06.jpg",
+      "imageUrl": "/images/tarot/cards/cups_06.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "快樂",
+          "action": "穩定知足",
+          "direction": "照顧餽贈"
+        },
+        "reversed": {
+          "theme": "回憶過去",
+          "action": "被忽略",
+          "direction": "缺乏保障"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 42,
+      "key": "圣杯七",
+      "name": "聖杯七",
+      "nameEn": "7 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_07.jpg",
+      "imageUrl": "/images/tarot/cards/cups_07.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "沉浸幻想",
+          "action": "不切實際",
+          "direction": "過度放縱"
+        },
+        "reversed": {
+          "theme": "覺悟",
+          "action": "面對現實",
+          "direction": "不好不壞"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 43,
+      "key": "圣杯八",
+      "name": "聖杯八",
+      "nameEn": "8 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_08.jpg",
+      "imageUrl": "/images/tarot/cards/cups_08.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "感情散漫",
+          "action": "倦怠冷漠",
+          "direction": "放棄離開"
+        },
+        "reversed": {
+          "theme": "舊情復燃",
+          "action": "欲走還留",
+          "direction": "停滯不前"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 44,
+      "key": "圣杯九",
+      "name": "聖杯九",
+      "nameEn": "9 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_09.jpg",
+      "imageUrl": "/images/tarot/cards/cups_09.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "享樂",
+          "action": "得意",
+          "direction": "知足滿意"
+        },
+        "reversed": {
+          "theme": "獨善其身",
+          "action": "自誇自負",
+          "direction": "專注外表"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 45,
+      "key": "圣杯十",
+      "name": "聖杯十",
+      "nameEn": "10 of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_10.jpg",
+      "imageUrl": "/images/tarot/cards/cups_10.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "家庭和樂",
+          "action": "感情合諧",
+          "direction": "圓滿豐富"
+        },
+        "reversed": {
+          "theme": "家庭失和",
+          "action": "過度放蕩",
+          "direction": "生活不平靜"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 46,
+      "key": "圣杯侍从",
+      "name": "聖杯侍者",
+      "nameEn": "Page of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_page.jpg",
+      "imageUrl": "/images/tarot/cards/cups_page.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "深情的女孩",
+          "action": "善良",
+          "direction": "寬宏包容"
+        },
+        "reversed": {
+          "theme": "自私的女孩",
+          "action": "懶散",
+          "direction": "貪圖享受"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 47,
+      "key": "圣杯骑士",
+      "name": "聖杯騎士",
+      "nameEn": "Knight of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_knight.jpg",
+      "imageUrl": "/images/tarot/cards/cups_knight.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "熱情的年輕人",
+          "action": "多變",
+          "direction": "好高騖遠"
+        },
+        "reversed": {
+          "theme": "花心的年輕人",
+          "action": "自私",
+          "direction": "野心勃勃"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 48,
+      "key": "圣杯皇后",
+      "name": "聖杯王后",
+      "nameEn": "Queen of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_queen.jpg",
+      "imageUrl": "/images/tarot/cards/cups_queen.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "愛作夢的女人",
+          "action": "敏感",
+          "direction": "感情豐富"
+        },
+        "reversed": {
+          "theme": "情緒化的女人",
+          "action": "自負",
+          "direction": "漠不關心"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 49,
+      "key": "圣杯国王",
+      "name": "聖杯國王",
+      "nameEn": "King of Cups",
+      "suit": "cups",
+      "isMajor": false,
+      "image": "cups_king.jpg",
+      "imageUrl": "/images/tarot/cards/cups_king.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "和善的男人",
+          "action": "靈敏",
+          "direction": "博愛"
+        },
+        "reversed": {
+          "theme": "好色的男人",
+          "action": "欺騙",
+          "direction": "喜新厭舊"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 50,
+      "key": "宝剑Ace",
+      "name": "寶劍一",
+      "nameEn": "1 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_01.jpg",
+      "imageUrl": "/images/tarot/cards/swords_01.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "新挑戰",
+          "action": "明確的思考",
+          "direction": "冒險"
+        },
+        "reversed": {
+          "theme": "失敗",
+          "action": "思緒阻塞",
+          "direction": "失去目標"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 51,
+      "key": "宝剑二",
+      "name": "寶劍二",
+      "nameEn": "2 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_02.jpg",
+      "imageUrl": "/images/tarot/cards/swords_02.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "逃避僵局",
+          "action": "對立",
+          "direction": "冷戰"
+        },
+        "reversed": {
+          "theme": "面對僵局",
+          "action": "停止抗拒",
+          "direction": "短暫和平"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 52,
+      "key": "宝剑三",
+      "name": "寶劍三",
+      "nameEn": "3 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_03.jpg",
+      "imageUrl": "/images/tarot/cards/swords_03.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "悲傷",
+          "action": "分離",
+          "direction": "痛苦憂愁"
+        },
+        "reversed": {
+          "theme": "疏遠",
+          "action": "混亂",
+          "direction": "衝突爭吵"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 53,
+      "key": "宝剑四",
+      "name": "寶劍四",
+      "nameEn": "4 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_04.jpg",
+      "imageUrl": "/images/tarot/cards/swords_04.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "休戰",
+          "action": "消極",
+          "direction": "沉思隱遁"
+        },
+        "reversed": {
+          "theme": "康復",
+          "action": "獲得精力",
+          "direction": "繼續投入"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 54,
+      "key": "宝剑五",
+      "name": "寶劍五",
+      "nameEn": "5 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_05.jpg",
+      "imageUrl": "/images/tarot/cards/swords_05.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "無謂的勝利",
+          "action": "自私",
+          "direction": "蒙羞與痛苦"
+        },
+        "reversed": {
+          "theme": "失敗",
+          "action": "爭執",
+          "direction": "惡意傷害"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 55,
+      "key": "宝剑六",
+      "name": "寶劍六",
+      "nameEn": "6 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_06.jpg",
+      "imageUrl": "/images/tarot/cards/swords_06.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "療傷",
+          "action": "回復平靜",
+          "direction": "遠離困境"
+        },
+        "reversed": {
+          "theme": "新問題",
+          "action": "延遲",
+          "direction": "憂慮阻礙"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 56,
+      "key": "宝剑七",
+      "name": "寶劍七",
+      "nameEn": "7 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_07.jpg",
+      "imageUrl": "/images/tarot/cards/swords_07.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "不坦承",
+          "action": "欺詐",
+          "direction": "另覓新方向"
+        },
+        "reversed": {
+          "theme": "不可靠",
+          "action": "背叛",
+          "direction": "自我欺騙"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 57,
+      "key": "宝剑八",
+      "name": "寶劍八",
+      "nameEn": "8 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_08.jpg",
+      "imageUrl": "/images/tarot/cards/swords_08.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "干擾",
+          "action": "限制",
+          "direction": "思想不集中"
+        },
+        "reversed": {
+          "theme": "看清事實",
+          "action": "解放",
+          "direction": "採取行動"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 58,
+      "key": "宝剑九",
+      "name": "寶劍九",
+      "nameEn": "9 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_09.jpg",
+      "imageUrl": "/images/tarot/cards/swords_09.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "自我虐待",
+          "action": "恐懼害怕",
+          "direction": "情緒不穩"
+        },
+        "reversed": {
+          "theme": "惡夢",
+          "action": "忍耐痛苦",
+          "direction": "重燃希望"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 59,
+      "key": "宝剑十",
+      "name": "寶劍十",
+      "nameEn": "10 of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_10.jpg",
+      "imageUrl": "/images/tarot/cards/swords_10.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "毀滅",
+          "action": "折磨",
+          "direction": "結束或放棄"
+        },
+        "reversed": {
+          "theme": "低潮",
+          "action": "痛苦中成長",
+          "direction": "苦盡甘來"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 60,
+      "key": "宝剑侍从",
+      "name": "寶劍侍者",
+      "nameEn": "Page of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_page.jpg",
+      "imageUrl": "/images/tarot/cards/swords_page.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "消息靈通的女孩",
+          "action": "伶俐",
+          "direction": "追根究底"
+        },
+        "reversed": {
+          "theme": "輕浮的女孩",
+          "action": "八卦",
+          "direction": "疑神疑鬼"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 61,
+      "key": "宝剑骑士",
+      "name": "寶劍騎士",
+      "nameEn": "Knight of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_knight.jpg",
+      "imageUrl": "/images/tarot/cards/swords_knight.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "想像力強的年輕人",
+          "action": "好勝",
+          "direction": "不切實際"
+        },
+        "reversed": {
+          "theme": "善變的年輕人",
+          "action": "任性",
+          "direction": "固執己見"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 62,
+      "key": "宝剑皇后",
+      "name": "寶劍王后",
+      "nameEn": "Queen of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_queen.jpg",
+      "imageUrl": "/images/tarot/cards/swords_queen.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "謹慎的女人",
+          "action": "機智",
+          "direction": "冰山美人"
+        },
+        "reversed": {
+          "theme": "狡猾的女人",
+          "action": "虛假",
+          "direction": "小心眼"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 63,
+      "key": "宝剑国王",
+      "name": "寶劍國王",
+      "nameEn": "King of Swords",
+      "suit": "swords",
+      "isMajor": false,
+      "image": "swords_king.jpg",
+      "imageUrl": "/images/tarot/cards/swords_king.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "聰明的男人",
+          "action": "反應快",
+          "direction": "運用智謀"
+        },
+        "reversed": {
+          "theme": "反覆無常的男人",
+          "action": "批判",
+          "direction": "冷酷無情"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 64,
+      "key": "星币Ace",
+      "name": "錢幣一",
+      "nameEn": "1 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_01.jpg",
+      "imageUrl": "/images/tarot/cards/coins_01.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "新計劃",
+          "action": "投資創業",
+          "direction": "好兆頭"
+        },
+        "reversed": {
+          "theme": "失利",
+          "action": "破財",
+          "direction": "計劃延遲"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 65,
+      "key": "星币二",
+      "name": "錢幣二",
+      "nameEn": "2 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_02.jpg",
+      "imageUrl": "/images/tarot/cards/coins_02.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "變化波動",
+          "action": "彈性運用",
+          "direction": "遊戲的心情"
+        },
+        "reversed": {
+          "theme": "不平衡",
+          "action": "動盪不安",
+          "direction": "不穩定性"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 66,
+      "key": "星币三",
+      "name": "錢幣三",
+      "nameEn": "3 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_03.jpg",
+      "imageUrl": "/images/tarot/cards/coins_03.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "團體合作",
+          "action": "表現自我",
+          "direction": "收穫提升"
+        },
+        "reversed": {
+          "theme": "團隊不和",
+          "action": "能力不足",
+          "direction": "跟不上進度"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 67,
+      "key": "星币四",
+      "name": "錢幣四",
+      "nameEn": "4 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_04.jpg",
+      "imageUrl": "/images/tarot/cards/coins_04.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "穩定",
+          "action": "佔有",
+          "direction": "貪婪"
+        },
+        "reversed": {
+          "theme": "自私",
+          "action": "覬覦",
+          "direction": "不滿足"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 68,
+      "key": "星币五",
+      "name": "錢幣五",
+      "nameEn": "5 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_05.jpg",
+      "imageUrl": "/images/tarot/cards/coins_05.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "憂慮",
+          "action": "困擾",
+          "direction": "窘境"
+        },
+        "reversed": {
+          "theme": "損失",
+          "action": "短缺",
+          "direction": "貧窮"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 69,
+      "key": "星币六",
+      "name": "錢幣六",
+      "nameEn": "6 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_06.jpg",
+      "imageUrl": "/images/tarot/cards/coins_06.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "物質成功",
+          "action": "收支平衡",
+          "direction": "施與受"
+        },
+        "reversed": {
+          "theme": "貪得無饜",
+          "action": "不均衡",
+          "direction": "不平等"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 70,
+      "key": "星币七",
+      "name": "錢幣七",
+      "nameEn": "7 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_07.jpg",
+      "imageUrl": "/images/tarot/cards/coins_07.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "略有小成",
+          "action": "暫停思索",
+          "direction": "十字路口"
+        },
+        "reversed": {
+          "theme": "投資失利",
+          "action": "坐困愁城",
+          "direction": "無法順利"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 71,
+      "key": "星币八",
+      "name": "錢幣八",
+      "nameEn": "8 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_08.jpg",
+      "imageUrl": "/images/tarot/cards/coins_08.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "謹慎扎實",
+          "action": "細心經營",
+          "direction": "勤勞工作"
+        },
+        "reversed": {
+          "theme": "小氣吝嗇",
+          "action": "技能不足",
+          "direction": "心胸狹隘"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 72,
+      "key": "星币九",
+      "name": "錢幣九",
+      "nameEn": "9 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_09.jpg",
+      "imageUrl": "/images/tarot/cards/coins_09.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "信心自律",
+          "action": "享受成就",
+          "direction": "財富增長"
+        },
+        "reversed": {
+          "theme": "盜用偷竊",
+          "action": "不正當得利",
+          "direction": "荒廢計劃"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 73,
+      "key": "星币十",
+      "name": "錢幣十",
+      "nameEn": "10 of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_10.jpg",
+      "imageUrl": "/images/tarot/cards/coins_10.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "財富",
+          "action": "慾望實現",
+          "direction": "按部就班"
+        },
+        "reversed": {
+          "theme": "物質主義",
+          "action": "財務出問題",
+          "direction": "缺乏進取"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 74,
+      "key": "星币侍从",
+      "name": "錢幣侍者",
+      "nameEn": "Page of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_page.jpg",
+      "imageUrl": "/images/tarot/cards/coins_page.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "樂善好施的女孩",
+          "action": "認真",
+          "direction": "安靜乖巧"
+        },
+        "reversed": {
+          "theme": "揮霍的女孩",
+          "action": "輕率",
+          "direction": "難以捉模"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 75,
+      "key": "星币骑士",
+      "name": "錢幣騎士",
+      "nameEn": "Knight of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_knight.jpg",
+      "imageUrl": "/images/tarot/cards/coins_knight.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "精力充沛的年輕人",
+          "action": "自信",
+          "direction": "持之以恆"
+        },
+        "reversed": {
+          "theme": "沉悶的年輕人",
+          "action": "平庸",
+          "direction": "現實主義"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 76,
+      "key": "星币皇后",
+      "name": "錢幣王后",
+      "nameEn": "Queen of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_queen.jpg",
+      "imageUrl": "/images/tarot/cards/coins_queen.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "安靜的女人",
+          "action": "誠實",
+          "direction": "腳踏實地"
+        },
+        "reversed": {
+          "theme": "刻板的女人",
+          "action": "遲鈍",
+          "direction": "埋頭苦幹"
+        }
+      },
+      "astro": null
+    },
+    {
+      "id": 77,
+      "key": "星币国王",
+      "name": "錢幣國王",
+      "nameEn": "King of Pentacles",
+      "suit": "coins",
+      "isMajor": false,
+      "image": "coins_king.jpg",
+      "imageUrl": "/images/tarot/cards/coins_king.jpg",
+      "keywords": {
+        "upright": {
+          "theme": "穩重的男人",
+          "action": "努力",
+          "direction": "堅定務實"
+        },
+        "reversed": {
+          "theme": "貪婪的男人",
+          "action": "盲從",
+          "direction": "不知變通"
+        }
+      },
+      "astro": null
+    }
+  ],
+  "numerology": {
+    "1": {
+      "card": "魔術師",
+      "summary": "充滿能量的巫師，溝通天地的創造者。對事物熱情積極、善於溝通、樂於幫朋友解決事情。要注意言語犀利需藏拙，以及朋友間的分際。"
+    },
+    "2": {
+      "card": "女祭司",
+      "summary": "深藏智慧、冷靜沉著、直覺敏銳、洞察力透徹。對事物的看法比一般人深入。要注意冷靜的態度在戀愛上容易造成距離感。"
+    },
+    "3": {
+      "card": "皇后",
+      "summary": "母性與愛情。熱情有愛心、很有母愛；愛情是人生中重要的功課，一旦投入便充滿希望與熱情。要注意熱情勿過頭、愛心適度，以免雙方壓力。"
+    },
+    "4": {
+      "card": "皇帝",
+      "summary": "責任、努力與掌控。靠自己的努力獲得成功，居安思危、步步為營。要注意不要太自我，以免與人相處產生距離感。"
+    },
+    "5": {
+      "card": "教皇",
+      "summary": "智慧、傳統與引領。內心有定見、對未來自有規劃並勇於實踐，樂於成為別人的引領者，適合團體合作。要注意過於保守，不容別人評斷專業。"
+    },
+    "6": {
+      "card": "戀人",
+      "summary": "抉擇與關係。對異性有吸引力、思考敏捷、善於判斷，以樂觀正面的方式待人。要注意愛情容易沖昏頭，衝動的決定易引發不良後果。"
+    },
+    "7": {
+      "card": "戰車",
+      "summary": "意志與征服。喜歡競爭、以競賽為進步動力，重視家人與自己人，第一名是唯一目標。要注意以智、仁、勇合一，勿用爭鬥心態對待周遭。"
+    },
+    "8": {
+      "card": "力量",
+      "summary": "以溫柔馴服內在的獸性。光芒四射、樂於散發光和熱。人生課題是降服內在的陰暗面，讓內心的神性與獸性自由溝通、達到平衡。"
+    },
+    "9": {
+      "card": "隱者",
+      "summary": "尋求智慧的引領者。很有智慧、可做為周遭人的心靈安慰者，帶來安定平和。要注意過度內省會壓力沉重，過度追求自我易憤世嫉俗。"
+    }
+  },
+  "spreads": [
+    {
+      "id": "triangle",
+      "name": "聖三角占卜法",
+      "count": 3,
+      "desc": "最經典的三張牌陣，以過去、現在、未來的時間之流看清問題的脈絡。",
+      "positions": [
+        {
+          "n": 1,
+          "name": "過去",
+          "desc": "過去的狀況，是問題的原因。"
+        },
+        {
+          "n": 2,
+          "name": "現在",
+          "desc": "目前的現況。"
+        },
+        {
+          "n": 3,
+          "name": "未來",
+          "desc": "未來可能之將來。"
+        }
+      ]
+    },
+    {
+      "id": "two-choice",
+      "name": "二擇一占卜法",
+      "count": 5,
+      "desc": "面對兩個選擇猶豫不決時，比較各路的現況與未來發展。",
+      "positions": [
+        {
+          "n": 1,
+          "name": "求問者",
+          "desc": "目前求問者的狀況、問題的現況。"
+        },
+        {
+          "n": 2,
+          "name": "選擇甲·現況",
+          "desc": "選擇『甲』的現況（近未來）。"
+        },
+        {
+          "n": 3,
+          "name": "選擇乙·現況",
+          "desc": "選擇『乙』的現況（近未來）。"
+        },
+        {
+          "n": 4,
+          "name": "選擇甲·未來",
+          "desc": "選擇甲以後，未來的發展。"
+        },
+        {
+          "n": 5,
+          "name": "選擇乙·未來",
+          "desc": "選擇乙以後，未來的發展。"
+        }
+      ]
+    },
+    {
+      "id": "hexagram",
+      "name": "六芒星占卜法",
+      "count": 7,
+      "desc": "探索問題的核心，從過去、現在、未來到對策與周遭，全面剖析。",
+      "positions": [
+        {
+          "n": 1,
+          "name": "過去",
+          "desc": "問題過去狀況。"
+        },
+        {
+          "n": 2,
+          "name": "現在",
+          "desc": "問題現在狀況。"
+        },
+        {
+          "n": 3,
+          "name": "未來",
+          "desc": "問題未來狀況。"
+        },
+        {
+          "n": 4,
+          "name": "對策",
+          "desc": "解決此一問題的對應策略。"
+        },
+        {
+          "n": 5,
+          "name": "周遭",
+          "desc": "周遭狀況。"
+        },
+        {
+          "n": 6,
+          "name": "態度",
+          "desc": "本人態度（希望或恐懼）。"
+        },
+        {
+          "n": 7,
+          "name": "結果",
+          "desc": "最後結果。"
+        }
+      ]
+    },
+    {
+      "id": "celtic-cross",
+      "name": "塞爾特十字法",
+      "count": 10,
+      "desc": "最完整的經典牌陣，深入剖析問題的現況、內外因素與結果。",
+      "positions": [
+        {
+          "n": 1,
+          "name": "現況",
+          "desc": "問題現況。"
+        },
+        {
+          "n": 2,
+          "name": "障礙/援助",
+          "desc": "碰到的障礙或援助。"
+        },
+        {
+          "n": 3,
+          "name": "理想",
+          "desc": "你的理想狀況。"
+        },
+        {
+          "n": 4,
+          "name": "本意",
+          "desc": "你的本意。"
+        },
+        {
+          "n": 5,
+          "name": "過去",
+          "desc": "問題的過去狀況。"
+        },
+        {
+          "n": 6,
+          "name": "未來",
+          "desc": "問題的未來狀況。"
+        },
+        {
+          "n": 7,
+          "name": "自己",
+          "desc": "你的現況。"
+        },
+        {
+          "n": 8,
+          "name": "環境",
+          "desc": "周圍環境對問題的影響。"
+        },
+        {
+          "n": 9,
+          "name": "願望",
+          "desc": "你對問題的願望。"
+        },
+        {
+          "n": 10,
+          "name": "結果",
+          "desc": "問題最後結果。"
+        }
+      ]
+    },
+    {
+      "id": "life-dev",
+      "name": "未來發展的占卜",
+      "count": 6,
+      "desc": "一次看穿愛情、工作、金錢、成就等人生各面向的發展。",
+      "positions": [
+        {
+          "n": 1,
+          "name": "現況",
+          "desc": "你現在的狀況。"
+        },
+        {
+          "n": 2,
+          "name": "愛情",
+          "desc": "你的愛情發展。"
+        },
+        {
+          "n": 3,
+          "name": "工作",
+          "desc": "你的工作／事業發展。"
+        },
+        {
+          "n": 4,
+          "name": "金錢",
+          "desc": "你的金錢／財富發展。"
+        },
+        {
+          "n": 5,
+          "name": "成就",
+          "desc": "你的地位／成就。"
+        },
+        {
+          "n": 6,
+          "name": "結果",
+          "desc": "最後的結果。"
+        }
+      ]
+    }
+  ]
+}

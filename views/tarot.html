@@ -56,6 +56,7 @@
                 <li class="active"><a href="/tarot">韋特塔羅</a></li>
                 <li><a href="/yinyuan">月老姻緣</a></li>
                 <li><a href="/answerbook">解答之書</a></li>
+                <li><a href="/name-analysis">姓名分析</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -82,51 +83,127 @@
         </div>
 
         <div class="suite-card">
-            <form id="suiteForm" toolname="tarot_reading" tooldescription="塔羅牌陣抽牌與解讀" toolautosubmit>
-                <div class="suite-form-group">
-                    <label for="tarotQuestion">心中所想的問題</label>
-                    <input type="text" class="form-control input-lg" id="tarotQuestion" name="question"
-                           toolparamdescription="想詢問的具體問題"
-                           placeholder="例如：我最近在猶豫是否該換工作？或這段感情接下來的走向？" autofocus>
-                </div>
+            <!-- Mode Switcher Cards -->
+            <div class="tarot-mode-grid">
+                <button type="button" class="tarot-mode-card mode-card-spread tarot-mode-btn <%= (typeof activeMode === 'undefined' || activeMode === 'spread') ? 'active' : '' %>" data-mode="spread" id="btnModeSpread">
+                    <span class="tarot-mode-icon">🔮</span>
+                    <div class="tarot-mode-content">
+                        <div class="tarot-mode-header">
+                            <span class="tarot-mode-title">經典牌陣占卜</span>
+                            <span class="tarot-mode-badge badge-spread">✨ 78張全陣</span>
+                        </div>
+                        <span class="tarot-mode-desc">三牌陣、五牌陣、凱爾特十字，照見迷津</span>
+                    </div>
+                </button>
 
-                <div class="suite-form-group">
-                    <label>選擇牌陣</label>
-                    <div class="suite-chips">
-                        <label class="suite-chip-radio">
-                            <input type="radio" name="spread" value="three" checked toolparamdescription="塔羅牌陣：single、three、diamond、moon、horseshoe 或 celtic">
-                            <span>🌟 三牌陣（過去·現在·未來）</span>
-                        </label>
-                        <label class="suite-chip-radio">
-                            <input type="radio" name="spread" value="single" toolparamdescription="塔羅牌陣：single 單張">
-                            <span>💫 單張指引（核心建議）</span>
-                        </label>
-                        <label class="suite-chip-radio">
-                            <input type="radio" name="spread" value="diamond" toolparamdescription="塔羅牌陣：diamond 鑽石牌陣">
-                            <span>💎 五牌陣（阻力與潛力）</span>
-                        </label>
-                        <label class="suite-chip-radio">
-                            <input type="radio" name="spread" value="moon" toolparamdescription="塔羅牌陣：moon 月亮週期">
-                            <span>🌙 月亮牌陣（情緒與週期）</span>
-                        </label>
-                        <label class="suite-chip-radio">
-                            <input type="radio" name="spread" value="horseshoe" toolparamdescription="塔羅牌陣：horseshoe 七星馬蹄">
-                            <span>🐴 馬蹄形（發展路徑）</span>
-                        </label>
-                        <label class="suite-chip-radio">
-                            <input type="radio" name="spread" value="celtic" toolparamdescription="塔羅牌陣：celtic 凱爾特十字">
-                            <span>⚔️ 凱爾特十字（全方位）</span>
-                        </label>
+                <button type="button" class="tarot-mode-card mode-card-numerology tarot-mode-btn <%= (typeof activeMode !== 'undefined' && activeMode === 'numerology') ? 'active' : '' %>" data-mode="numerology" id="btnModeNumerology">
+                    <span class="tarot-mode-icon">🔢</span>
+                    <div class="tarot-mode-content">
+                        <div class="tarot-mode-header">
+                            <span class="tarot-mode-title">測出你的生命靈數</span>
+                            <span class="tarot-mode-badge badge-numerology">🔥 靈魂本命牌</span>
+                        </div>
+                        <span class="tarot-mode-desc">輸入生日，解鎖大阿卡納原型與天賦盲點</span>
+                    </div>
+                </button>
+
+                <button type="button" class="tarot-mode-card mode-card-gallery tarot-mode-btn <%= (typeof activeMode !== 'undefined' && activeMode === 'gallery') ? 'active' : '' %>" data-mode="gallery" id="btnModeGallery">
+                    <span class="tarot-mode-icon">🗂️</span>
+                    <div class="tarot-mode-content">
+                        <div class="tarot-mode-header">
+                            <span class="tarot-mode-title">78張全牌庫圖鑑</span>
+                            <span class="tarot-mode-badge badge-gallery">📖 高清全覽</span>
+                        </div>
+                        <span class="tarot-mode-desc">經典偉特原畫、正逆位牌義與占星對應</span>
+                    </div>
+                </button>
+            </div>
+
+            <form id="suiteForm" toolname="tarot_reading" tooldescription="塔羅牌陣抽牌與解讀" toolautosubmit>
+                <input type="hidden" name="mode" id="tarotMode" value="<%= typeof activeMode !== 'undefined' ? activeMode : 'spread' %>">
+
+                <div id="numerologyBanner" class="tarot-banner numerology-banner" style="<%= (typeof activeMode !== 'undefined' && activeMode === 'numerology') ? '' : 'display: none;' %>">
+                    <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px;">🔢 專屬模式：生命靈數 · 大阿爾克那靈魂象徵牌</div>
+                    <div style="font-size: 13px; color: var(--suite-text-muted);">
+                        運用畢達哥拉斯數字學與偉特塔羅原型，輸入西元出生年月日，3秒直擊你的靈魂象徵牌、天賦優勢、人際魅力與人生核心功課！
                     </div>
                 </div>
 
-                <div class="suite-form-group" id="threeVariantGroup">
-                    <label for="tarotVariant">三牌陣解讀視角</label>
+                <div id="galleryBanner" class="tarot-banner gallery-banner" style="<%= (typeof activeMode !== 'undefined' && activeMode === 'gallery') ? '' : 'display: none;' %>">
+                    <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px;">🗂️ 偉特塔羅 78 張全牌庫圖鑑與奧秘資料庫</div>
+                    <div style="font-size: 13px; color: var(--suite-text-muted);">
+                        典藏黃金黎明協會與愛德華·偉特正統體系，點選卡牌即可檢視正位/逆位主題、行動方向與占星元素對應。
+                    </div>
+                </div>
+
+                <!-- Spread Mode Fields -->
+                <div id="tarotSpreadFields" style="<%= (typeof activeMode === 'undefined' || activeMode === 'spread') ? '' : 'display: none;' %>">
+                    <div class="suite-form-group">
+                        <label for="tarotQuestion">心中所想的問題</label>
+                        <input type="text" class="form-control input-lg" id="tarotQuestion" name="question"
+                               toolparamdescription="想詢問的具體問題"
+                               placeholder="例如：我最近在猶豫是否該換工作？或這段感情接下來的走向？" autofocus>
+                    </div>
+
+                    <div class="suite-form-group">
+                        <label>選擇牌陣</label>
+                        <div class="suite-chips">
+                            <label class="suite-chip-radio">
+                                <input type="radio" name="spread" value="three" checked toolparamdescription="塔羅牌陣：single、three、diamond、moon、horseshoe 或 celtic">
+                                <span>🌟 三牌陣（過去·現在·未來）</span>
+                            </label>
+                            <label class="suite-chip-radio">
+                                <input type="radio" name="spread" value="single" toolparamdescription="塔羅牌陣：single 單張">
+                                <span>💫 單張指引（核心建議）</span>
+                            </label>
+                            <label class="suite-chip-radio">
+                                <input type="radio" name="spread" value="diamond" toolparamdescription="塔羅牌陣：diamond 鑽石牌陣">
+                                <span>💎 五牌陣（阻力與潛力）</span>
+                            </label>
+                            <label class="suite-chip-radio">
+                                <input type="radio" name="spread" value="moon" toolparamdescription="塔羅牌陣：moon 月亮週期">
+                                <span>🌙 月亮牌陣（情緒與週期）</span>
+                            </label>
+                            <label class="suite-chip-radio">
+                                <input type="radio" name="spread" value="horseshoe" toolparamdescription="塔羅牌陣：horseshoe 七星馬蹄">
+                                <span>🐴 馬蹄形（發展路徑）</span>
+                            </label>
+                            <label class="suite-chip-radio">
+                                <input type="radio" name="spread" value="celtic" toolparamdescription="塔羅牌陣：celtic 凱爾特十字">
+                                <span>⚔️ 凱爾特十字（全方位）</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="suite-form-group" id="threeVariantGroup">
+                        <label for="tarotVariant">三牌陣解讀視角</label>
                         <select class="form-control" id="tarotVariant" name="variant" toolparamdescription="三牌陣解讀視角：timeline、situation、relationship 或 decision">
-                        <option value="timeline" selected>時間流向（過去起因 ➔ 現在現狀 ➔ 未來趨勢）</option>
-                        <option value="relationship">感情關係（我的狀態 ➔ 對方狀態 ➔ 雙方關係走向）</option>
-                        <option value="decision">抉擇行動（面臨情境 ➔ 可行方案 ➔ 預期結果）</option>
-                    </select>
+                            <option value="timeline" selected>時間流向（過去起因 ➔ 現在現狀 ➔ 未來趨勢）</option>
+                            <option value="relationship">感情關係（我的狀態 ➔ 對方狀態 ➔ 雙方關係走向）</option>
+                            <option value="decision">抉擇行動（面臨情境 ➔ 可行方案 ➔ 預期結果）</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Numerology Mode Fields -->
+                <div id="tarotNumerologyFields" style="<%= (typeof activeMode !== 'undefined' && activeMode === 'numerology') ? '' : 'display: none;' %>">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="suite-form-label" for="tarotBirthDate">出生日期（西元年月日）<span style="color:#f43f5e;">*</span></label>
+                            <input type="date" class="form-control input-lg" id="tarotBirthDate" name="birthDate" value="1995-08-18">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="suite-form-label" for="tarotNumerologyQuestion">想針對天賦特質詢問的事（選填）</label>
+                            <input type="text" class="form-control input-lg" id="tarotNumerologyQuestion" name="numQuestion" placeholder="例如：我的靈魂天賦如何運用在工作與感情上？">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Mode Fields -->
+                <div id="tarotGalleryFields" style="<%= (typeof activeMode !== 'undefined' && activeMode === 'gallery') ? '' : 'display: none;' %>">
+                    <div style="font-size: 14px; color: var(--suite-text-muted); margin-bottom: 12px;">
+                        點擊下方按鈕可立即切換花色檢視，點擊任何卡牌即可展開高清原畫、占星對應與正逆位牌義。
+                    </div>
                 </div>
 
                 <div id="suiteTurnstileWrapper" style="margin-top: 12px; margin-bottom: 14px;">
@@ -134,7 +211,7 @@
                 </div>
 
                 <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
-                    <span>✨ 開始占卜並查看解讀</span>
+                    <span><%= (typeof activeMode !== 'undefined' && activeMode === 'numerology') ? '🔥 立即揭秘靈魂象徵牌 ➔' : (typeof activeMode !== 'undefined' && activeMode === 'gallery') ? '🗂️ 瀏覽 78 張牌庫 ➔' : '✨ 開始占卜並查看解讀' %></span>
                 </button>
             </form>
 

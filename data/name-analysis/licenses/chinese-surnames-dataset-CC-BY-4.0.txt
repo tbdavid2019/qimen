@@ -1,0 +1,72 @@
+Chinese Surnames Dataset — Data License
+
+Creative Commons Attribution 4.0 International
+CC BY 4.0
+
+Copyright © 2026 liziqing and contributors.
+
+1. Scope
+
+This license applies to the dataset contained in:
+
+- surnames.json
+
+It also applies to future dataset files in this repository when those files
+explicitly state that they are licensed under CC BY 4.0.
+
+This license does not apply to source code, validation scripts, workflows,
+or software documentation. Those materials are licensed separately under
+the MIT License contained in the LICENSE file.
+
+2. Permission
+
+Subject to the terms of the Creative Commons Attribution 4.0 International
+License, you may:
+
+- copy and redistribute the dataset in any medium or format;
+- adapt, transform, and build upon the dataset;
+- use the dataset for commercial and non-commercial purposes.
+
+3. Attribution
+
+When reusing or redistributing the dataset, you must provide appropriate
+credit, include a reference to the CC BY 4.0 license, and indicate whether
+you made changes.
+
+Suggested attribution:
+
+Chinese Surnames Dataset, maintained by liziqing and contributors,
+https://github.com/liziqing/chinese-surnames-dataset,
+licensed under Creative Commons Attribution 4.0 International.
+
+Attribution may be provided in project documentation, credits, dataset
+metadata, an acknowledgements page, or another reasonable location
+appropriate to the reuse context.
+
+4. Modified Versions
+
+If you modify the dataset, clearly indicate that changes were made. Do not
+imply that the maintainers endorse, sponsor, or have verified your modified
+version.
+
+5. No Additional Restrictions
+
+You may not apply legal terms or technological measures that legally
+restrict others from exercising the rights granted by the license.
+
+6. Disclaimer
+
+The dataset is provided as-is, without warranties of any kind. Historical
+origin narratives, regional variants, traditional classifications, and
+multilingual descriptions may contain uncertainty or reflect differing
+sources and traditions.
+
+This notice summarizes the applicable license. If this notice conflicts
+with the official Creative Commons legal code, the official legal code
+controls.
+
+Official license summary:
+https://creativecommons.org/licenses/by/4.0/
+
+Official legal code:
+https://creativecommons.org/licenses/by/4.0/legalcode

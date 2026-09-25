@@ -5,7 +5,7 @@
  */
 
 const path = require('path');
-const { drawCards, SPREADS } = require(path.join(__dirname, '../../../lib/tarot.js'));
+const { drawCards, SPREADS, calculateTarotNumerology } = require(path.join(__dirname, '../../../lib/tarot.js'));
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -26,6 +26,11 @@ function parseArgs() {
             params.timeFactor = args[++i];
         } else if (arg === '--variant' && args[i + 1]) {
             params.variant = args[++i];
+        } else if ((arg === '--birth-date' || arg === '--birthDate' || arg === '-d') && args[i + 1]) {
+            params.birthDate = args[++i];
+            params.mode = 'numerology';
+        } else if (arg === '--numerology') {
+            params.mode = 'numerology';
         }
     }
 
@@ -35,6 +40,15 @@ function parseArgs() {
 function run() {
     try {
         const params = parseArgs();
+        if (params.mode === 'numerology' || params.birthDate) {
+            const numResult = calculateTarotNumerology(params.birthDate);
+            if (numResult.error) {
+                console.error(JSON.stringify({ success: false, error: numResult.error }));
+                process.exit(1);
+            }
+            console.log(JSON.stringify({ success: true, ...numResult }, null, 2));
+            return;
+        }
         const result = drawCards(params);
         console.log(JSON.stringify(result, null, 2));
     } catch (err) {

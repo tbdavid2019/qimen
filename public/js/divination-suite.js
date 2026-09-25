@@ -36,17 +36,35 @@
 
     // --- Visual Board Renderers ---
 
+    let currentTarotReading = null;
+    let tarotAllCards = null;
+
     function renderTarot(reading) {
         if (!reading || !reading.cards) return;
-        const cardsHtml = reading.cards.map((card) => {
+        currentTarotReading = reading;
+
+        const cardsHtml = reading.cards.map((card, idx) => {
             const isUpright = card.orientation === '正位';
+            const imgPath = card.imageUrl || (card.image ? `/images/tarot/cards/${card.image}` : '');
+            const kw = card.keywords ? (isUpright ? card.keywords.upright : card.keywords.reversed) : null;
             return `
-                <div class="tarot-card-item">
-                    <span class="tarot-pos-badge">${escapeHtml(card.position)}</span>
+                <div class="tarot-card-item tarot-card-interactive" data-tarot-idx="${idx}">
+                    <span class="tarot-pos-badge">${escapeHtml(card.position || '')}</span>
+                    <div class="tarot-card-img-wrap ${isUpright ? 'upright' : 'reversed'}">
+                        ${imgPath ? `<img src="${escapeHtml(imgPath)}" alt="${escapeHtml(card.name)}" class="tarot-card-img ${isUpright ? '' : 'reversed'}" loading="lazy">` : ''}
+                    </div>
                     <div class="tarot-card-name">${escapeHtml(card.name)}</div>
+                    ${card.nameEn || card.name_en ? `<div class="tarot-card-en">${escapeHtml(card.nameEn || card.name_en)}</div>` : ''}
                     <span class="tarot-orientation ${isUpright ? 'upright' : 'reversed'}">${escapeHtml(card.orientation)}</span>
-                    <div style="font-size: var(--type-caption); margin-top:4px; color:var(--suite-text-muted);">屬${escapeHtml(card.element || '')} · ${escapeHtml(card.suit || '')}</div>
+                    <div class="tarot-card-attr">屬${escapeHtml(card.element || '')} · ${escapeHtml(card.suit || '')}</div>
+                    ${kw ? `
+                        <div class="tarot-kw-compact">
+                            <span class="tarot-kw-pill"><b>${isUpright ? '正' : '逆'}</b> ${escapeHtml(kw.theme || '')}</span>
+                            <span class="tarot-kw-pill">${escapeHtml(kw.action || '')}</span>
+                        </div>
+                    ` : ''}
                     ${card.isMajor ? '<div class="tarot-major-tag">★ 大阿爾克那</div>' : ''}
+                    <div class="tarot-click-hint">🔍 點擊看大圖與牌義</div>
                 </div>
             `;
         }).join('');
@@ -80,6 +98,247 @@
             ${relationsHtml}
         `;
         visualBoard.hidden = false;
+
+        const cardsGrid = visualBoard.querySelector('.tarot-cards-grid');
+        if (cardsGrid) {
+            cardsGrid.addEventListener('click', (e) => {
+                const item = e.target.closest('.tarot-card-interactive');
+                if (!item) return;
+                const idx = item.dataset.tarotIdx;
+                if (idx !== undefined && currentTarotReading && currentTarotReading.cards[idx]) {
+                    showTarotModal(currentTarotReading.cards[idx]);
+                }
+            });
+        }
+    }
+
+    function renderTarotNumerology(numerologyData) {
+        if (!numerologyData || !numerologyData.soulCard) return;
+        const soul = numerologyData.soulCard;
+        const imgPath = soul.imageUrl || (soul.image ? `/images/tarot/cards/${soul.image}` : '');
+        const kwUp = soul.keywords ? soul.keywords.upright : null;
+        const kwRev = soul.keywords ? soul.keywords.reversed : null;
+
+        visualBoard.innerHTML = `
+            <div class="suite-board-title">🔢 生命靈數與靈魂象徵牌</div>
+            <div class="tarot-numerology-board">
+                <div class="num-sub-label">你的生命靈數</div>
+                <div class="tarot-num-big">${escapeHtml(String(numerologyData.lifeNumber))}</div>
+
+                <div class="tarot-num-card-center">
+                    <div class="tarot-num-img-wrap tarot-card-interactive" id="numerologySoulCardClick">
+                        ${imgPath ? `<img src="${escapeHtml(imgPath)}" alt="${escapeHtml(soul.name)}" class="tarot-num-card-img">` : ''}
+                    </div>
+                    <div class="tarot-num-card-title">
+                        靈魂象徵牌 · ${escapeHtml(soul.name)} <small>(${escapeHtml(soul.nameEn || '')})</small>
+                    </div>
+                </div>
+
+                <div class="tarot-num-summary-box">
+                    <div class="tarot-num-summary-quote">「${escapeHtml(soul.summary || '')}」</div>
+                </div>
+
+                <div class="tarot-num-formula">
+                    🧮 計算歷程：<strong>${escapeHtml(numerologyData.formula || numerologyData.steps?.join(' ➔ ') || '')}</strong>
+                </div>
+
+                <div class="tarot-num-tip">
+                    💡 以西元出生年月日各數位相加至個位數，即為生命靈數（1~9 對應大阿爾克那九大靈魂原型）
+                </div>
+
+                ${kwUp ? `
+                <div class="tarot-num-traits-grid">
+                    <div class="tarot-trait-card trait-upright">
+                        <div class="tarot-trait-title">✨ 正位賦能 · 天賦特質</div>
+                        <div class="tarot-trait-desc">
+                            <span><b>核心主題：</b>${escapeHtml(kwUp.theme || '')}</span><br>
+                            <span><b>天賦行動：</b>${escapeHtml(kwUp.action || '')}</span><br>
+                            <span><b>前進方向：</b>${escapeHtml(kwUp.direction || '')}</span>
+                        </div>
+                    </div>
+                    <div class="tarot-trait-card trait-reversed">
+                        <div class="tarot-trait-title">⚠️ 逆位警惕 · 人生盲點</div>
+                        <div class="tarot-trait-desc">
+                            <span><b>潛在執念：</b>${escapeHtml(kwRev?.theme || '')}</span><br>
+                            <span><b>容易陷入：</b>${escapeHtml(kwRev?.action || '')}</span><br>
+                            <span><b>修煉功課：</b>${escapeHtml(kwRev?.direction || '')}</span>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+        `;
+        visualBoard.hidden = false;
+
+        const soulCardWrap = document.getElementById('numerologySoulCardClick');
+        if (soulCardWrap) {
+            soulCardWrap.addEventListener('click', () => {
+                showTarotModal({
+                    ...soul,
+                    orientation: '正位',
+                    position: '靈魂象徵牌'
+                });
+            });
+        }
+    }
+
+    async function renderTarotGallery(filter = 'all') {
+        visualBoard.innerHTML = `
+            <div class="suite-board-title">🗂️ 偉特塔羅 78 張牌庫圖鑑</div>
+            <div class="tarot-gallery-filter-chips">
+                <button type="button" class="gallery-chip ${filter === 'all' ? 'active' : ''}" data-filter="all">全部 (78)</button>
+                <button type="button" class="gallery-chip ${filter === 'major' ? 'active' : ''}" data-filter="major">大阿爾克那 (22)</button>
+                <button type="button" class="gallery-chip ${filter === 'wands' ? 'active' : ''}" data-filter="wands">權杖 (14)</button>
+                <button type="button" class="gallery-chip ${filter === 'cups' ? 'active' : ''}" data-filter="cups">聖杯 (14)</button>
+                <button type="button" class="gallery-chip ${filter === 'swords' ? 'active' : ''}" data-filter="swords">寶劍 (14)</button>
+                <button type="button" class="gallery-chip ${filter === 'coins' ? 'active' : ''}" data-filter="coins">星幣 (14)</button>
+            </div>
+            <div class="tarot-gallery-loading" id="tarotGalleryLoading" style="text-align:center; padding:20px; color:var(--suite-text-muted);">正在載入牌庫…</div>
+            <div class="tarot-gallery-grid" id="tarotGalleryGrid"></div>
+        `;
+        visualBoard.hidden = false;
+
+        try {
+            if (!tarotAllCards) {
+                const res = await fetch('/api/tarot/cards');
+                const data = await res.json();
+                if (data.success && data.cards) {
+                    tarotAllCards = data.cards;
+                }
+            }
+            const grid = document.getElementById('tarotGalleryGrid');
+            const loading = document.getElementById('tarotGalleryLoading');
+            if (loading) loading.style.display = 'none';
+
+            let list = tarotAllCards || [];
+            if (filter !== 'all') {
+                list = list.filter((c) => c.suit === filter);
+            }
+
+            if (grid) {
+                grid.innerHTML = list.map((card) => `
+                    <div class="tarot-gallery-card tarot-card-interactive" data-card-id="${card.id}">
+                        <div class="tarot-gallery-img-wrap">
+                            <img src="${card.imageUrl || ('/images/tarot/cards/' + card.image)}" alt="${escapeHtml(card.name)}" loading="lazy">
+                        </div>
+                        <div class="tarot-gallery-name">${escapeHtml(card.name)}</div>
+                        <div class="tarot-gallery-en">${escapeHtml(card.nameEn || '')}</div>
+                    </div>
+                `).join('');
+
+                grid.addEventListener('click', (e) => {
+                    const el = e.target.closest('.tarot-gallery-card');
+                    if (!el) return;
+                    const cardId = Number(el.dataset.cardId);
+                    const found = list.find((c) => c.id === cardId);
+                    if (found) {
+                        showTarotModal({
+                            ...found,
+                            orientation: '正位',
+                            position: '牌庫檢視'
+                        });
+                    }
+                });
+            }
+
+            const filterChips = visualBoard.querySelectorAll('.gallery-chip');
+            filterChips.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    renderTarotGallery(btn.dataset.filter);
+                });
+            });
+        } catch (e) {
+            console.error('Failed to load gallery:', e);
+        }
+    }
+
+    function showTarotModal(card) {
+        if (!card) return;
+        const isUpright = card.orientation !== '逆位';
+        const imgPath = card.imageUrl || (card.image ? `/images/tarot/cards/${card.image}` : '');
+        const kwUp = card.keywords?.upright || {};
+        const kwRev = card.keywords?.reversed || {};
+
+        let modalEl = document.getElementById('tarotCardModal');
+        if (!modalEl) {
+            modalEl = document.createElement('div');
+            modalEl.id = 'tarotCardModal';
+            modalEl.className = 'tarot-modal-mask';
+            document.body.appendChild(modalEl);
+        }
+
+        modalEl.innerHTML = `
+            <div class="tarot-modal-dialog">
+                <button type="button" class="tarot-modal-close" aria-label="關閉">&times;</button>
+                <div class="tarot-modal-body">
+                    <div class="tarot-modal-img-col">
+                        <div class="tarot-modal-img-wrap ${isUpright ? 'upright' : 'reversed'}">
+                            ${imgPath ? `<img src="${escapeHtml(imgPath)}" alt="${escapeHtml(card.name)}" class="tarot-modal-img ${isUpright ? '' : 'reversed'}">` : ''}
+                        </div>
+                    </div>
+                    <div class="tarot-modal-info-col">
+                        <div class="tarot-modal-header">
+                            <h2 class="tarot-modal-title">${escapeHtml(card.name)} <small>${escapeHtml(card.nameEn || '')}</small></h2>
+                            <div class="tarot-modal-tags">
+                                <span class="tarot-orientation ${isUpright ? 'upright' : 'reversed'}">${isUpright ? '正位' : '逆位'}</span>
+                                ${card.position ? `<span class="tarot-pos-badge">${escapeHtml(card.position)}</span>` : ''}
+                                ${card.isMajor || card.is_major ? '<span class="tarot-major-tag">★ 大阿爾克那</span>' : ''}
+                                ${card.element ? `<span class="suite-tag">屬${escapeHtml(card.element)}</span>` : ''}
+                            </div>
+                        </div>
+
+                        ${card.astro ? `
+                            <div class="tarot-modal-astro">
+                                🌌 <strong>占星對應：</strong>元素 ${escapeHtml(card.astro.element || '')} · ${escapeHtml(card.astro.planet || '')}${card.astro.note ? `（${escapeHtml(card.astro.note)}）` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${card.summary ? `
+                            <div class="tarot-modal-summary">
+                                「${escapeHtml(card.summary)}」
+                            </div>
+                        ` : ''}
+
+                        <div class="tarot-modal-kw-section">
+                            <div class="tarot-kw-box upright">
+                                <div class="kw-box-title">🌟 正位牌義關鍵字</div>
+                                <div class="kw-box-row"><span>主題：</span><strong>${escapeHtml(kwUp.theme || '—')}</strong></div>
+                                <div class="kw-box-row"><span>行動：</span><strong>${escapeHtml(kwUp.action || '—')}</strong></div>
+                                <div class="kw-box-row"><span>方向：</span><strong>${escapeHtml(kwUp.direction || '—')}</strong></div>
+                            </div>
+                            <div class="tarot-kw-box reversed">
+                                <div class="kw-box-title">🔄 逆位牌義關鍵字</div>
+                                <div class="kw-box-row"><span>主題：</span><strong>${escapeHtml(kwRev.theme || '—')}</strong></div>
+                                <div class="kw-box-row"><span>行動：</span><strong>${escapeHtml(kwRev.action || '—')}</strong></div>
+                                <div class="kw-box-row"><span>方向：</span><strong>${escapeHtml(kwRev.direction || '—')}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        modalEl.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+
+        const closeModal = () => {
+            modalEl.style.display = 'none';
+            document.body.style.overflow = '';
+        };
+
+        const closeBtn = modalEl.querySelector('.tarot-modal-close');
+        if (closeBtn) closeBtn.onclick = closeModal;
+        modalEl.onclick = (e) => {
+            if (e.target === modalEl) closeModal();
+        };
+
+        const onEsc = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', onEsc);
+            }
+        };
+        document.addEventListener('keydown', onEsc);
     }
 
     function renderBazi(chart) {
@@ -890,7 +1149,11 @@
 
     function renderVisual(data, payload) {
         if (page === 'ziwei') renderZiwei(data);
-        else if (page === 'tarot') renderTarot(data);
+        else if (page === 'tarot') {
+            if (data?.soulCard || payload?.mode === 'numerology') renderTarotNumerology(data);
+            else if (payload?.mode === 'gallery') renderTarotGallery('all');
+            else renderTarot(data);
+        }
         else if (page === 'bazi2') renderBazi(data);
         else if (page === 'fengshui') renderFengShui(data);
         else if (page === 'yinyuan') renderYinyuan(data, payload?.mode);
@@ -1031,7 +1294,19 @@
             };
         }
         if (page === 'tarot') {
+            const mode = document.getElementById('tarotMode')?.value || 'spread';
+            if (mode === 'numerology') {
+                return {
+                    mode: 'numerology',
+                    birthDate: val('birthDate') || document.getElementById('tarotBirthDate')?.value || '',
+                    question: val('numQuestion') || document.getElementById('tarotNumerologyQuestion')?.value || ''
+                };
+            }
+            if (mode === 'gallery') {
+                return { mode: 'gallery' };
+            }
             return {
+                mode: 'spread',
                 spread: form.elements['spread']?.value || 'three',
                 variant: val('variant') || 'timeline',
                 question
@@ -1328,6 +1603,49 @@
         yinyuan: '/api/yinyuan/reading'
     };
 
+    const chartOnlyBtn = document.getElementById('ziweiChartOnlyBtn');
+    chartOnlyBtn?.addEventListener('click', async () => {
+        const payload = buildPayload();
+        if (!payload.date) {
+            alert('請選擇出生日期');
+            return;
+        }
+
+        chartOnlyBtn.disabled = true;
+        const originalLabel = chartOnlyBtn.textContent;
+        chartOnlyBtn.textContent = '正在排盤…';
+        try {
+            const response = await fetch('/api/ziwei/chart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...payload, skipRecord: true })
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success || !data.chart) {
+                throw new Error(data.error || '排盤計算失敗');
+            }
+
+            lastResult = data.chart;
+            conversationHistory = [];
+            window.conversationHistory = conversationHistory;
+            if (aiSection) aiSection.hidden = true;
+            if (visualBoard) {
+                visualBoard.hidden = false;
+                renderVisual(data.chart, payload);
+                visualBoard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            const spouseCard = document.getElementById('spouseResultCard');
+            const maleSizeCard = document.getElementById('maleSizeResultCard');
+            if (spouseCard) spouseCard.hidden = true;
+            if (maleSizeCard) maleSizeCard.hidden = true;
+        } catch (error) {
+            alert(`錯誤：${error.message}`);
+        } finally {
+            chartOnlyBtn.disabled = false;
+            chartOnlyBtn.textContent = originalLabel;
+        }
+    });
+
     form?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = buildPayload();
@@ -1335,6 +1653,99 @@
         // Basic date validation for bazi2 and ziwei
         if ((page === 'bazi2' || page === 'ziwei') && !payload.date) {
             alert('請選擇出生日期');
+            return;
+        }
+
+        // Fast-Pass for Tarot Numerology (0.1s Deterministic)
+        if (page === 'tarot' && payload.mode === 'numerology') {
+            if (!payload.birthDate) {
+                alert('請選擇出生日期');
+                return;
+            }
+            if (submitBtn) submitBtn.disabled = true;
+            try {
+                const calcRes = await fetch('/api/tarot/numerology', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const calcData = await calcRes.json();
+                if (!calcData.success) throw new Error(calcData.error || '生命靈數計算失敗');
+
+                const numData = calcData.result || calcData.numerology || calcData;
+                renderTarotNumerology(numData);
+                lastResult = numData;
+                if (visualBoard) {
+                    visualBoard.hidden = false;
+                    visualBoard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                if (payload.question && payload.question.trim()) {
+                    let sToken = currentSuiteTurnstileToken;
+                    if (!sToken && window.turnstile && suiteTurnstileWidgetId !== null) {
+                        try { sToken = window.turnstile.getResponse(suiteTurnstileWidgetId); } catch (e) {}
+                    }
+                    const suiteTurnstileElem = document.getElementById('suite-turnstile');
+                    if (!sToken && suiteTurnstileElem && typeof suiteTurnstileElem.getAttribute === 'function' && suiteTurnstileElem.getAttribute('data-sitekey')) {
+                        alert('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊查看靈魂特質解讀！');
+                        return;
+                    }
+
+                    if (aiSection) aiSection.hidden = false;
+                    if (aiLoading) aiLoading.hidden = false;
+                    conversationStream.innerHTML = '';
+                    conversationHistory = [];
+                    window.conversationHistory = conversationHistory;
+
+                    const userQuestion = payload.question.trim();
+                    const aiRes = await fetch('/api/tarot/llm-analysis', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            result: numData,
+                            question: userQuestion,
+                            conversationHistory: [],
+                            'cf-turnstile-response': sToken || undefined,
+                            turnstileToken: sToken || undefined
+                        })
+                    });
+
+                    const aiData = await aiRes.json();
+                    if (aiLoading) aiLoading.hidden = true;
+
+                    if (aiData.success && aiData.analysis) {
+                        conversationHistory.push({ role: 'user', content: userQuestion });
+                        conversationHistory.push({ role: 'assistant', content: aiData.analysis });
+                        window.conversationHistory = conversationHistory;
+                        appendMessage('assistant', aiData.analysis);
+                        if (followUpForm) {
+                            followUpForm.hidden = false;
+                            renderSuiteFollowUpTurnstile();
+                        }
+                    } else {
+                        appendMessage('assistant', `⚠️ 解讀暫不可用：${aiData.error || '請稍後重試'}`);
+                    }
+                } else if (aiSection) {
+                    aiSection.hidden = true;
+                }
+            } catch (err) {
+                if (aiLoading) aiLoading.hidden = true;
+                alert(`錯誤：${err.message}`);
+            } finally {
+                resetSuiteTurnstile();
+                if (submitBtn) submitBtn.disabled = false;
+            }
+            return;
+        }
+
+        // Fast-Pass for Tarot Gallery Mode
+        if (page === 'tarot' && payload.mode === 'gallery') {
+            renderTarotGallery('all');
+            if (visualBoard) {
+                visualBoard.hidden = false;
+                visualBoard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            if (aiSection) aiSection.hidden = true;
             return;
         }
 
@@ -1584,6 +1995,7 @@
         const btnModeSpouse = document.getElementById('btnModeSpouse');
         const btnModeMaleSize = document.getElementById('btnModeMaleSize');
         const ziweiModeInput = document.getElementById('ziweiMode');
+        const chartOnlyButton = document.getElementById('ziweiChartOnlyBtn');
         const spouseBanner = document.getElementById('spouseBanner');
         const maleSizeBanner = document.getElementById('maleSizeBanner');
         const ziweiQuestionGroup = document.getElementById('ziweiQuestionGroup');
@@ -1639,12 +2051,14 @@
                 if (ziweiQuestionGroup) ziweiQuestionGroup.style.display = '';
                 if (turnstileWrapper) turnstileWrapper.style.display = '';
                 if (submitBtn) submitBtn.textContent = '✨ 排盤並查看命理解讀';
+                if (chartOnlyButton) chartOnlyButton.hidden = false;
                 if (spouseResultCard) spouseResultCard.hidden = true;
                 if (maleSizeResultCard) maleSizeResultCard.hidden = true;
                 if (updateUrl && window.history?.pushState && location.pathname !== '/ziwei') {
                     window.history.pushState({ mode: 'chart' }, '', '/ziwei');
                 }
             }
+            if (chartOnlyButton && mode !== 'chart') chartOnlyButton.hidden = true;
         }
 
         btnModeChart?.addEventListener('click', () => setZiweiMode('chart', true));
@@ -1718,6 +2132,88 @@
                 if (!isNaN(hour) && hourToShichen[hour]) {
                     ziweiShichenSelect.value = hourToShichen[hour];
                 }
+            }
+        });
+
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+    }
+
+    // --- Dynamic Mode Switcher for Tarot (Spread / Numerology / Gallery) ---
+    if (page === 'tarot') {
+        const btnModeSpread = document.getElementById('btnModeSpread');
+        const btnModeNumerology = document.getElementById('btnModeNumerology');
+        const btnModeGallery = document.getElementById('btnModeGallery');
+        const tarotModeInput = document.getElementById('tarotMode');
+        const numerologyBanner = document.getElementById('numerologyBanner');
+        const galleryBanner = document.getElementById('galleryBanner');
+        const tarotSpreadFields = document.getElementById('tarotSpreadFields');
+        const tarotNumerologyFields = document.getElementById('tarotNumerologyFields');
+        const tarotGalleryFields = document.getElementById('tarotGalleryFields');
+
+        function setTarotMode(mode, updateUrl = true) {
+            btnModeSpread?.classList.toggle('active', mode === 'spread');
+            btnModeNumerology?.classList.toggle('active', mode === 'numerology');
+            btnModeGallery?.classList.toggle('active', mode === 'gallery');
+
+            if (tarotModeInput) tarotModeInput.value = mode;
+
+            if (mode === 'numerology') {
+                if (numerologyBanner) numerologyBanner.style.display = 'block';
+                if (galleryBanner) galleryBanner.style.display = 'none';
+                if (tarotSpreadFields) tarotSpreadFields.style.display = 'none';
+                if (tarotNumerologyFields) tarotNumerologyFields.style.display = 'block';
+                if (tarotGalleryFields) tarotGalleryFields.style.display = 'none';
+                if (submitBtn) submitBtn.innerHTML = '<span>🔥 立即揭秘靈魂象徵牌 ➔</span>';
+                if (visualBoard) visualBoard.hidden = true;
+                if (aiSection) aiSection.hidden = true;
+                if (updateUrl && window.history?.pushState && location.pathname !== '/tarot/numerology') {
+                    window.history.pushState({ mode: 'numerology' }, '', '/tarot/numerology');
+                }
+            } else if (mode === 'gallery') {
+                if (galleryBanner) galleryBanner.style.display = 'block';
+                if (numerologyBanner) numerologyBanner.style.display = 'none';
+                if (tarotSpreadFields) tarotSpreadFields.style.display = 'none';
+                if (tarotNumerologyFields) tarotNumerologyFields.style.display = 'none';
+                if (tarotGalleryFields) tarotGalleryFields.style.display = 'block';
+                if (submitBtn) submitBtn.innerHTML = '<span>🗂️ 瀏覽 78 張牌庫 ➔</span>';
+                renderTarotGallery('all');
+                if (updateUrl && window.history?.pushState && location.pathname !== '/tarot/gallery') {
+                    window.history.pushState({ mode: 'gallery' }, '', '/tarot/gallery');
+                }
+            } else {
+                // Default: spread
+                if (numerologyBanner) numerologyBanner.style.display = 'none';
+                if (galleryBanner) galleryBanner.style.display = 'none';
+                if (tarotSpreadFields) tarotSpreadFields.style.display = 'block';
+                if (tarotNumerologyFields) tarotNumerologyFields.style.display = 'none';
+                if (tarotGalleryFields) tarotGalleryFields.style.display = 'none';
+                if (submitBtn) submitBtn.innerHTML = '<span>✨ 開始占卜並查看解讀 ➔</span>';
+                if (updateUrl && window.history?.pushState && location.pathname !== '/tarot') {
+                    window.history.pushState({ mode: 'spread' }, '', '/tarot');
+                }
+            }
+        }
+
+        btnModeSpread?.addEventListener('click', () => setTarotMode('spread', true));
+        btnModeNumerology?.addEventListener('click', () => setTarotMode('numerology', true));
+        btnModeGallery?.addEventListener('click', () => setTarotMode('gallery', true));
+
+        // Initial setup from URL / state
+        const initialMode = tarotModeInput?.value || (window.location.pathname.includes('numerology') ? 'numerology' : window.location.pathname.includes('gallery') ? 'gallery' : 'spread');
+        if (initialMode && initialMode !== 'spread') {
+            setTarotMode(initialMode, false);
+        }
+
+        window.addEventListener('popstate', (e) => {
+            const path = window.location.pathname;
+            if (path === '/tarot/numerology' || e.state?.mode === 'numerology') {
+                setTarotMode('numerology', false);
+            } else if (path === '/tarot/gallery' || e.state?.mode === 'gallery') {
+                setTarotMode('gallery', false);
+            } else {
+                setTarotMode('spread', false);
             }
         });
 

@@ -261,8 +261,8 @@ test("紫微頁面會保留宣告式排盤並註冊確定性男生尺寸與未�
 		const WebMCP = require("../public/js/webmcp");
 		WebMCP.resetForTesting();
 		await WebMCP.registerAllTools();
-		assert.deepEqual(registered, ["ziwei_male_size", "ziwei_future_spouse", "switch_theme", "send_conversation_email"]);
-		assert.deepEqual(WebMCP.getRegisteredTools(), ["ziwei_male_size", "ziwei_future_spouse", "switch_theme", "send_conversation_email"]);
+		assert.deepEqual(registered, ["ziwei_chart_only", "ziwei_male_size", "ziwei_future_spouse", "switch_theme", "send_conversation_email"]);
+		assert.deepEqual(WebMCP.getRegisteredTools(), ["ziwei_chart_only", "ziwei_male_size", "ziwei_future_spouse", "switch_theme", "send_conversation_email"]);
 	} finally {
 		if (previousWindow === undefined) delete global.window;
 		else global.window = previousWindow;

@@ -1,0 +1,41 @@
+{
+  "version": "name-method-profiles-v1",
+  "dataVersion": "name-data-2026-09-v1",
+  "sharedMethods": {
+    "surnameSegmentation": { "id": "surname-index-longest-first-v1", "source": "surname-index.json", "behavior": "Return every indexed prefix segmentation; do not calculate surname-based results unless explicit or unique." },
+    "numerology81": { "id": "traditional-81-v1", "source": "81-numerology.json", "sourceDataset": "babyname/fate internal/wuge/dayan.go; category labels only" },
+    "characterElements": { "id": "shunshi-character-wuxing-v1", "source": "chars.json.gz", "behavior": "Use source attribution only; missing values remain unknown." },
+    "characterReading": { "id": "shunshi-reading-gloss-v1", "source": "definitions.json.gz and chars.json.gz", "behavior": "Pinyin is not context-resolved for polyphonic characters; definitions are dictionary glosses." },
+    "longGivenNameExtension": { "id": "long-given-name-five-grid-extension-v1", "scope": "Given-name portion longer than two characters; report as an extension, not a universal classical convention." }
+  },
+  "profiles": {
+    "taiwanKangxi": {
+      "id": "taiwan-kangxi-v1",
+      "strokeField": "kx",
+      "source": "shunshi-kangxi-core 0.1.1",
+      "license": "MIT",
+      "fiveGrid": "single surname: surname stroke + 1; compound surname: surname sum; person: final surname character + first given character; single given character: stroke + 1; multi-character given name: given stroke sum; outer: heaven + earth - person; total: full name sum wrapped to 1..81",
+      "threeTalents": "element from final digit: 1/2 wood, 3/4 fire, 5/6 earth, 7/8 metal, 9/0 water"
+    },
+    "modern": {
+      "id": "modern-stroke-v1",
+      "strokeField": "bs",
+      "source": "shunshi-kangxi-core 0.1.1",
+      "license": "MIT",
+      "fiveGrid": "same arithmetic as taiwanKangxi, using modern strokes",
+      "threeTalents": "same final-digit mapping as taiwanKangxi"
+    }
+  },
+  "unsupported": {
+    "zodiacRadicalAssociations": "Not enabled: no reviewed complete source with confirmed redistribution rights and documented method.",
+    "genderedStyles": "Not enabled: current name-character pool does not carry validated gender or style metadata; preferences are not inferred."
+  },
+  "optionalBirthDataLens": {
+    "id": "local-bazi-useful-element-alignment-v1",
+    "source": "Project's existing Node.js lib/bazi2.js",
+    "inputs": "Only when explicitly supplied: date, sex, calendar, optional lunar leap-month flag and ziMode, and time/shichen or explicit unknown-hour choice",
+    "behavior": "Lists name characters whose dictionary element matches useful elements from the local Bazi calculation. Generation may use those elements as a soft ordering preference; no single compatibility score is calculated.",
+    "privacy": "Birth fields are calculated in-process and excluded from the LLM prompt. Without place coordinates, true-solar-time correction is not applied."
+  },
+  "interpretiveNotice": "These methods are traditional cultural conventions, not empirically validated predictors. Three-or-more-character given names are labeled as an extension because schools differ."
+}
