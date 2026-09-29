@@ -175,7 +175,9 @@
 
 ### 分析結果寄送
 
-- 奇門以外八個服務頁面會在收到有效的計算或解讀結果後顯示「寄送本次結果」。寄送內容取自最近一次成功 API 回應，包含完整結構化結果與解讀，支援姓名驗證／候選、紫微純排盤與專題測算、梅花、八字、塔羅牌陣與生命靈數、風水、月老及解答之書。
+- 奇門以外八個服務頁面會在收到有效的計算或解讀結果後顯示「寄送本次結果」。
+- **人類友善排版 (Human-Readable Metaphysics Email Formatter)**：專屬命理郵件格式化引擎 (`lib/email-formatter.js`) 將姓名分析（取名候選/姓名評估）、紫微斗數、韋特塔羅/生命靈數、梅花易數、八字命理、易經風水、月老姻緣與解答之書自動轉換為結構清晰、字義與數理完整的大師解盤 Markdown 報告，杜絕任何 raw JSON 代碼塊或 `/api/...` 程式路徑，並以溫潤排版呈現在使用者信箱中。
+- **寄送視窗與體驗優化**：送出後即時回饋「已成功寄送 ✓」並鎖定按鈕避免二次誤觸，於 1.8 秒後自動關閉彈窗，維持與首頁奇門一致的高質感互動體驗。
 - 郵件由 `POST /api/conversation/send-email` 經 Resend 寄出；啟用 Cloudflare Turnstile 時需附 `cf-turnstile-response`（action `send_email`）。頁面會記住收件信箱於目前瀏覽器的 localStorage，不會將郵件地址寫入分析結果。
 - WebMCP `send_conversation_email` 可接收 `email`、`service`、`subject`、`history`；未提供 `history` 時會使用頁面現存的完整結果／對話作為寄送內容，並依 Turnstile 設定完成驗證。
 - 寄送結果資料上限為 900 KiB；超過時 API 回傳 HTTP 413。奇門保留原有盤面摘要與完整多輪對話寄送按鈕。
