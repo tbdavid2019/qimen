@@ -35,6 +35,7 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 		"answerbook_reading",
 		"ziwei_male_size",
 		"ziwei_future_spouse",
+		"liuyao_cast_divination",
 	];
 
 	for (const toolName of expectedTools) {
@@ -161,6 +162,26 @@ test("WebMCP 風水佈局評估工具提供嚴格九宮與路徑契約", () => {
 	assert.equal(tool.inputSchema.properties.layoutObjects.properties["南"].maxItems, 63);
 	assert.equal(tool.inputSchema.properties.entryPath.maxItems, 9);
 	assert.deepEqual(tool.inputSchema.properties.entryPath.items.enum, ["東南", "南", "西南", "東", "中", "西", "東北", "北", "西北"]);
+});
+
+test("六爻神卦 WebMCP schema 符合完整納甲契約", () => {
+	const WebMCP = require("../public/js/webmcp");
+	const tool = WebMCP.tools.liuyao_cast_divination;
+	assert.ok(tool, "缺少 liuyao_cast_divination 工具");
+	assert.deepEqual(tool.inputSchema.required, ["question"]);
+	const props = tool.inputSchema.properties;
+	assert.ok(props.question);
+	assert.ok(props.category);
+	assert.ok(props.category.enum.includes("求財投資"));
+	assert.ok(props.category.enum.includes("事業升遷"));
+	assert.ok(props.category.enum.includes("戀愛婚姻"));
+	assert.ok(props.method);
+	assert.deepEqual(props.method.enum, ["coins", "dayan", "datetime", "manual"]);
+	assert.ok(props.lines);
+	assert.equal(props.lines.type, "array");
+	assert.equal(props.lines.minItems, 6);
+	assert.equal(props.lines.maxItems, 6);
+	assert.deepEqual(props.lines.items.enum, [6, 7, 8, 9]);
 });
 
 test("解答之書 WebMCP schema 支援兩種模式", () => {
@@ -306,12 +327,45 @@ test("術數套件頁面都提供宣告式 WebMCP 表單欄位", () => {
 		tarot: ["tarotQuestion"],
 		fengshui: ["fengshuiQuestion", "fengshuiFacing"],
 		bazi2: ["baziQuestion", "baziDate"],
-		yinyuan: ["yinyuanQuestion", "yinyuanMode"]
+		yinyuan: ["yinyuanQuestion", "yinyuanMode"],
+		liuyao: ["userQuestionInput", "liuyaoCategory"]
 	};
 	for (const [page, ids] of Object.entries(pages)) {
 		const html = read(`views/${page}.html`);
 		assert.match(html, /<form[^>]*id="suiteForm"[^>]*toolautosubmit/, page);
 		for (const id of ids) assert.match(html, new RegExp(`<[^>]+id="${id}"[^>]*toolparamdescription=`), `${page} ${id}`);
+	}
+});
+
+test("六爻頁面會保留宣告式排盤並註冊主題與郵件工具", async () => {
+	const previousWindow = global.window;
+	const previousDocument = global.document;
+	const registered = [];
+	global.window = { location: { pathname: "/liuyao" } };
+	global.document = {
+		readyState: "loading",
+		addEventListener: () => {},
+		modelContext: {
+			registerTool: async (tool) => {
+				registered.push(tool.name);
+			},
+		},
+		querySelectorAll: (selector) => selector === "form[toolname]"
+			? [{ getAttribute: () => "liuyao_cast_divination" }]
+			: [],
+	};
+
+	try {
+		const WebMCP = require("../public/js/webmcp");
+		WebMCP.resetForTesting();
+		await WebMCP.registerAllTools();
+		assert.deepEqual(registered, ["switch_theme", "send_conversation_email"]);
+		assert.deepEqual(WebMCP.getRegisteredTools(), ["switch_theme", "send_conversation_email"]);
+	} finally {
+		if (previousWindow === undefined) delete global.window;
+		else global.window = previousWindow;
+		if (previousDocument === undefined) delete global.document;
+		else global.document = previousDocument;
 	}
 });
 

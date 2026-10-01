@@ -1624,6 +1624,26 @@
 				precision: { type: "string", enum: ["millisecond", "second"], default: "millisecond", description: "邊界精度" }
 			},
 			required: ["startDate", "endDate"]
+		}),
+		liuyao_cast_divination: createSuiteTool("liuyao_cast_divination", "六爻神卦排盤與納甲筮法解讀（京房八宮六十四卦、世應六親六獸、伏神旬空與朱熹七規）。", "/api/liuyao-question", {
+			type: "object",
+			properties: {
+				question: { type: "string", description: "使用者欲占問之具體事項（如：今年下半年換工作發展如何？）" },
+				category: { type: "string", enum: ["求財投資", "事業升遷", "考試學業", "戀愛婚姻", "身體健康", "求子生產", "出行尋物", "綜合運勢"], description: "占問分類（自動鎖定專屬用神）" },
+				method: { type: "string", enum: ["coins", "dayan", "datetime", "manual"], default: "coins", description: "起卦方式：coins 銅錢搖卦、dayan 大衍蓍草、datetime 時間起卦、manual 手動指定爻象" },
+				lines: {
+					type: "array",
+					items: { type: "integer", enum: [6, 7, 8, 9] },
+					minItems: 6,
+					maxItems: 6,
+					description: "初爻至上爻之六爻數值（6老陰變少陽、7少陽、8少陰、9老陽變少陰，初爻在 index 0）"
+				},
+				gender: { type: "string", enum: ["男", "女"], description: "問卦者性別（姻緣用神定世應/官鬼/妻財用）" },
+				datetime: { type: "string", description: "起卦時間 (ISO 8601 或 YYYY-MM-DD HH:mm:ss)" },
+				lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw", description: "解讀語言" },
+				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
+			},
+			required: ["question"]
 		})
 	});
 
@@ -1690,8 +1710,8 @@
 				toolDefinitions.switch_theme,
 				toolDefinitions.send_conversation_email
 			];
-		} else if (["/bazi2", "/yinyuan", "/answerbook"].includes(pathname)) {
-			const suiteTool = { "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
+		} else if (["/bazi2", "/yinyuan", "/answerbook", "/liuyao"].includes(pathname)) {
+			const suiteTool = { "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading", "/liuyao": "liuyao_cast_divination" }[pathname];
 			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme, toolDefinitions.send_conversation_email];
 		} else {
 			// Default / or /custom (具備對話紀錄與 #emailConversationModal)

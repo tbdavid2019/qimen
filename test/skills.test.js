@@ -82,6 +82,10 @@ test('所有獨立 CLI 腳本（bazi, qimen, ziwei, fengshui, yinyuan, tarot）�
     const trStdout = execSync('node skills/tarot-consultant/scripts/tarot_cli.js --spread three --seed 999', { encoding: 'utf-8' });
     const trRes = JSON.parse(trStdout);
     assert.equal(trRes.cards.length, 3);
+
+    const lyStdout = execSync('node skills/liuyao-consultant/scripts/ask_liuyao.js --lines 789687 --question 測試', { encoding: 'utf-8' });
+    const lyRes = JSON.parse(lyStdout);
+    assert.equal(lyRes.result.benGua.name, '山火賁');
 });
 
 test('風水 Skill evaluate-layout 模式路由本地 API 且不要求 question', async () => {

@@ -5,8 +5,8 @@
 > [!IMPORTANT]
 > **🤖 FOR AI AGENTS & LLMs**: 
 > This repository provides native Model Context Protocol (MCP), **WebMCP** (Chrome In-Browser Agent Tools) support, Standalone CLI Skills, and standard JSON REST APIs.
-> - **🌐 WebMCP (In-Browser Tools)**: Full support for Chrome WebMCP Imperative & Declarative API (`document.modelContext`). AI browser agents can directly discover and execute tools across all 7 divination services.
-> - **⚡ Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to access all 7 services via JSON-RPC 2.0 stdio.
+> - **🌐 WebMCP (In-Browser Tools)**: Full support for Chrome WebMCP Imperative & Declarative API (`document.modelContext`). AI browser agents can directly discover and execute tools across all 8 divination services.
+> - **⚡ Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to access all 8 services via JSON-RPC 2.0 stdio.
 > - **🚀 Production APIs**: Send POST requests to `https://qi.david888.com/api/` endpoints.
 > - **🧠 Consultant Skills**: Behavioral guidance and CLI tools available in `skills/*-consultant/SKILL.md`.
 
@@ -22,7 +22,7 @@
 
 ---
 
-## 🌟 7 大正統術數與心靈模組
+## 🌟 正統術數與心靈模組 (8 大核心服務)
 
 本系統拒絕任何敷衍與閹割版本，全量實作古典正統算法與全息數據庫：
 
@@ -61,7 +61,28 @@
   - `/ziwei` (完整排盤) · `/ziwei/spouse` (未來另一半) · `/ziwei/male-size` (男生尺寸) 具備獨立 SEO Canonical Tags 與 History API 無縫切換。
 - **標準 CLI 工具**：`skills/ziwei-consultant/scripts/ziwei_cli.js` 支援 `--spouse` 與 `--male-size` 旗標直接輸出對應的結構化 JSON。
 
-### 3. 🌸 梅花易數 (`/meihua` & `/api/meihua-question`)
+### 3. 🪙 六爻神卦 · 納甲筮法 (`/liuyao` & `/api/liuyao-question`)
+- **正統京房納甲體系 (`lib/liuyao.js`)**：
+  - 八宮六十四卦世應定位（本宮、一世至五世、遊魂、歸魂）。
+  - 六十四卦世爻、應爻地支納甲排布與卦身判定。
+  - 世應六親（父母、兄弟、子孫、妻財、官鬼）基於宮位五行生剋定名。
+  - 日干起六獸（青龍、朱雀、勾陳、螣蛇、白虎、玄武）精準配置於初爻至上爻。
+  - 本卦與變卦雙柱並列，清楚標注動變爻（老陰 6 變少陽、老陽 9 變少陰）。
+  - 伏神自動查驗（本宮首卦尋查）與日干支旬空（戌亥、申酉、午未、辰巳、寅卯、子丑）防護標記。
+  - 朱熹《易學啟蒙》七條占斷規則（0爻動至6爻動權重定奪主爻）。
+- **4 大正統起卦法**：
+  - **三枚銅錢搖卦 (`coins`)**：連續 6 次搖卦互動動畫、Web Audio 銅錢清鳴音效，或一鍵「神速起卦」。
+  - **大衍之數五十蓍草 (`dayan`)**：分而為二以象兩、掛一以象三、揲之以四以象四時、歸奇於扐以象閏（三變而成一爻，十八變而成卦）。
+  - **年月日時起卦 (`datetime`)**：年支數+農曆月+農曆日除 8 取上卦，總和+時支數除 8 取下卦，總和除 6 取動爻。
+  - **手動指定爻象 (`manual`)**：自選初爻至上爻六爻老少陰陽數值（6, 7, 8, 9）。
+- **專題用神鎖定**：
+  - 自動依問題類別鎖定專屬用神：求財投資（妻財）、事業升遷（官鬼）、考試學業/合約（父母）、戀愛婚姻（妻財/官鬼/世應）、身體健康/消災（子孫/官鬼）、求子晚輩（子孫）、出行尋物/人際（世應）、綜合運勢。
+- **純排盤 API 端點 (`POST /api/liuyao`)**：純演算法快速排盤無 LLM 延遲，支援自選 `lines`、`method` 或 `datetime`。
+- **問答與解讀 API 端點 (`POST /api/liuyao-question`)**：整合宗師解讀與多輪對話追問。
+- **標準 CLI 工具**：`skills/liuyao-consultant/scripts/ask_liuyao.js` 支援命令列參數與 stdin JSON 輸入。
+- **WebMCP 支援**：`liuyao_cast_divination` 供瀏覽器 AI 代理直接調用與自動宣告式表單適配。
+
+### 4. 🌸 梅花易數 (`/meihua` & `/api/meihua-question`)
 - **起卦方式**：
   - **時間起卦**：精確到年月日時與時辰。
   - **數字起卦**：提供 3 個 1-100 數字計算上卦、下卦與動爻。
@@ -69,7 +90,7 @@
 - **五卦全息系統**：本卦（現狀基礎）、互卦（過程演變）、變卦（最終趨勢）、錯卦（盲點危機）、綜卦（換位思考）。
 - **爻辭與應期**：完整 64 卦與 384 爻動爻爻辭、體用五行生剋旺衰、四季得時與先天數應期推算。
 
-### 4. 📜 八字命理 / 賽博算命 (`/bazi2` & `/api/bazi2-question`)
+### 5. 📜 八字命理 / 賽博算命 (`/bazi2` & `/api/bazi2-question`)
 - **四柱排盤**：年月日時四柱天干地支、六十甲子納音五行、十二長生運。
 - **十神與藏干**：十神六親、地支本氣/中氣/餘氣藏干。
 - **旺衰與五行力量**：日主得令、得地、得勢判定（身旺/身弱），五行百分比能量分佈。
@@ -77,7 +98,7 @@
 - **吉凶神煞**：天乙貴人、文昌貴人、驛馬、桃花咸池、華蓋、將星、祿神、羊刃、月德貴人。
 - **大運與流年**：十年大運排盤、流年干支生剋互動與歷史關鍵轉折年份驗證。
 
-### 5. 🏮 月老 · 姻緣測算 (`/yinyuan` & `/api/yinyuan-question`)
+### 6. 🏮 月老 · 姻緣測算 (`/yinyuan` & `/api/yinyuan-question`)
 - **100 支月老靈籤 (`fortune`)**：支援自選籤號（1-100）或🎲誠心搖籤按鈕、信士姓名/性別（Radio Pills 快速點選）、出生日期、感情狀態（單身/暗戀/熱戀/備婚/已婚/分手挽回）與問事主題。
 - **生肖配對 (`zodiac`)**：12 生肖快速選擇或出生西元年份、相處階段（初識/曖昧/熱戀/備婚/已婚）、三合/六合/六沖/六害契合評分與磨合錦囊。
 - **紫微夫妻宮 (`ziwei-marriage`)**：姓名、性別、公曆/農曆雙曆法、出生年月日、十二時辰下拉、感情狀態、14 主星四化與配偶特質畫像。
@@ -85,7 +106,7 @@
 - **八字合婚 (`bazi-match`)**：甲方與乙方雙方姓名、性別、公曆/農曆、出生年月日、出生時辰、關係階段與四柱天合地合互補評分。
 - **紅線測算 (`red-thread`)**：命主姓名、性別、尋找對象性別、理想型特質偏好、單身狀態、正緣外貌氣質/職業/相遇場景與時機窗口。
 
-### 6. 🏡 易經風水 / 陽宅分析 (`/fengshui` & `/api/fengshui-question`)
+### 7. 🏡 易經風水 / 陽宅分析 (`/fengshui` & `/api/fengshui-question`)
 - **PWA 實時電子羅盤與 24 山坐向測定 (`heading`, `northReference`, `declination`)**：
   - 提供 iOS/Android 感測器介面與手動角度 fallback；實機權限、磁干擾與跨平台校正仍需在 HTTPS 裝置環境驗證。
   - 授權後會同時監聽絕對方向與一般方向事件；只有絕對方向資料才會轉為羅盤向首，相對方向資料會保留手動輸入，不會誤當成北向。
@@ -110,7 +131,7 @@
 - **確定性純算 API 端點 (`POST /api/fengshui/evaluate-layout`)**：純演算法評估室內格局，不呼叫 LLM，供 Agent 與外部系統直接查詢。
   - 官方 MCP 提供 `fengshui_layout_evaluation`；WebMCP 與 bridge 使用同一方向宮位／canonical ID／最多 9 段入路契約。
 
-### 7. 🃏 韋特塔羅與生命靈數雙核心 (`/tarot`, `/tarot/numerology`, `/tarot/gallery`)
+### 8. 🃏 韋特塔羅與生命靈數雙核心 (`/tarot`, `/tarot/numerology`, `/tarot/gallery`)
 - **78 張完整原創偉特牌庫與高清視覺**：22 張大阿爾克那 + 56 張小阿爾克那（權杖/火、聖杯/水、寶劍/風、錢幣/土），全數配備 625x1082 高畫質插畫、逆位 180° 翻轉動畫、中英雙語牌名、正逆位關鍵字提煉與全螢幕 Lightbox 原畫燈箱。
 - **6 大占卜牌陣**：單張指引（`single`）、三牌陣（`three`：時間線/現狀/感情關係變體）、五牌鑽石（`diamond`）、月亮週期（`moon`）、七星馬蹄（`horseshoe`）、十牌凱爾特十字（`celtic`）。
 - **四維透鏡與能量矩陣**：鏡子（現狀）、窗戶（盲點）、門（突破路徑）、錨（核心價值）；大牌佔比、四大元素分佈、牌性生剋、經典牌對組合檢測與具體行動清單。
@@ -120,12 +141,12 @@
   - 網頁直達路由 `/tarot/numerology` 可獨立完成純計算，不需要 AI；確定性 API `GET|POST /api/tarot/numerology` 與 CLI `tarot_numerology.js` 回傳結構化計算資料。每次計算的輸入與完整結果會送至 Discord webhook；使用 AI 補充解讀時，完整計算資料會送至設定的 LLM。
 - **78 張全牌庫圖鑑 (`/tarot/gallery` & `/api/tarot/cards`)**：全牌庫分類篩選（大牌、權杖、聖杯、寶劍、錢幣），點選牌卡即可檢視高清原畫、占星對應與正逆位牌義。
 
-### 8. 📖 解答之書 (`/answerbook` & `/api/answerbook-question`)
+### 9. 📖 解答之書 (`/answerbook` & `/api/answerbook-question`)
 - **雙模式運作**：
   - `direct`（直接默念）：隨機翻開一頁獲取宇宙的一句提醒。
   - `question`（輸入問題）：輸入具體困惑，由 AI 結合書中籤言進行深層象徵解讀與理性行動指引。
 
-### 9. ⏰ 時間標準化與午夜邊界解決引擎 (`/api/time/range` & `/api/time/boundary`)
+### 10. ⏰ 時間標準化與午夜邊界解決引擎 (`/api/time/range` & `/api/time/boundary`)
 - **午夜邊界問題 (Midnight Boundary Problem)**：徹底根治資料工程與時序統計中常見的「9/1 ~ 9/9 漏算 9/9 當天下午與晚間」的重大邊界缺陷。
 - **雙標準保證**：
   - **當日末刻閉區間**：`endDate` 自動補齊至 `23:59:59.999`（或秒精度 `23:59:59`），完整包容當天所有數據。
@@ -250,6 +271,9 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen �
 
 # 紫微斗數男生真實尺寸與戰鬥力快速測算（免等 LLM）
 node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen 巳 --sex male --male-size
+
+# 六爻神卦占問（支援銅錢搖卦、大衍筮法、時間起卦與手動指定爻值）
+node skills/liuyao-consultant/scripts/ask_liuyao.js --question "今年下半年換工作發展如何？" --category "事業升遷" --method coins
 ```
 
 ---
@@ -308,9 +332,9 @@ npm start
 #### 1. 防護範圍與端點劃分 (Protection Scope & Boundaries)
 | 端點類別 | 路由端點 | Turnstile 驗證 | 設計理念與外部整合說明 |
 | :--- | :--- | :---: | :--- |
-| **網頁問答與解盤 (Web UI)** | `POST /api/llm-analysis`<br>`POST /api/meihua/llm-analysis`<br>`POST /api/:module/llm-analysis`<br>*(支援 ziwei, bazi2, tarot, fengshui, yinyuan, answerbook)* | **強制驗證 (Protected)** | **保護 LLM Token 額度**。前端網頁訪客點擊「💬 詢問」、「開始解盤」、「🌸 梅花解卦」或「排盤並查看命理解讀」時，必須通過 Turnstile 人機驗證，有效杜絕爬蟲盜刷後端 LLM 額度。支援單次使用與續問自動重置。 |
+| **網頁問答與解盤 (Web UI)** | `POST /api/llm-analysis`<br>`POST /api/meihua/llm-analysis`<br>`POST /api/:module/llm-analysis`<br>*(支援 ziwei, bazi2, tarot, fengshui, yinyuan, answerbook, liuyao)* | **強制驗證 (Protected)** | **保護 LLM Token 額度**。前端網頁訪客點擊「💬 詢問」、「開始解盤」、「🌸 梅花解卦」或「排盤並查看命理解讀」時，必須通過 Turnstile 人機驗證，有效杜絕爬蟲盜刷後端 LLM 額度。支援單次使用與續問自動重置。 |
 | **對話與結果寄送** | `POST /api/conversation/send-email` | **強制驗證 (Protected)** | 奇門寄送完整排盤與對話；其他模組寄送最近一次 API 計算結果與解讀。防止惡意腳本利用 Resend API 濫發郵件。 |
-| **外部程式化 API (Telegram / OpenClaw / CLI)** | `POST /api/qimen-question`<br>`POST /api/meihua-question`<br>`POST /api/ziwei-question`<br>`POST /api/tarot-question`<br>`POST /api/fengshui-question`<br>`POST /api/bazi2-question`<br>`POST /api/yinyuan-question`<br>`POST /api/answerbook-question` | **100% 零阻擋 (開放)** | **杜絕任何驗證碼阻礙**。外部 Telegram Bot、OpenClaw、CLI 腳本（如 `ask_qimen.js`）與第三方串接程式可直接透過 JSON 呼叫，保證 100% 暢通無阻。 |
+| **外部程式化 API (Telegram / OpenClaw / CLI)** | `POST /api/qimen-question`<br>`POST /api/meihua-question`<br>`POST /api/ziwei-question`<br>`POST /api/liuyao-question`<br>`POST /api/tarot-question`<br>`POST /api/fengshui-question`<br>`POST /api/bazi2-question`<br>`POST /api/yinyuan-question`<br>`POST /api/answerbook-question` | **100% 零阻擋 (開放)** | **杜絕任何驗證碼阻礙**。外部 Telegram Bot、OpenClaw、CLI 腳本（如 `ask_qimen.js`、`ask_liuyao.js`）與第三方串接程式可直接透過 JSON 呼叫，保證 100% 暢通無阻。 |
 | **安全配置端點** | `GET /api/turnstile/config` | **公開讀取** | 回傳 `{ success: true, enabled: boolean, siteKey: string\|null }`，供前端瀏覽器與 WebMCP 客戶端動態偵測驗證狀態並載入對應金鑰。 |
 
 #### 2. 環境變數規範 (Environment Variables Reference)

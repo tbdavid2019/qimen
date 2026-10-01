@@ -36,6 +36,7 @@ const { AnswerBookClient, createAnswerbookQuestionHandler } = require('./lib/ans
 const { sendConversationEmail } = require('./lib/email');
 const { turnstileMiddleware, verifyTurnstile, getSiteKey, isTurnstileEnabled, getTurnstileConfigError } = require('./lib/turnstile');
 const nameAnalysis = require('./lib/name-analysis');
+const { calculateLiuyao, tossThreeCoins, castByCoins, castByDayan, castByDatetime } = require('./lib/liuyao');
 
 function getHttpErrorStatus(error) {
     return error && error.statusCode === 400 ? 400 : 500;
@@ -255,6 +256,7 @@ app.get('/meihua', (req, res) => {
     });
 });
 app.get('/answerbook', (req, res) => res.render('answerbook', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'answerbook' }));
+app.get('/liuyao', (req, res) => res.render('liuyao', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'liuyao', activeMode: req.query.mode || 'coins' }));
 
 function sendModuleRecord(moduleName, input, result, analysis = '') {
     return discordWebhook.sendDivinationRecord(moduleName, input, result, analysis)
@@ -586,6 +588,45 @@ const handleYinyuanReading = async (req, res) => {
 app.post('/api/yinyuan/reading', handleYinyuanReading);
 app.get('/api/yinyuan/reading', handleYinyuanReading);
 
+const handleLiuyaoReading = async (req, res) => {
+    try {
+        const body = { ...(req.query || {}), ...(req.body || {}) };
+        const result = calculateLiuyao(body);
+        let analysis = null;
+        if (body.analyze && (process.env.LLM_API_KEY || body.forceAnalysis)) {
+            try {
+                const aiResult = await llmService.analyzeLiuyao(result, {
+                    userQuestion: body.question,
+                    purpose: body.category
+                });
+                if (aiResult && aiResult.success) {
+                    analysis = aiResult.analysis;
+                } else if (aiResult && aiResult.error) {
+                    analysis = llmService.getLiuyaoFallbackAnalysis(result);
+                }
+            } catch (e) {
+                analysis = llmService.getLiuyaoFallbackAnalysis(result);
+            }
+        }
+        const discord = await sendModuleRecord('六爻神卦', body, result, analysis || '');
+        res.json({ success: true, result, analysis, discord });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+};
+app.post('/api/liuyao', handleLiuyaoReading);
+app.get('/api/liuyao', handleLiuyaoReading);
+app.post('/api/liuyao/reading', handleLiuyaoReading);
+app.post('/api/liuyao/toss-coin', (req, res) => {
+    res.json({ success: true, ...tossThreeCoins() });
+});
+app.get('/api/liuyao/toss-coin', (req, res) => {
+    res.json({ success: true, ...tossThreeCoins() });
+});
+app.post('/api/liuyao/cast-dayan', (req, res) => {
+    res.json({ success: true, lines: castByDayan() });
+});
+
 const FENGSHUI_FACINGS = new Set([
     '南', '北', '東', '西', '東南', '西北', '東北', '西南',
     '壬山丙向', '子山午向', '癸山丁向', '丑山未向', '艮山坤向', '寅山申向',
@@ -877,7 +918,18 @@ const answerbookQuestionHandler = createAnswerbookQuestionHandler({
 app.post('/api/answerbook-question', answerbookQuestionHandler);
 app.get('/api/answerbook-question', answerbookQuestionHandler);
 
-const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書' };
+const liuyaoQuestionHandler = createServiceQuestionHandler({
+    moduleName: '六爻神卦',
+    resultKey: 'result',
+    validate: (body) => body,
+    calculate: (body) => calculateLiuyao(body),
+    analyze: llmService.analyzeLiuyao.bind(llmService),
+    discord: discordWebhook
+});
+app.post('/api/liuyao-question', liuyaoQuestionHandler);
+app.get('/api/liuyao-question', liuyaoQuestionHandler);
+
+const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書', liuyao: '六爻神卦' };
 
 const handleSuiteModuleLlmAnalysis = async (req, res) => {
     const moduleKey = req.params.module || (req.path && req.path.includes('/tarot/') ? 'tarot' : null);
@@ -2173,6 +2225,36 @@ app.get('/api/docs', (req, res) => {
                     answer: "準時\nBE ON TIME",
                     analysis: "請依問題與現況安排可執行的下一步。",
                     analysisSuccess: true
+                }
+            },
+            liuyao: {
+                method: "POST",
+                path: "/api/liuyao",
+                description: "六爻神卦純排盤（京房納甲、世應六親六獸、伏神旬空與朱熹七規，無 LLM 延遲）",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: false, description: "占問事項" },
+                    category: { type: "string", required: false, enum: ["求財投資", "事業升遷", "考試學業", "戀愛婚姻", "身體健康", "求子生產", "出行尋物", "綜合運勢"], description: "占問分類" },
+                    method: { type: "string", required: false, enum: ["coins", "dayan", "datetime", "manual"], default: "coins", description: "起卦方式" },
+                    lines: { type: "array", required: false, description: "初至上爻值 [6,7,8,9]" },
+                    gender: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
+                    datetime: { type: "string", required: false, description: "起卦時間" }
+                }
+            },
+            liuyaoQuestion: {
+                method: "POST",
+                path: "/api/liuyao-question",
+                description: "六爻神卦排盤並調用 LLM 宗師進行納甲深度解讀",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "占問具體事項" },
+                    category: { type: "string", required: false, enum: ["求財投資", "事業升遷", "考試學業", "戀愛婚姻", "身體健康", "求子生產", "出行尋物", "綜合運勢"], description: "占問分類" },
+                    method: { type: "string", required: false, enum: ["coins", "dayan", "datetime", "manual"], default: "coins", description: "起卦方式" },
+                    lines: { type: "array", required: false, description: "初至上爻值 [6,7,8,9]" },
+                    gender: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
+                    datetime: { type: "string", required: false, description: "起卦時間" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
                 }
             },
             timeRange: {

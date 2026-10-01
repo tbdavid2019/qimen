@@ -1,0 +1,546 @@
+/* public/css/liuyao.css - 六爻神卦專屬樣式 */
+
+:root {
+    --liuyao-gold: #f59e0b;
+    --liuyao-gold-dark: #b45309;
+    --liuyao-cyan: #06b6d4;
+    --liuyao-purple: #8b5cf6;
+    --liuyao-rose: #f43f5e;
+    --liuyao-amber-glow: rgba(245, 158, 11, 0.22);
+    --liuyao-indigo-glow: rgba(99, 102, 241, 0.20);
+    --liuyao-coin-front: #fbbf24;
+    --liuyao-coin-back: #d97706;
+}
+
+[data-theme="dark"] {
+    --liuyao-amber-glow: rgba(245, 158, 11, 0.35);
+    --liuyao-indigo-glow: rgba(99, 102, 241, 0.35);
+    --liuyao-coin-front: #fcd34d;
+    --liuyao-coin-back: #b45309;
+}
+
+/* 頂部英雄區 */
+.liuyao-hero {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+    border: 1.5px solid rgba(245, 158, 11, 0.28);
+    border-radius: 18px;
+    padding: 24px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 30px var(--liuyao-amber-glow);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.liuyao-badge-group {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.liuyao-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.liuyao-badge-gold {
+    background: rgba(245, 158, 11, 0.15);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+[data-theme="dark"] .liuyao-badge-gold {
+    color: #fbbf24;
+}
+
+.liuyao-badge-purple {
+    background: rgba(139, 92, 246, 0.15);
+    color: #7c3aed;
+    border: 1px solid rgba(139, 92, 246, 0.35);
+}
+[data-theme="dark"] .liuyao-badge-purple {
+    color: #a78bfa;
+}
+
+.liuyao-hero-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #4338ca 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+[data-theme="dark"] .liuyao-hero-title {
+    background: linear-gradient(135deg, #fde68a 0%, #f59e0b 50%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.liuyao-hero-sub {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--suite-text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* 分類選項膠囊 */
+.liuyao-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.liuyao-pill {
+    cursor: pointer;
+    user-select: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--suite-border);
+    background: var(--suite-card-bg);
+    color: var(--suite-text);
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.liuyao-pill:hover {
+    border-color: var(--liuyao-gold);
+    transform: translateY(-1px);
+}
+
+.liuyao-pill.active {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border-color: #d97706;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+/* 起卦模式切換頁籤 */
+.liuyao-mode-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--suite-border);
+    margin-bottom: 20px;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.liuyao-tab-btn {
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--suite-text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.liuyao-tab-btn.active {
+    color: #d97706;
+    border-bottom-color: #f59e0b;
+}
+[data-theme="dark"] .liuyao-tab-btn.active {
+    color: #fbbf24;
+}
+
+/* 搖卦互動競技場 */
+.liuyao-arena {
+    background: var(--suite-card-bg);
+    border: 1.5px solid var(--suite-border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--suite-shadow);
+    text-align: center;
+}
+
+.coins-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
+    min-height: 90px;
+}
+
+.coin {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--liuyao-coin-front), var(--liuyao-coin-back));
+    border: 2px solid #b45309;
+    box-shadow: 0 6px 16px rgba(180, 83, 9, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    user-select: none;
+    font-weight: 900;
+    font-size: 16px;
+    color: #78350f;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.coin-hole {
+    width: 20px;
+    height: 20px;
+    background: var(--suite-card-bg);
+    border: 1.5px solid #92400e;
+    position: absolute;
+}
+
+.coin.flipping {
+    animation: coinFlip 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes coinFlip {
+    0% { transform: translateY(0) rotateY(0deg) scale(1); }
+    50% { transform: translateY(-40px) rotateY(540deg) scale(1.15); }
+    100% { transform: translateY(0) rotateY(1080deg) scale(1); }
+}
+
+/* 即時六爻構築塔 (由下至上) */
+.toss-progress-tower {
+    max-width: 320px;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-direction: column-reverse; /* 由下至上 */
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px dashed var(--suite-border);
+}
+[data-theme="dark"] .toss-progress-tower {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tower-step {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: var(--suite-card-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+}
+
+.tower-step.active {
+    border-color: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.tower-step.done {
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.yao-bar-yang {
+    font-family: monospace;
+    font-weight: 900;
+    color: #d97706;
+    letter-spacing: 1px;
+}
+
+.yao-bar-yin {
+    font-family: monospace;
+    font-weight: 900;
+    color: #4f46e5;
+    letter-spacing: 1px;
+}
+
+.moving-indicator {
+    color: #e11d48;
+    font-weight: 900;
+    margin-left: 6px;
+}
+
+/* 操作按鈕群 */
+.liuyao-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.btn-liuyao-primary {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-liuyao-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    color: #fff;
+}
+
+.btn-liuyao-secondary {
+    background: transparent;
+    border: 1.5px solid var(--suite-border);
+    color: var(--suite-text);
+    padding: 10px 18px;
+    border-radius: 24px;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-liuyao-secondary:hover {
+    border-color: #f59e0b;
+    color: #d97706;
+}
+
+/* 排盤結果卡片 */
+.liuyao-result-card {
+    background: var(--suite-card-bg);
+    border: 1.5px solid var(--suite-border);
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--suite-shadow);
+}
+
+.liuyao-header-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 1.5px solid var(--suite-border);
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+}
+
+.liuyao-time-meta {
+    font-size: 13.5px;
+    color: var(--suite-text-muted);
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* 用神英雄醒目標籤 */
+.yongshen-banner {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(234, 88, 12, 0.12) 100%);
+    border: 1.5px solid rgba(245, 158, 11, 0.35);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.12);
+}
+
+.yongshen-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #b45309;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+[data-theme="dark"] .yongshen-title {
+    color: #fbbf24;
+}
+
+.yongshen-desc {
+    font-size: 13.5px;
+    color: var(--suite-text);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* 雙卦並列格網 */
+.gua-matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.gua-card {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1.5px solid var(--suite-border);
+    border-radius: 14px;
+    padding: 18px;
+}
+[data-theme="dark"] .gua-card {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.gua-card-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--suite-border);
+    padding-bottom: 10px;
+}
+
+.gua-lines-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+}
+
+.gua-line-row {
+    background: var(--suite-card-bg);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.gua-line-row td {
+    padding: 8px 10px;
+    font-size: 13.5px;
+    vertical-align: middle;
+}
+
+.badge-shi {
+    background: #f59e0b;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+.badge-ying {
+    background: #06b6d4;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+.badge-fushen {
+    background: rgba(139, 92, 246, 0.15);
+    color: #7c3aed;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+[data-theme="dark"] .badge-fushen {
+    color: #c4b5fd;
+}
+
+.badge-kong {
+    background: rgba(244, 63, 94, 0.15);
+    color: #e11d48;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+.zhuxi-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+    border: 1.5px solid rgba(99, 102, 241, 0.25);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.zhuxi-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #4f46e5;
+    margin-bottom: 6px;
+}
+[data-theme="dark"] .zhuxi-title {
+    color: #818cf8;
+}
+
+/* LLM 宗師解答區 */
+.liuyao-ai-section {
+    background: var(--suite-card-bg);
+    border: 1.5px solid rgba(245, 158, 11, 0.3);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 8px 30px var(--liuyao-amber-glow);
+    margin-bottom: 24px;
+}
+
+.liuyao-ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--suite-border);
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+}
+
+.liuyao-ai-content {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--suite-text);
+}
+
+.liuyao-ai-content h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #b45309;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-left: 4px solid #f59e0b;
+    padding-left: 8px;
+}
+[data-theme="dark"] .liuyao-ai-content h3 {
+    color: #fcd34d;
+}
+
+.liuyao-ai-content ul {
+    padding-left: 20px;
+}
+
+.liuyao-ai-content li {
+    margin-bottom: 6px;
+}
+
+@media (max-width: 767px) {
+    .gua-matrix-grid {
+        grid-template-columns: 1fr;
+    }
+    .liuyao-hero-title {
+        font-size: 20px;
+    }
+    .coins-container {
+        gap: 12px;
+    }
+    .coin {
+        width: 56px;
+        height: 56px;
+        font-size: 14px;
+    }
+}
