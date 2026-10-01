@@ -475,12 +475,16 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
         assert.equal(typeof configData.siteKey, 'string');
 
         // 1b. 驗證 /api/turnstile/config 在停用時回傳 enabled: false 且 siteKey 為 null
+        const originalEnabled = process.env.TURNSTILE_ENABLED;
         delete process.env.TURNSTILE_FORCE_ENABLE;
+        process.env.TURNSTILE_ENABLED = 'false';
         const configDisabledRes = await fetch(`${baseUrl}/api/turnstile/config`);
         const configDisabledData = await configDisabledRes.json();
         assert.equal(configDisabledData.enabled, false);
         assert.equal(configDisabledData.siteKey, null);
         process.env.TURNSTILE_FORCE_ENABLE = 'true';
+        if (originalEnabled !== undefined) process.env.TURNSTILE_ENABLED = originalEnabled;
+        else delete process.env.TURNSTILE_ENABLED;
 
         // 2. 測試 /api/qimen-question 在不提供任何 Turnstile token 的情況下直接呼叫
         // 應進入正常業務驗證（如缺少 question 參數回傳 400），而絕對不能被 403 Turnstile 擋下
@@ -556,7 +560,7 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
     }
 });
 
-test('Turnstile: 全站 8 大頁面模板均完整包含問答防護 Turnstile 元件', () => {
+test('Turnstile: 全站 9 大頁面模板均完整包含問答防護 Turnstile 元件', () => {
     const fs = require('node:fs');
     const path = require('node:path');
     const viewsDir = path.join(__dirname, '../views');
@@ -565,6 +569,7 @@ test('Turnstile: 全站 8 大頁面模板均完整包含問答防護 Turnstile �
         { file: 'index.html', widgetId: 'question-turnstile' },
         { file: 'meihua.html', widgetId: 'meihua-turnstile' },
         { file: 'ziwei.html', widgetId: 'suite-turnstile' },
+        { file: 'liuyao.html', widgetId: 'suite-turnstile' },
         { file: 'bazi2.html', widgetId: 'suite-turnstile' },
         { file: 'tarot.html', widgetId: 'suite-turnstile' },
         { file: 'fengshui.html', widgetId: 'suite-turnstile' },

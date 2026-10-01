@@ -1,4 +1,4 @@
-/* public/css/liuyao.css - 六爻神卦專屬樣式 */
+/* public/css/liuyao.css - 六爻神卦專屬高質感樣式 (Punchy & Prominent Design System) */
 
 :root {
     --liuyao-gold: #f59e0b;
@@ -6,27 +6,54 @@
     --liuyao-cyan: #06b6d4;
     --liuyao-purple: #8b5cf6;
     --liuyao-rose: #f43f5e;
-    --liuyao-amber-glow: rgba(245, 158, 11, 0.22);
-    --liuyao-indigo-glow: rgba(99, 102, 241, 0.20);
-    --liuyao-coin-front: #fbbf24;
-    --liuyao-coin-back: #d97706;
+    --liuyao-amber-glow: rgba(245, 158, 11, 0.20);
+    --liuyao-indigo-glow: rgba(99, 102, 241, 0.18);
+    --liuyao-coin-outer: #78350f;
+    --liuyao-coin-grad-1: #fef3c7;
+    --liuyao-coin-grad-2: #fcd34d;
+    --liuyao-coin-grad-3: #f59e0b;
+    --liuyao-coin-grad-4: #b45309;
 }
 
 [data-theme="dark"] {
-    --liuyao-amber-glow: rgba(245, 158, 11, 0.35);
-    --liuyao-indigo-glow: rgba(99, 102, 241, 0.35);
-    --liuyao-coin-front: #fcd34d;
-    --liuyao-coin-back: #b45309;
+    --liuyao-amber-glow: rgba(245, 158, 11, 0.32);
+    --liuyao-indigo-glow: rgba(99, 102, 241, 0.32);
+    --liuyao-coin-outer: #451a03;
+    --liuyao-coin-grad-1: #fef08a;
+    --liuyao-coin-grad-2: #fbbf24;
+    --liuyao-coin-grad-3: #d97706;
+    --liuyao-coin-grad-4: #92400e;
+}
+
+/* Lucide 圖標通用對齊與尺寸 */
+.suite-hero-badge [data-lucide],
+.suite-form-label [data-lucide],
+.liuyao-tab-btn [data-lucide],
+.liuyao-action-bar [data-lucide],
+.suite-copy-btn [data-lucide],
+.liuyao-actions [data-lucide] {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.2px;
+    vertical-align: -2.5px;
+    display: inline-block;
+}
+
+.btn-lg [data-lucide] {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.3px;
+    vertical-align: -3px;
 }
 
 /* 頂部英雄區 */
 .liuyao-hero {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.09) 0%, rgba(99, 102, 241, 0.07) 100%);
     border: 1.5px solid rgba(245, 158, 11, 0.28);
-    border-radius: 18px;
-    padding: 24px 20px;
+    border-radius: 20px;
+    padding: 26px 20px;
     margin-bottom: 24px;
-    box-shadow: 0 8px 30px var(--liuyao-amber-glow);
+    box-shadow: 0 10px 32px var(--liuyao-amber-glow);
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -35,48 +62,29 @@
 .liuyao-badge-group {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
     margin-bottom: 12px;
 }
 
-.liuyao-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-}
-
-.liuyao-badge-gold {
-    background: rgba(245, 158, 11, 0.15);
-    color: #d97706;
-    border: 1px solid rgba(245, 158, 11, 0.35);
-}
-[data-theme="dark"] .liuyao-badge-gold {
-    color: #fbbf24;
-}
-
 .liuyao-badge-purple {
-    background: rgba(139, 92, 246, 0.15);
-    color: #7c3aed;
-    border: 1px solid rgba(139, 92, 246, 0.35);
+    background: rgba(139, 92, 246, 0.12) !important;
+    color: #7c3aed !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
 }
 [data-theme="dark"] .liuyao-badge-purple {
-    color: #a78bfa;
+    color: #a78bfa !important;
 }
 
 .liuyao-hero-title {
-    font-size: 24px;
+    font-size: clamp(24px, 4vw, 32px);
     font-weight: 800;
     margin: 0 0 8px 0;
     letter-spacing: -0.3px;
     background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #4338ca 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    line-height: 1.3;
 }
 [data-theme="dark"] .liuyao-hero-title {
     background: linear-gradient(135deg, #fde68a 0%, #f59e0b 50%, #a5b4fc 100%);
@@ -84,12 +92,13 @@
     -webkit-text-fill-color: transparent;
 }
 
-.liuyao-hero-sub {
-    font-size: 14.5px;
+.liuyao-hero-subtitle {
+    font-size: 15px;
     font-weight: 500;
     color: var(--suite-text-muted);
-    margin: 0;
-    line-height: 1.5;
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.6;
 }
 
 /* 分類選項膠囊 */
@@ -97,25 +106,26 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 6px;
 }
 
 .liuyao-pill {
     cursor: pointer;
     user-select: none;
-    padding: 6px 14px;
+    padding: 7px 15px;
     border-radius: 20px;
     border: 1.5px solid var(--suite-border);
     background: var(--suite-card-bg);
     color: var(--suite-text);
     font-size: 13.5px;
     font-weight: 600;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .liuyao-pill:hover {
     border-color: var(--liuyao-gold);
-    transform: translateY(-1px);
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
 }
 
 .liuyao-pill.active {
@@ -129,17 +139,21 @@
 .liuyao-mode-tabs {
     display: flex;
     border-bottom: 2px solid var(--suite-border);
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     gap: 8px;
     overflow-x: auto;
+    padding-bottom: 2px;
 }
 
 .liuyao-tab-btn {
-    padding: 10px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
-    font-size: 14.5px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--suite-text-muted);
     cursor: pointer;
@@ -148,105 +162,133 @@
 }
 
 .liuyao-tab-btn.active {
-    color: #d97706;
+    color: #b45309;
     border-bottom-color: #f59e0b;
 }
 [data-theme="dark"] .liuyao-tab-btn.active {
     color: #fbbf24;
+    border-bottom-color: #fbbf24;
 }
 
 /* 搖卦互動競技場 */
 .liuyao-arena {
-    background: var(--suite-card-bg);
-    border: 1.5px solid var(--suite-border);
-    border-radius: 16px;
     padding: 24px;
     margin-bottom: 24px;
-    box-shadow: var(--suite-shadow);
     text-align: center;
 }
 
+.toss-status-desc {
+    font-weight: 700;
+    color: #b45309;
+    font-size: 15px;
+    margin-bottom: 14px;
+}
+[data-theme="dark"] .toss-status-desc {
+    color: #fbbf24;
+}
+
+.mode-desc {
+    font-size: 15px;
+    color: var(--suite-text-muted);
+    line-height: 1.6;
+    max-width: 620px;
+    margin: 0 auto 18px;
+}
+
+/* 擬真古典青銅/黃銅錢幣 */
 .coins-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    margin: 20px 0;
-    min-height: 90px;
+    gap: 24px;
+    margin: 20px 0 24px;
+    min-height: 96px;
 }
 
 .coin {
-    width: 68px;
-    height: 68px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, var(--liuyao-coin-front), var(--liuyao-coin-back));
-    border: 2px solid #b45309;
-    box-shadow: 0 6px 16px rgba(180, 83, 9, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    background: radial-gradient(circle at 35% 35%, var(--liuyao-coin-grad-1) 0%, var(--liuyao-coin-grad-2) 35%, var(--liuyao-coin-grad-3) 65%, var(--liuyao-coin-grad-4) 90%, var(--liuyao-coin-outer) 100%);
+    border: 2.5px solid var(--liuyao-coin-outer);
+    box-shadow: inset 0 0 0 2px rgba(217, 119, 6, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.6), 0 8px 24px rgba(180, 83, 9, 0.32);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     user-select: none;
-    font-weight: 900;
-    font-size: 16px;
-    color: #78350f;
+    cursor: pointer;
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .coin-hole {
     width: 20px;
     height: 20px;
-    background: var(--suite-card-bg);
-    border: 1.5px solid #92400e;
+    background: var(--suite-card-bg, #fff);
+    border: 2px solid var(--liuyao-coin-outer);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35);
     position: absolute;
+    z-index: 1;
+}
+
+.coin-face {
+    position: absolute;
+    font-weight: 900;
+    font-size: 15px;
+    color: var(--liuyao-coin-outer);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+    z-index: 2;
+    pointer-events: none;
 }
 
 .coin.flipping {
-    animation: coinFlip 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: coinFlip 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 @keyframes coinFlip {
     0% { transform: translateY(0) rotateY(0deg) scale(1); }
-    50% { transform: translateY(-40px) rotateY(540deg) scale(1.15); }
+    50% { transform: translateY(-46px) rotateY(540deg) scale(1.15); }
     100% { transform: translateY(0) rotateY(1080deg) scale(1); }
 }
 
 /* 即時六爻構築塔 (由下至上) */
 .toss-progress-tower {
-    max-width: 320px;
-    margin: 0 auto 20px;
+    max-width: 360px;
+    margin: 0 auto 22px;
     display: flex;
-    flex-direction: column-reverse; /* 由下至上 */
-    gap: 6px;
-    background: rgba(0, 0, 0, 0.03);
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px dashed var(--suite-border);
+    flex-direction: column-reverse; /* 由初爻至上爻由下至上 */
+    gap: 7px;
+    background: rgba(245, 158, 11, 0.04);
+    border: 1.5px dashed rgba(245, 158, 11, 0.35);
+    border-radius: 14px;
+    padding: 14px;
 }
 [data-theme="dark"] .toss-progress-tower {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(245, 158, 11, 0.08);
 }
 
 .tower-step {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 12px;
+    padding: 7px 14px;
     background: var(--suite-card-bg);
     border: 1px solid var(--suite-border);
-    border-radius: 8px;
-    font-size: 13.5px;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: 700;
+    transition: all 0.25s ease;
 }
 
 .tower-step.active {
     border-color: #f59e0b;
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
-    background: rgba(245, 158, 11, 0.08);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    background: rgba(245, 158, 11, 0.12);
+    transform: scale(1.02);
 }
 
 .tower-step.done {
-    border-color: rgba(99, 102, 241, 0.4);
+    border-color: rgba(99, 102, 241, 0.35);
 }
 
 .yao-bar-yang {
@@ -275,54 +317,48 @@
     justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
-    margin-top: 18px;
+    margin-top: 20px;
 }
 
-.btn-liuyao-primary {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    color: #ffffff;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 24px;
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: 0.3px;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
-    transition: all 0.2s ease;
+/* 卦象排盤結果操作列（複製、Email、重新起卦） */
+.liuyao-action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin: 22px 0 24px;
 }
 
-.btn-liuyao-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
-    color: #fff;
-}
-
-.btn-liuyao-secondary {
-    background: transparent;
-    border: 1.5px solid var(--suite-border);
-    color: var(--suite-text);
-    padding: 10px 18px;
-    border-radius: 24px;
+.liuyao-action-bar button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
     font-size: 14.5px;
     font-weight: 700;
+    border-radius: 24px;
+    background: var(--suite-card-bg);
+    border: 1.5px solid var(--suite-border);
+    color: var(--suite-text);
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.btn-liuyao-secondary:hover {
+.liuyao-action-bar button:hover {
     border-color: #f59e0b;
-    color: #d97706;
+    color: #b45309;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.15);
+}
+[data-theme="dark"] .liuyao-action-bar button:hover {
+    color: #fbbf24;
 }
 
 /* 排盤結果卡片 */
 .liuyao-result-card {
-    background: var(--suite-card-bg);
-    border: 1.5px solid var(--suite-border);
-    border-radius: 18px;
     padding: 24px;
     margin-bottom: 24px;
-    box-shadow: var(--suite-shadow);
 }
 
 .liuyao-header-banner {
@@ -340,17 +376,18 @@
     font-size: 13.5px;
     color: var(--suite-text-muted);
     font-weight: 500;
-    line-height: 1.5;
+    line-height: 1.6;
+    margin-top: 4px;
 }
 
 /* 用神英雄醒目標籤 */
 .yongshen-banner {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(234, 88, 12, 0.12) 100%);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(234, 88, 12, 0.10) 100%);
     border: 1.5px solid rgba(245, 158, 11, 0.35);
     border-radius: 14px;
     padding: 14px 18px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.12);
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.10);
 }
 
 .yongshen-title {
@@ -367,10 +404,10 @@
 }
 
 .yongshen-desc {
-    font-size: 13.5px;
+    font-size: 14px;
     color: var(--suite-text);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 /* 雙卦並列格網 */
@@ -395,7 +432,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 17px;
+    font-size: 16.5px;
     font-weight: 800;
     margin-bottom: 14px;
     border-bottom: 1px solid var(--suite-border);
@@ -477,6 +514,9 @@
     font-weight: 800;
     color: #4f46e5;
     margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 [data-theme="dark"] .zhuxi-title {
     color: #818cf8;
@@ -484,9 +524,7 @@
 
 /* LLM 宗師解答區 */
 .liuyao-ai-section {
-    background: var(--suite-card-bg);
     border: 1.5px solid rgba(245, 158, 11, 0.3);
-    border-radius: 18px;
     padding: 24px;
     box-shadow: 0 8px 30px var(--liuyao-amber-glow);
     margin-bottom: 24px;
@@ -499,10 +537,66 @@
     border-bottom: 1px solid var(--suite-border);
     padding-bottom: 14px;
     margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.liuyao-ai-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--suite-text);
+    margin: 0;
+}
+
+.suite-icon-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(245, 158, 11, 0.16);
+    color: #b45309;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+[data-theme="dark"] .suite-icon-circle {
+    background: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+}
+
+.suite-copy-btn {
+    background: var(--suite-card-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--suite-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
+.suite-copy-btn:hover {
+    border-color: var(--suite-primary);
+    background: rgba(204, 107, 73, 0.08);
+}
+
+.suite-tag-gold {
+    background: rgba(245, 158, 11, 0.15);
+    color: #b45309;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+[data-theme="dark"] .suite-tag-gold {
+    color: #fbbf24;
 }
 
 .liuyao-ai-content {
-    font-size: 15.5px;
+    font-size: 15px;
     line-height: 1.8;
     color: var(--suite-text);
 }
@@ -530,13 +624,13 @@
 }
 
 .liuyao-ai-content h2 {
-    font-size: 18px;
+    font-size: 17.5px;
     border-left: 4px solid #f59e0b;
     padding-left: 10px;
 }
 
 .liuyao-ai-content h3 {
-    font-size: 16.5px;
+    font-size: 16px;
     border-left: 3px solid #d97706;
     padding-left: 8px;
 }
@@ -617,19 +711,32 @@
     margin-bottom: 6px;
 }
 
+.liuyao-followup-container {
+    margin-top: 24px;
+    border-top: 1px dashed var(--suite-border);
+    padding-top: 18px;
+}
+
 @media (max-width: 767px) {
     .gua-matrix-grid {
         grid-template-columns: 1fr;
     }
     .liuyao-hero-title {
-        font-size: 20px;
+        font-size: 22px;
     }
     .coins-container {
-        gap: 12px;
+        gap: 14px;
     }
     .coin {
-        width: 56px;
-        height: 56px;
-        font-size: 14px;
+        width: 62px;
+        height: 62px;
+    }
+    .coin-hole {
+        width: 17px;
+        height: 17px;
+    }
+    .liuyao-action-bar button {
+        width: 100%;
+        justify-content: center;
     }
 }

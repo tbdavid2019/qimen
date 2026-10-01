@@ -239,4 +239,29 @@ describe('六爻神卦核心演算法測試 (Liuyao Divination Core Tests)', () 
         assert.ok(fallback.includes('【一句提醒】'));
     });
 
+    it('六爻頁面與腳本完整包含 Turnstile、複製按鈕、Email 寄送與 Lucide 圖標整合', () => {
+        const fs = require('node:fs');
+        const path = require('node:path');
+        const html = fs.readFileSync(path.join(__dirname, '../views/liuyao.html'), 'utf8');
+        const js = fs.readFileSync(path.join(__dirname, '../public/js/liuyao.js'), 'utf8');
+
+        // HTML 驗證
+        assert.ok(html.includes('id="btnCopyLiuyao"'), '六爻頁面必須包含複製卦象按鈕');
+        assert.ok(html.includes('id="btnEmailLiuyao"'), '六爻頁面必須包含 Email 寄送按鈕');
+        assert.ok(html.includes('id="btnRestartLiuyao"'), '六爻頁面必須包含重新起卦按鈕');
+        assert.ok(html.includes('id="btnCopyAiAnalysis"'), '六爻頁面必須包含 AI 解讀複製按鈕');
+        assert.ok(html.includes("widgetId: 'suite-turnstile'"), '六爻頁面主表單必須包含 Turnstile');
+        assert.ok(html.includes("widgetId: 'suite-followup-turnstile'"), '六爻頁面追問表單必須包含 Turnstile');
+        assert.ok(html.includes('data-lucide="coins"'), '六爻頁面必須採用 Lucide 圖標');
+        assert.ok(html.includes('/js/lucide.min.js'), '六爻頁面必須引入 lucide.min.js');
+        assert.ok(html.includes('/js/result-email.js'), '六爻頁面必須引入 result-email.js');
+
+        // JS 驗證
+        assert.ok(js.includes('formatDivinationCopyText'), 'liuyao.js 必須具備排版複製功能');
+        assert.ok(js.includes('copyTextWithFeedback'), 'liuyao.js 必須具備複製回饋');
+        assert.ok(js.includes('suiteResultEmailOpen'), 'liuyao.js 必須支援觸發 Email 寄送視窗');
+        assert.ok(js.includes('getTurnstileToken'), 'liuyao.js 必須支援 Turnstile 驗證碼獲取');
+    });
+
 });
+

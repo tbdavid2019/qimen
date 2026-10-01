@@ -30,6 +30,11 @@
   - 六爻頁面完整導入 `public/js/markdown-renderer.js` 與 `.markdown-body`，支援水平分隔線（`<hr/>`）、區塊引言（`blockquote`）與深色模式適配。
   - 增強 Markdown 渲染引擎：強化 GFM 表格解析支援（容忍單列連續表格、冒號對齊）、自動辨識「第X部分」章節標題。
   - 提示詞優化：明確要求 LLM 輸出二級標題 `##` 與規範 GFM 表格語法，徹底解決文字黏合與裸露 Markdown 語法問題。
+- **六爻神卦 Impeccable 視覺升級、Turnstile 人機防護與快捷操作列 (Copy / Email / Restart)**：
+  - **人機驗證全面覆蓋**：主起卦表單與追問表單雙層嵌入 Cloudflare Turnstile 元件，更新至全站 9 大模組 100% 驗證防護契約。
+  - **全套快捷操作列**：新增「複製卦象與解盤」（一鍵拷貝卦象排盤、用神、動變及宗師解讀）、「寄送結果至信箱」（無縫喚醒共用 Email 彈窗與浮鈕）、「重新起卦」及各對話氣泡獨立複製按鈕，均具備 Lucide 打勾動態回饋。
+  - **人類友善郵件報告引擎擴充**：`lib/email-formatter.js` 與 `public/js/email-formatter.js` 完整擴充 `formatLiuyaoReport`，支援主旨格式化與人類易讀排版，杜絕 raw JSON。
+  - **視覺系統與排版嚴格對齊 (Impeccable & Punchy & Prominent)**：全盤導入 Lucide 圖標系統，消除不一致 emoji 與雜亂行內樣式；重構擬真 3D 浮雕金屬古錢幣與階梯構建塔；統一字體層次（Hero / Section / Form / Meta），徹底杜絕字體忽大忽小體驗問題。
 
 ## [2026-09-29]
 

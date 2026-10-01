@@ -173,3 +173,47 @@ test('Front-end result-email.js: 包含成功按鈕切換「已成功寄送 ✓�
     assert.ok(script.includes('modal.close()'), '必須自動關閉彈窗');
     assert.ok(!script.includes('```json\\n${lastReport.text}'), '不得在 history 中包裝原始 JSON 代碼塊');
 });
+
+test('Email Formatter: 六爻神卦報告格式化為人類友善 Markdown 與標題', () => {
+    const mockLiuyao = {
+        success: true,
+        result: {
+            question: '今年下半年事業升遷如何？',
+            category: '事業升遷',
+            datetime: '2026-10-01 16:30',
+            lunarText: '丙午年八月廿一日',
+            ganzhi: {
+                year: '丙午', month: '丁酉', day: '戊子', time: '庚申',
+                monthBranch: '酉', dayBranch: '子', xunKong: '午未'
+            },
+            benGua: {
+                name: '乾為天', palace: '乾', palaceElement: '金', type: '本宮卦', shi: 6, ying: 3
+            },
+            zhiGua: {
+                name: '天風姤', palace: '乾', type: '一世卦', shi: 1, ying: 4
+            },
+            yongshen: {
+                name: '官鬼', target: '官鬼爻', summary: '官鬼午火受日辰子水衝剋，月建酉金休囚。'
+            },
+            zhuxiRule: {
+                movingCount: 1, movingLines: [1], mainRule: '一爻動，以本卦動爻之辭占。', explanation: '專取初九爻辭斷其吉凶。'
+            }
+        }
+    };
+
+    const md = formatHumanReadableReport('六爻神卦', mockLiuyao);
+    assert.ok(md.includes('🪙 六爻神卦 · 京房納甲全息排盤報告'), '必須包含友善大標題');
+    assert.ok(md.includes('乾為天'), '必須包含本卦卦名');
+    assert.ok(md.includes('天風姤'), '必須包含之卦卦名');
+    assert.ok(md.includes('官鬼'), '必須包含用神');
+    assert.ok(md.includes('朱熹《易學啟蒙》'), '必須包含朱熹考變占');
+    assert.ok(!md.includes('```json'), '絕對不得含有 raw JSON 代碼塊');
+
+    const summary = formatChartSummary('六爻神卦', mockLiuyao);
+    assert.ok(!summary.includes('/api/'), '摘要絕不能含有 /api/ 程式路徑');
+    assert.ok(summary.includes('乾為天') && summary.includes('天風姤'));
+
+    const subject = formatSubject('六爻神卦', mockLiuyao);
+    assert.ok(subject.includes('六爻神卦') && subject.includes('事業升遷') && subject.includes('乾為天'));
+});
+

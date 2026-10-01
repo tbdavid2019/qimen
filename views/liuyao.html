@@ -79,12 +79,12 @@
         <!-- 頂部英雄區 -->
         <div class="liuyao-hero">
             <div class="liuyao-badge-group">
-                <span class="liuyao-badge liuyao-badge-gold">🔥 文王神卦</span>
-                <span class="liuyao-badge liuyao-badge-purple">⚡ 京房納甲正理</span>
-                <span class="liuyao-badge liuyao-badge-gold">🎯 單事精斷</span>
+                <span class="suite-hero-badge"><i data-lucide="flame"></i> 文王神卦</span>
+                <span class="suite-hero-badge liuyao-badge-purple"><i data-lucide="shield"></i> 京房納甲正理</span>
+                <span class="suite-hero-badge"><i data-lucide="target"></i> 單事精斷</span>
             </div>
             <h1 class="liuyao-hero-title">六爻神卦 · 納甲筮法</h1>
-            <p class="liuyao-hero-sub">
+            <p class="liuyao-hero-subtitle">
                 求財投資、事業升遷、文憑考試、姻緣感情、健康安危 — 鎖定專題用神，以日月生剋與動變爻直見事態動向
             </p>
         </div>
@@ -93,147 +93,181 @@
         <div class="suite-card" style="margin-bottom: 24px;">
             <form id="suiteForm" toolname="liuyao_cast_divination" tooldescription="六爻神卦排盤與納甲筮法解讀" toolautosubmit onsubmit="return false;">
                 <input type="hidden" id="liuyaoCategory" name="category" value="求財投資" toolparamdescription="占問分類，如求財投資、事業升遷、戀愛婚姻等">
-                <div class="form-group">
-                    <label for="userQuestionInput" style="font-weight: 700; font-size: 15px; margin-bottom: 8px;">
-                        📝 請輸入您想要占問的具體事項或提問：
+                
+                <div class="form-group mb-3">
+                    <label class="suite-form-label" for="userQuestionInput">
+                        <i data-lucide="help-circle"></i> 請輸入您想要占問的具體事項或提問
                     </label>
-                    <textarea id="userQuestionInput" name="question" class="form-control" rows="3"
+                    <textarea id="userQuestionInput" name="question" class="form-control suite-textarea" rows="2"
                               toolparamdescription="欲占問的具體問題或事項"
                               placeholder="例如：今年下半年換工作/求職發展如何？這筆投資是否能獲利？"></textarea>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label style="font-weight: 700; font-size: 14px; margin-bottom: 8px; display:block;">
-                        🎯 選擇占問類別（系統將自動鎖定專屬「用神」）：
+                <div class="form-group mb-3">
+                    <label class="suite-form-label">
+                        <i data-lucide="target"></i> 選擇占問類別（系統將自動鎖定專屬用神）
                     </label>
                     <div class="liuyao-pills">
-                        <span class="liuyao-pill active" data-cat="求財投資">💰 求財投資 (看妻財)</span>
-                        <span class="liuyao-pill" data-cat="事業升遷">💼 事業升遷 (看官鬼)</span>
-                        <span class="liuyao-pill" data-cat="考試學業">📚 考試學業/合約 (看父母)</span>
-                        <span class="liuyao-pill" data-cat="戀愛婚姻">💍 戀愛婚姻 (看妻財/官鬼/世應)</span>
-                        <span class="liuyao-pill" data-cat="身體健康">🩺 身體健康/消災 (看子孫/官鬼)</span>
-                        <span class="liuyao-pill" data-cat="求子生產">👶 求子晚輩 (看子孫)</span>
-                        <span class="liuyao-pill" data-cat="出行尋物">🧭 出行尋物/人際 (看世應)</span>
-                        <span class="liuyao-pill" data-cat="綜合運勢">🌟 綜合運勢</span>
+                        <button type="button" class="liuyao-pill active" data-cat="求財投資">💰 求財投資 (看妻財)</button>
+                        <button type="button" class="liuyao-pill" data-cat="事業升遷">💼 事業升遷 (看官鬼)</button>
+                        <button type="button" class="liuyao-pill" data-cat="考試學業">📚 考試學業/合約 (看父母)</button>
+                        <button type="button" class="liuyao-pill" data-cat="戀愛婚姻">💍 戀愛婚姻 (看妻財/官鬼/世應)</button>
+                        <button type="button" class="liuyao-pill" data-cat="身體健康">🩺 身體健康/消災 (看子孫/官鬼)</button>
+                        <button type="button" class="liuyao-pill" data-cat="求子生產">👶 求子晚輩 (看子孫)</button>
+                        <button type="button" class="liuyao-pill" data-cat="出行尋物">🧭 出行尋物/人際 (看世應)</button>
+                        <button type="button" class="liuyao-pill" data-cat="綜合運勢">🌟 綜合運勢</button>
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 0;">
-                    <label style="font-weight: 700; font-size: 14px; margin-right: 12px;">問測人性別：</label>
-                    <label class="radio-inline"><input type="radio" name="gender" value="男" checked> 先生（男）</label>
-                    <label class="radio-inline"><input type="radio" name="gender" value="女"> 女士（女）</label>
+                <div class="form-group mb-3" style="display: flex; align-items: center; gap: 16px;">
+                    <label class="suite-form-label" style="margin-bottom: 0;">問測人性別：</label>
+                    <label class="radio-inline"><input type="radio" name="gender" value="男" checked> 先生（乾）</label>
+                    <label class="radio-inline"><input type="radio" name="gender" value="女"> 女士（坤）</label>
+                </div>
+
+                <div id="suiteTurnstileWrapper" style="margin-top: 14px; margin-bottom: 6px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'suite-turnstile', action: 'llm_analysis', explicit: true }) %>
                 </div>
             </form>
         </div>
 
         <!-- 起卦方式選項與互動面板 -->
-        <div class="liuyao-arena">
+        <div class="liuyao-arena suite-card">
             <div class="liuyao-mode-tabs">
-                <button type="button" class="liuyao-tab-btn active" data-mode="coins">🪙 銅錢搖卦（推薦）</button>
-                <button type="button" class="liuyao-tab-btn" data-mode="dayan">🎋 大衍筮法（49策）</button>
-                <button type="button" class="liuyao-tab-btn" data-mode="datetime">🕒 時間起卦</button>
-                <button type="button" class="liuyao-tab-btn" data-mode="manual">✍️ 手動輸入爻值</button>
+                <button type="button" class="liuyao-tab-btn active" data-mode="coins"><i data-lucide="coins"></i> 銅錢搖卦（推薦）</button>
+                <button type="button" class="liuyao-tab-btn" data-mode="dayan"><i data-lucide="layers"></i> 大衍筮法（49策）</button>
+                <button type="button" class="liuyao-tab-btn" data-mode="datetime"><i data-lucide="clock"></i> 時間起卦</button>
+                <button type="button" class="liuyao-tab-btn" data-mode="manual"><i data-lucide="pen-tool"></i> 手動輸入爻值</button>
             </div>
 
             <!-- 模式 1：銅錢搖卦 -->
-            <div id="modeCoinsSection">
-                <p id="tossStatusText" style="font-weight: 700; color: #b45309; font-size: 15px; margin-bottom: 12px;">
+            <div id="modeCoinsSection" class="liuyao-mode-panel">
+                <p id="tossStatusText" class="toss-status-desc">
                     點擊「擲錢起爻」開始，由初爻逐次搖至上爻（共 6 次）
                 </p>
 
                 <!-- 三枚虛擬銅錢 -->
                 <div class="coins-container">
-                    <div class="coin" id="coin1"><div class="coin-hole"></div>字</div>
-                    <div class="coin" id="coin2"><div class="coin-hole"></div>字</div>
-                    <div class="coin" id="coin3"><div class="coin-hole"></div>字</div>
+                    <div class="coin" id="coin1" title="銅錢一"><div class="coin-rim"></div><div class="coin-hole"></div><span class="coin-face">字</span></div>
+                    <div class="coin" id="coin2" title="銅錢二"><div class="coin-rim"></div><div class="coin-hole"></div><span class="coin-face">字</span></div>
+                    <div class="coin" id="coin3" title="銅錢三"><div class="coin-rim"></div><div class="coin-hole"></div><span class="coin-face">字</span></div>
                 </div>
 
                 <!-- 六爻建構階梯塔 (由下至上) -->
                 <div class="toss-progress-tower">
-                    <div class="tower-step" id="towerStep6"><span>第 6 爻 (上爻)</span><span class="text-muted">待搖</span></div>
-                    <div class="tower-step" id="towerStep5"><span>第 5 爻</span><span class="text-muted">待搖</span></div>
-                    <div class="tower-step" id="towerStep4"><span>第 4 爻</span><span class="text-muted">待搖</span></div>
-                    <div class="tower-step" id="towerStep3"><span>第 3 爻</span><span class="text-muted">待搖</span></div>
-                    <div class="tower-step" id="towerStep2"><span>第 2 爻</span><span class="text-muted">待搖</span></div>
-                    <div class="tower-step" id="towerStep1"><span>第 1 爻 (初爻)</span><span class="text-muted">待搖</span></div>
+                    <div class="tower-step" id="towerStep6"><span class="step-label">第 6 爻 (上爻)</span><span class="step-value text-muted">待搖</span></div>
+                    <div class="tower-step" id="towerStep5"><span class="step-label">第 5 爻</span><span class="step-value text-muted">待搖</span></div>
+                    <div class="tower-step" id="towerStep4"><span class="step-label">第 4 爻</span><span class="step-value text-muted">待搖</span></div>
+                    <div class="tower-step" id="towerStep3"><span class="step-label">第 3 爻</span><span class="step-value text-muted">待搖</span></div>
+                    <div class="tower-step" id="towerStep2"><span class="step-label">第 2 爻</span><span class="step-value text-muted">待搖</span></div>
+                    <div class="tower-step" id="towerStep1"><span class="step-label">第 1 爻 (初爻)</span><span class="step-value text-muted">待搖</span></div>
                 </div>
 
-                <div class="liuyao-actions">
-                    <button type="button" id="btnTossOnce" class="btn-liuyao-primary">擲錢起爻 ➔</button>
-                    <button type="button" id="btnQuickToss" class="btn-liuyao-secondary">⚡ 神速起卦（一鍵成卦）</button>
-                    <button type="button" id="btnResetToss" class="btn-liuyao-secondary">重置</button>
+                <div class="liuyao-actions suite-submit-container">
+                    <button type="button" id="btnTossOnce" class="btn suite-btn-primary btn-lg"><i data-lucide="coins"></i> 擲錢起爻 ➔</button>
+                    <button type="button" id="btnQuickToss" class="btn suite-btn-secondary btn-lg"><i data-lucide="zap"></i> 神速起卦（一鍵成卦）</button>
+                    <button type="button" id="btnResetToss" class="btn suite-btn-secondary btn-lg"><i data-lucide="rotate-ccw"></i> 重置</button>
                 </div>
             </div>
 
             <!-- 模式 2：大衍筮法 -->
-            <div id="modeDayanSection" style="display: none;">
-                <p style="font-size: 14.5px; color: var(--suite-text-muted); line-height: 1.6; max-width: 600px; margin: 0 auto 16px;">
+            <div id="modeDayanSection" class="liuyao-mode-panel" style="display: none;">
+                <p class="mode-desc">
                     《易經·繫辭》：「大衍之數五十，其用四十有九。分而為二以象兩，掛一以象三，揲之以四以象四時，歸奇於扐以象閏。」
                     系統將嚴格模擬十八變過程，推演初爻至上爻之策數。
                 </p>
-                <div class="liuyao-actions">
-                    <button type="button" id="btnDayanCast" class="btn-liuyao-primary">以大衍筮法推衍卦象 ➔</button>
+                <div class="liuyao-actions suite-submit-container">
+                    <button type="button" id="btnDayanCast" class="btn suite-btn-primary btn-lg"><i data-lucide="layers"></i> 以大衍筮法推衍卦象 ➔</button>
                 </div>
             </div>
 
             <!-- 模式 3：時間起卦 -->
-            <div id="modeDatetimeSection" style="display: none;">
-                <p style="font-size: 14.5px; color: var(--suite-text-muted); margin-bottom: 16px;">
+            <div id="modeDatetimeSection" class="liuyao-mode-panel" style="display: none;">
+                <p class="mode-desc">
                     依據年月日時辰農曆數值，取上卦、下卦與發動之爻。
                 </p>
-                <div style="max-width: 320px; margin: 0 auto 16px;">
-                    <input type="datetime-local" id="datetimeInput" class="form-control">
+                <div style="max-width: 320px; margin: 0 auto 18px;">
+                    <input type="datetime-local" id="datetimeInput" class="form-control suite-input">
                 </div>
-                <div class="liuyao-actions">
-                    <button type="button" id="btnDatetimeCast" class="btn-liuyao-primary">按指定時間起卦 ➔</button>
+                <div class="liuyao-actions suite-submit-container">
+                    <button type="button" id="btnDatetimeCast" class="btn suite-btn-primary btn-lg"><i data-lucide="clock"></i> 按指定時間起卦 ➔</button>
                 </div>
             </div>
 
             <!-- 模式 4：手動輸入 -->
-            <div id="modeManualSection" style="display: none;">
-                <p style="font-size: 14.5px; color: var(--suite-text-muted); margin-bottom: 16px;">
+            <div id="modeManualSection" class="liuyao-mode-panel" style="display: none;">
+                <p class="mode-desc">
                     輸入 6 位爻值（由初爻至上爻）：<br>
-                    <strong>6</strong>: 老陰 (動爻 ×) ｜ <strong>7</strong>: 少陽 (陽爻) ｜ <strong>8</strong>: 少陰 (陰爻) ｜ <strong>9</strong>: 老陽 (動爻 ○)
+                    <strong>6</strong>: 老陰 (動爻 ×) ｜ <strong>7</strong>: 少陽 (陽爻 ⚊) ｜ <strong>8</strong>: 少陰 (陰爻 ⚋) ｜ <strong>9</strong>: 老陽 (動爻 ○)
                 </p>
-                <div style="max-width: 240px; margin: 0 auto 16px;">
-                    <input type="text" id="manualLinesInput" class="form-control text-center"
-                           placeholder="如：789687" maxlength="6" style="font-size: 18px; letter-spacing: 4px; font-weight: 800;">
+                <div style="max-width: 260px; margin: 0 auto 18px;">
+                    <input type="text" id="manualLinesInput" class="form-control suite-input text-center"
+                           placeholder="如：789687" maxlength="6" style="font-size: 20px; letter-spacing: 6px; font-weight: 800;">
                 </div>
-                <div class="liuyao-actions">
-                    <button type="button" id="btnManualCast" class="btn-liuyao-primary">排盤解析 ➔</button>
+                <div class="liuyao-actions suite-submit-container">
+                    <button type="button" id="btnManualCast" class="btn suite-btn-primary btn-lg"><i data-lucide="compass"></i> 排盤解析 ➔</button>
                 </div>
             </div>
         </div>
 
         <!-- 載入中動畫 -->
-        <div id="liuyaoLoading" style="display:none; text-align:center; padding: 40px 0;">
-            <div class="glyphicon glyphicon-refresh glyphicon-spin" style="font-size: 32px; color: #f59e0b; margin-bottom: 12px;"></div>
-            <p style="font-weight: 700; font-size: 16px;">天地合德，爻變吉凶推演中...</p>
+        <div id="liuyaoLoading" class="suite-loading-box" style="display:none;">
+            <div class="suite-spinner"></div>
+            <p style="margin-top: 14px; font-weight: 600; color: var(--suite-primary);">天地合德，納甲干支與爻變吉凶推演中…</p>
         </div>
 
         <!-- 排盤與分析結果呈現容器 -->
         <div id="liuyaoResultContainer" style="display: none;">
             <!-- 雙卦排盤盤面 -->
-            <div id="liuyaoBoard" class="liuyao-result-card"></div>
+            <div id="liuyaoBoard" class="liuyao-result-card suite-card"></div>
+
+            <!-- 卦象快捷操作列 (Copy / Email / Reset) -->
+            <div class="liuyao-action-bar">
+                <button type="button" id="btnCopyLiuyao" class="btn suite-btn-secondary" title="複製完整卦象與宗師解盤">
+                    <i data-lucide="copy"></i> 複製卦象與解盤
+                </button>
+                <button type="button" id="btnEmailLiuyao" class="btn suite-btn-secondary" title="將結果寄送到電子信箱">
+                    <i data-lucide="mail"></i> 寄送結果至信箱
+                </button>
+                <button type="button" id="btnRestartLiuyao" class="btn suite-btn-secondary" title="重新起卦">
+                    <i data-lucide="refresh-cw"></i> 重新起卦
+                </button>
+            </div>
 
             <!-- 宗師 AI 深度解讀 -->
-            <div id="liuyaoAISection" class="liuyao-ai-section" style="display: none;">
+            <div id="liuyaoAISection" class="liuyao-ai-section suite-card" style="display: none;">
                 <div class="liuyao-ai-header">
-                    <h3 style="margin:0; font-weight:800; font-size:18px;">
-                        📜 宗師解卦 · 照見當下
-                    </h3>
-                    <span class="liuyao-badge liuyao-badge-gold">智能納甲推演</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="suite-icon-circle"><i data-lucide="sparkles"></i></span>
+                        <h3 class="liuyao-ai-title">宗師解卦 · 照見當下</h3>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="suite-tag suite-tag-gold">智能納甲推演</span>
+                        <button type="button" id="btnCopyAiAnalysis" class="suite-copy-btn" title="複製解讀內容">
+                            <i data-lucide="copy"></i> 複製解讀
+                        </button>
+                    </div>
                 </div>
+
                 <div id="liuyaoAIAnalysis" class="liuyao-ai-content markdown-body"></div>
 
                 <!-- 追問互動 -->
-                <div style="margin-top: 24px; border-top: 1px dashed var(--suite-border); padding-top: 18px;">
-                    <label for="followupQuestionInput" style="font-weight:700; font-size:14.5px;">💬 對當前卦象還有疑問？向宗師繼續追問：</label>
-                    <div id="followupHistory"></div>
-                    <div class="input-group" style="margin-top: 8px;">
-                        <input type="text" id="followupQuestionInput" class="form-control" placeholder="例如：若我想在三個月內推展，應如何配合？">
+                <div class="liuyao-followup-container">
+                    <label for="followupQuestionInput" class="suite-form-label">
+                        <i data-lucide="message-square"></i> 對當前卦象還有疑問？向宗師繼續追問：
+                    </label>
+                    <div id="followupHistory" class="suite-conversation-list"></div>
+                    
+                    <div id="suiteFollowUpTurnstileWrapper" style="margin-top: 10px; margin-bottom: 10px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
+                    </div>
+
+                    <div class="input-group mt-2">
+                        <input type="text" id="followupQuestionInput" class="form-control suite-input" placeholder="例如：若我想在三個月內推展，應如何配合？">
                         <span class="input-group-btn">
-                            <button type="button" id="btnAskFollowup" class="btn-liuyao-primary" style="border-radius:0 24px 24px 0; padding:9px 18px;">送出追問 ➔</button>
+                            <button type="button" id="btnAskFollowup" class="btn suite-btn-primary" style="height: 44px; padding: 0 20px;">
+                                <i data-lucide="send"></i> 送出追問 ➔
+                            </button>
                         </span>
                     </div>
                 </div>
@@ -251,9 +285,13 @@
     <!-- 頁尾 -->
     <%- include('partials/site-footer.html') %>
 
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/lucide.min.js"></script>
     <script src="/js/markdown-renderer.js"></script>
+    <script src="/js/email-formatter.js"></script>
+    <script src="/js/result-email.js"></script>
     <script src="/js/webmcp.js"></script>
     <script src="/js/liuyao.js"></script>
 </body>

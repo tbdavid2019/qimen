@@ -5,7 +5,7 @@ const path = require('node:path');
 const app = require('../app');
 
 const root = path.join(__dirname, '..');
-const resultPages = ['name-analysis', 'meihua', 'ziwei', 'bazi2', 'tarot', 'fengshui', 'yinyuan', 'answerbook'];
+const resultPages = ['name-analysis', 'meihua', 'ziwei', 'bazi2', 'tarot', 'fengshui', 'yinyuan', 'answerbook', 'liuyao'];
 
 test('所有非奇門結果頁都有共用結果寄送視窗與腳本', () => {
   for (const page of resultPages) {
@@ -43,7 +43,7 @@ test('共用結果寄送沿用 send_email Turnstile 並記錄完整 API 結果',
 test('結果寄送辨識姓名、生命靈數、純紫微盤與各服務結果端點', () => {
   const script = fs.readFileSync(path.join(root, 'public/js/result-email.js'), 'utf8');
   for (const endpoint of [
-    'name-analysis', 'tarot', 'ziwei', 'meihua', 'bazi2', 'fengshui', 'evaluate-layout', 'luantou', 'yinyuan', 'answerbook'
+    'name-analysis', 'tarot', 'ziwei', 'meihua', 'liuyao', 'bazi2', 'fengshui', 'evaluate-layout', 'luantou', 'yinyuan', 'answerbook'
   ]) assert.ok(script.includes(endpoint), `結果寄送漏掉 ${endpoint}`);
   assert.ok(script.includes('tarot(?:\\/numerology'), '生命靈數 API 未納入結果偵測');
   assert.ok(script.includes('name-analysis(?:\\/(verify|generate)|-question)'), '姓名補充 API 未納入結果偵測');

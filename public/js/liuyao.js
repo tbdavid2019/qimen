@@ -6,16 +6,28 @@
  * - 神速起卦一鍵成卦
  * - 大衍筮法、年月日時、手動爻值多模式切換
  * - 雙卦排盤、用神直斷、動變生剋渲染
- * - 宗師 AI 解讀與對話追問
+ * - Cloudflare Turnstile 人機驗證防護
+ * - 完整快捷操作列：複製卦象與解盤、寄送 Email 結果、重新起卦
+ * - 宗師 AI 解讀與對話追問 (對齊 Lucide 圖標系統與 Impeccable 設計規範)
  */
 
 (function () {
+    'use strict';
+
     let tossHistory = [];
     let currentCategory = '求財投資';
     let currentMode = 'coins';
     let audioCtx = null;
     let isFlipping = false;
     let latestDivinationResult = null;
+    let latestAiAnalysisText = '';
+
+    // 重新渲染頁面上所有 Lucide 圖標
+    function refreshIcons() {
+        if (typeof window !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+    }
 
     // 播放銅錢金屬輕鳴音效 (Web Audio API 合成音，無需外部音檔)
     function playCoinChime() {
@@ -37,15 +49,109 @@
             gain.connect(audioCtx.destination);
             osc.start();
             osc.stop(audioCtx.currentTime + 0.35);
-        } catch (e) {
-            // Audio not allowed or failed
-        }
+        } catch (e) {}
     }
 
     function triggerHaptic() {
-        if (navigator.vibrate) {
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
             try { navigator.vibrate(25); } catch (e) {}
         }
+    }
+
+    // Turnstile 驗證碼獲取與重置
+    function getTurnstileToken(widgetContainerId) {
+        if (typeof window !== 'undefined' && window.turnstile) {
+            try {
+                const el = document.getElementById(widgetContainerId);
+                if (el && el.dataset.widgetId) {
+                    return window.turnstile.getResponse(el.dataset.widgetId) || '';
+                }
+                return window.turnstile.getResponse() || '';
+            } catch (_) {}
+        }
+        return '';
+    }
+
+    function resetTurnstile(widgetContainerId) {
+        if (typeof window !== 'undefined' && window.turnstile) {
+            try {
+                const el = document.getElementById(widgetContainerId);
+                if (el && el.dataset.widgetId) {
+                    window.turnstile.reset(el.dataset.widgetId);
+                } else {
+                    window.turnstile.reset();
+                }
+            } catch (_) {}
+        }
+    }
+
+    // 複製到剪貼簿工具函式（含視覺動畫回饋）
+    function copyTextWithFeedback(text, btnElement) {
+        if (!text) return;
+        const doSuccess = () => {
+            if (btnElement) {
+                const origHtml = btnElement.innerHTML;
+                btnElement.innerHTML = '<i data-lucide="check" style="color:#10b981;"></i> 已複製！';
+                refreshIcons();
+                setTimeout(() => {
+                    btnElement.innerHTML = origHtml;
+                    refreshIcons();
+                }, 2000);
+            }
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(doSuccess).catch(() => {
+                fallbackCopy(text);
+                doSuccess();
+            });
+        } else {
+            fallbackCopy(text);
+            doSuccess();
+        }
+    }
+
+    function fallbackCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        ta.style.top = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            document.execCommand('copy');
+        } catch (_) {}
+        document.body.removeChild(ta);
+    }
+
+    // 格式化完整卦象與解讀為易讀文字供剪貼簿使用
+    function formatDivinationCopyText(result, aiText) {
+        if (!result) return '';
+        const ben = result.benGua || {};
+        const zhi = result.zhiGua || {};
+        const gz = result.ganzhi || {};
+        const ys = result.yongshen || {};
+        const zx = result.zhuxiRule || {};
+        const q = result.question || document.getElementById('userQuestionInput')?.value?.trim() || '';
+
+        const lines = [
+            `【333 六爻神卦 · 京房納甲排盤】`,
+            q ? `占問事項：${q}` : '',
+            result.category ? `占問分類：${result.category}` : '',
+            `占卦時間：${result.datetime || ''}（農曆：${result.lunarText || ''}）`,
+            `干支：${gz.year}年 ${gz.month}月 ${gz.day}日 ${gz.time}時 ｜ 月建：${gz.monthBranch || ''} ｜ 日辰：${gz.dayBranch || ''} ｜ 旬空：${gz.xunKong || ''}`,
+            `----------------------------------------`,
+            `本卦：【${ben.name}】（${ben.palace}宮·五行屬${ben.palaceElement}·${ben.type}） 世在第${ben.shi}爻 應在第${ben.ying}爻`,
+            (zhi.name && zhi.name !== ben.name) ? `之卦：【${zhi.name}】（${zhi.palace}宮·${zhi.type}） 世在第${zhi.shi}爻 應在第${zhi.ying}爻` : '',
+            ys.summary ? `專題用神：${ys.name}（以【${ys.target}】為用神）- ${ys.summary}` : '',
+            zx.mainRule ? `考變占斷法：${zx.mainRule}（發動 ${zx.movingCount || 0} 爻）` : '',
+            `----------------------------------------`,
+            aiText ? `【宗師解盤】\n${aiText}` : ''
+        ].filter(Boolean);
+
+        return lines.join('\n');
     }
 
     // 初始化頁面事件
@@ -54,7 +160,9 @@
         initModeTabs();
         initCoinTossControls();
         initOtherCastingForms();
+        initActionBar();
         initAIAnalysisControls();
+        refreshIcons();
     });
 
     // 分類選擇膠囊
@@ -92,6 +200,7 @@
                         sections[mode].style.display = (mode === currentMode) ? 'block' : 'none';
                     }
                 });
+                refreshIcons();
             });
         });
     }
@@ -151,7 +260,7 @@
             isFlipping = false;
 
             if (tossHistory.length === 6) {
-                document.getElementById('tossStatusText').textContent = '🎉 六爻齊備！正在起卦排盤中...';
+                document.getElementById('tossStatusText').textContent = '🎉 六爻齊備！正在生成納甲排盤...';
                 submitLiuyaoDivination({
                     method: 'manual',
                     lines: tossHistory.join('')
@@ -197,25 +306,27 @@
     function resetCoinToss() {
         tossHistory = [];
         isFlipping = false;
-        document.getElementById('tossStatusText').textContent = '點擊「擲錢起爻」開始，由初爻逐次搖至上爻';
+        const statusEl = document.getElementById('tossStatusText');
+        if (statusEl) statusEl.textContent = '點擊「擲錢起爻」開始，由初爻逐次搖至上爻（共 6 次）';
+
         for (let i = 1; i <= 6; i++) {
             const stepEl = document.getElementById(`towerStep${i}`);
             if (stepEl) {
                 stepEl.className = 'tower-step';
-                stepEl.innerHTML = `<span>第 ${i} 爻</span><span class="text-muted">待搖</span>`;
+                stepEl.innerHTML = `<span class="step-label">第 ${i} 爻</span><span class="step-value text-muted">待搖</span>`;
             }
         }
-        document.getElementById('liuyaoResultContainer').style.display = 'none';
+        const container = document.getElementById('liuyaoResultContainer');
+        if (container) container.style.display = 'none';
+        refreshIcons();
     }
 
     function updateCoinFaces(vals) {
         vals.forEach((v, idx) => {
             const el = document.getElementById(`coin${idx + 1}`);
             if (el) {
-                el.textContent = v === 3 ? '字' : '背';
-                el.style.background = v === 3
-                    ? 'radial-gradient(circle at 35% 35%, #fde047, #d97706)'
-                    : 'radial-gradient(circle at 35% 35%, #fb923c, #9a3412)';
+                const face = el.querySelector('.coin-face');
+                if (face) face.textContent = v === 3 ? '字' : '背';
             }
         });
     }
@@ -227,20 +338,19 @@
         stepEl.classList.add('done');
         let symbolHtml = '';
         if (sum === 7) {
-            symbolHtml = '<span class="yao-bar-yang">▅▅▅▅▅</span> <small>(少陽)</small>';
+            symbolHtml = '<span class="yao-bar-yang">▅▅▅▅▅</span> <small class="text-muted">(少陽 ⚊)</small>';
         } else if (sum === 8) {
-            symbolHtml = '<span class="yao-bar-yin">▅▅　▅▅</span> <small>(少陰)</small>';
+            symbolHtml = '<span class="yao-bar-yin">▅▅　▅▅</span> <small class="text-muted">(少陰 ⚋)</small>';
         } else if (sum === 9) {
             symbolHtml = '<span class="yao-bar-yang">▅▅▅▅▅</span> <span class="moving-indicator">○ (老陽動)</span>';
         } else if (sum === 6) {
             symbolHtml = '<span class="yao-bar-yin">▅▅　▅▅</span> <span class="moving-indicator">× (老陰動)</span>';
         }
-        stepEl.innerHTML = `<span>第 ${lineIndex} 爻</span><span>${symbolHtml}</span>`;
+        stepEl.innerHTML = `<span class="step-label">第 ${lineIndex} 爻</span><span>${symbolHtml}</span>`;
     }
 
     // 其他起卦模式
     function initOtherCastingForms() {
-        // 大衍筮法按鈕
         const btnDayanCast = document.getElementById('btnDayanCast');
         if (btnDayanCast) {
             btnDayanCast.addEventListener('click', () => {
@@ -248,7 +358,6 @@
             });
         }
 
-        // 時間起卦按鈕
         const btnDatetimeCast = document.getElementById('btnDatetimeCast');
         if (btnDatetimeCast) {
             btnDatetimeCast.addEventListener('click', () => {
@@ -260,7 +369,6 @@
             });
         }
 
-        // 手動爻值按鈕
         const btnManualCast = document.getElementById('btnManualCast');
         if (btnManualCast) {
             btnManualCast.addEventListener('click', () => {
@@ -317,10 +425,22 @@
                 triggerLLMAnalysis(data.result, question);
             }
 
+            // 更新全站郵件寄送快照
+            if (typeof window !== 'undefined') {
+                window.lastSuiteResult = {
+                    calculation: data.result,
+                    analysis: data.analysis || ''
+                };
+                if (typeof window.publishSuiteEmailResult === 'function') {
+                    window.publishSuiteEmailResult('六爻神卦', data.result, `【${data.result.benGua?.name || '六爻卦'}】排盤解讀`);
+                }
+            }
+
             if (resultContainer) {
                 resultContainer.style.display = 'block';
                 resultContainer.scrollIntoView({ behavior: 'smooth' });
             }
+            refreshIcons();
         } catch (e) {
             alert('連線失敗：' + e.message);
         } finally {
@@ -343,7 +463,7 @@
         // 用神橫幅
         let yongshenHtml = `
             <div class="yongshen-banner">
-                <div class="yongshen-title">🎯 專題用神鎖定：${escapeHtml(ys.name || '事態')}</div>
+                <div class="yongshen-title"><i data-lucide="target"></i> 專題用神鎖定：${escapeHtml(ys.name || '事態')}</div>
                 <div class="yongshen-desc">${escapeHtml(ys.summary || '')}</div>
             </div>
         `;
@@ -351,12 +471,12 @@
         // 朱熹變爻斷法橫幅
         let zhuxiHtml = `
             <div class="zhuxi-card">
-                <div class="zhuxi-title">📜 朱熹《易學啟蒙》考變占斷法：${escapeHtml(zx.mainRule || '')}</div>
-                <div class="text-muted" style="font-size: 13.5px;">${escapeHtml(zx.explanation || '')}</div>
+                <div class="zhuxi-title"><i data-lucide="book-open"></i> 朱熹《易學啟蒙》考變占斷法：${escapeHtml(zx.mainRule || '')}</div>
+                <div class="text-muted" style="font-size: 14px; line-height: 1.6;">${escapeHtml(zx.explanation || '')}</div>
             </div>
         `;
 
-        // 本卦表格
+        // 本卦表格行
         const benRows = (ben.lines || []).slice().reverse().map(l => {
             const isShi = l.position === ben.shi ? '<span class="badge-shi">世</span>' : '';
             const isYing = l.position === ben.ying ? '<span class="badge-ying">應</span>' : '';
@@ -381,7 +501,7 @@
             `;
         }).join('');
 
-        // 之卦表格
+        // 之卦表格行
         const zhiRows = (zhi.lines || []).slice().reverse().map(l => {
             const isShi = l.position === zhi.shi ? '<span class="badge-shi">世</span>' : '';
             const isYing = l.position === zhi.ying ? '<span class="badge-ying">應</span>' : '';
@@ -401,12 +521,13 @@
         boardEl.innerHTML = `
             <div class="liuyao-header-banner">
                 <div>
-                    <h3 style="margin:0 0 4px 0; font-weight:800; font-size:18px;">
+                    <h3 style="margin:0 0 6px 0; font-weight:800; font-size:18px;">
                         【${escapeHtml(ben.name)}】 之 【${escapeHtml(zhi.name)}】
                     </h3>
                     <div class="liuyao-time-meta">
                         ${escapeHtml(result.lunarText || '')} ｜ 
                         ${gz.year}年 ${gz.month}月 ${gz.day}日 ${gz.time}時 ｜ 
+                        月建：<strong>${gz.monthBranch || ''}</strong> ｜ 日辰：<strong>${gz.dayBranch || ''}</strong> ｜ 
                         旬空：<strong>${gz.xunKong || '無'}</strong>
                     </div>
                 </div>
@@ -421,11 +542,11 @@
                 <div class="gua-card">
                     <div class="gua-card-title">
                         <span>本卦：${escapeHtml(ben.name)}</span>
-                        <small class="text-muted">${ben.palace}宮·五行${ben.palaceElement}</small>
+                        <small class="text-muted">${ben.palace}宮·五行屬${ben.palaceElement}</small>
                     </div>
                     <table class="gua-lines-table">
                         <thead>
-                            <tr class="text-muted" style="font-size:12px;">
+                            <tr class="text-muted" style="font-size:13px;">
                                 <th>爻</th><th>六神</th><th>伏神</th><th>爻象</th><th>六親</th><th>干支</th><th>旺衰</th><th>世應</th>
                             </tr>
                         </thead>
@@ -440,7 +561,7 @@
                     </div>
                     <table class="gua-lines-table">
                         <thead>
-                            <tr class="text-muted" style="font-size:12px;">
+                            <tr class="text-muted" style="font-size:13px;">
                                 <th>爻</th><th>爻象</th><th>六親</th><th>干支</th><th>世應</th>
                             </tr>
                         </thead>
@@ -451,10 +572,12 @@
 
             ${zhuxiHtml}
         `;
+        refreshIcons();
     }
 
-    // 渲染 LLM 解讀
+    // 渲染 LLM 宗師深度解讀
     function renderAIAnalysis(markdownText) {
+        latestAiAnalysisText = markdownText || '';
         const aiContainer = document.getElementById('liuyaoAIAnalysis');
         if (!aiContainer) return;
 
@@ -464,22 +587,26 @@
             aiContainer.innerHTML = escapeHtml(markdownText).replace(/\n/g, '<br>');
         }
         document.getElementById('liuyaoAISection').style.display = 'block';
+        refreshIcons();
     }
 
-    // 若 API 回傳未包含即時 AI，前端單獨請求
+    // 前端單獨請求 AI 深度解讀（支援 Turnstile 防護）
     async function triggerLLMAnalysis(result, question) {
         const aiContainer = document.getElementById('liuyaoAIAnalysis');
         if (!aiContainer) return;
         aiContainer.innerHTML = '<div class="text-center py-4 text-muted"><span class="glyphicon glyphicon-refresh glyphicon-spin"></span> 正在邀請宗師依據納甲用神深度推演...</div>';
         document.getElementById('liuyaoAISection').style.display = 'block';
 
+        const token = getTurnstileToken('suite-turnstile');
+
         try {
-            const resp = await fetch('/api/suite-ai/liuyao', {
+            const resp = await fetch('/api/liuyao/llm-analysis', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     result,
-                    question
+                    question,
+                    'cf-turnstile-response': token
                 })
             });
             const data = await resp.json();
@@ -489,17 +616,64 @@
                     window.conversationHistory = window.conversationHistory || [];
                     window.conversationHistory.push({ role: 'user', content: question || '六爻神卦排盤分析' });
                     window.conversationHistory.push({ role: 'assistant', content: data.analysis });
-                    window.lastSuiteResult = result;
+                    window.lastSuiteResult = { calculation: result, analysis: data.analysis };
+                    if (typeof window.publishSuiteEmailResult === 'function') {
+                        window.publishSuiteEmailResult('六爻神卦', result, `【${result.benGua?.name || '六爻卦'}】排盤解讀`);
+                    }
                 }
             } else {
                 aiContainer.innerHTML = '<div class="alert alert-warning">未能取得即時解讀，已保留上述卦盤結構供您參詳。</div>';
             }
         } catch (e) {
             aiContainer.innerHTML = `<div class="text-muted">解讀服務連線暫緩：${escapeHtml(e.message)}</div>`;
+        } finally {
+            resetTurnstile('suite-turnstile');
+            refreshIcons();
         }
     }
 
-    // 追問與對話互動
+    // 快捷操作列（複製卦象、Email 寄送、重新起卦）
+    function initActionBar() {
+        const copyBtn = document.getElementById('btnCopyLiuyao');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                const report = formatDivinationCopyText(latestDivinationResult, latestAiAnalysisText);
+                copyTextWithFeedback(report, copyBtn);
+            });
+        }
+
+        const emailBtn = document.getElementById('btnEmailLiuyao');
+        if (emailBtn) {
+            emailBtn.addEventListener('click', () => {
+                const launcherBtn = document.getElementById('suiteResultEmailOpen');
+                if (launcherBtn) {
+                    launcherBtn.click();
+                } else {
+                    const dialog = document.getElementById('suiteResultEmailDialog');
+                    if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+                }
+            });
+        }
+
+        const restartBtn = document.getElementById('btnRestartLiuyao');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                resetCoinToss();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        const copyAiBtn = document.getElementById('btnCopyAiAnalysis');
+        if (copyAiBtn) {
+            copyAiBtn.addEventListener('click', () => {
+                if (latestAiAnalysisText) {
+                    copyTextWithFeedback(latestAiAnalysisText, copyAiBtn);
+                }
+            });
+        }
+    }
+
+    // 追問與對話互動（支援 Turnstile 防護）
     function initAIAnalysisControls() {
         const askBtn = document.getElementById('btnAskFollowup');
         const askInput = document.getElementById('followupQuestionInput');
@@ -514,13 +688,18 @@
                 }
                 askBtn.disabled = true;
                 askBtn.textContent = '分析中...';
+
+                const token = getTurnstileToken('suite-followup-turnstile');
+
                 try {
-                    const resp = await fetch('/api/suite-ai/liuyao', {
+                    const resp = await fetch('/api/liuyao/llm-analysis', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             result: latestDivinationResult,
-                            question: q
+                            question: q,
+                            conversationHistory: window.conversationHistory || [],
+                            'cf-turnstile-response': token
                         })
                     });
                     const data = await resp.json();
@@ -528,11 +707,32 @@
                         const historyEl = document.getElementById('followupHistory');
                         if (historyEl) {
                             const newEntry = document.createElement('div');
-                            newEntry.className = 'well mt-3 markdown-body';
+                            newEntry.className = 'suite-message-bubble assistant markdown-body';
+                            newEntry.style.marginTop = '14px';
+
                             const renderedAnswer = window.MarkdownRenderer && typeof window.MarkdownRenderer.render === 'function'
                                 ? window.MarkdownRenderer.render(data.analysis)
                                 : escapeHtml(data.analysis).replace(/\n/g, '<br>');
-                            newEntry.innerHTML = `<div style="font-weight:700; margin-bottom:8px; color:var(--suite-primary, #b45309);">問：${escapeHtml(q)}</div><hr style="margin:8px 0;">${renderedAnswer}`;
+
+                            newEntry.innerHTML = `
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--suite-border); padding-bottom: 6px;">
+                                    <span style="font-weight:700; color:var(--suite-primary, #b45309); display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="help-circle"></i> 問：${escapeHtml(q)}
+                                    </span>
+                                    <button type="button" class="suite-copy-btn btn-copy-msg" title="複製此回答內容">
+                                        <i data-lucide="copy"></i> 複製內容
+                                    </button>
+                                </div>
+                                <div class="followup-answer-content">${renderedAnswer}</div>
+                            `;
+
+                            const copyMsgBtn = newEntry.querySelector('.btn-copy-msg');
+                            if (copyMsgBtn) {
+                                copyMsgBtn.addEventListener('click', () => {
+                                    copyTextWithFeedback(data.analysis, copyMsgBtn);
+                                });
+                            }
+
                             historyEl.appendChild(newEntry);
                             askInput.value = '';
                         }
@@ -541,12 +741,16 @@
                             window.conversationHistory.push({ role: 'user', content: q });
                             window.conversationHistory.push({ role: 'assistant', content: data.analysis });
                         }
+                    } else {
+                        alert('未能獲取追問解讀：' + (data.error || '請稍後再試'));
                     }
                 } catch (e) {
                     alert('追問失敗：' + e.message);
                 } finally {
+                    resetTurnstile('suite-followup-turnstile');
                     askBtn.disabled = false;
-                    askBtn.textContent = '送出追問 ➔';
+                    askBtn.innerHTML = '<i data-lucide="send"></i> 送出追問 ➔';
+                    refreshIcons();
                 }
             });
         }
