@@ -58,13 +58,182 @@
         }
     }
 
+    // Cloudflare Turnstile 人機驗證管理
+    let suiteTurnstileWidgetId = null;
+    let currentSuiteTurnstileToken = '';
+    let suiteTurnstileRenderRetries = 0;
+
+    let followupTurnstileWidgetId = null;
+    let currentFollowupTurnstileToken = '';
+    let followupTurnstileRenderRetries = 0;
+
+    function loadTurnstileScript(callback) {
+        if (typeof window !== 'undefined' && window.turnstile && typeof window.turnstile.render === 'function') {
+            return callback(null);
+        }
+        const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+        if (existing) {
+            existing.addEventListener('load', () => callback(null), { once: true });
+            existing.addEventListener('error', (err) => callback(err || new Error('Turnstile script failed to load')), { once: true });
+            if (typeof window.turnstile !== 'undefined' && typeof window.turnstile.render === 'function') {
+                return callback(null);
+            }
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => callback(null);
+        script.onerror = (err) => callback(err || new Error('Turnstile script failed to load'));
+        document.head.appendChild(script);
+    }
+
+    function renderSuiteTurnstile() {
+        const container = document.getElementById('suite-turnstile');
+        if (!container || typeof container.getAttribute !== 'function') return;
+        const sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript((err) => {
+            if (err) {
+                console.warn('[Turnstile] Liuyao suite widget failed to load:', err);
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (suiteTurnstileRenderRetries < 30) {
+                    suiteTurnstileRenderRetries++;
+                    setTimeout(renderSuiteTurnstile, 200);
+                }
+                return;
+            }
+            suiteTurnstileRenderRetries = 0;
+            if (suiteTurnstileWidgetId === null) {
+                try {
+                    const action = container.getAttribute('data-action') || 'llm_analysis';
+                    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'auto';
+                    suiteTurnstileWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: theme,
+                        size: 'flexible',
+                        callback: (token) => {
+                            currentSuiteTurnstileToken = token;
+                            container.dataset.token = token;
+                            const promptBox = document.querySelector('.suite-turnstile-prompt-box');
+                            if (promptBox && latestDivinationResult) {
+                                promptBox.innerHTML = '<p style="color:#10b981; font-weight:700;"><i data-lucide="check-circle"></i> 驗證完成，正在啟動宗師深度推演…</p>';
+                                refreshIcons();
+                                setTimeout(() => {
+                                    triggerLLMAnalysis(latestDivinationResult, document.getElementById('userQuestionInput')?.value?.trim() || '');
+                                }, 300);
+                            }
+                        },
+                        'expired-callback': () => {
+                            currentSuiteTurnstileToken = '';
+                            delete container.dataset.token;
+                        },
+                        'error-callback': () => {
+                            currentSuiteTurnstileToken = '';
+                            delete container.dataset.token;
+                        }
+                    });
+                    container.dataset.widgetId = suiteTurnstileWidgetId;
+                    window.suiteTurnstileWidgetId = suiteTurnstileWidgetId;
+                } catch (e) {
+                    console.warn('[Turnstile] Liuyao suite render error:', e);
+                }
+            }
+        });
+    }
+
+    function renderFollowupTurnstile() {
+        const container = document.getElementById('suite-followup-turnstile');
+        if (!container || typeof container.getAttribute !== 'function') return;
+        const sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript((err) => {
+            if (err) {
+                console.warn('[Turnstile] Liuyao followup widget failed to load:', err);
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (followupTurnstileRenderRetries < 30) {
+                    followupTurnstileRenderRetries++;
+                    setTimeout(renderFollowupTurnstile, 200);
+                }
+                return;
+            }
+            followupTurnstileRenderRetries = 0;
+            if (followupTurnstileWidgetId === null) {
+                try {
+                    const action = container.getAttribute('data-action') || 'llm_analysis';
+                    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'auto';
+                    followupTurnstileWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: theme,
+                        size: 'flexible',
+                        callback: (token) => {
+                            currentFollowupTurnstileToken = token;
+                            container.dataset.token = token;
+                        },
+                        'expired-callback': () => {
+                            currentFollowupTurnstileToken = '';
+                            delete container.dataset.token;
+                        },
+                        'error-callback': () => {
+                            currentFollowupTurnstileToken = '';
+                            delete container.dataset.token;
+                        }
+                    });
+                    container.dataset.widgetId = followupTurnstileWidgetId;
+                    window.suiteFollowUpWidgetId = followupTurnstileWidgetId;
+                } catch (e) {
+                    console.warn('[Turnstile] Liuyao followup render error:', e);
+                }
+            }
+        });
+    }
+
     // Turnstile 驗證碼獲取與重置
     function getTurnstileToken(widgetContainerId) {
+        if (widgetContainerId === 'suite-turnstile') {
+            if (currentSuiteTurnstileToken) return currentSuiteTurnstileToken;
+            const container = document.getElementById('suite-turnstile');
+            if (container) {
+                const hiddenInput = container.querySelector('input[name="cf-turnstile-response"]');
+                if (hiddenInput && hiddenInput.value) return hiddenInput.value;
+            }
+            if (typeof window !== 'undefined' && window.turnstile && suiteTurnstileWidgetId !== null) {
+                try {
+                    const t = window.turnstile.getResponse(suiteTurnstileWidgetId);
+                    if (t) return t;
+                } catch (_) {}
+            }
+        } else if (widgetContainerId === 'suite-followup-turnstile') {
+            if (currentFollowupTurnstileToken) return currentFollowupTurnstileToken;
+            const container = document.getElementById('suite-followup-turnstile');
+            if (container) {
+                const hiddenInput = container.querySelector('input[name="cf-turnstile-response"]');
+                if (hiddenInput && hiddenInput.value) return hiddenInput.value;
+            }
+            if (typeof window !== 'undefined' && window.turnstile && followupTurnstileWidgetId !== null) {
+                try {
+                    const t = window.turnstile.getResponse(followupTurnstileWidgetId);
+                    if (t) return t;
+                } catch (_) {}
+            }
+            if (currentSuiteTurnstileToken) return currentSuiteTurnstileToken;
+        }
+
         if (typeof window !== 'undefined' && window.turnstile) {
             try {
                 const el = document.getElementById(widgetContainerId);
                 if (el && el.dataset.widgetId) {
-                    return window.turnstile.getResponse(el.dataset.widgetId) || '';
+                    const t = window.turnstile.getResponse(el.dataset.widgetId);
+                    if (t) return t;
                 }
                 return window.turnstile.getResponse() || '';
             } catch (_) {}
@@ -73,15 +242,43 @@
     }
 
     function resetTurnstile(widgetContainerId) {
-        if (typeof window !== 'undefined' && window.turnstile) {
-            try {
-                const el = document.getElementById(widgetContainerId);
-                if (el && el.dataset.widgetId) {
-                    window.turnstile.reset(el.dataset.widgetId);
-                } else {
-                    window.turnstile.reset();
-                }
-            } catch (_) {}
+        if (widgetContainerId === 'suite-turnstile') {
+            currentSuiteTurnstileToken = '';
+            const container = document.getElementById('suite-turnstile');
+            if (container) delete container.dataset.token;
+            if (typeof window !== 'undefined' && window.turnstile) {
+                try {
+                    if (suiteTurnstileWidgetId !== null) {
+                        window.turnstile.reset(suiteTurnstileWidgetId);
+                    } else if (container) {
+                        window.turnstile.reset(container);
+                    }
+                } catch (_) {}
+            }
+        } else if (widgetContainerId === 'suite-followup-turnstile') {
+            currentFollowupTurnstileToken = '';
+            const container = document.getElementById('suite-followup-turnstile');
+            if (container) delete container.dataset.token;
+            if (typeof window !== 'undefined' && window.turnstile) {
+                try {
+                    if (followupTurnstileWidgetId !== null) {
+                        window.turnstile.reset(followupTurnstileWidgetId);
+                    } else if (container) {
+                        window.turnstile.reset(container);
+                    }
+                } catch (_) {}
+            }
+        } else {
+            if (typeof window !== 'undefined' && window.turnstile) {
+                try {
+                    const el = document.getElementById(widgetContainerId);
+                    if (el && el.dataset.widgetId) {
+                        window.turnstile.reset(el.dataset.widgetId);
+                    } else {
+                        window.turnstile.reset();
+                    }
+                } catch (_) {}
+            }
         }
     }
 
@@ -162,8 +359,13 @@
         initOtherCastingForms();
         initActionBar();
         initAIAnalysisControls();
+        renderSuiteTurnstile();
         refreshIcons();
     });
+
+    if (typeof document !== 'undefined' && (document.readyState === 'interactive' || document.readyState === 'complete')) {
+        renderSuiteTurnstile();
+    }
 
     // 分類選擇膠囊
     function initCategoryPills() {
@@ -400,7 +602,7 @@
                 category: currentCategory,
                 question,
                 gender,
-                analyze: true,
+                analyze: false,
                 ...extraParams
             };
 
@@ -594,10 +796,49 @@
     async function triggerLLMAnalysis(result, question) {
         const aiContainer = document.getElementById('liuyaoAIAnalysis');
         if (!aiContainer) return;
-        aiContainer.innerHTML = '<div class="text-center py-4 text-muted"><span class="glyphicon glyphicon-refresh glyphicon-spin"></span> 正在邀請宗師依據納甲用神深度推演...</div>';
-        document.getElementById('liuyaoAISection').style.display = 'block';
+        const aiSection = document.getElementById('liuyaoAISection');
+        if (aiSection) aiSection.style.display = 'block';
 
         const token = getTurnstileToken('suite-turnstile');
+        const container = document.getElementById('suite-turnstile');
+        const isTurnstileConfigured = Boolean(container && container.getAttribute('data-sitekey'));
+
+        if (isTurnstileConfigured && !token) {
+            aiContainer.innerHTML = `
+                <div class="suite-turnstile-prompt-box" style="text-align: center; padding: 24px 18px; background: rgba(232, 121, 79, 0.06); border: 1.5px dashed var(--suite-primary, #b45309); border-radius: 14px; margin: 12px 0;">
+                    <div style="font-size: 28px; margin-bottom: 8px;">🛡️</div>
+                    <p style="font-weight: 800; color: var(--suite-primary, #b45309); margin-bottom: 8px; font-size: 16px;">
+                        請完成上方的人機安全驗證 (Cloudflare Turnstile)
+                    </p>
+                    <p style="font-size: 13.5px; color: var(--suite-text-muted, #667085); margin-bottom: 16px; line-height: 1.5;">
+                        卦象已排定！請在上方表單完成 Turnstile 勾選驗證，即可啟動宗師納甲深度推演與吉凶指引。
+                    </p>
+                    <button type="button" id="btnRetryTurnstileLLM" class="btn suite-btn-primary">
+                        <i data-lucide="sparkles"></i> 驗證完成，獲取宗師解讀 ➔
+                    </button>
+                </div>
+            `;
+            refreshIcons();
+            const promptWrapper = document.getElementById('suiteTurnstileWrapper');
+            if (promptWrapper) {
+                promptWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            const retryBtn = document.getElementById('btnRetryTurnstileLLM');
+            if (retryBtn) {
+                retryBtn.addEventListener('click', () => {
+                    const freshToken = getTurnstileToken('suite-turnstile');
+                    if (!freshToken && isTurnstileConfigured) {
+                        alert('請先在上方完成 Cloudflare 人機安全驗證！');
+                        promptWrapper?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+                    triggerLLMAnalysis(result, question);
+                });
+            }
+            return;
+        }
+
+        aiContainer.innerHTML = '<div class="text-center py-4 text-muted"><span class="glyphicon glyphicon-refresh glyphicon-spin"></span> 正在邀請宗師依據納甲用神深度推演...</div>';
 
         try {
             const resp = await fetch('/api/liuyao/llm-analysis', {
@@ -606,7 +847,8 @@
                 body: JSON.stringify({
                     result,
                     question,
-                    'cf-turnstile-response': token
+                    'cf-turnstile-response': token || undefined,
+                    turnstileToken: token || undefined
                 })
             });
             const data = await resp.json();
@@ -621,8 +863,10 @@
                         window.publishSuiteEmailResult('六爻神卦', result, `【${result.benGua?.name || '六爻卦'}】排盤解讀`);
                     }
                 }
+                // 當主解讀完成並展開追問時，初始化追問專用 Turnstile
+                renderFollowupTurnstile();
             } else {
-                aiContainer.innerHTML = '<div class="alert alert-warning">未能取得即時解讀，已保留上述卦盤結構供您參詳。</div>';
+                aiContainer.innerHTML = `<div class="alert alert-warning">未能取得即時解讀：${escapeHtml(data.error || '服務暫忙，請稍後重試')}。已保留上述卦盤結構供您參詳。</div>`;
             }
         } catch (e) {
             aiContainer.innerHTML = `<div class="text-muted">解讀服務連線暫緩：${escapeHtml(e.message)}</div>`;
@@ -686,10 +930,19 @@
                     alert('請先起卦');
                     return;
                 }
+
+                const fuContainer = document.getElementById('suite-followup-turnstile');
+                const isFuTurnstileConfigured = Boolean(fuContainer && fuContainer.getAttribute('data-sitekey'));
+                const token = getTurnstileToken('suite-followup-turnstile');
+
+                if (isFuTurnstileConfigured && !token) {
+                    alert('請先完成下方的人機安全驗證 (Cloudflare Turnstile) 後再送出追問！');
+                    document.getElementById('suiteFollowUpTurnstileWrapper')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+
                 askBtn.disabled = true;
                 askBtn.textContent = '分析中...';
-
-                const token = getTurnstileToken('suite-followup-turnstile');
 
                 try {
                     const resp = await fetch('/api/liuyao/llm-analysis', {
@@ -699,7 +952,8 @@
                             result: latestDivinationResult,
                             question: q,
                             conversationHistory: window.conversationHistory || [],
-                            'cf-turnstile-response': token
+                            'cf-turnstile-response': token || undefined,
+                            turnstileToken: token || undefined
                         })
                     });
                     const data = await resp.json();
@@ -767,5 +1021,12 @@
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    if (typeof window !== 'undefined') {
+        window.renderSuiteTurnstile = renderSuiteTurnstile;
+        window.renderFollowupTurnstile = renderFollowupTurnstile;
+        window.resetLiuyaoTurnstile = resetTurnstile;
+        window.getLiuyaoTurnstileToken = getTurnstileToken;
     }
 })();

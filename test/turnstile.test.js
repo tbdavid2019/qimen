@@ -544,6 +544,16 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
         assert.equal(answerbookLLMRes.status, 403, '解答之書前端解讀未帶 Turnstile 應被拒絕以保護 LLM Token');
         const answerbookLLMData = await answerbookLLMRes.json();
         assert.equal(answerbookLLMData.code, 'TURNSTILE_TOKEN_MISSING');
+
+        // 3e. 測試六爻解卦端點 /api/liuyao/llm-analysis 在啟用時強制要求 Turnstile
+        const liuyaoLLMRes = await fetch(`${baseUrl}/api/liuyao/llm-analysis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: '測試六爻', result: { benGua: { name: '乾為天' } } })
+        });
+        assert.equal(liuyaoLLMRes.status, 403, '六爻前端解讀未帶 Turnstile 應被拒絕以保護 LLM Token');
+        const liuyaoLLMData = await liuyaoLLMRes.json();
+        assert.equal(liuyaoLLMData.code, 'TURNSTILE_TOKEN_MISSING');
     } finally {
         delete process.env.TURNSTILE_FORCE_ENABLE;
         if (originalSiteKey !== undefined) {
