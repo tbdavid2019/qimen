@@ -72,3 +72,19 @@ test('支援區塊引言 (blockquote) 語法', () => {
 
     assert.match(html, /<blockquote>一句提醒：<strong>掌握當下<\/strong><br\/>切勿猶豫不決<\/blockquote>/);
 });
+
+test('支援水平分隔線 (hr) 語法', () => {
+    const html = MarkdownRenderer.render('段落一\n\n---\n\n段落二');
+    assert.match(html, /<p>段落一<\/p><hr\/><p>段落二<\/p>/);
+});
+
+test('支援自動辨識章節標題 (第X部分) 與表格列 unpack', () => {
+    const source = `第一部分：事態主旨與用神辨析\n\n| 項目 | 內容 | |-------|-------| | 日主 | 戊（陽土）| | 月建 | 酉金 |`;
+    const html = MarkdownRenderer.render(source);
+
+    assert.match(html, /<h3>第一部分：事態主旨與用神辨析<\/h3>/);
+    assert.match(html, /<div class="markdown-table-wrapper"><table>/);
+    assert.match(html, /<th>項目<\/th><th>內容<\/th>/);
+    assert.match(html, /<td>日主<\/td><td>戊（陽土）<\/td>/);
+    assert.match(html, /<td>月建<\/td><td>酉金<\/td>/);
+});

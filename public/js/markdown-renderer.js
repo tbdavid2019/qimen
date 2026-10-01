@@ -56,7 +56,7 @@
 
     function parseDelimiterRow(line) {
         var cells = splitTableRow(line);
-        if (!cells || !cells.every(function(cell) { return /^:?-{3,}:?$/.test(cell); })) {
+        if (!cells || !cells.every(function(cell) { return /^:?-+:?$/.test(cell); })) {
             return null;
         }
         return cells.map(function(cell) {
@@ -130,6 +130,12 @@
                 continue;
             }
 
+            if (/^\s*[-*_]{3,}\s*$/.test(line)) {
+                html.push('<hr/>');
+                index += 1;
+                continue;
+            }
+
             var table = index + 1 < lines.length ? renderTable(lines, index) : null;
             if (table) {
                 html.push(table.html);
@@ -141,6 +147,13 @@
             if (heading) {
                 var level = heading[1].length;
                 html.push('<h' + level + '>' + renderInline(heading[2]) + '</h' + level + '>');
+                index += 1;
+                continue;
+            }
+
+            var sectionHeading = line.match(/^\s*(?:【)?(第[一二三四五六七八九十\d]+部分[：:][^】\n]+)(?:】)?\s*$/);
+            if (sectionHeading) {
+                html.push('<h3>' + renderInline(sectionHeading[1]) + '</h3>');
                 index += 1;
                 continue;
             }
@@ -192,7 +205,9 @@
     }
 
     function render(markdown) {
-        return renderBlocks(String(markdown || '').split(/\r?\n/));
+        var preprocessed = String(markdown || '')
+            .replace(/\|\s*\|/g, '|\n|');
+        return renderBlocks(preprocessed.split(/\r?\n/));
     }
 
     return {

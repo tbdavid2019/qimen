@@ -63,3 +63,21 @@ test('深色模式有 Markdown 表格的配色與邊框', () => {
     assert.match(darkCss, /\[data-theme="dark"\] \.markdown-body th\s*\{/);
     assert.match(darkCss, /border-color:\s*#46535d/);
 });
+
+test('六爻頁在頁面程式前載入共用 renderer 且具備 markdown-body', () => {
+    const html = read('views/liuyao.html');
+    const rendererIndex = html.indexOf('js/markdown-renderer.js');
+    const appIndex = html.indexOf('js/liuyao.js');
+
+    assert.ok(rendererIndex >= 0, '缺少 markdown-renderer.js');
+    assert.ok(rendererIndex < appIndex, 'renderer 必須先於 liuyao.js 載入');
+    assert.match(html, /id="liuyaoAIAnalysis" class="[^"]*markdown-body/);
+});
+
+test('六爻初始分析與追問對話共用 MarkdownRenderer', () => {
+    const source = read('public/js/liuyao.js');
+
+    assert.match(source, /MarkdownRenderer\.render/);
+    assert.match(source, /MarkdownRenderer\.escapeHtml/);
+});
+

@@ -25,7 +25,11 @@
   - **API 端點 (`app.js`, `lib/llm-analysis.js`)**：提供快速純排盤端點 `POST /api/liuyao`、搖錢端點 `POST /api/liuyao/toss-coin`、蓍草端點 `POST /api/liuyao/cast-dayan`、以及宗師深度解讀 `POST /api/liuyao-question`，並納入通用模組 `/api/:module/llm-analysis`。
   - **CLI & Agent Skill (`skills/liuyao-consultant/`)**：獨立 CLI 工具 `ask_liuyao.js` 支援命令行參數與 stdin JSON 輸入；提供完整的 `SKILL.md` 諮詢顧問行為規範。
   - **WebMCP 規範 (`public/js/webmcp.js`)**：註冊 `liuyao_cast_divination` 工具，支援完整的 JSON Schema 參數校驗、Chrome 宣告式表單自動繫結。
-  - **文件與測試**：`README.md`、`CHANGELOG.md` 同步更新，全套 273 個單元與整合測試 100% 通過。
+  - **文件與測試**：`README.md`、`CHANGELOG.md` 同步更新，全套 277 個單元與整合測試 100% 通過。
+- **宗師解卦 Markdown to HTML 排版與表格渲染優化**：
+  - 六爻頁面完整導入 `public/js/markdown-renderer.js` 與 `.markdown-body`，支援水平分隔線（`<hr/>`）、區塊引言（`blockquote`）與深色模式適配。
+  - 增強 Markdown 渲染引擎：強化 GFM 表格解析支援（容忍單列連續表格、冒號對齊）、自動辨識「第X部分」章節標題。
+  - 提示詞優化：明確要求 LLM 輸出二級標題 `##` 與規範 GFM 表格語法，徹底解決文字黏合與裸露 Markdown 語法問題。
 
 ## [2026-09-29]
 

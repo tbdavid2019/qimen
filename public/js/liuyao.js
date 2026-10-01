@@ -458,16 +458,11 @@
         const aiContainer = document.getElementById('liuyaoAIAnalysis');
         if (!aiContainer) return;
 
-        // 簡單將 Markdown 標題與段落轉為乾淨 HTML
-        let html = escapeHtml(markdownText)
-            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-            .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-            .replace(/\n\n/gim, '<br><br>')
-            .replace(/\n- (.*$)/gim, '<li>$1</li>');
-
-        aiContainer.innerHTML = html;
+        if (window.MarkdownRenderer && typeof window.MarkdownRenderer.render === 'function') {
+            aiContainer.innerHTML = window.MarkdownRenderer.render(markdownText);
+        } else {
+            aiContainer.innerHTML = escapeHtml(markdownText).replace(/\n/g, '<br>');
+        }
         document.getElementById('liuyaoAISection').style.display = 'block';
     }
 
@@ -533,8 +528,11 @@
                         const historyEl = document.getElementById('followupHistory');
                         if (historyEl) {
                             const newEntry = document.createElement('div');
-                            newEntry.className = 'well mt-3';
-                            newEntry.innerHTML = `<strong>問：${escapeHtml(q)}</strong><hr style="margin:8px 0;">${escapeHtml(data.analysis).replace(/\n/g, '<br>')}`;
+                            newEntry.className = 'well mt-3 markdown-body';
+                            const renderedAnswer = window.MarkdownRenderer && typeof window.MarkdownRenderer.render === 'function'
+                                ? window.MarkdownRenderer.render(data.analysis)
+                                : escapeHtml(data.analysis).replace(/\n/g, '<br>');
+                            newEntry.innerHTML = `<div style="font-weight:700; margin-bottom:8px; color:var(--suite-primary, #b45309);">問：${escapeHtml(q)}</div><hr style="margin:8px 0;">${renderedAnswer}`;
                             historyEl.appendChild(newEntry);
                             askInput.value = '';
                         }
@@ -555,6 +553,9 @@
     }
 
     function escapeHtml(str) {
+        if (window.MarkdownRenderer && typeof window.MarkdownRenderer.escapeHtml === 'function') {
+            return window.MarkdownRenderer.escapeHtml(str);
+        }
         if (!str) return '';
         return String(str)
             .replace(/&/g, '&amp;')
