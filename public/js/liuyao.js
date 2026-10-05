@@ -282,6 +282,47 @@
         }
     }
 
+    // 浮動輕量級 Toast 通知系統 (取代阻斷式原生 alert)
+    function showToast(message, type = 'info') {
+        let container = document.getElementById('liuyaoToastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'liuyaoToastContainer';
+            container.className = 'liuyao-toast-container';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `liuyao-toast liuyao-toast-${type}`;
+
+        const iconMap = {
+            success: 'check-circle-2',
+            warning: 'alert-triangle',
+            error: 'alert-circle',
+            info: 'info'
+        };
+        const iconName = iconMap[type] || 'info';
+
+        toast.innerHTML = `
+            <i data-lucide="${iconName}" class="toast-icon"></i>
+            <span>${escapeHtml(message)}</span>
+        `;
+
+        const closeToast = () => {
+            if (toast.classList.contains('closing')) return;
+            toast.classList.add('closing');
+            setTimeout(() => {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 250);
+        };
+
+        toast.addEventListener('click', closeToast);
+        container.appendChild(toast);
+        refreshIcons();
+
+        setTimeout(closeToast, 3500);
+    }
+
     // 複製到剪貼簿工具函式（含視覺動畫回饋）
     function copyTextWithFeedback(text, btnElement) {
         if (!text) return;
@@ -354,17 +395,61 @@
     // 初始化頁面事件
     document.addEventListener('DOMContentLoaded', () => {
         initCategoryPills();
+        initGenderPills();
         initModeTabs();
         initCoinTossControls();
         initOtherCastingForms();
         initActionBar();
         initAIAnalysisControls();
+        initKeyboardShortcuts();
         renderSuiteTurnstile();
         refreshIcons();
     });
 
     if (typeof document !== 'undefined' && (document.readyState === 'interactive' || document.readyState === 'complete')) {
         renderSuiteTurnstile();
+    }
+
+    // 性別切換現代膠囊
+    function initGenderPills() {
+        const pills = document.querySelectorAll('.liuyao-gender-pill');
+        pills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                pills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                const val = pill.getAttribute('data-gender') || '男';
+                const hiddenInput = document.getElementById('liuyaoGenderInput');
+                if (hiddenInput) hiddenInput.value = val;
+            });
+        });
+    }
+
+    // 鍵盤加速鍵支援 (Space 擲錢、U 撤銷、Enter 手動排盤)
+    function initKeyboardShortcuts() {
+        window.addEventListener('keydown', (e) => {
+            const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            const isEditing = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable);
+
+            if (e.code === 'Space' && !isEditing) {
+                if (currentMode === 'coins') {
+                    e.preventDefault();
+                    const tossBtn = document.getElementById('btnTossOnce');
+                    if (tossBtn && !tossBtn.disabled && !isFlipping && tossHistory.length < 6) {
+                        performOneToss();
+                    }
+                }
+            } else if ((e.key === 'u' || e.key === 'U') && !isEditing) {
+                if (currentMode === 'coins' && tossHistory.length > 0 && !isFlipping) {
+                    e.preventDefault();
+                    undoLastToss();
+                }
+            } else if (e.key === 'Enter') {
+                if (currentMode === 'manual' && document.activeElement && document.activeElement.id === 'manualLinesInput') {
+                    e.preventDefault();
+                    document.getElementById('btnManualCast')?.click();
+                }
+            }
+        });
     }
 
     // 分類選擇膠囊
@@ -410,6 +495,7 @@
     // 銅錢搖卦控制
     function initCoinTossControls() {
         const tossBtn = document.getElementById('btnTossOnce');
+        const undoBtn = document.getElementById('btnUndoToss');
         const quickTossBtn = document.getElementById('btnQuickToss');
         const resetTossBtn = document.getElementById('btnResetToss');
 
@@ -417,6 +503,12 @@
             tossBtn.addEventListener('click', () => {
                 if (isFlipping || tossHistory.length >= 6) return;
                 performOneToss();
+            });
+        }
+
+        if (undoBtn) {
+            undoBtn.addEventListener('click', () => {
+                undoLastToss();
             });
         }
 
@@ -459,6 +551,10 @@
             // 更新階梯指示塔
             updateTowerStep(lineIndex, sum);
 
+            // 更新撤銷按鈕狀態
+            const undoBtn = document.getElementById('btnUndoToss');
+            if (undoBtn) undoBtn.disabled = false;
+
             isFlipping = false;
 
             if (tossHistory.length === 6) {
@@ -496,6 +592,8 @@
             if (step >= 6) {
                 clearInterval(interval);
                 isFlipping = false;
+                const undoBtn = document.getElementById('btnUndoToss');
+                if (undoBtn) undoBtn.disabled = false;
                 document.getElementById('tossStatusText').textContent = '🎉 神速起卦完成，正在生成納甲排盤...';
                 submitLiuyaoDivination({
                     method: 'manual',
@@ -508,6 +606,9 @@
     function resetCoinToss() {
         tossHistory = [];
         isFlipping = false;
+        const undoBtn = document.getElementById('btnUndoToss');
+        if (undoBtn) undoBtn.disabled = true;
+
         const statusEl = document.getElementById('tossStatusText');
         if (statusEl) statusEl.textContent = '點擊「擲錢起爻」開始，由初爻逐次搖至上爻（共 6 次）';
 
@@ -521,6 +622,33 @@
         const container = document.getElementById('liuyaoResultContainer');
         if (container) container.style.display = 'none';
         refreshIcons();
+    }
+
+    // 撤銷上一爻重新擲錢
+    function undoLastToss() {
+        if (isFlipping || tossHistory.length === 0) return;
+        const lastLineIndex = tossHistory.length;
+        tossHistory.pop();
+
+        const stepEl = document.getElementById(`towerStep${lastLineIndex}`);
+        if (stepEl) {
+            stepEl.className = 'tower-step';
+            stepEl.innerHTML = `<span class="step-label">第 ${lastLineIndex} 爻</span><span class="step-value text-muted">待搖</span>`;
+        }
+
+        const undoBtn = document.getElementById('btnUndoToss');
+        if (undoBtn) undoBtn.disabled = (tossHistory.length === 0);
+
+        const statusEl = document.getElementById('tossStatusText');
+        if (statusEl) {
+            if (tossHistory.length === 0) {
+                statusEl.textContent = '點擊「擲錢起爻」開始，由初爻逐次搖至上爻（共 6 次）';
+            } else {
+                const nextYao = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'][tossHistory.length];
+                statusEl.textContent = `已撤銷第 ${lastLineIndex} 爻。目前第 ${tossHistory.length} 爻，請搖第 ${tossHistory.length + 1} 爻（${nextYao}）`;
+            }
+        }
+        showToast(`已撤銷第 ${lastLineIndex} 爻，請重新擲錢`, 'info');
     }
 
     function updateCoinFaces(vals) {
@@ -576,7 +704,7 @@
             btnManualCast.addEventListener('click', () => {
                 const lines = document.getElementById('manualLinesInput')?.value?.trim();
                 if (!lines || lines.length !== 6) {
-                    alert('請輸入完整的 6 位爻值（由初爻至上爻，如 789687）');
+                    showToast('請輸入完整的 6 位爻值（由初爻至上爻，如 789687）', 'warning');
                     return;
                 }
                 submitLiuyaoDivination({
@@ -590,7 +718,8 @@
     // 發送排盤請求
     async function submitLiuyaoDivination(extraParams = {}) {
         const question = document.getElementById('userQuestionInput')?.value?.trim() || '';
-        const gender = document.querySelector('input[name="gender"]:checked')?.value || '男';
+        const gender = document.getElementById('liuyaoGenderInput')?.value ||
+                       document.querySelector('input[name="gender"]:checked')?.value || '男';
         const loadingEl = document.getElementById('liuyaoLoading');
         const resultContainer = document.getElementById('liuyaoResultContainer');
 
@@ -614,7 +743,7 @@
 
             const data = await resp.json();
             if (!data.success) {
-                alert('起卦失敗：' + (data.error || '未知錯誤'));
+                showToast('起卦失敗：' + (data.error || '未知錯誤'), 'error');
                 return;
             }
 
@@ -644,7 +773,7 @@
             }
             refreshIcons();
         } catch (e) {
-            alert('連線失敗：' + e.message);
+            showToast('連線失敗：' + e.message, 'error');
         } finally {
             if (loadingEl) loadingEl.style.display = 'none';
         }
@@ -746,14 +875,23 @@
                         <span>本卦：${escapeHtml(ben.name)}</span>
                         <small class="text-muted">${ben.palace}宮·五行屬${ben.palaceElement}</small>
                     </div>
-                    <table class="gua-lines-table">
-                        <thead>
-                            <tr class="text-muted" style="font-size:13px;">
-                                <th>爻</th><th>六神</th><th>伏神</th><th>爻象</th><th>六親</th><th>干支</th><th>旺衰</th><th>世應</th>
-                            </tr>
-                        </thead>
-                        <tbody>${benRows}</tbody>
-                    </table>
+                    <div class="gua-table-responsive">
+                        <table class="gua-lines-table">
+                            <thead>
+                                <tr class="text-muted" style="font-size:13px;">
+                                    <th title="爻位（由初爻至上爻）">爻</th>
+                                    <th title="六神（青龍、朱雀、勾陳、螣蛇、白虎、玄武）">六神</th>
+                                    <th title="伏神（若用神不上卦，尋伏於本宮首卦相應爻下）">伏神</th>
+                                    <th title="陰陽爻象與動爻標記（○老陽動、×老陰動）">爻象</th>
+                                    <th title="六親（父母、兄弟、子孫、妻財、官鬼）">六親</th>
+                                    <th title="納甲干支與五行">干支</th>
+                                    <th title="得月建日辰生扶之旺衰狀態">旺衰</th>
+                                    <th title="世爻為自己、應爻為對方或事態">世應</th>
+                                </tr>
+                            </thead>
+                            <tbody>${benRows}</tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="gua-card">
@@ -761,14 +899,20 @@
                         <span>之卦：${escapeHtml(zhi.name)}</span>
                         <small class="text-muted">${zhi.palace}宮·變爻轉化</small>
                     </div>
-                    <table class="gua-lines-table">
-                        <thead>
-                            <tr class="text-muted" style="font-size:13px;">
-                                <th>爻</th><th>爻象</th><th>六親</th><th>干支</th><th>世應</th>
-                            </tr>
-                        </thead>
-                        <tbody>${zhiRows}</tbody>
-                    </table>
+                    <div class="gua-table-responsive">
+                        <table class="gua-lines-table">
+                            <thead>
+                                <tr class="text-muted" style="font-size:13px;">
+                                    <th title="爻位">爻</th>
+                                    <th title="變爻轉化後之陰陽爻象">爻象</th>
+                                    <th title="之卦六親">六親</th>
+                                    <th title="之卦干支五行">干支</th>
+                                    <th title="之卦世應位">世應</th>
+                                </tr>
+                            </thead>
+                            <tbody>${zhiRows}</tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -811,7 +955,7 @@
                         請完成上方的人機安全驗證 (Cloudflare Turnstile)
                     </p>
                     <p style="font-size: 13.5px; color: var(--suite-text-muted, #667085); margin-bottom: 16px; line-height: 1.5;">
-                        卦象已排定！請在上方表單完成 Turnstile 勾選驗證，即可啟動宗師納甲深度推演與吉凶指引。
+                        卦象已排定！請在上方 Step 2 完成 Turnstile 勾選驗證，即可啟動宗師納甲深度推演與吉凶指引。
                     </p>
                     <button type="button" id="btnRetryTurnstileLLM" class="btn suite-btn-primary">
                         <i data-lucide="sparkles"></i> 驗證完成，獲取宗師解讀 ➔
@@ -819,17 +963,12 @@
                 </div>
             `;
             refreshIcons();
-            const promptWrapper = document.getElementById('suiteTurnstileWrapper');
-            if (promptWrapper) {
-                promptWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
             const retryBtn = document.getElementById('btnRetryTurnstileLLM');
             if (retryBtn) {
                 retryBtn.addEventListener('click', () => {
                     const freshToken = getTurnstileToken('suite-turnstile');
                     if (!freshToken && isTurnstileConfigured) {
-                        alert('請先在上方完成 Cloudflare 人機安全驗證！');
-                        promptWrapper?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        showToast('請先完成上方 Step 2 的 Cloudflare 人機安全驗證！', 'warning');
                         return;
                     }
                     triggerLLMAnalysis(result, question);
@@ -838,7 +977,8 @@
             return;
         }
 
-        aiContainer.innerHTML = '<div class="text-center py-4 text-muted"><span class="glyphicon glyphicon-refresh glyphicon-spin"></span> 正在邀請宗師依據納甲用神深度推演...</div>';
+        aiContainer.innerHTML = '<div class="text-center py-4 text-muted" style="display:flex; align-items:center; justify-content:center; gap:8px;"><i data-lucide="loader-2" class="suite-spinner-icon" style="animation: spin 1s linear infinite;"></i> 正在邀請宗師依據納甲用神深度推演...</div>';
+        refreshIcons();
 
         try {
             const resp = await fetch('/api/liuyao/llm-analysis', {
@@ -927,7 +1067,7 @@
                 const q = askInput.value.trim();
                 if (!q) return;
                 if (!latestDivinationResult) {
-                    alert('請先起卦');
+                    showToast('請先完成起卦後再送出追問', 'warning');
                     return;
                 }
 
@@ -936,7 +1076,7 @@
                 const token = getTurnstileToken('suite-followup-turnstile');
 
                 if (isFuTurnstileConfigured && !token) {
-                    alert('請先完成下方的人機安全驗證 (Cloudflare Turnstile) 後再送出追問！');
+                    showToast('請先完成下方的人機安全驗證 (Cloudflare Turnstile) 後再送出追問！', 'warning');
                     document.getElementById('suiteFollowUpTurnstileWrapper')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return;
                 }
@@ -996,10 +1136,10 @@
                             window.conversationHistory.push({ role: 'assistant', content: data.analysis });
                         }
                     } else {
-                        alert('未能獲取追問解讀：' + (data.error || '請稍後再試'));
+                        showToast('未能獲取追問解讀：' + (data.error || '請稍後再試'), 'warning');
                     }
                 } catch (e) {
-                    alert('追問失敗：' + e.message);
+                    showToast('追問失敗：' + e.message, 'error');
                 } finally {
                     resetTurnstile('suite-followup-turnstile');
                     askBtn.disabled = false;
