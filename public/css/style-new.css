@@ -2257,3 +2257,58 @@ body.qimen-page .wuxing-shui:hover::after {
 .turnstile-container:empty {
     display: none;
 }
+
+/* 奇門專屬儀式感卡片與階段樣式 (Punchy & Prominent) */
+.qimen-hero {
+    background: linear-gradient(135deg, rgba(204, 107, 73, 0.08) 0%, rgba(245, 158, 11, 0.07) 100%);
+    border: 1.5px solid rgba(204, 107, 73, 0.25);
+    border-radius: 20px;
+    padding: 26px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 32px rgba(204, 107, 73, 0.12);
+    text-align: center;
+}
+
+[data-theme="dark"] .qimen-hero {
+    background: linear-gradient(135deg, rgba(204, 107, 73, 0.16) 0%, rgba(245, 158, 11, 0.12) 100%);
+    border-color: rgba(204, 107, 73, 0.35);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4);
+}
+
+.qimen-stage-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.qimen-stage-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #cc6b49 0%, #b85d3b 100%);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(204, 107, 73, 0.35);
+}
+
+.qimen-stage-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--claude-text-main, #2C221E);
+    margin: 0 0 4px 0;
+    letter-spacing: -0.2px;
+}
+
+.qimen-stage-desc {
+    font-size: 13.5px;
+    color: var(--claude-text-muted, #8C7E74);
+    margin: 0;
+    line-height: 1.5;
+}
+

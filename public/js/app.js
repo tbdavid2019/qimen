@@ -1,3 +1,41 @@
+// 浮動 Toast 通知工具 (取代阻斷式原生 alert)
+function showToast(message, type) {
+    type = type || 'warning';
+    var container = document.getElementById('suiteToastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'suiteToastContainer';
+        container.className = 'suite-toast-container';
+        document.body.appendChild(container);
+    }
+    var toast = document.createElement('div');
+    toast.className = 'suite-toast suite-toast-' + type;
+
+    var iconName = 'info';
+    if (type === 'success') iconName = 'check-circle';
+    else if (type === 'error') iconName = 'alert-triangle';
+    else if (type === 'warning') iconName = 'alert-circle';
+
+    toast.innerHTML = '<span class="toast-icon"><i data-lucide="' + iconName + '"></i></span><span class="toast-text">' + message + '</span>';
+    container.appendChild(toast);
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+    }
+
+    function removeToast() {
+        if (!toast.classList.contains('closing')) {
+            toast.classList.add('closing');
+            setTimeout(function() {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 250);
+        }
+    }
+    toast.addEventListener('click', removeToast);
+    setTimeout(removeToast, 4000);
+}
+window.showToast = showToast;
+
 $(document).ready(function() {
     window.qimenData = loadQimenDataFromDom();
 
@@ -186,7 +224,7 @@ $(document).ready(function() {
             } catch (e) {}
         }
         if (!questionToken && $qTurnstile.length && $qTurnstile.attr('data-sitekey')) {
-            alert('請先勾選並完成上方的人機安全驗證 (Cloudflare Turnstile) 後再點擊開始解盤！');
+            showToast('請先勾選並完成上方的人機安全驗證 (Cloudflare Turnstile) 後再點擊開始解盤！', 'warning');
             $('#llmLoadingPanel').hide();
             $('#llmInitialPanel').show();
             return;
@@ -257,7 +295,7 @@ $(document).ready(function() {
         function showSuccess() {
             if ($btn && $btn.length) {
                 var origHtml = $btn.html();
-                $btn.html('<i data-lucide="check" class="glyphicon glyphicon-ok" style="color:#10b981;"></i> 已複製！');
+                $btn.html('<i data-lucide="check" style="color:#10b981;"></i> 已複製！');
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
                     window.lucide.createIcons();
                 }
@@ -343,23 +381,23 @@ $(document).ready(function() {
             } else {
                 html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 20px;">';
                 html += '<div class="conversation-msg-header">';
-                html += '  <span class="conversation-result-label"><i data-lucide="sparkles" class="glyphicon glyphicon-star"></i> 奇門解讀</span>';
+                html += '  <span class="conversation-result-label"><i data-lucide="sparkles"></i> 奇門解讀</span>';
                 html += '  <div style="display:inline-flex;gap:6px;">';
                 html += '    <button type="button" class="btn btn-default btn-xs btn-open-email-modal conversation-copy-button" title="寄送完整對話紀錄至信箱">';
-                html += '      <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i> 寄送對話';
+                html += '      <i data-lucide="mail"></i> 寄送對話';
                 html += '    </button>';
                 html += '    <button type="button" class="btn btn-default btn-xs btn-copy-msg conversation-copy-button" data-msg-idx="' + index + '" title="複製此解讀內容">';
-                html += '      <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製內容';
+                html += '      <i data-lucide="copy"></i> 複製內容';
                 html += '    </button>';
                 html += '  </div>';
                 html += '</div>';
                 html += '<div class="markdown-body conversation-answer">' + MarkdownRenderer.render(msg.content) + '</div>';
                 html += '<div style="display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px;">';
                 html += '  <button type="button" class="btn btn-default btn-xs btn-open-email-modal conversation-copy-button" title="寄送完整對話紀錄至信箱">';
-                html += '    <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i> 寄送對話';
+                html += '    <i data-lucide="mail"></i> 寄送對話';
                 html += '  </button>';
                 html += '  <button type="button" class="btn btn-default btn-xs btn-copy-msg conversation-copy-button" data-msg-idx="' + index + '" title="複製此解讀內容">';
-                html += '    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製內容';
+                html += '    <i data-lucide="copy"></i> 複製內容';
                 html += '  </button>';
                 html += '</div>';
                 html += '</div>';
@@ -409,7 +447,7 @@ $(document).ready(function() {
     $('#askLLMQuestion').click(function() {
         var question = $('#userQuestion').val().trim();
         if (!question) {
-            alert('請輸入您的問題');
+            showToast('請輸入您的問題', 'warning');
             return;
         }
 
@@ -419,14 +457,14 @@ $(document).ready(function() {
         var $responseTime = $responseDiv.find('.response-time');
 
         // 顯示載入狀態
-        $button.prop('disabled', true).html('<i data-lucide="loader-2" class="animate-spin glyphicon glyphicon-refresh"></i> 分析中...');
+        $button.prop('disabled', true).html('<i data-lucide="loader-2" class="animate-spin"></i> 分析中...');
         $('#clearConversation').prop('disabled', true);
         if ($('#emailConversation').length) $('#emailConversation').prop('disabled', true);
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
             window.lucide.createIcons();
         }
         $responseDiv.show();
-        $responseContent.html('<i data-lucide="loader-2" class="animate-spin glyphicon glyphicon-refresh"></i> 正在思考您的問題...');
+        $responseContent.html('<i data-lucide="loader-2" class="animate-spin"></i> 正在思考您的問題...');
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
             window.lucide.createIcons();
         }
@@ -446,8 +484,8 @@ $(document).ready(function() {
             } catch (e) {}
         }
         if (!questionToken && $qTurnstile.length && $qTurnstile.attr('data-sitekey')) {
-            alert('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊詢問！');
-            $button.prop('disabled', false).html('<i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 詢問');
+            showToast('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊詢問！', 'warning');
+            $button.prop('disabled', false).html('<i data-lucide="message-square"></i> 詢問');
             $('#clearConversation').prop('disabled', false);
             if ($('#emailConversation').length) $('#emailConversation').prop('disabled', false);
             $responseDiv.hide();
@@ -510,7 +548,7 @@ $(document).ready(function() {
             },
             complete: function() {
                 resetQuestionTurnstile();
-                $button.prop('disabled', false).html('<i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 詢問');
+                $button.prop('disabled', false).html('<i data-lucide="message-square"></i> 詢問');
                 $('#clearConversation').prop('disabled', false);
                 if ($('#emailConversation').length) $('#emailConversation').prop('disabled', false);
                 if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -549,7 +587,7 @@ $(document).ready(function() {
     function openEmailModal() {
         var activeHistory = buildExportHistory();
         if (!activeHistory || activeHistory.length === 0) {
-            alert('目前尚無解盤或對話紀錄可寄送。請先等待排盤解讀完成或於下方輸入框詢問問題！');
+            showToast('目前尚無解盤或對話紀錄可寄送。請先等待排盤解讀完成或於下方輸入框詢問問題！', 'warning');
             return;
         }
         var savedEmail = '';
@@ -1153,18 +1191,4 @@ function checkTimezoneStatus() {
     }
 }
 
-// CSS 動畫樣式（需要添加到 CSS 文件中）
-// .glyphicon-refresh-animate {
-//     -animation: spin .7s infinite linear;
-//     -webkit-animation: spin2 .7s infinite linear;
-// }
-// 
-// @-webkit-keyframes spin2 {
-//     from { -webkit-transform: rotate(0deg);}
-//     to { -webkit-transform: rotate(360deg);}
-// }
-// 
-// @keyframes spin {
-//     from { transform: scale(1) rotate(0deg);}
-//     to { transform: scale(1) rotate(360deg);}
-// }
+

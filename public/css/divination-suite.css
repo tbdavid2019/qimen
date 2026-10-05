@@ -3614,3 +3614,80 @@ body.suite-page .name-useful-panel h4 {
         line-height: 1.7;
     }
 }
+
+/* 全站共用浮動 Toast 通知元件 (Non-blocking notification system) */
+.suite-toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: 400px;
+    width: calc(100% - 48px);
+}
+
+.suite-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    background: var(--suite-card-bg, #ffffff);
+    color: var(--suite-text, #1f2937);
+    border: 1.5px solid var(--suite-border, #e5e7eb);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+    animation: suiteToastIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+[data-theme="dark"] .suite-toast {
+    background: var(--suite-card-bg, #221E1B);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.suite-toast-warning {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+}
+.suite-toast-warning .toast-icon { color: #f59e0b; }
+
+.suite-toast-error {
+    border-color: rgba(244, 63, 94, 0.45);
+    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.2);
+}
+.suite-toast-error .toast-icon { color: #f43f5e; }
+
+.suite-toast-success {
+    border-color: rgba(16, 185, 129, 0.45);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+}
+.suite-toast-success .toast-icon { color: #10b981; }
+
+.suite-toast-info {
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+}
+.suite-toast-info .toast-icon { color: #6366f1; }
+
+.suite-toast.closing {
+    animation: suiteToastOut 0.22s ease forwards;
+}
+
+@keyframes suiteToastIn {
+    from { opacity: 0; transform: translateY(-12px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes suiteToastOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-10px) scale(0.95); }
+}

@@ -1,3 +1,42 @@
+// public/js/meihua.js - 梅花易數前端互動邏輯 (Punchy & Prominent Ritual Flow)
+
+// 浮動 Toast 通知工具 (取代阻斷式原生 alert)
+function showToast(message, type) {
+    type = type || 'warning';
+    var container = document.getElementById('meihuaToastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'meihuaToastContainer';
+        container.className = 'meihua-toast-container';
+        document.body.appendChild(container);
+    }
+    var toast = document.createElement('div');
+    toast.className = 'meihua-toast meihua-toast-' + type;
+
+    var iconName = 'info';
+    if (type === 'success') iconName = 'check-circle';
+    else if (type === 'error') iconName = 'alert-triangle';
+    else if (type === 'warning') iconName = 'alert-circle';
+
+    toast.innerHTML = '<span class="toast-icon"><i data-lucide="' + iconName + '"></i></span><span class="toast-text">' + message + '</span>';
+    container.appendChild(toast);
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+    }
+
+    function removeToast() {
+        if (!toast.classList.contains('closing')) {
+            toast.classList.add('closing');
+            setTimeout(function() {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 250);
+        }
+    }
+    toast.addEventListener('click', removeToast);
+    setTimeout(removeToast, 4000);
+}
+
 function updateCurrentTime() {
     var now = new Date();
     var timeString = now.toLocaleString('zh-TW', {
@@ -74,9 +113,9 @@ function updateResult(data) {
     var dongYaoInfo = data.bengua.dongYaoInfo;
     var dongYaoTextEl = document.getElementById('benguaDongYaoText');
     if (dongYaoTextEl && dongYaoInfo) {
-        dongYaoTextEl.innerHTML = `<div style="margin-top: 8px; padding: 6px 10px; background: rgba(220,53,69,0.08); border-left: 3px solid #dc3545; border-radius: 3px;">
+        dongYaoTextEl.innerHTML = `<div style="margin-top: 8px; padding: 8px 12px; background: rgba(225,29,72,0.08); border: 1px solid rgba(225,29,72,0.25); border-radius: 6px;">
             <strong>爻辭：</strong>${dongYaoInfo.text || '動爻生變'}<br>
-            <small style="color: var(--text-secondary);">${dongYaoInfo.vernacular || ''}</small>
+            <small style="color: var(--suite-text-muted);">${dongYaoInfo.vernacular || ''}</small>
         </div>`;
     }
 
@@ -165,14 +204,122 @@ function updateResult(data) {
     }
 
     window.currentMeihuaData = data;
+
+    // 平滑滾動到結果盤面
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+    }
 }
 
 function bindMeihuaEvents() {
     updateCurrentTime();
     setInterval(updateCurrentTime, 1000);
 
+    // 起卦模式頁籤切換
+    var modeTabs = document.querySelectorAll('.meihua-tab-btn');
+    modeTabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            var mode = this.getAttribute('data-mode');
+            modeTabs.forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
+
+            var timeSec = document.getElementById('modeTimeSection');
+            var numSec = document.getElementById('modeNumberSection');
+            var textSec = document.getElementById('modeTextSection');
+
+            if (timeSec) timeSec.style.display = (mode === 'time') ? 'block' : 'none';
+            if (numSec) numSec.style.display = (mode === 'number') ? 'block' : 'none';
+            if (textSec) textSec.style.display = (mode === 'text') ? 'block' : 'none';
+
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
+        });
+    });
+
+    // 時間起卦單選膠囊樣式
+    var timePills = document.querySelectorAll('.meihua-time-pill');
+    timePills.forEach(function(pill) {
+        pill.addEventListener('click', function() {
+            timePills.forEach(function(p) { p.classList.remove('active'); });
+            this.classList.add('active');
+            var radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                toggleCustomTimeInput(radio.value === 'custom');
+            }
+        });
+    });
+
+    // 階段 1：占問焦點膠囊連動
+    var categoryPills = document.querySelectorAll('#meihuaPillCluster .meihua-pill');
+    categoryPills.forEach(function(pill) {
+        pill.addEventListener('click', function() {
+            categoryPills.forEach(function(p) { p.classList.remove('active'); });
+            this.classList.add('active');
+            var prompt = this.getAttribute('data-prompt');
+            var qInput = document.getElementById('meihuaQuestion');
+            if (qInput && prompt) {
+                qInput.value = prompt;
+                showToast('已代入占問焦點：「' + this.textContent.trim() + '」', 'success');
+            }
+        });
+    });
+
+    // 快捷操作列按鈕綁定
+    var copyGuaBtn = document.getElementById('btnCopyMeihua');
+    if (copyGuaBtn) {
+        copyGuaBtn.addEventListener('click', function() {
+            if (!window.currentMeihuaData) {
+                showToast('尚未有起卦結果可供複製', 'warning');
+                return;
+            }
+            var d = window.currentMeihuaData;
+            var text = [
+                '【梅花易數 · 五卦全息象義】',
+                '起卦方式：' + (document.getElementById('calcMethodDisplay')?.textContent || ''),
+                '本卦：' + d.bengua.num + ' ' + d.bengua.name + '（上' + d.bengua.upperGua.name + '下' + d.bengua.lowerGua.name + '）',
+                '動爻：第 ' + d.bengua.dongYao + ' 爻生變',
+                '體卦：' + d.tigua.name + '（' + d.tigua.element + '） ｜ 用卦：' + d.yonggua.name + '（' + d.yonggua.element + '）',
+                '五行生剋：' + d.wuxingRelation + ' · ' + (d.wuxing?.judgement || ''),
+                '應期指引：' + (d.timing?.timingDesc || ''),
+                '互卦：' + d.hugua.num + ' ' + d.hugua.name + ' ｜ 變卦：' + d.biangua.num + ' ' + d.biangua.name,
+                d.cuogua ? '錯卦：' + d.cuogua.num + ' ' + d.cuogua.name + ' ｜ 綜卦：' + d.zonggua.num + ' ' + d.zonggua.name : ''
+            ].filter(Boolean).join('\n');
+            copyTextToClipboard(text, copyGuaBtn);
+            showToast('已複製梅花卦象推演結果！', 'success');
+        });
+    }
+
+    var emailBtn = document.getElementById('btnEmailMeihua');
+    if (emailBtn) {
+        emailBtn.addEventListener('click', function() {
+            var openBtn = document.getElementById('suiteResultEmailOpen');
+            if (openBtn) {
+                openBtn.click();
+            } else {
+                var dialog = document.getElementById('suiteResultEmailDialog');
+                if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+            }
+        });
+    }
+
+    var restartBtn = document.getElementById('btnRestartMeihua');
+    if (restartBtn) {
+        restartBtn.addEventListener('click', function() {
+            var mainCard = document.querySelector('.meihua-main-card');
+            if (mainCard) {
+                mainCard.scrollIntoView({ behavior: 'smooth' });
+            }
+            showToast('已重設，請虔心重新起卦', 'info');
+        });
+    }
+
     async function requestQiguaData() {
-        var mode = document.querySelector('input[name="timeMode"]:checked').value;
+        var modeRadio = document.querySelector('input[name="timeMode"]:checked');
+        var mode = modeRadio ? modeRadio.value : 'current';
         var params;
 
         if (mode === 'custom') {
@@ -287,11 +434,15 @@ function bindMeihuaEvents() {
 
             try {
                 await requestQiguaData();
+                showToast('起卦成功！五卦全息推演已完成。', 'success');
             } catch (error) {
-                alert(`起卦失敗: ${error.message}`);
+                showToast(`起卦失敗: ${error.message}`, 'error');
             } finally {
                 qiguaBtn.disabled = false;
-                qiguaBtn.textContent = '起卦';
+                qiguaBtn.innerHTML = '<i data-lucide="sparkles"></i> 感應時空起卦 ➔';
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
             }
         });
     }
@@ -305,6 +456,7 @@ function bindMeihuaEvents() {
             document.getElementById('meihuaNum1').value = num1;
             document.getElementById('meihuaNum2').value = num2;
             document.getElementById('meihuaNum3').value = num3;
+            showToast('已隨機生成三數：' + num1 + ', ' + num2 + ', ' + num3, 'info');
         });
     }
 
@@ -316,11 +468,15 @@ function bindMeihuaEvents() {
 
             try {
                 await requestNumberQiguaData();
+                showToast('起卦成功！五卦全息推演已完成。', 'success');
             } catch (error) {
-                alert(`起卦失敗: ${error.message}`);
+                showToast(`起卦失敗: ${error.message}`, 'error');
             } finally {
                 numberQiguaBtn.disabled = false;
-                numberQiguaBtn.textContent = '起卦';
+                numberQiguaBtn.innerHTML = '<i data-lucide="sparkles"></i> 數字起卦 ➔';
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
             }
         });
     }
@@ -333,11 +489,15 @@ function bindMeihuaEvents() {
 
             try {
                 await requestTextQiguaData();
+                showToast('起卦成功！五卦全息推演已完成。', 'success');
             } catch (error) {
-                alert(`起卦失敗: ${error.message}`);
+                showToast(`起卦失敗: ${error.message}`, 'error');
             } finally {
                 textQiguaBtn.disabled = false;
-                textQiguaBtn.textContent = '報字起卦';
+                textQiguaBtn.innerHTML = '<i data-lucide="type"></i> 報字起卦 ➔';
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
             }
         });
     }
@@ -432,7 +592,7 @@ function bindMeihuaEvents() {
     if (askBtn) {
         askBtn.addEventListener('click', async function() {
             if (!window.enableLLM) {
-                alert('解讀功能尚未開放，請先完成服務設定');
+                showToast('解讀功能尚未開放，請先完成服務設定', 'warning');
                 return;
             }
 
@@ -440,7 +600,7 @@ function bindMeihuaEvents() {
                 try {
                     await requestQiguaData();
                 } catch (error) {
-                    alert(`起卦失敗: ${error.message}`);
+                    showToast(`起卦失敗: ${error.message}`, 'error');
                     return;
                 }
             }
@@ -448,7 +608,7 @@ function bindMeihuaEvents() {
             var questionInput = document.getElementById('meihuaQuestion');
             var question = questionInput.value.trim();
             if (!question) {
-                alert('請輸入您的問題');
+                showToast('請輸入您的問題', 'warning');
                 return;
             }
 
@@ -461,7 +621,7 @@ function bindMeihuaEvents() {
                 } catch (e) {}
             }
             if (!mToken && container && container.getAttribute('data-sitekey')) {
-                alert('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊梅花解卦！');
+                showToast('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊梅花解卦！', 'warning');
                 return;
             }
 
@@ -494,16 +654,20 @@ function bindMeihuaEvents() {
                     window.meihuaConversationHistory.push({ role: 'assistant', content: result.analysis });
                     renderMeihuaConversation();
                     questionInput.value = '';
+                    showToast('宗師解卦完成！', 'success');
                 } else {
-                    alert(`解讀失敗: ${result.error || result.message || '未知錯誤'}`);
+                    showToast(`解讀失敗: ${result.error || result.message || '未知錯誤'}`, 'error');
                 }
             } catch (error) {
-                alert(`解讀失敗: ${error.message}`);
+                showToast(`解讀失敗: ${error.message}`, 'error');
             } finally {
                 resetMeihuaTurnstile();
                 askBtn.disabled = false;
-                askBtn.textContent = '🌸 梅花解卦';
+                askBtn.innerHTML = '<i data-lucide="sparkles"></i> 🌸 梅花解卦 ➔';
                 document.getElementById('meihuaClear').disabled = false;
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
             }
         });
     }
@@ -516,6 +680,7 @@ function bindMeihuaEvents() {
             }
             window.meihuaConversationHistory = [];
             renderMeihuaConversation();
+            showToast('已清除對話記錄', 'info');
         });
     }
 
@@ -536,7 +701,7 @@ function copyTextToClipboard(text, btn) {
     function showSuccess() {
         if (btn) {
             var origHtml = btn.innerHTML;
-            btn.innerHTML = '<i data-lucide="check" class="glyphicon glyphicon-ok" style="color:#10b981;"></i> 已複製！';
+            btn.innerHTML = '<i data-lucide="check" style="color:#10b981;"></i> 已複製！';
             if (window.lucide && typeof window.lucide.createIcons === 'function') {
                 window.lucide.createIcons();
             }
@@ -611,18 +776,13 @@ function renderMeihuaConversation() {
             html += '</div>';
         } else {
             html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 20px;">';
-            html += '<div class="conversation-msg-header">';
-            html += '  <span class="conversation-result-label">🌸 梅花解卦</span>';
+            html += '<div class="conversation-msg-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">';
+            html += '  <span class="conversation-result-label" style="font-weight:700; color:#e11d48;"><i data-lucide="sparkles"></i> 🌸 梅花解卦</span>';
             html += `  <button type="button" class="btn btn-default btn-xs meihua-copy-btn conversation-copy-button" data-msg-idx="${index}" title="複製解讀內容">`;
-            html += '    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製內容';
+            html += '    <i data-lucide="copy"></i> 複製內容';
             html += '  </button>';
             html += '</div>';
             html += `<div class="conversation-bubble assistant-bubble markdown-body conversation-answer">${MarkdownRenderer.render(msg.content)}</div>`;
-            html += '<div style="display: flex; justify-content: flex-end; margin-top: 6px;">';
-            html += `  <button type="button" class="btn btn-default btn-xs meihua-copy-btn conversation-copy-button" data-msg-idx="${index}" title="複製解讀內容">`;
-            html += '    <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製內容';
-            html += '  </button>';
-            html += '</div>';
             html += '</div>';
         }
     });
@@ -654,7 +814,7 @@ function toggleMeihuaLLM(enabled) {
         if (questionInput) questionInput.disabled = true;
     } else {
         if (status) {
-            status.textContent = '可針對本卦提出問題，系統會結合卦辭與動爻提供建議。';
+            status.textContent = '結合體用生剋、本變互綜全息盤與周易動爻辭，直面提問，提供理性指引與實踐建議。';
         }
         if (askBtn) askBtn.disabled = false;
         if (clearBtn) clearBtn.disabled = false;

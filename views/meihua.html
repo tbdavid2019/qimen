@@ -54,10 +54,11 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style-new.css">
     <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="stylesheet" href="css/divination-suite.css">
     <link rel="stylesheet" href="css/meihua.css">
 </head>
 
-<body class="meihua-page">
+<body class="meihua-page suite-page">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -71,14 +72,10 @@
 
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                <li>
-                    <a href="/">奇門遁甲</a>
-                </li>
+                <li><a href="/">奇門遁甲</a></li>
                 <li><a href="/ziwei">紫微斗數</a></li>
                 <li><a href="/liuyao">六爻神卦</a></li>
-                <li class="active">
-                    <a href="/meihua">梅花易數</a>
-                </li>
+                <li class="active"><a href="/meihua">梅花易數</a></li>
                 <li><a href="/bazi2">八字命理</a></li>
                 <li><a href="/fengshui">易經風水</a></li>
                 <li><a href="/tarot">韋特塔羅</a></li>
@@ -102,266 +99,365 @@
     </nav>
 
     <div class="container">
-        <div class="panel panel-default" id="meihuaLLMSection">
-            <div class="panel-heading">
-                <h3 class="panel-title"> 有特定問題想問？梅花易數解卦</h3>
+        <!-- 英雄區 (Punchy Hero Banner) -->
+        <div class="meihua-hero">
+            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+                <span class="suite-badge suite-badge-rose"><i data-lucide="sparkles"></i> 體用生剋直斷</span>
+                <span class="suite-badge suite-badge-gold"><i data-lucide="compass"></i> 五卦全息推演</span>
+                <span class="suite-badge"><i data-lucide="zap"></i> 萬物皆可應機占</span>
             </div>
-            <div class="panel-body">
-                <p class="meihua-llm-note meihua-llm-status">
-                    可針對本卦提出問題，結合卦辭與動爻提供建議。
-                </p>
-                <div id="meihuaConversation" class="conversation-history"></div>
-                <form id="meihuaQuestionForm"
-                      toolname="meihua_question"
-                      tooldescription="針對梅花易數當前卦象提出問題並取得解卦"
-                      toolautosubmit
-                      onsubmit="return false;">
-                    <textarea id="meihuaQuestion" name="question" class="form-control" rows="4"
-                              toolparamdescription="針對當前卦象想詢問的具體問題或事項"
-                              placeholder="例如：這個卦象對我的事業有什麼提醒？"></textarea>
-                    <div id="meihuaTurnstileWrapper" style="margin-top: 10px; margin-bottom: 6px;">
-                        <%- include('partials/turnstile-widget.html', { widgetId: 'meihua-turnstile', action: 'llm_analysis', explicit: true }) %>
-                    </div>
-                    <div style="margin-top: 10px;">
-                        <button id="meihuaAsk" type="submit" class="btn btn-primary">
-                            🌸 梅花解卦
-                        </button>
-                        <button id="meihuaClear" type="button" class="btn btn-default">
-                            🗑️ 清除對話
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <h1 style="font-size: 28px; font-weight: 800; margin: 0 0 10px 0; letter-spacing: -0.5px;">
+                🌸 梅花易數 · 心易妙算
+            </h1>
+            <p style="font-size: 14.5px; font-weight: 500; color: var(--suite-text-muted, #6b7280); max-width: 620px; margin: 0 auto; line-height: 1.6;">
+                宋代邵康節先生所創心易之法，以天時、數字、文字機微契應天地。體用生剋明辨吉凶，互變錯綜照見事物全貌。
+            </p>
         </div>
 
         <%- include('partials/ads-mobile.html') %>
 
-        <div class="meihua-header">
-            <h1>梅花易數起卦</h1>
-            <p class="text-muted">使用時間起卦，快速獲得卦象與體用分析</p>
-        </div>
+        <!-- 主操作儀式卡片 (4-Stage Ritual Architecture) -->
+        <div class="meihua-main-card">
+            <!-- 階段 1：設問立心 -->
+            <div class="meihua-stage-section">
+                <div class="meihua-stage-header">
+                    <span class="meihua-stage-badge">壹</span>
+                    <div>
+                        <h2 class="meihua-stage-title">設問立心 · 意念相通</h2>
+                        <p class="meihua-stage-desc">心誠則靈，請在心中沉澱思緒，可預先選定關切焦點或填入心中所惑</p>
+                    </div>
+                </div>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">時間起卦</h3>
+                <div class="form-group mb-3">
+                    <label class="suite-form-label">
+                        <i data-lucide="target"></i> 常見占問焦點（點擊快速帶入）
+                    </label>
+                    <div class="meihua-pills" id="meihuaPillCluster">
+                        <button type="button" class="meihua-pill active" data-prompt="這段時間我的工作事業發展與轉職機遇如何？">💼 事業發展</button>
+                        <button type="button" class="meihua-pill" data-prompt="近期這筆投資財務決策是否合適？能有預期收益嗎？">💰 財運投資</button>
+                        <button type="button" class="meihua-pill" data-prompt="我和對方的感情發展趨勢如何？雙方相處有何提醒？">💍 情感緣分</button>
+                        <button type="button" class="meihua-pill" data-prompt="這次考試、進修或資格審核能順利通過嗎？">📚 考試學業</button>
+                        <button type="button" class="meihua-pill" data-prompt="最近身心狀態與健康運勢如何，需要注意什麼？">🩺 健康平安</button>
+                        <button type="button" class="meihua-pill" data-prompt="眼前這項關鍵決策，若付諸行動吉凶如何？">🧭 決策抉擇</button>
+                    </div>
+                </div>
             </div>
-            <div class="panel-body">
-                <form id="meihuaTimeForm"
-                      toolname="meihua_qigua_time"
-                      tooldescription="使用時間進行梅花易數起卦"
-                      toolautosubmit
-                      onsubmit="return false;">
-                    <div class="form-group">
-                        <label class="radio-inline">
-                            <input type="radio" name="timeMode" value="current" checked toolparamdescription="起卦時間模式：當前時間 (current) 或自定義時間 (custom)"> 使用當前時間
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="timeMode" value="custom" toolparamdescription="使用自定義起卦時間"> 自定義時間
-                        </label>
+
+            <hr class="meihua-stage-divider">
+
+            <!-- 階段 2：虔心起卦 -->
+            <div class="meihua-stage-section">
+                <div class="meihua-stage-header">
+                    <span class="meihua-stage-badge">貳</span>
+                    <div>
+                        <h2 class="meihua-stage-title">虔心起卦 · 萬物應機</h2>
+                        <p class="meihua-stage-desc">依當前時空機微，或依直覺三數、漢字筆畫引動先天八卦</p>
                     </div>
+                </div>
 
-                    <div id="customTimeGroup" class="form-group" style="display: none;">
-                        <input type="datetime-local" id="customDateTime" name="customDateTime" class="form-control" toolparamdescription="自定義起卦日期時間 (YYYY-MM-DDTHH:mm)">
-                    </div>
-
-                    <p class="text-muted">當前時間：<span id="currentTime"></span></p>
-
-                    <button id="qiguaBtn" type="submit" class="btn btn-primary">
-                        <i data-lucide="sparkles" class="glyphicon glyphicon-star"></i> 起卦
+                <!-- 起卦模式頁籤 -->
+                <div class="meihua-mode-tabs" role="tablist">
+                    <button type="button" class="meihua-tab-btn active" data-mode="time" role="tab">
+                        <i data-lucide="clock"></i> 時間起卦（推薦）
                     </button>
-                </form>
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">數字起卦</h3>
-            </div>
-            <div class="panel-body">
-                <p class="text-muted">請直覺選三個數字（1 - 100），或使用骰子隨機生成。</p>
-                <form id="meihuaNumberForm"
-                      toolname="meihua_qigua_numbers"
-                      tooldescription="使用三個數字(1-100)進行梅花易數數字起卦"
-                      toolautosubmit
-                      onsubmit="return false;">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="meihuaNum1">第一個數字（上卦）</label>
-                                <input type="number" id="meihuaNum1" name="num1" class="form-control" min="1" max="100" placeholder="1 - 100" toolparamdescription="第一個數字（1-100，計算上卦）">
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="meihuaNum2">第二個數字（下卦）</label>
-                                <input type="number" id="meihuaNum2" name="num2" class="form-control" min="1" max="100" placeholder="1 - 100" toolparamdescription="第二個數字（1-100，計算下卦）">
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="meihuaNum3">第三個數字（動爻）</label>
-                                <input type="number" id="meihuaNum3" name="num3" class="form-control" min="1" max="100" placeholder="1 - 100" toolparamdescription="第三個數字（1-100，計算動爻）">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="meihua-number-actions">
-                        <button id="meihuaDice" type="button" class="btn btn-default">
-                            <i data-lucide="shuffle" class="glyphicon glyphicon-refresh"></i> 隨機
-                        </button>
-                        <button id="numberQiguaBtn" type="submit" class="btn btn-primary">
-                            <i data-lucide="sparkles" class="glyphicon glyphicon-star"></i> 起卦
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">漢字報字起卦</h3>
-            </div>
-            <div class="panel-body">
-                <p class="text-muted">輸入任意漢字、詞語、姓名或短句（單字、雙字、多字皆可），透過筆畫數演繹卦象動爻。</p>
-                <form id="meihuaTextForm"
-                      toolname="meihua_qigua_text"
-                      tooldescription="輸入漢字進行梅花易數字占起卦"
-                      toolautosubmit
-                      onsubmit="return false;">
-                    <div class="form-group">
-                        <label for="meihuaText">占測文字或詞語</label>
-                        <input type="text" id="meihuaText" name="text" class="form-control" placeholder="例如：天地人、風調雨順、心想事成" toolparamdescription="占測漢字或詞語">
-                    </div>
-                    <button id="textQiguaBtn" type="submit" class="btn btn-primary">
-                        <i data-lucide="type" class="glyphicon glyphicon-edit"></i> 報字起卦
+                    <button type="button" class="meihua-tab-btn" data-mode="number" role="tab">
+                        <i data-lucide="hash"></i> 數字起卦
                     </button>
-                </form>
-            </div>
-        </div>
-
-        <div id="meihuaResult" class="panel panel-default" style="display: none;">
-            <div class="panel-heading">
-                <h3 class="panel-title">五卦全息象義結果</h3>
-            </div>
-            <div class="panel-body">
-                <div class="row meihua-result-grid">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">1. 本卦（現狀基礎）</div>
-                            <div class="panel-body">
-                                <div id="benguaLines" class="meihua-hexagram"></div>
-                                <div class="meihua-symbol" id="benguaSymbol"></div>
-                                <div class="meihua-section-title" id="benguaName"></div>
-                                <div class="meihua-meta">上卦：<span id="benguaUpper"></span></div>
-                                <div class="meihua-meta">下卦：<span id="benguaLower"></span></div>
-                                <div class="meihua-meta">動爻：<span id="benguaDongYao" class="label label-danger"></span></div>
-                                <div class="meihua-meta" id="benguaDongYaoText"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 col-md-6">
-                        <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">2. 體用生剋與四季旺衰</div>
-                            <div class="panel-body">
-                                <div class="meihua-section-title">體卦（主）：<span id="tiGua" class="label label-primary"></span></div>
-                                <div class="meihua-section-title">用卦（客）：<span id="yongGua" class="label label-info"></span></div>
-                                <div class="meihua-meta">五行生剋：<strong id="wuxingRelation"></strong></div>
-                                <div class="meihua-meta">旺衰狀態：<span id="tiYongSeasonal"></span></div>
-                                <div class="meihua-meta">體用斷語：<span id="wuxingJudgement"></span></div>
-                                <div class="meihua-meta" id="wuxingDetail" style="margin-top: 6px;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 col-md-12">
-                        <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">3. 應期推斷與時空契機</div>
-                            <div class="panel-body">
-                                <div class="meihua-section-title">📅 應期指引</div>
-                                <p class="meihua-meta meihua-timing" id="timingDesc" style="line-height: 1.6; font-weight: 500;"></p>
-                                <hr style="margin: 10px 0;">
-                                <div class="meihua-meta">起卦方式：<span id="calcMethodDisplay"></span></div>
-                                <div class="meihua-meta" id="calcExtraDetail"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <button type="button" class="meihua-tab-btn" data-mode="text" role="tab">
+                        <i data-lucide="type"></i> 漢字報字起卦
+                    </button>
                 </div>
 
-                <div class="row" style="margin-top: 15px;">
-                    <div class="col-md-3 col-sm-6">
-                        <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">互卦（過程演變）</div>
-                            <div class="panel-body text-center">
-                                <div class="meihua-section-title" id="huguaName"></div>
-                                <div id="huguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                                <small class="text-muted">事物中間的互動發展</small>
+                <!-- 模式 1：時間起卦 -->
+                <div id="modeTimeSection" class="meihua-mode-panel">
+                    <form id="meihuaTimeForm"
+                          toolname="meihua_qigua_time"
+                          tooldescription="使用時間進行梅花易數起卦"
+                          toolautosubmit
+                          onsubmit="return false;">
+                        <div class="form-group">
+                            <label class="suite-form-label"><i data-lucide="calendar"></i> 起卦時間設定</label>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
+                                <label class="meihua-time-pill active">
+                                    <input type="radio" name="timeMode" value="current" checked toolparamdescription="起卦時間模式：當前時間 (current) 或自定義時間 (custom)" style="position: absolute; opacity: 0; pointer-events: none;">
+                                    <i data-lucide="zap"></i> 使用當前時間
+                                </label>
+                                <label class="meihua-time-pill">
+                                    <input type="radio" name="timeMode" value="custom" toolparamdescription="使用自定義起卦時間" style="position: absolute; opacity: 0; pointer-events: none;">
+                                    <i data-lucide="calendar-days"></i> 自定義時間
+                                </label>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">變卦（事態結局）</div>
-                            <div class="panel-body text-center">
-                                <div class="meihua-section-title" id="bianguaName"></div>
-                                <div id="bianguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                                <small class="text-muted">事物最終的演化趨勢</small>
-                            </div>
+
+                        <div id="customTimeGroup" class="form-group" style="display: none; max-width: 320px; margin-bottom: 16px;">
+                            <input type="datetime-local" id="customDateTime" name="customDateTime" class="form-control suite-input" toolparamdescription="自定義起卦日期時間 (YYYY-MM-DDTHH:mm)">
                         </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">錯卦（反向對立面）</div>
-                            <div class="panel-body text-center">
-                                <div class="meihua-section-title" id="cuoguaName"></div>
-                                <div id="cuoguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                                <small class="text-muted">事物的對立危機與盲點</small>
-                            </div>
+
+                        <p class="text-muted" style="font-size: 13.5px; margin-bottom: 18px;">
+                            <i data-lucide="clock"></i> 當前時空基準：<strong id="currentTime" style="color: var(--suite-text);"></strong>
+                        </p>
+
+                        <div class="suite-submit-container">
+                            <button id="qiguaBtn" type="submit" class="btn suite-btn-primary btn-lg">
+                                <i data-lucide="sparkles"></i> 感應時空起卦 ➔
+                            </button>
                         </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="panel panel-default meihua-card">
-                            <div class="panel-heading">綜卦（換位思考）</div>
-                            <div class="panel-body text-center">
-                                <div class="meihua-section-title" id="zongguaName"></div>
-                                <div id="zongguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                                <small class="text-muted">站在對方立場或顛倒角度</small>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-            </div>
-        </div>
 
-        <div id="meihuaTexts" class="panel panel-default" style="display: none;">
-            <div class="panel-heading">
-                <h3 class="panel-title">卦辭 / 爻辭</h3>
-            </div>
-            <div class="panel-body">
-                <div class="meihua-section-title" id="guaCiTitle"></div>
-                <p id="guaCi" class="meihua-meta"></p>
+                <!-- 模式 2：數字起卦 -->
+                <div id="modeNumberSection" class="meihua-mode-panel" style="display: none;">
+                    <p class="text-muted" style="font-size: 13.5px; margin-bottom: 16px;">
+                        請依當下直覺選定三個 1 - 100 之正整數，或點擊隨機生成靈數。
+                    </p>
+                    <form id="meihuaNumberForm"
+                          toolname="meihua_qigua_numbers"
+                          tooldescription="使用三個數字(1-100)進行梅花易數數字起卦"
+                          toolautosubmit
+                          onsubmit="return false;">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label class="suite-form-label" for="meihuaNum1">第一數（推演上卦）</label>
+                                    <input type="number" id="meihuaNum1" name="num1" class="form-control suite-input text-center" min="1" max="100" placeholder="1 - 100" toolparamdescription="第一個數字（1-100，計算上卦）" style="font-size: 18px; font-weight: 700;">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label class="suite-form-label" for="meihuaNum2">第二數（推演下卦）</label>
+                                    <input type="number" id="meihuaNum2" name="num2" class="form-control suite-input text-center" min="1" max="100" placeholder="1 - 100" toolparamdescription="第二個數字（1-100，計算下卦）" style="font-size: 18px; font-weight: 700;">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label class="suite-form-label" for="meihuaNum3">第三數（動爻時機）</label>
+                                    <input type="number" id="meihuaNum3" name="num3" class="form-control suite-input text-center" min="1" max="100" placeholder="1 - 100" toolparamdescription="第三個數字（1-100，計算動爻）" style="font-size: 18px; font-weight: 700;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="suite-submit-container" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 14px;">
+                            <button id="meihuaDice" type="button" class="btn suite-btn-secondary btn-lg">
+                                <i data-lucide="shuffle"></i> 靈感隨機
+                            </button>
+                            <button id="numberQiguaBtn" type="submit" class="btn suite-btn-primary btn-lg">
+                                <i data-lucide="sparkles"></i> 數字起卦 ➔
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered meihua-yaoci-table">
-                        <thead>
-                            <tr>
-                                <th>爻位</th>
-                                <th>爻辭</th>
-                                <th>白話</th>
-                            </tr>
-                        </thead>
-                        <tbody id="yaoCiTable"></tbody>
-                    </table>
+                <!-- 模式 3：漢字報字起卦 -->
+                <div id="modeTextSection" class="meihua-mode-panel" style="display: none;">
+                    <p class="text-muted" style="font-size: 13.5px; margin-bottom: 16px;">
+                        輸入任意漢字、詞語或短句（單字、雙字、多字皆可），系統將依康熙正體筆劃數演繹上下卦與動爻。
+                    </p>
+                    <form id="meihuaTextForm"
+                          toolname="meihua_qigua_text"
+                          tooldescription="輸入漢字進行梅花易數字占起卦"
+                          toolautosubmit
+                          onsubmit="return false;">
+                        <div class="form-group" style="max-width: 460px; margin: 0 auto 18px;">
+                            <label class="suite-form-label" for="meihuaText"><i data-lucide="type"></i> 占測文字或詞語</label>
+                            <input type="text" id="meihuaText" name="text" class="form-control suite-input text-center" placeholder="例如：天地人、風調雨順、心想事成" toolparamdescription="占測漢字或詞語" style="font-size: 18px; font-weight: 700;">
+                        </div>
+                        <div class="suite-submit-container">
+                            <button id="textQiguaBtn" type="submit" class="btn suite-btn-primary btn-lg">
+                                <i data-lucide="type"></i> 報字起卦 ➔
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
+        <!-- 階段 3：五卦全息象義結果 -->
+        <div id="meihuaResult" class="suite-card meihua-result-card" style="display: none; margin-bottom: 24px;">
+            <div class="meihua-header-banner">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="meihua-stage-badge">參</span>
+                        <h2 style="font-size: 20px; font-weight: 800; margin: 0;">五卦全息 · 象義生剋結果</h2>
+                    </div>
+                    <div class="meihua-time-meta" id="calcMethodDisplay"></div>
+                    <div class="meihua-time-meta" id="calcExtraDetail"></div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <span class="suite-tag suite-tag-gold">邵雍梅花心易</span>
+                </div>
+            </div>
+
+            <!-- 主三欄：本卦、體用、應期 -->
+            <div class="row meihua-result-grid">
+                <div class="col-lg-4 col-md-6">
+                    <div class="meihua-card">
+                        <div class="meihua-section-title" style="color: #e11d48;"><i data-lucide="compass"></i> 1. 本卦（現狀基礎）</div>
+                        <div id="benguaLines" class="meihua-hexagram"></div>
+                        <div class="meihua-symbol" id="benguaSymbol"></div>
+                        <div class="meihua-section-title" id="benguaName" style="font-size: 18px;"></div>
+                        <div class="meihua-meta">上卦：<span id="benguaUpper"></span></div>
+                        <div class="meihua-meta">下卦：<span id="benguaLower"></span></div>
+                        <div class="meihua-meta" style="margin-top: 4px;">
+                            動爻：<span id="benguaDongYao" class="label label-danger"></span>
+                        </div>
+                        <div class="meihua-meta" id="benguaDongYaoText"></div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="meihua-card">
+                        <div class="meihua-section-title" style="color: #4f46e5;"><i data-lucide="scale"></i> 2. 體用生剋與四季旺衰</div>
+                        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                            <div class="meihua-section-title" style="font-size: 15px; margin-bottom: 0;">體卦（我）：<span id="tiGua" class="label label-primary"></span></div>
+                            <div class="meihua-section-title" style="font-size: 15px; margin-bottom: 0;">用卦（事）：<span id="yongGua" class="label label-info"></span></div>
+                        </div>
+                        <div class="meihua-meta">五行生剋：<strong id="wuxingRelation" style="color: #e11d48; font-size: 15px;"></strong></div>
+                        <div class="meihua-meta">旺衰狀態：<span id="tiYongSeasonal"></span></div>
+                        <div class="meihua-meta" style="margin-top: 6px;">體用斷語：<strong id="wuxingJudgement" style="color: var(--suite-text);"></strong></div>
+                        <div class="meihua-meta" id="wuxingDetail" style="margin-top: 6px; font-size: 13px; line-height: 1.6; color: var(--suite-text-muted);"></div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-12">
+                    <div class="meihua-card">
+                        <div class="meihua-section-title" style="color: #b45309;"><i data-lucide="calendar"></i> 3. 應期推斷與時空契機</div>
+                        <p class="meihua-meta meihua-timing" id="timingDesc" style="line-height: 1.7; font-weight: 600; padding: 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; margin: 12px 0;"></p>
+                        <small class="text-muted" style="display: block; line-height: 1.5;">
+                            體旺得生，吉期可待；生體用旺，指日可期；若逢剋洩，宜待生旺之日時。
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 次四欄：互、變、錯、綜 -->
+            <div class="row" style="margin-top: 10px;">
+                <div class="col-md-3 col-sm-6">
+                    <div class="meihua-card text-center" style="min-height: 200px;">
+                        <div class="meihua-section-title" style="font-size: 14.5px;">互卦（中間過程）</div>
+                        <div class="meihua-section-title" id="huguaName" style="color: #6366f1;"></div>
+                        <div id="huguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                        <small class="text-muted" style="display: block; margin-top: 6px;">事物中途發展的轉折</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="meihua-card text-center" style="min-height: 200px;">
+                        <div class="meihua-section-title" style="font-size: 14.5px;">變卦（最終事態）</div>
+                        <div class="meihua-section-title" id="bianguaName" style="color: #ec4899;"></div>
+                        <div id="bianguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                        <small class="text-muted" style="display: block; margin-top: 6px;">事態最終演進之走向</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="meihua-card text-center" style="min-height: 200px;">
+                        <div class="meihua-section-title" style="font-size: 14.5px;">錯卦（反面危機）</div>
+                        <div class="meihua-section-title" id="cuoguaName" style="color: #f59e0b;"></div>
+                        <div id="cuoguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                        <small class="text-muted" style="display: block; margin-top: 6px;">事物對立面與暗藏盲點</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="meihua-card text-center" style="min-height: 200px;">
+                        <div class="meihua-section-title" style="font-size: 14.5px;">綜卦（換位視角）</div>
+                        <div class="meihua-section-title" id="zongguaName" style="color: #10b981;"></div>
+                        <div id="zongguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
+                        <small class="text-muted" style="display: block; margin-top: 6px;">換位思考或逆向觀察</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快捷操作列 (Copy / Email / Reset) -->
+            <div class="meihua-action-bar">
+                <button type="button" id="btnCopyMeihua" title="複製完整卦象">
+                    <i data-lucide="copy"></i> 複製卦象
+                </button>
+                <button type="button" id="btnEmailMeihua" title="將結果寄送到電子信箱">
+                    <i data-lucide="mail"></i> 寄送結果至信箱
+                </button>
+                <button type="button" id="btnRestartMeihua" title="重新起卦">
+                    <i data-lucide="refresh-cw"></i> 重新起卦
+                </button>
+            </div>
+        </div>
+
+        <!-- 易經卦爻辭卡片 -->
+        <div id="meihuaTexts" class="suite-card" style="display: none; padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                <i data-lucide="book-open" style="color: #e11d48;"></i>
+                <h3 class="suite-card-title" style="margin: 0; font-size: 18px; font-weight: 800;">周易卦爻辭詳解</h3>
+            </div>
+            <div class="meihua-section-title" id="guaCiTitle" style="font-size: 16px; color: #e11d48;"></div>
+            <p id="guaCi" class="meihua-meta" style="line-height: 1.8; margin-bottom: 16px; padding: 12px; background: rgba(0,0,0,0.02); border-radius: 8px; border: 1px solid rgba(225, 29, 72, 0.2);"></p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered meihua-yaoci-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">爻位</th>
+                            <th style="width: 45%;">爻辭（古文）</th>
+                            <th style="width: 40%;">白話解讀</th>
+                        </tr>
+                    </thead>
+                    <tbody id="yaoCiTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 階段 4：宗師解卦 · 照見當下 (LLM Deep Interpretation) -->
+        <div id="meihuaLLMSection" class="suite-card meihua-ai-section" style="margin-bottom: 30px;">
+            <div class="meihua-stage-header" style="margin-bottom: 12px;">
+                <span class="meihua-stage-badge">肆</span>
+                <div>
+                    <h2 class="meihua-stage-title" style="display: flex; align-items: center; gap: 8px;">
+                        <span>宗師解卦 · 照見當下</span>
+                        <span class="suite-tag suite-tag-gold" style="font-size: 12px;">智能體用推演</span>
+                    </h2>
+                    <p class="meihua-stage-desc meihua-llm-note meihua-llm-status">
+                        結合體用生剋、本變互綜全息盤與周易動爻辭，直面提問，提供理性指引與實踐建議。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 對話歷史展示區 -->
+            <div id="meihuaConversation" class="conversation-history"></div>
+
+            <!-- 解卦表單 (保留完整 WebMCP 宣告與 Turnstile 驗證) -->
+            <form id="meihuaQuestionForm"
+                  toolname="meihua_question"
+                  tooldescription="針對梅花易數當前卦象提出問題並取得解卦"
+                  toolautosubmit
+                  onsubmit="return false;">
+                <div class="form-group mb-3">
+                    <label class="suite-form-label" for="meihuaQuestion">
+                        <i data-lucide="help-circle"></i> 請輸入您欲向梅花宗師請教的具體問題或事項
+                    </label>
+                    <textarea id="meihuaQuestion" name="question" class="form-control suite-textarea" rows="3"
+                              toolparamdescription="針對當前卦象想詢問的具體問題或事項"
+                              placeholder="例如：這個卦象對我近期的工作轉換或投資有什麼具體提醒？"></textarea>
+                </div>
+
+                <div id="meihuaTurnstileWrapper" style="margin-top: 12px; margin-bottom: 12px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'meihua-turnstile', action: 'llm_analysis', explicit: true }) %>
+                </div>
+
+                <div class="suite-submit-container" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button id="meihuaAsk" type="submit" class="btn suite-btn-primary btn-lg">
+                        <i data-lucide="sparkles"></i> 🌸 梅花解卦 ➔
+                    </button>
+                    <button id="meihuaClear" type="button" class="btn suite-btn-secondary btn-lg">
+                        <i data-lucide="trash-2"></i> 清除對話
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <%- include('partials/ads-bottom.html') %>
     </div>
 
     <%- include('partials/result-email.html') %>
-    <%- include('partials/ads-bottom.html') %>
-
     <%- include('partials/site-footer.html') %>
 
+    <% if ((typeof turnstileEnabled === 'undefined' || turnstileEnabled) && typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+    <% } %>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
@@ -370,9 +466,10 @@
     <script src="js/theme.js"></script>
     <script src="js/lucide.min.js"></script>
     <script src="js/markdown-renderer.js"></script>
+    <script src="js/email-formatter.js"></script>
+    <script src="/js/result-email.js"></script>
     <script src="js/meihua.js"></script>
     <script src="js/webmcp.js"></script>
-    <script src="/js/result-email.js"></script>
 </body>
 
 </html>

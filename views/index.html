@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant-TW">
+<html lang="<%= currentLang %>">
 
 <head>
     <meta charset="utf-8">
@@ -7,43 +7,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= t('title') %></title>
     <meta name="description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
-    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://qi.david888.com/">
 
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qi.david888.com/">
     <meta property="og:title" content="<%= t('title') %>">
     <meta property="og:description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
-    <meta property="og:url" content="https://qi.david888.com/">
-    <meta property="og:site_name" content="333 一句提醒·照見當下">
-    <meta property="og:locale" content="zh_TW">
-    <meta property="og:locale:alternate" content="zh_CN">
     <meta property="og:image" content="https://qi.david888.com/og-image.png">
     <meta property="og:image:secure_url" content="https://qi.david888.com/og-image.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="333 一句提醒·照見當下奇門命理服務預覽圖">
+    <meta property="og:image:alt" content="333 一句提醒·照見當下 - 奇門遁甲與各類術數排盤工具">
+    <meta property="og:site_name" content="333 一句提醒·照見當下">
+    <meta property="og:locale" content="<%= currentLang === 'zh-cn' ? 'zh_CN' : 'zh_TW' %>">
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://qi.david888.com/">
     <meta name="twitter:title" content="<%= t('title') %>">
     <meta name="twitter:description" content="免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。">
     <meta name="twitter:image" content="https://qi.david888.com/og-image.png">
-    <meta name="twitter:image:alt" content="333 一句提醒·照見當下奇門命理服務預覽圖">
+    <meta name="twitter:image:alt" content="333 一句提醒·照見當下 - 奇門遁甲與各類術數排盤工具">
     <meta name="twitter:site" content="@david888">
 
+    <!-- Schema.org JSON-LD Structured Data -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "333 一句提醒·照見當下",
-        "url": "https://qi.david888.com/",
-        "description": "免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。",
-        "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web"
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "333 一句提醒·照見當下",
+      "url": "https://qi.david888.com/",
+      "description": "免費使用奇門遁甲、梅花易數、塔羅、風水、生辰八字、姻緣與解答之書，結合結構化排盤與多輪問答，提供工作、感情、財運與居家布局的實用線索與決策方向，協助你看清當下、做出更好的下一步。支援繁體與簡體中文介面，立即開始線上探索。",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      },
+      "inLanguage": ["zh-TW", "zh-CN"]
     }
     </script>
 
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -71,14 +80,10 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style-new.css">
     <link rel="stylesheet" href="css/dark-mode.css">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" href="css/divination-suite.css">
 </head>
 
-<body class="qimen-page">
+<body class="qimen-page suite-page">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -108,7 +113,7 @@
                 <li><a href="/name-analysis">姓名分析</a></li>
             </ul>
             
-            <!-- 語言切換選單 -->
+            <!-- 語言切換選單與右側功能 -->
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <a href="#" id="darkModeToggle" class="dark-mode-toggle"
@@ -136,565 +141,594 @@
     </nav>
 
     <div class="container">
-        <!-- 問答區域（永遠顯示） -->
-        <% if (enableLLM) { %>
-        <div class="row" style="margin-bottom: 30px;">
-            <div class="col-md-12">
-                <!-- 獨立的問答輸入區域 -->
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            <i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 有特定問題想問？
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <!-- 對話歷史區域 -->
-                        <div id="conversationHistory" class="conversation-history" style="display: none; max-height: 400px; overflow-y: auto; margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
-                            <!-- 對話記錄將動態插入這裡 -->
-                        </div>
-                        
-                        <form id="qimenQuestionForm" toolname="qimen_question" tooldescription="針對目前奇門盤面提出具體問題並取得解讀" toolautosubmit onsubmit="return false;">
-                            <div class="form-group" style="margin-bottom: 12px;">
-                                <label class="qimen-form-label" style="font-weight: 600;">🎯 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
-                                <select class="form-control" id="qimenPurpose" name="purpose" toolparamdescription="占問事項類別，決定主用神方向" style="max-width: 320px; display: inline-block; margin-bottom: 8px;">
-                                    <option value="綜合" selected>🌐 綜合運勢（全盤統攬）</option>
-                                    <option value="求財">💰 求財投資（主用神：生門 / 戊）</option>
-                                    <option value="事業">💼 工作事業（主用神：開門 / 值符）</option>
-                                    <option value="感情">❤️ 感情婚姻（主用神：六合 / 乙庚）</option>
-                                    <option value="考試">📚 考試升學（主用神：景門 / 天輔）</option>
-                                    <option value="健康">🏥 疾病健康（主用神：天芮 / 死門）</option>
-                                    <option value="出行">🚗 出行方位（主用神：目標方位宮）</option>
-                                    <option value="官司">⚖️ 官司合約（主用神：驚門 / 開門）</option>
-                                </select>
-                                <span id="yongshenTip" class="label label-primary qimen-meta-badge" style="margin-left: 6px; padding: 5px 8px;">
-                                    🎯 主用神：值符 / 日干
-                                </span>
-                            </div>
+        <!-- 英雄區 (Punchy Hero Banner) -->
+        <div class="qimen-hero">
+            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+                <span class="suite-badge suite-badge-rose"><i data-lucide="shield"></i> 帝王之術 · 因時借勢</span>
+                <span class="suite-badge suite-badge-gold"><i data-lucide="compass"></i> 九宮拆補精確至13分</span>
+                <span class="suite-badge"><i data-lucide="zap"></i> 主客動靜克應直斷</span>
+            </div>
+            <h1 style="font-size: 28px; font-weight: 800; margin: 0 0 10px 0; letter-spacing: -0.5px;">
+                ⚔️ <%= t('main.pageTitle') %>
+            </h1>
+            <p style="font-size: 14.5px; font-weight: 500; color: var(--claude-text-muted, #5c4d43); max-width: 650px; margin: 0 auto; line-height: 1.6;">
+                天時、地利、人和、神助四維合參。以時空九宮為經緯，推演三奇六儀、八門、九星與八神，洞悉事物主客動靜之機。
+            </p>
+        </div>
 
-                            <div class="form-group" style="margin-bottom: 10px;">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="userQuestion" name="question"
-                                           toolparamdescription="您想詢問的具體問題或狀況（例如：今天適合投資嗎？感情運勢如何？）"
-                                           placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-primary" type="submit" id="askLLMQuestion">
-                                            <i data-lucide="message-square" class="glyphicon glyphicon-comment"></i> 詢問
-                                        </button>
-                                        <button class="btn btn-info" type="button" id="emailConversation" style="display: none;" title="寄送對話紀錄到 Email">
-                                            <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i>
-                                        </button>
-                                        <button class="btn btn-warning" type="button" id="clearConversation" style="display: none;" title="清除對話，開始新問題">
-                                            <i data-lucide="trash-2" class="glyphicon glyphicon-trash"></i>
-                                        </button>
-                                    </span>
+        <%- include('partials/ads-mobile.html') %>
+
+        <!-- 階段 1：時空起盤 · 精度與自定 -->
+        <div class="suite-card" style="padding: 24px; margin-bottom: 24px;">
+            <div class="qimen-stage-header">
+                <span class="qimen-stage-badge">壹</span>
+                <div>
+                    <h2 class="qimen-stage-title">時空起盤 · 精度校準</h2>
+                    <p class="qimen-stage-desc">可自由選擇傳統時辰或進階13分鐘九時段拆補法，亦可自定義時空排盤</p>
+                </div>
+            </div>
+
+            <!-- 時間精度模式選擇器 -->
+            <div class="time-mode-selector" style="margin-bottom: 18px;">
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'active' : '' %>" id="traditionalModeBtn">
+                        <input type="radio" name="timeMode" value="traditional" <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'checked' : '' %>> 
+                        <i data-lucide="clock"></i> 傳統模式
+                        <small class="qimen-caption" style="display: block;">以當下時辰起盤（兩小時一盤）</small>
+                    </label>
+                    <label class="btn btn-default <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'active' : '' %>" id="advancedModeBtn">
+                        <input type="radio" name="timeMode" value="advanced" <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'checked' : '' %>> 
+                        <i data-lucide="gauge"></i> 進階模式
+                        <small class="qimen-caption" style="display: block;">九宮拆補（13分鐘法）</small>
+                    </label>
+                </div>
+                <div id="advancedModeInfo" class="alert alert-info qimen-meta" style="display: none; margin-top: 10px;">
+                    <i data-lucide="info"></i> 
+                    進階模式將每個時辰（2小時）細分為9個時段，每段約13分鐘，提供更精確的時間分析
+                </div>
+                <div class="text-right" style="margin-top: 10px;">
+                    <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#customPanModal">
+                        <i data-lucide="calendar"></i> <%= t('form.customPaipan') %>
+                    </button>
+                    <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#helpModal" style="margin-left: 6px;">
+                        <i data-lucide="help-circle"></i> <%= t('modal.title') %>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="basic-info">
+                <div class="info-item">
+                    <strong><%= t('form.type') %>:</strong> <span id="panType"><%= qimen.basicInfo && qimen.basicInfo.type || '' %></span>
+                </div>
+                <div class="info-item">
+                    <strong><%= t('form.method') %>:</strong> <span id="panMethod"><%= qimen.basicInfo && qimen.basicInfo.method || '' %></span>
+                </div>
+                <div class="info-item">
+                    <strong>時間精度:</strong> <span id="timePrecision"><%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? '傳統模式' : '進階模式' %></span>
+                    <span id="timeSegmentInfo" style="display: none;"></span>
+                </div>
+                <% if (process.env.NODE_ENV !== 'production') { %>
+                <div class="info-item qimen-caption">
+                    <strong>時區調試:</strong> 
+                    <span title="用戶本地時間">本地: <span id="localTime"></span></span> |
+                    <span title="伺服器使用時間">計算: <span id="calculationTime"><%= qimen.basicInfo && qimen.basicInfo.date || '' %></span></span>
+                </div>
+                <% } %>
+                <div class="info-item">
+                    <strong>公曆:</strong> <span id="solarDate"><%= qimen.basicInfo && qimen.basicInfo.date || '' %></span>
+                </div>
+                <div class="info-item">
+                    <strong>農曆:</strong> <span id="lunarDate"><%= qimen.basicInfo && qimen.basicInfo.lunarDate || '' %></span>
+                </div>
+                <div class="info-item">
+                    <strong><%= t('main.fourPillars') %>:</strong>
+                    <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.year || '' %></span>
+                    <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.month || '' %></span>
+                    <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.day || '' %></span>
+                    <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.time || '' %></span>
+                </div>
+                <div class="info-item">
+                    <strong><%= t('main.xunShou') %>:</strong> <span id="xunShou"><%= qimen.xunShou || '' %></span>
+                </div>
+                <div class="info-item">
+                    <strong><%= t('main.juShu') %>:</strong> <span id="juShu"><%= qimen.juShu && qimen.juShu.fullName || '' %></span>
+                </div>
+                <div class="info-item">
+                    <strong><%= t('main.zhiFu') %>:</strong> <span id="zhiFu"><%= qimen.zhiFuXing || '' %>(<%= qimen.zhiFuGong || '' %><%= t('main.gong') %>)</span>
+                </div>
+                <div class="info-item">
+                    <strong><%= t('main.zhiShi') %>:</strong> <span id="zhiShi"><%= qimen.zhiShiMen || '' %>(<%= qimen.zhiShiGong || '' %><%= t('main.gong') %>)</span>
+                </div>
+                <div class="info-item">
+                    <strong>運勢:</strong> <span id="overallLuck" class="<%= qimen.analysis && qimen.analysis.overallJiXiong || 'ping' %>"><%= qimen.analysis && qimen.analysis.overallJiXiongText || '平' %></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 階段 2：九宮全息 · 盤面總攬 -->
+        <div class="suite-card" style="padding: 24px; margin-bottom: 24px;">
+            <div class="qimen-stage-header">
+                <span class="qimen-stage-badge">貳</span>
+                <div>
+                    <h2 class="qimen-stage-title">九宮全息 · 盤面總攬</h2>
+                    <p class="qimen-stage-desc">洛書九宮、三奇六儀、八門、九星與八神全息排盤</p>
+                </div>
+            </div>
+
+            <!-- 奇門九宮圖 -->
+            <div class="qimen-pan">
+                <div class="pan-outer">
+                    <div class="pan-grid">
+                        <!-- A. 第一行 - 4,9,2 -->
+                        <div class="gong gong4 <%= qimen.jiuGongAnalysis[4] && qimen.jiuGongAnalysis[4].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '4' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '4' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['4'] : '',
+                                directionWuxing: JIU_GONG['4'].direction + ' ' + JIU_GONG['4'].element,
+                                baMen: qimen.baMen ? qimen.baMen['4'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['4'] : '',
+                                gongName: JIU_GONG['4'].name,
+                                gongNumber: '四',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['4'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['4'] : '乙',
+                                diZhi: '卯',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('4'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+
+                        <div class="gong gong9 <%= qimen.jiuGongAnalysis[9] && qimen.jiuGongAnalysis[9].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '9' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '9' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['9'] : '',
+                                directionWuxing: JIU_GONG['9'].direction + ' ' + JIU_GONG['9'].element,
+                                baMen: qimen.baMen ? qimen.baMen['9'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['9'] : '',
+                                gongName: JIU_GONG['9'].name,
+                                gongNumber: '九',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['9'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['9'] : '壬',
+                                diZhi: '未',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('9'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+
+                        <div class="gong gong2 <%= qimen.jiuGongAnalysis[2] && qimen.jiuGongAnalysis[2].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '2' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '2' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['2'] : '',
+                                directionWuxing: JIU_GONG['2'].direction + ' ' + JIU_GONG['2'].element,
+                                baMen: qimen.baMen ? qimen.baMen['2'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['2'] : '',
+                                gongName: JIU_GONG['2'].name,
+                                gongNumber: '二',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['2'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['2'] : '丁',
+                                diZhi: '醜',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('2'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+
+                        <!-- B. 第二行 - 3,5,7 -->
+                        <div class="gong gong3 <%= qimen.jiuGongAnalysis[3] && qimen.jiuGongAnalysis[3].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '3' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '3' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['3'] : '',
+                                directionWuxing: JIU_GONG['3'].direction + ' ' + JIU_GONG['3'].element,
+                                baMen: qimen.baMen ? qimen.baMen['3'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['3'] : '',
+                                gongName: JIU_GONG['3'].name,
+                                gongNumber: '三',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['3'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['3'] : '丙',
+                                diZhi: '寅',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('3'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+
+                        <div class="gong gong5 ping <%= qimen.zhiFuGong === '5' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '5' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['5'] : '',
+                                directionWuxing: JIU_GONG['5'].direction + ' ' + JIU_GONG['5'].element,
+                                baMen: qimen.baMen ? qimen.baMen['5'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['5'] : '',
+                                gongName: JIU_GONG['5'].name,
+                                gongNumber: '五',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['5'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['5'] : '戊',
+                                diZhi: '',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('5'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+
+                        <div class="gong gong7 <%= qimen.jiuGongAnalysis[7] && qimen.jiuGongAnalysis[7].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '7' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '7' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['7'] : '',
+                                directionWuxing: JIU_GONG['7'].direction + ' ' + JIU_GONG['7'].element,
+                                baMen: qimen.baMen ? qimen.baMen['7'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['7'] : '',
+                                gongName: JIU_GONG['7'].name,
+                                gongNumber: '七',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['7'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['7'] : '庚',
+                                diZhi: '酉',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('7'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+
+                        <!-- C. 第三行 - 8,1,6 -->
+                        <div class="gong gong8 <%= qimen.jiuGongAnalysis[8] && qimen.jiuGongAnalysis[8].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '8' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '8' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['8'] : '',
+                                directionWuxing: JIU_GONG['8'].direction + ' ' + JIU_GONG['8'].element,
+                                baMen: qimen.baMen ? qimen.baMen['8'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['8'] : '',
+                                gongName: JIU_GONG['8'].name,
+                                gongNumber: '八',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['8'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['8'] : '辛',
+                                diZhi: '申',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('8'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+
+                        <div class="gong gong1 <%= qimen.jiuGongAnalysis[1] && qimen.jiuGongAnalysis[1].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '1' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '1' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['1'] : '',
+                                directionWuxing: JIU_GONG['1'].direction + ' ' + JIU_GONG['1'].element,
+                                baMen: qimen.baMen ? qimen.baMen['1'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['1'] : '',
+                                gongName: JIU_GONG['1'].name,
+                                gongNumber: '一',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['1'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['1'] : '戊',
+                                diZhi: '子',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('1'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+
+                        <div class="gong gong6 <%= qimen.jiuGongAnalysis[6] && qimen.jiuGongAnalysis[6].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '6' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '6' ? 'zhishi' : '' %>">
+                            <%- include('standardGongTemplate', {
+                                baShen: qimen.baShen ? qimen.baShen['6'] : '',
+                                directionWuxing: JIU_GONG['6'].direction + ' ' + JIU_GONG['6'].element,
+                                baMen: qimen.baMen ? qimen.baMen['6'] : '',
+                                jiuXing: qimen.jiuXing ? qimen.jiuXing['6'] : '',
+                                gongName: JIU_GONG['6'].name,
+                                gongNumber: '六',
+                                tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['6'] : '',
+                                diPan: qimen.diPan ? qimen.diPan['6'] : '己',
+                                diZhi: '戌',
+                                tianGanFang: '',
+                                showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('6'),
+                                emptyType: 'yellow',
+                                emptyContent: '空'
+                            }) %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 吉凶標記圖例說明 -->
+                <div class="auspicious-legend">
+                    <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 10px 0;">宮位吉凶標記說明 (色弱友善設計)</h3>
+                    <div class="auspicious-items">
+                        <div class="auspicious-item">
+                            <div class="auspicious-sample sample-da-ji"></div>
+                            <span class="auspicious-text">大吉 - 深綠斜紋 + ◆</span>
+                        </div>
+                        <div class="auspicious-item">
+                            <div class="auspicious-sample sample-xiao-ji"></div>
+                            <span class="auspicious-text">小吉 - 淺綠點紋 + ♦</span>
+                        </div>
+                        <div class="auspicious-item">
+                            <div class="auspicious-sample sample-ping"></div>
+                            <span class="auspicious-text">平 - 白底灰框 + ○</span>
+                        </div>
+                        <div class="auspicious-item">
+                            <div class="auspicious-sample sample-xiao-xiong"></div>
+                            <span class="auspicious-text">小兇 - 橙色點紋 + ▲</span>
+                        </div>
+                        <div class="auspicious-item">
+                            <div class="auspicious-sample sample-da-xiong"></div>
+                            <span class="auspicious-text">大兇 - 紅色斜紋 + ✖</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pan-legend">
+                    <div class="legend-item">
+                        <span class="legend-label">五行顏色標記:</span>
+                        <span class="legend-box wuxing-mu"><%= t('legend.wuxing.mu') %></span>
+                        <span class="legend-box wuxing-huo"><%= t('legend.wuxing.huo') %></span>
+                        <span class="legend-box wuxing-tu"><%= t('legend.wuxing.tu') %></span>
+                        <span class="legend-box wuxing-jin"><%= t('legend.wuxing.jin') %></span>
+                        <span class="legend-box wuxing-shui"><%= t('legend.wuxing.shui') %></span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-label">八神:</span>
+                        <span class="legend-box shen wuxing-mu"><%= t('legend.zhifu') %></span>
+                        <span class="legend-box shen wuxing-huo">騰蛇</span>
+                        <span class="legend-box shen wuxing-shui">太陰</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-label"><%= t('legend.bamen') %>:</span>
+                        <span class="legend-box men wuxing-mu">傷門</span>
+                        <span class="legend-box men wuxing-huo">景門</span>
+                        <span class="legend-box men wuxing-shui">休門</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-label">吉兇標記:</span>
+                        <span class="legend-box label-da_ji">大吉</span>
+                        <span class="legend-box label-xiao_ji">小吉</span>
+                        <span class="legend-box label-ping">平</span>
+                        <span class="legend-box label-xiao_xiong">小兇</span>
+                        <span class="legend-box label-da_xiong">大兇</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 整體分析與行動建議 -->
+            <div class="panel panel-primary" style="margin-top: 24px; border-radius: 12px; overflow: hidden;">
+                <div class="panel-heading" style="padding: 12px 18px;">
+                    <h3 class="panel-title" style="font-weight: 700;"><i data-lucide="compass"></i> <%= t('analysis.title') %></h3>
+                </div>
+                <div class="panel-body" style="padding: 18px;">
+                    <p style="font-size: 15px; margin-bottom: 8px;">
+                        <%= t('main.zhiFu') %>: <strong><%= qimen.zhiFuGong || '5' %><%= t('main.gong') %>(<%= (qimen.jiuGongAnalysis[qimen.zhiFuGong] && qimen.jiuGongAnalysis[qimen.zhiFuGong].gongName) || '中' %>)</strong> ｜ 
+                        <%= t('main.zhiShi') %>: <strong><%= qimen.zhiShiGong || '5' %><%= t('main.gong') %>(<%= (qimen.jiuGongAnalysis[qimen.zhiShiGong] && qimen.jiuGongAnalysis[qimen.zhiShiGong].gongName) || '中' %>)</strong>
+                    </p>
+                    <% if (qimen.analysis && qimen.analysis.bestGong && qimen.jiuGongAnalysis[qimen.analysis.bestGong]) { %>
+                        <p style="font-size: 15px; color: #047857; font-weight: 600;">
+                            <i data-lucide="check-circle"></i> 最有利方位: <strong><%= qimen.jiuGongAnalysis[qimen.analysis.bestGong].direction || '' %>(<%= qimen.jiuGongAnalysis[qimen.analysis.bestGong].gongName || '' %><%= t('main.gong') %>)</strong>
+                        </p>
+                    <% } %>
+
+                    <% if (qimen.analysis && qimen.analysis.suggestions && Array.isArray(qimen.analysis.suggestions)) { %>
+                    <h4 style="font-weight: 700; margin-top: 14px;">行動建議：</h4>
+                    <ul class="suggestion-list">
+                        <% qimen.analysis.suggestions.forEach(function(suggestion) { %>
+                            <li><%= suggestion %></li>
+                        <% }); %>
+                    </ul>
+                    <% } else { %>
+                    <p class="text-muted">暫無建議</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- 九宮詳解 (1-9宮詳細卡片) -->
+            <div class="panel panel-default" style="margin-top: 20px; border-radius: 12px; overflow: hidden;">
+                <div class="panel-heading" style="padding: 12px 18px;">
+                    <h3 class="panel-title" style="font-weight: 700;"><i data-lucide="grid"></i> 九宮星門神儀詳解</h3>
+                </div>
+                <div class="panel-body" style="padding: 18px;">
+                    <div class="gong-details row">
+                        <% if (qimen.jiuGongAnalysis) { %>
+                        <% for (let i = 1; i <= 9; i++) { %>
+                            <% if (qimen.jiuGongAnalysis[i]) { %>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="panel panel-<%= qimen.jiuGongAnalysis[i].jiXiong && qimen.jiuGongAnalysis[i].jiXiong.includes('ji') ? 'success' : qimen.jiuGongAnalysis[i].jiXiong === 'ping' ? 'info' : 'danger' %>" style="border-radius: 8px;">
+                                    <div class="panel-heading" style="padding: 8px 12px;">
+                                        <h4 class="panel-title" style="font-size: 14px; font-weight: 700;"><%= i %>-<%= qimen.jiuGongAnalysis[i].gongName || '' %>
+                                        <span class="pull-right label label-<%= qimen.jiuGongAnalysis[i].jiXiong && qimen.jiuGongAnalysis[i].jiXiong.includes('ji') ? 'success' : qimen.jiuGongAnalysis[i].jiXiong === 'ping' ? 'default' : 'danger' %>">
+                                            <%= qimen.jiuGongAnalysis[i].jiXiongText || '平' %>
+                                        </span>
+                                        </h4>
+                                    </div>
+                                    <div class="panel-body" style="padding: 12px; font-size: 13px; line-height: 1.6;">
+                                        <p><strong>方位:</strong> <%= qimen.jiuGongAnalysis[i].direction || '' %> ｜ 
+                                        <strong><%= t('analysis.jiuxing') %>:</strong> <%= qimen.jiuGongAnalysis[i].xing || '' %><% if (qimen.jiuGongAnalysis[i].xingAlias) { %>(<%= qimen.jiuGongAnalysis[i].xingAlias %>)<% } %></p>
+                                        <% if (qimen.jiuGongAnalysis[i].men) { %>
+                                            <p><strong><%= t('analysis.bamen') %>:</strong> <%= qimen.jiuGongAnalysis[i].men %>
+                                        <% } %>
+                                        <% if (qimen.jiuGongAnalysis[i].shen) { %>
+                                            ｜ <strong>八神:</strong> <%= qimen.jiuGongAnalysis[i].shen %></p>
+                                        <% } %>
+                                        <p><strong>三奇六儀:</strong> <%= qimen.sanQiLiuYi && qimen.sanQiLiuYi[i] || '' %></p>
+                                        <p class="gong-explain" style="margin-top: 6px; color: var(--claude-text-muted);"><%= qimen.jiuGongAnalysis[i].explain || '暫無解釋' %></p>
+                                    </div>
                                 </div>
                             </div>
-                            <div id="questionTurnstileWrapper" style="margin-top: 8px; margin-bottom: 10px;">
-                                <%- include('partials/turnstile-widget.html', { widgetId: 'question-turnstile', action: 'llm_analysis', explicit: true }) %>
-                            </div>
-                        </form>
-                        
-                        <div id="llmQuestionResponse" class="well" style="display: none; margin-top: 15px;">
-                            <div class="response-content"></div>
-                            <div class="text-muted response-time qimen-meta" style="margin-top: 10px;"></div>
+                            <% } %>
+                        <% } %>
+                        <% } else { %>
+                        <div class="col-md-12">
+                            <p class="text-center text-muted">暫無九宮分析數據</p>
                         </div>
-                        
-                        <div class="text-muted qimen-meta" style="margin-top: 10px;">
-                            <i data-lucide="info" class="glyphicon glyphicon-info-sign"></i> 
-                            您可以直接詢問關於當前奇門盤的任何問題，系統會基於排盤結果給出建議。<strong>支援續問功能</strong>，會延續對話脈絡。
-                        </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <%- include('partials/ads-mobile.html') %>
-        
-        <!-- 解盤區域（可選展開） -->
-        <div class="row" style="margin-bottom: 30px;">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            <i data-lucide="sparkles" class="glyphicon glyphicon-star"></i> 奇門遁甲解盤
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <!-- 初始狀態：顯示解盤按鈕 -->
-                        <div id="llmInitialPanel" class="text-center">
-                            <p class="text-muted">點擊下方按鈕，查看這個奇門盤的解讀</p>
-                            <button id="startLLMAnalysis" class="btn btn-primary btn-lg">
-                                <i data-lucide="sparkles" class="glyphicon glyphicon-star"></i> 開始解盤
-                            </button>
-                            <div class="text-muted qimen-meta" style="margin-top: 10px;">
-                                <i data-lucide="info" class="glyphicon glyphicon-info-sign"></i> 
-                                系統將根據當前排盤提供個人化的運勢分析和建議
-                            </div>
-                        </div>
 
-                        <!-- 載入狀態 -->
-                        <div id="llmLoadingPanel" style="display: none;">
-                            <div class="text-center">
-                                <div class="progress progress-striped active">
-                                    <div class="progress-bar progress-bar-info" style="width: 100%">
-                                        <span class="sr-only">解盤中...</span>
-                                    </div>
-                                </div>
-                                <p><i data-lucide="hourglass" class="glyphicon glyphicon-hourglass"></i> 正在分析您的奇門盤…</p>
-                                <p class="text-muted">這可能需要幾秒鐘時間，請稍候</p>
-                            </div>
-                        </div>
+        <!-- 階段 3：宗師解盤 · 照見當下 (LLM Analysis) -->
+        <% if (enableLLM) { %>
+        <div class="suite-card" style="padding: 24px; margin-bottom: 24px;">
+            <div class="qimen-stage-header">
+                <span class="qimen-stage-badge">參</span>
+                <div>
+                    <h2 class="qimen-stage-title" style="display: flex; align-items: center; gap: 8px;">
+                        <span>宗師解盤 · 照見當下</span>
+                        <span class="suite-tag suite-tag-gold" style="font-size: 12px;">四維奇門透析</span>
+                    </h2>
+                    <p class="qimen-stage-desc">
+                        依據當前奇門全盤九宮、值符值使動態，提供全方位運勢吉凶剖析與因勢利導策略
+                    </p>
+                </div>
+            </div>
 
-                        <!-- 解盤結果 -->
-                        <div id="llmResultPanel" style="display: none;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
-                                <div id="llmTimestamp" class="text-muted qimen-meta">
-                                    <!-- 解盤時間將顯示在這裡 -->
-                                </div>
-                                <div style="display:inline-flex;gap:6px;">
-                                    <button type="button" id="emailAnalysisBtn" class="btn btn-default btn-xs qimen-copy-button btn-open-email-modal" style="padding: 5px 11px; border-radius: 4px;" title="寄送完整解盤到信箱">
-                                        <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i> 寄送解盤
-                                    </button>
-                                    <button type="button" id="copyAnalysisBtn" class="btn btn-default btn-xs qimen-copy-button" style="padding: 5px 11px; border-radius: 4px;" title="複製完整解盤內容">
-                                        <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製解盤內容
-                                    </button>
-                                </div>
-                            </div>
+            <!-- 初始狀態：顯示解盤按鈕 -->
+            <div id="llmInitialPanel" class="text-center" style="padding: 20px 0;">
+                <p class="text-muted" style="font-size: 15px; margin-bottom: 16px;">點擊下方按鈕，由 AI 宗師深入解析當前奇門盤面</p>
+                <button id="startLLMAnalysis" class="btn suite-btn-primary btn-lg">
+                    <i data-lucide="sparkles"></i> 開始解盤 ➔
+                </button>
+                <div class="text-muted qimen-meta" style="margin-top: 14px;">
+                    <i data-lucide="info"></i> 
+                    系統將綜合天時九星、地利九宮、人和八門與神助八神，提供清晰建議
+                </div>
+            </div>
 
-                            <div id="llmAnalysisContent" class="llm-analysis-content markdown-body">
-                                <!-- 解盤結果將顯示在這裡 -->
-                            </div>
-
-                            <!-- 底部操作列（含右下角複製、寄送與重新解盤） -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--claude-border, #eee); padding-top: 15px;">
-                                <button id="reAnalyzeButton" class="btn btn-default">
-                                    <i data-lucide="refresh-cw" class="glyphicon glyphicon-refresh"></i> 重新解盤
-                                </button>
-                                <div style="display:inline-flex;gap:6px;">
-                                    <button type="button" id="emailAnalysisBtnBottom" class="btn btn-default btn-sm qimen-copy-button btn-open-email-modal" style="padding: 6px 14px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="寄送完整解盤到信箱">
-                                        <i data-lucide="mail" class="glyphicon glyphicon-envelope"></i> 寄送解盤
-                                    </button>
-                                    <button type="button" id="copyAnalysisBtnBottom" class="btn btn-default btn-sm qimen-copy-button" style="padding: 6px 14px; border-radius: 8px; color: var(--claude-primary, #CC6B49); border: 1px solid var(--claude-border, #E8E0D6);" title="複製完整解盤內容">
-                                        <i data-lucide="copy" class="glyphicon glyphicon-copy"></i> 複製解盤內容
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 錯誤狀態 -->
-                        <div id="llmErrorPanel" style="display: none;">
-                            <div class="alert alert-warning">
-                                <strong>抱歉！</strong> 解盤服務暫時不可用，請稍後再試。
-                            </div>
-                            <div id="llmErrorContent" class="text-muted">
-                                <!-- 錯誤信息將顯示在這裡 -->
-                            </div>
-                            <div class="text-center" style="margin-top: 15px;">
-                                <button id="retryLLMAnalysis" class="btn btn-warning">
-                                    <i data-lucide="rotate-ccw" class="glyphicon glyphicon-repeat"></i> 重試
-                                </button>
-                            </div>
+            <!-- 載入狀態 -->
+            <div id="llmLoadingPanel" style="display: none; padding: 24px 0;">
+                <div class="text-center">
+                    <div class="progress progress-striped active" style="max-width: 380px; margin: 0 auto 16px;">
+                        <div class="progress-bar progress-bar-info" style="width: 100%">
+                            <span class="sr-only">解盤中...</span>
                         </div>
                     </div>
+                    <p style="font-size: 16px; font-weight: 600;"><i data-lucide="hourglass"></i> 正在分析您的奇門盤…</p>
+                    <p class="text-muted">天干地支推演與神煞吉凶剖析中，請稍候</p>
+                </div>
+            </div>
+
+            <!-- 解盤結果 -->
+            <div id="llmResultPanel" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1.5px solid var(--claude-border, #eee); flex-wrap: wrap; gap: 8px;">
+                    <div id="llmTimestamp" class="text-muted qimen-meta"></div>
+                    <div style="display:inline-flex;gap:8px;">
+                        <button type="button" id="emailAnalysisBtn" class="btn suite-btn-secondary btn-xs btn-open-email-modal" title="寄送完整解盤到信箱">
+                            <i data-lucide="mail"></i> 寄送解盤
+                        </button>
+                        <button type="button" id="copyAnalysisBtn" class="btn suite-btn-secondary btn-xs" title="複製完整解盤內容">
+                            <i data-lucide="copy"></i> 複製解盤內容
+                        </button>
+                    </div>
+                </div>
+
+                <div id="llmAnalysisContent" class="llm-analysis-content markdown-body"></div>
+
+                <!-- 底部操作列 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--claude-border, #eee); padding-top: 16px; flex-wrap: wrap; gap: 10px;">
+                    <button id="reAnalyzeButton" class="btn suite-btn-secondary">
+                        <i data-lucide="refresh-cw"></i> 重新解盤
+                    </button>
+                    <div style="display:inline-flex;gap:8px;">
+                        <button type="button" id="emailAnalysisBtnBottom" class="btn suite-btn-secondary btn-sm btn-open-email-modal" title="寄送完整解盤到信箱">
+                            <i data-lucide="mail"></i> 寄送解盤
+                        </button>
+                        <button type="button" id="copyAnalysisBtnBottom" class="btn suite-btn-secondary btn-sm" title="複製完整解盤內容">
+                            <i data-lucide="copy"></i> 複製解盤內容
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 錯誤狀態 -->
+            <div id="llmErrorPanel" style="display: none;">
+                <div class="alert alert-warning">
+                    <strong>抱歉！</strong> 解盤服務暫時不可用，請稍後再試。
+                </div>
+                <div id="llmErrorContent" class="text-muted"></div>
+                <div class="text-center" style="margin-top: 15px;">
+                    <button id="retryLLMAnalysis" class="btn suite-btn-secondary">
+                        <i data-lucide="rotate-ccw"></i> 重試
+                    </button>
                 </div>
             </div>
         </div>
         <% } else { %>
-        <div class="row" style="margin-bottom: 30px;">
-            <div class="col-md-12">
-                <div class="alert alert-info" role="alert">
-                    <strong>提示：</strong> 解盤功能需要先完成服務設定。
-                    <a href="/api/llm-config" target="_blank">查看配置</a>
-                </div>
+        <div class="suite-card" style="padding: 20px; margin-bottom: 24px;">
+            <div class="alert alert-info" role="alert" style="margin-bottom: 0;">
+                <strong>提示：</strong> 解盤功能需要先完成服務設定。<a href="/api/llm-config" target="_blank">查看配置</a>
             </div>
         </div>
         <% } %>
 
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <h1 class="page-title"><%= t('main.pageTitle') %></h1>
-                
-                <!-- 時間精度模式選擇器 -->
-                <div class="time-mode-selector" style="margin-bottom: 20px;">
-                    <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-default <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'active' : '' %>" id="traditionalModeBtn">
-                            <input type="radio" name="timeMode" value="traditional" <%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? 'checked' : '' %>> 
-                            <i data-lucide="clock" class="glyphicon glyphicon-time"></i> 傳統模式
-                                    <small class="qimen-caption" style="display: block;">以當下時辰起盤（兩小時一盤）</small>
-                        </label>
-                        <label class="btn btn-default <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'active' : '' %>" id="advancedModeBtn">
-                            <input type="radio" name="timeMode" value="advanced" <%= (!qimen.basicInfo || qimen.basicInfo.timePrecisionMode !== 'traditional') ? 'checked' : '' %>> 
-                            <i data-lucide="gauge" class="glyphicon glyphicon-dashboard"></i> 進階模式
-                                    <small class="qimen-caption" style="display: block;">九宮拆補（13分鐘法）</small>
-                        </label>
-                    </div>
-                    <div id="advancedModeInfo" class="alert alert-info qimen-meta" style="display: none; margin-top: 10px;">
-                        <i data-lucide="info" class="glyphicon glyphicon-info-sign"></i> 
-                        進階模式將每個時辰（2小時）細分為9個時段，每段約13分鐘，提供更精確的時間分析
-                    </div>
-                    <div class="text-right" style="margin-top: 10px;">
-                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#customPanModal">
-                            <i data-lucide="calendar" class="glyphicon glyphicon-calendar"></i> <%= t('form.customPaipan') %>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="basic-info">
-                    <div class="info-item">
-                        <strong><%= t('form.type') %>:</strong> <span id="panType"><%= qimen.basicInfo && qimen.basicInfo.type || '' %></span>
-                    </div>
-                    <div class="info-item">
-                        <strong><%= t('form.method') %>:</strong> <span id="panMethod"><%= qimen.basicInfo && qimen.basicInfo.method || '' %></span>
-                    </div>
-                    <div class="info-item">
-                        <strong>時間精度:</strong> <span id="timePrecision"><%= (qimen.basicInfo && qimen.basicInfo.timePrecisionMode === 'traditional') ? '傳統模式' : '進階模式' %></span>
-                        <span id="timeSegmentInfo" style="display: none;"></span>
-                    </div>
-                    <% if (process.env.NODE_ENV !== 'production') { %>
-                    <div class="info-item qimen-caption">
-                        <strong>時區調試:</strong> 
-                        <span title="用戶本地時間">本地: <span id="localTime"></span></span> |
-                        <span title="伺服器使用時間">計算: <span id="calculationTime"><%= qimen.basicInfo && qimen.basicInfo.date || '' %></span></span>
-                    </div>
-                    <% } %>
-                    <div class="info-item">
-                        <strong>公曆:</strong> <span id="solarDate"><%= qimen.basicInfo && qimen.basicInfo.date || '' %></span>
-                    </div>
-                    <div class="info-item">
-                        <strong>農曆:</strong> <span id="lunarDate"><%= qimen.basicInfo && qimen.basicInfo.lunarDate || '' %></span>
-                    </div>
-                    <div class="info-item">
-                        <strong><%= t('main.fourPillars') %>:</strong>
-                        <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.year || '' %></span>
-                        <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.month || '' %></span>
-                        <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.day || '' %></span>
-                        <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.time || '' %></span>
-                    </div>
-                    <div class="info-item">
-                        <strong><%= t('main.xunShou') %>:</strong> <span id="xunShou"><%= qimen.xunShou || '' %></span>
-                    </div>
-                    <div class="info-item">
-                        <strong><%= t('main.juShu') %>:</strong> <span id="juShu"><%= qimen.juShu && qimen.juShu.fullName || '' %></span>
-                    </div>
-                    <div class="info-item">
-                        <strong><%= t('main.zhiFu') %>:</strong> <span id="zhiFu"><%= qimen.zhiFuXing || '' %>(<%= qimen.zhiFuGong || '' %><%= t('main.gong') %>)</span>
-                    </div>
-                    <div class="info-item">
-                        <strong><%= t('main.zhiShi') %>:</strong> <span id="zhiShi"><%= qimen.zhiShiMen || '' %>(<%= qimen.zhiShiGong || '' %><%= t('main.gong') %>)</span>
-                    </div>
-                    <div class="info-item">
-                        <strong>運勢:</strong> <span id="overallLuck" class="<%= qimen.analysis && qimen.analysis.overallJiXiong || 'ping' %>"><%= qimen.analysis && qimen.analysis.overallJiXiongText || '平' %></span>
-                    </div>
+        <!-- 階段 4：專題用神 · 深度問答 -->
+        <% if (enableLLM) { %>
+        <div class="suite-card" style="padding: 24px; margin-bottom: 30px;">
+            <div class="qimen-stage-header">
+                <span class="qimen-stage-badge">肆</span>
+                <div>
+                    <h2 class="qimen-stage-title" style="display: flex; align-items: center; gap: 8px;">
+                        <span>專題用神 · 深度問答</span>
+                        <span class="suite-tag suite-tag-gold" style="font-size: 12px;">多輪對話續問</span>
+                    </h2>
+                    <p class="qimen-stage-desc">
+                        針對工作升遷、求財投資、姻緣合婚、訴訟健康等具體提問，系統自動鎖定專屬用神與客動靜之機。
+                    </p>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <!-- 奇門九宮圖 -->
-                <div class="qimen-pan">
-                    <div class="pan-outer">
-                        <div class="pan-grid">
-                            <!-- A. 第一行 - 4,9,2 -->
-                            <div class="gong gong4 <%= qimen.jiuGongAnalysis[4] && qimen.jiuGongAnalysis[4].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '4' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '4' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['4'] : '',
-                                    directionWuxing: JIU_GONG['4'].direction + ' ' + JIU_GONG['4'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['4'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['4'] : '',
-                                    gongName: JIU_GONG['4'].name,
-                                    gongNumber: '四',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['4'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['4'] : '乙',
-                                    diZhi: '卯',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('4'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-
-                            <div class="gong gong9 <%= qimen.jiuGongAnalysis[9] && qimen.jiuGongAnalysis[9].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '9' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '9' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['9'] : '',
-                                    directionWuxing: JIU_GONG['9'].direction + ' ' + JIU_GONG['9'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['9'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['9'] : '',
-                                    gongName: JIU_GONG['9'].name,
-                                    gongNumber: '九',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['9'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['9'] : '壬',
-                                    diZhi: '未',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('9'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-
-                            <div class="gong gong2 <%= qimen.jiuGongAnalysis[2] && qimen.jiuGongAnalysis[2].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '2' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '2' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['2'] : '',
-                                    directionWuxing: JIU_GONG['2'].direction + ' ' + JIU_GONG['2'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['2'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['2'] : '',
-                                    gongName: JIU_GONG['2'].name,
-                                    gongNumber: '二',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['2'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['2'] : '丁',
-                                    diZhi: '醜',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('2'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-
-                            <!-- B. 第二行 - 3,5,7 -->
-                            <div class="gong gong3 <%= qimen.jiuGongAnalysis[3] && qimen.jiuGongAnalysis[3].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '3' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '3' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['3'] : '',
-                                    directionWuxing: JIU_GONG['3'].direction + ' ' + JIU_GONG['3'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['3'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['3'] : '',
-                                    gongName: JIU_GONG['3'].name,
-                                    gongNumber: '三',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['3'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['3'] : '丙',
-                                    diZhi: '寅',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('3'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-
-                            <div class="gong gong5 ping <%= qimen.zhiFuGong === '5' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '5' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['5'] : '',
-                                    directionWuxing: JIU_GONG['5'].direction + ' ' + JIU_GONG['5'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['5'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['5'] : '',
-                                    gongName: JIU_GONG['5'].name,
-                                    gongNumber: '五',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['5'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['5'] : '戊',
-                                    diZhi: '',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('5'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-
-                            <div class="gong gong7 <%= qimen.jiuGongAnalysis[7] && qimen.jiuGongAnalysis[7].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '7' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '7' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['7'] : '',
-                                    directionWuxing: JIU_GONG['7'].direction + ' ' + JIU_GONG['7'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['7'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['7'] : '',
-                                    gongName: JIU_GONG['7'].name,
-                                    gongNumber: '七',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['7'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['7'] : '庚',
-                                    diZhi: '酉',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('7'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-
-                            <!-- C. 第三行 - 8,1,6 -->
-                            <div class="gong gong8 <%= qimen.jiuGongAnalysis[8] && qimen.jiuGongAnalysis[8].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '8' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '8' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['8'] : '',
-                                    directionWuxing: JIU_GONG['8'].direction + ' ' + JIU_GONG['8'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['8'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['8'] : '',
-                                    gongName: JIU_GONG['8'].name,
-                                    gongNumber: '八',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['8'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['8'] : '辛',
-                                    diZhi: '申',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('8'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-
-                            <div class="gong gong1 <%= qimen.jiuGongAnalysis[1] && qimen.jiuGongAnalysis[1].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '1' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '1' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['1'] : '',
-                                    directionWuxing: JIU_GONG['1'].direction + ' ' + JIU_GONG['1'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['1'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['1'] : '',
-                                    gongName: JIU_GONG['1'].name,
-                                    gongNumber: '一',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['1'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['1'] : '戊',
-                                    diZhi: '子',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('1'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-
-                            <div class="gong gong6 <%= qimen.jiuGongAnalysis[6] && qimen.jiuGongAnalysis[6].jiXiong || 'ping' %> <%= qimen.zhiFuGong === '6' ? 'zhifu' : '' %> <%= qimen.zhiShiGong === '6' ? 'zhishi' : '' %>">
-                                <%- include('standardGongTemplate', {
-                                    baShen: qimen.baShen ? qimen.baShen['6'] : '',
-                                    directionWuxing: JIU_GONG['6'].direction + ' ' + JIU_GONG['6'].element,
-                                    baMen: qimen.baMen ? qimen.baMen['6'] : '',
-                                    jiuXing: qimen.jiuXing ? qimen.jiuXing['6'] : '',
-                                    gongName: JIU_GONG['6'].name,
-                                    gongNumber: '六',
-                                    tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi['6'] : '',
-                                    diPan: qimen.diPan ? qimen.diPan['6'] : '己',
-                                    diZhi: '戌',
-                                    tianGanFang: '',
-                                    showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes('6'),
-                                    emptyType: 'yellow',
-                                    emptyContent: '空'
-                                }) %>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 吉凶標記圖例說明 -->
-                    <div class="auspicious-legend">
-                        <h4>宮位吉凶標記說明 (色弱友善設計)</h4>
-                        <div class="auspicious-items">
-                            <div class="auspicious-item">
-                                <div class="auspicious-sample sample-da-ji"></div>
-                                <span class="auspicious-text">大吉 - 深綠斜紋 + ◆</span>
-                            </div>
-                            <div class="auspicious-item">
-                                <div class="auspicious-sample sample-xiao-ji"></div>
-                                <span class="auspicious-text">小吉 - 淺綠點紋 + ♦</span>
-                            </div>
-                            <div class="auspicious-item">
-                                <div class="auspicious-sample sample-ping"></div>
-                                <span class="auspicious-text">平 - 白底灰框 + ○</span>
-                            </div>
-                            <div class="auspicious-item">
-                                <div class="auspicious-sample sample-xiao-xiong"></div>
-                                <span class="auspicious-text">小兇 - 橙色點紋 + ▲</span>
-                            </div>
-                            <div class="auspicious-item">
-                                <div class="auspicious-sample sample-da-xiong"></div>
-                                <span class="auspicious-text">大兇 - 紅色斜紋 + ✖</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pan-legend">
-                        <div class="legend-item">
-                            <span class="legend-label">五行顏色標記:</span>
-                            <span class="legend-box wuxing-mu"><%= t('legend.wuxing.mu') %></span>
-                            <span class="legend-box wuxing-huo"><%= t('legend.wuxing.huo') %></span>
-                            <span class="legend-box wuxing-tu"><%= t('legend.wuxing.tu') %></span>
-                            <span class="legend-box wuxing-jin"><%= t('legend.wuxing.jin') %></span>
-                            <span class="legend-box wuxing-shui"><%= t('legend.wuxing.shui') %></span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-label">八神:</span>
-                            <span class="legend-box shen wuxing-mu"><%= t('legend.zhifu') %></span>
-                            <span class="legend-box shen wuxing-huo">騰蛇</span>
-                            <span class="legend-box shen wuxing-shui">太陰</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-label"><%= t('legend.bamen') %>:</span>
-                            <span class="legend-box men wuxing-mu">傷門</span>
-                            <span class="legend-box men wuxing-huo">景門</span>
-                            <span class="legend-box men wuxing-shui">休門</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-label">吉兇標記:</span>
-                            <span class="legend-box label-da_ji">大吉</span>
-                            <span class="legend-box label-xiao_ji">小吉</span>
-                            <span class="legend-box label-ping">平</span>
-                            <span class="legend-box label-xiao_xiong">小兇</span>
-                            <span class="legend-box label-da_xiong">大兇</span>
-                        </div>
+            <!-- 對話歷史區域 -->
+            <div id="conversationHistory" class="conversation-history" style="display: none; max-height: 420px; overflow-y: auto; margin-bottom: 16px; padding: 14px; background: rgba(0, 0, 0, 0.02); border-radius: 12px; border: 1px solid var(--claude-border, #E8E0D6);"></div>
+            
+            <form id="qimenQuestionForm" toolname="qimen_question" tooldescription="針對目前奇門盤面提出具體問題並取得解讀" toolautosubmit onsubmit="return false;">
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label class="suite-form-label"><i data-lucide="target"></i> 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <select class="form-control suite-input" id="qimenPurpose" name="purpose" toolparamdescription="占問事項類別，決定主用神方向" style="max-width: 320px; display: inline-block;">
+                            <option value="綜合" selected>🌐 綜合運勢（全盤統攬）</option>
+                            <option value="求財">💰 求財投資（主用神：生門 / 戊）</option>
+                            <option value="事業">💼 工作事業（主用神：開門 / 值符）</option>
+                            <option value="感情">❤️ 感情婚姻（主用神：六合 / 乙庚）</option>
+                            <option value="考試">📚 考試升學（主用神：景門 / 天輔）</option>
+                            <option value="健康">🏥 疾病健康（主用神：天芮 / 死門）</option>
+                            <option value="出行">🚗 出行方位（主用神：目標方位宮）</option>
+                            <option value="官司">⚖️ 官司合約（主用神：驚門 / 開門）</option>
+                        </select>
+                        <span id="yongshenTip" class="label label-primary qimen-meta-badge" style="padding: 7px 12px; border-radius: 16px; font-size: 13px;">
+                            🎯 主用神：值符 / 日干
+                        </span>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                    <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><%= t('analysis.title') %></h3>
-                    </div>
-                    <div class="panel-body">
-                        <p><%= t('main.zhiFu') %>:<strong><%= qimen.zhiFuGong || '5' %><%= t('main.gong') %>(<%= (qimen.jiuGongAnalysis[qimen.zhiFuGong] && qimen.jiuGongAnalysis[qimen.zhiFuGong].gongName) || '中' %>)</strong>, <%= t('main.zhiShi') %>:<strong><%= qimen.zhiShiGong || '5' %><%= t('main.gong') %>(<%= (qimen.jiuGongAnalysis[qimen.zhiShiGong] && qimen.jiuGongAnalysis[qimen.zhiShiGong].gongName) || '中' %>)</strong></p>                        <% if (qimen.analysis && qimen.analysis.bestGong && qimen.jiuGongAnalysis[qimen.analysis.bestGong]) { %>
-                            <p>最有利方位: <strong><%= qimen.jiuGongAnalysis[qimen.analysis.bestGong].direction || '' %>(<%= qimen.jiuGongAnalysis[qimen.analysis.bestGong].gongName || '' %><%= t('main.gong') %>)</strong></p>
-                        <% } %>
-
-                        <% if (qimen.analysis && qimen.analysis.suggestions && Array.isArray(qimen.analysis.suggestions)) { %>
-                        <h4>建議:</h4>
-                        <ul class="suggestion-list">
-                            <% qimen.analysis.suggestions.forEach(function(suggestion) { %>
-                                <li><%= suggestion %></li>
-                            <% }); %>
-                        </ul>
-                        <% } else { %>
-                        <p>暫無建議</p>
-                        <% } %>
+                <div class="form-group mb-3">
+                    <label class="suite-form-label" for="userQuestion"><i data-lucide="help-circle"></i> 請輸入您想占問的具體問題或事項：</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control suite-input" id="userQuestion" name="question"
+                               toolparamdescription="您想詢問的具體問題或狀況（例如：今天適合投資嗎？感情運勢如何？）"
+                               placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？" style="height: 44px;">
+                        <span class="input-group-btn">
+                            <button class="btn suite-btn-primary" type="submit" id="askLLMQuestion" style="height: 44px; padding: 0 20px;">
+                                <i data-lucide="message-square"></i> 詢問 ➔
+                            </button>
+                            <button class="btn suite-btn-secondary" type="button" id="emailConversation" style="display: none; height: 44px;" title="寄送對話紀錄到 Email">
+                                <i data-lucide="mail"></i>
+                            </button>
+                            <button class="btn suite-btn-secondary" type="button" id="clearConversation" style="display: none; height: 44px;" title="清除對話，開始新問題">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </span>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">九宮詳解</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="gong-details">
-                            <% if (qimen.jiuGongAnalysis) { %>
-                            <% for (let i = 1; i <= 9; i++) { %>
-                                <% if (qimen.jiuGongAnalysis[i]) { %>
-                                <div class="col-md-4">
-                                    <div class="panel panel-<%= qimen.jiuGongAnalysis[i].jiXiong && qimen.jiuGongAnalysis[i].jiXiong.includes('ji') ? 'success' : qimen.jiuGongAnalysis[i].jiXiong === 'ping' ? 'info' : 'danger' %>">
-                                        <div class="panel-heading">
-                                            <h4 class="panel-title"><%= i %>-<%= qimen.jiuGongAnalysis[i].gongName || '' %>
-                                            <span class="pull-right label label-<%= qimen.jiuGongAnalysis[i].jiXiong && qimen.jiuGongAnalysis[i].jiXiong.includes('ji') ? 'success' : qimen.jiuGongAnalysis[i].jiXiong === 'ping' ? 'default' : 'danger' %>">
-                                                <%= qimen.jiuGongAnalysis[i].jiXiongText || '平' %>
-                                            </span>
-                                            </h4>
-                                        </div>
-                                        <div class="panel-body">
-                                            <p><strong>方位:</strong> <%= qimen.jiuGongAnalysis[i].direction || '' %>
-                                            <strong><%= t('analysis.jiuxing') %>:</strong> <%= qimen.jiuGongAnalysis[i].xing || '' %><% if (qimen.jiuGongAnalysis[i].xingAlias) { %>(<%= qimen.jiuGongAnalysis[i].xingAlias %>)<% } %></p>
-                                            <% if (qimen.jiuGongAnalysis[i].men) { %>
-                                                <p><strong><%= t('analysis.bamen') %>:</strong> <%= qimen.jiuGongAnalysis[i].men %>
-                                            <% } %>
-                                            <% if (qimen.jiuGongAnalysis[i].shen) { %>
-                                                <strong>八神:</strong> <%= qimen.jiuGongAnalysis[i].shen %></p>
-                                            <% } %>
-                                            <p><strong>三奇六儀:</strong> <%= qimen.sanQiLiuYi && qimen.sanQiLiuYi[i] || '' %></p>
-                                            <p class="gong-explain"><%= qimen.jiuGongAnalysis[i].explain || '暫無解釋' %></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <% } %>
-                            <% } %>
-                            <% } else { %>
-                            <div class="col-md-12">
-                                <p class="text-center">暫無九宮分析數據</p>
-                            </div>
-                            <% } %>
-                        </div>
-                    </div>
+                <div id="questionTurnstileWrapper" style="margin-top: 10px; margin-bottom: 12px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'question-turnstile', action: 'llm_analysis', explicit: true }) %>
                 </div>
+            </form>
+            
+            <div id="llmQuestionResponse" class="well" style="display: none; margin-top: 15px; border-radius: 10px;">
+                <div class="response-content"></div>
+                <div class="text-muted response-time qimen-meta" style="margin-top: 10px;"></div>
+            </div>
+            
+            <div class="text-muted qimen-meta" style="margin-top: 12px; font-size: 13.5px;">
+                <i data-lucide="info"></i> 
+                您可以直接詢問關於當前奇門盤的任何問題，系統會基於排盤結果給出建議。<strong>支援續問功能</strong>，會延續對話脈絡。
             </div>
         </div>
+        <% } %>
+
+        <%- include('partials/ads-bottom.html') %>
     </div>
 
     <!-- 自定義排盤模態框 -->
@@ -703,7 +737,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><%= t('form.customPaipan') %></h4>
+                    <h3 class="modal-title" style="margin: 0; font-size: 18px; font-weight: 700;"><%= t('form.customPaipan') %></h3>
                 </div>
                 <div class="modal-body">
                     <form id="customPanForm" action="/custom" method="get"
@@ -774,15 +808,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><%= t('modal.title') %></h4>
+                    <h3 class="modal-title" style="margin: 0; font-size: 18px; font-weight: 700;"><%= t('modal.title') %></h3>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h4><%= t('modal.intro.title') %></h4>
+                            <h4 style="font-weight: 700;"><%= t('modal.intro.title') %></h4>
                             <p><%= t('modal.intro.content') %></p>
 
-                            <h4><%= t('modal.elements.title') %></h4>
+                            <h4 style="font-weight: 700;"><%= t('modal.elements.title') %></h4>
                             <ul>
                                 <li><strong>三奇六儀:</strong> 三奇指戊己庚三個天幹，六儀指辛壬癸丁丙乙</li>
                                 <li><strong><%= t('modal.elements.bamen') %></strong></li>
@@ -793,7 +827,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <h4><%= t('modal.methods.title') %></h4>
+                            <h4 style="font-weight: 700;"><%= t('modal.methods.title') %></h4>
                             <ul>
                                 <li><strong><%= t('modal.methods.sizhu') %></strong></li>
                                 <li><strong><%= t('modal.methods.sanyuan') %></strong></li>
@@ -803,7 +837,7 @@
                                 <li><strong>年家奇門:</strong> 以年份排盤，適合長期預測</li>
                             </ul>
 
-                            <h4>吉兇判斷</h4>
+                            <h4 style="font-weight: 700;">吉兇判斷</h4>
                             <p>在奇門遁甲中，吉兇判斷主要基於以下因素:</p>
                             <ul>
                                 <li>值符、值使落宮的吉兇</li>
@@ -827,9 +861,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="emailModalTitle" style="display: flex; align-items: center; gap: 8px;">
+                    <h3 class="modal-title" id="emailModalTitle" style="margin: 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
                         <i data-lucide="mail"></i> 寄送完整對話紀錄
-                    </h4>
+                    </h3>
                 </div>
                 <div class="modal-body">
                     <p class="text-muted" style="font-size: 13.5px; line-height: 1.5; margin-bottom: 16px;">
@@ -844,15 +878,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="btnSubmitSendEmail">
+                    <button type="button" class="btn suite-btn-primary" id="btnSubmitSendEmail">
                         <i data-lucide="send"></i> 確認發送
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
-    <%- include('partials/ads-bottom.html') %>
 
     <%- include('partials/site-footer.html') %>
 
