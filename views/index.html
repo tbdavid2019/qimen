@@ -152,16 +152,181 @@
                 ⚔️ <%= t('main.pageTitle') %>
             </h1>
             <p style="font-size: 14.5px; font-weight: 500; color: var(--claude-text-muted, #5c4d43); max-width: 650px; margin: 0 auto; line-height: 1.6;">
-                天時、地利、人和、神助四維合參。以時空九宮為經緯，推演三奇六儀、八門、九星與八神，洞悉事物主客動靜之機。
+                天時、地利、人和、神助四維合參。出奇制勝，因時借勢，為您的當下生活與重大決策提供理性行動指引。
             </p>
         </div>
 
         <%- include('partials/ads-mobile.html') %>
 
-        <!-- 階段 1：時空起盤 · 精度與自定 -->
+        <!-- 核心 AI 輔助中心（專題問答與全盤透析，置頂零摩擦入口） -->
+        <% if (enableLLM) { %>
+        <div class="suite-card" style="padding: 24px; margin-bottom: 24px; border: 1.5px solid var(--claude-primary-border, rgba(204, 107, 73, 0.3)); box-shadow: 0 10px 30px rgba(204, 107, 73, 0.08);">
+            <div class="qimen-stage-header" style="margin-bottom: 16px;">
+                <span class="qimen-stage-badge">壹</span>
+                <div>
+                    <h2 class="qimen-stage-title" style="display: flex; align-items: center; gap: 8px;">
+                        <span>AI 宗師直斷 · 專題用神問答</span>
+                        <span class="suite-tag suite-tag-gold" style="font-size: 12px;">四維奇門透析</span>
+                    </h2>
+                    <p class="qimen-stage-desc">
+                        免讀繁複排盤術語！直接選定生活焦點或輸入心中疑問，AI 宗師自動鎖定專屬用神與主客動靜，直面解答。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 高頻問事用神膠囊快速點選 -->
+            <div class="form-group mb-3">
+                <label class="suite-form-label" style="margin-bottom: 8px;">
+                    <i data-lucide="target"></i> 選擇您關切的占問焦點（點擊快速帶入用神與提問）：
+                </label>
+                <div class="qimen-purpose-pills">
+                    <button type="button" class="qimen-pill active" data-purpose="綜合" data-prompt="請綜合解析當前盤面，我的今日整體運勢與關鍵提醒為何？">🌐 綜合運勢</button>
+                    <button type="button" class="qimen-pill" data-purpose="事業" data-prompt="近期工作事業發展、升遷或轉職時機如何？應如何把握貴人？">💼 工作事業</button>
+                    <button type="button" class="qimen-pill" data-purpose="求財" data-prompt="眼前這筆投資或財務決策是否合適？能否獲利？要注意哪些風險？">💰 求財投資</button>
+                    <button type="button" class="qimen-pill" data-purpose="感情" data-prompt="我和對方的感情發展趨勢如何？雙方相處有何關鍵提醒？">❤️ 感情婚姻</button>
+                    <button type="button" class="qimen-pill" data-purpose="考試" data-prompt="這次考試、證照或進修考核是否能順利通過？">📚 考試學業</button>
+                    <button type="button" class="qimen-pill" data-purpose="健康" data-prompt="近期身心狀態與健康運勢如何？需要注意哪些病灶或保養？">🏥 疾病健康</button>
+                    <button type="button" class="qimen-pill" data-purpose="出行" data-prompt="外出或差旅往哪個方位最有利？出行需要注意什麼？">🚗 出行吉方</button>
+                    <button type="button" class="qimen-pill" data-purpose="官司" data-prompt="訴訟合約或談判爭議的進展如何？對我方是否有利？">⚖️ 官司合約</button>
+                </div>
+            </div>
+
+            <!-- 問答表單 (保留完整 WebMCP 宣告與 Turnstile 驗證) -->
+            <form id="qimenQuestionForm" toolname="qimen_question" tooldescription="針對目前奇門盤面提出具體問題並取得解讀" toolautosubmit onsubmit="return false;">
+                <div class="form-group" style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <label class="suite-form-label" style="margin-bottom: 0;">用神類別：</label>
+                    <select class="form-control suite-input" id="qimenPurpose" name="purpose" toolparamdescription="占問事項類別，決定主用神方向" style="max-width: 280px; display: inline-block;">
+                        <option value="綜合" selected>🌐 綜合運勢（全盤統攬）</option>
+                        <option value="求財">💰 求財投資（主用神：生門 / 戊）</option>
+                        <option value="事業">💼 工作事業（主用神：開門 / 值符）</option>
+                        <option value="感情">❤️ 感情婚姻（主用神：六合 / 乙庚）</option>
+                        <option value="考試">📚 考試升學（主用神：景門 / 天輔）</option>
+                        <option value="健康">🏥 疾病健康（主用神：天芮 / 死門）</option>
+                        <option value="出行">🚗 出行方位（主用神：目標方位宮）</option>
+                        <option value="官司">⚖️ 官司合約（主用神：驚門 / 開門）</option>
+                    </select>
+                    <span id="yongshenTip" class="label label-primary qimen-meta-badge" style="padding: 7px 12px; border-radius: 16px; font-size: 13px;">
+                        🎯 主用神：值符 / 日干
+                    </span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="suite-form-label" for="userQuestion"><i data-lucide="help-circle"></i> 輸入您的具體狀況或想請教的問題：</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control suite-input" id="userQuestion" name="question"
+                               toolparamdescription="您想詢問的具體問題或狀況（例如：今天適合投資嗎？感情運勢如何？）"
+                               placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？" style="height: 46px;">
+                        <span class="input-group-btn">
+                            <button class="btn suite-btn-primary" type="submit" id="askLLMQuestion" style="height: 46px; padding: 0 22px;">
+                                <i data-lucide="sparkles"></i> 立即詢問 ➔
+                            </button>
+                            <button class="btn suite-btn-secondary" type="button" id="emailConversation" style="display: none; height: 46px;" title="寄送對話紀錄到 Email">
+                                <i data-lucide="mail"></i>
+                            </button>
+                            <button class="btn suite-btn-secondary" type="button" id="clearConversation" style="display: none; height: 46px;" title="清除對話，開始新問題">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="questionTurnstileWrapper" style="margin-top: 10px; margin-bottom: 12px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'question-turnstile', action: 'llm_analysis', explicit: true }) %>
+                </div>
+            </form>
+
+            <!-- 對話歷史區 (動態展開) -->
+            <div id="conversationHistory" class="conversation-history" style="display: none; max-height: 440px; overflow-y: auto; margin-top: 16px; margin-bottom: 16px; padding: 16px; background: rgba(0, 0, 0, 0.02); border-radius: 12px; border: 1px solid var(--claude-border, #E8E0D6);"></div>
+
+            <div id="llmQuestionResponse" class="well" style="display: none; margin-top: 15px; border-radius: 10px;">
+                <div class="response-content"></div>
+                <div class="text-muted response-time qimen-meta" style="margin-top: 10px;"></div>
+            </div>
+
+            <!-- 全盤解讀快速通道 -->
+            <hr style="margin: 20px 0 16px; border: 0; border-top: 1px dashed var(--claude-border, #E8E0D6);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <strong style="font-size: 15px; color: var(--claude-text-main);"><i data-lucide="compass"></i> 想看當前時間點的整體盤局總評？</strong>
+                    <p class="text-muted" style="font-size: 13px; margin: 2px 0 0;">綜合值符值使、九星八門與天干克應，生成全局運勢與行動決策指引</p>
+                </div>
+                <div id="llmInitialPanel">
+                    <button id="startLLMAnalysis" class="btn suite-btn-secondary" style="font-weight: 700; border-color: var(--claude-primary);">
+                        <i data-lucide="sparkles" style="color: var(--claude-primary);"></i> 開始全盤解讀 ➔
+                    </button>
+                </div>
+            </div>
+
+            <!-- 全盤解讀載入中 -->
+            <div id="llmLoadingPanel" style="display: none; padding: 20px 0;">
+                <div class="text-center">
+                    <div class="progress progress-striped active" style="max-width: 360px; margin: 0 auto 14px;">
+                        <div class="progress-bar progress-bar-info" style="width: 100%">
+                            <span class="sr-only">解盤中...</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 15px; font-weight: 600;"><i data-lucide="hourglass"></i> 正在深度分析奇門全盤吉凶…</p>
+                    <p class="text-muted" style="font-size: 13px;">結合九宮拆補、動靜生剋與主客動向，請稍候</p>
+                </div>
+            </div>
+
+            <!-- 全盤解讀結果 -->
+            <div id="llmResultPanel" style="display: none; margin-top: 20px; padding-top: 16px; border-top: 1.5px solid var(--claude-border, #eee);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--claude-border, #eee); flex-wrap: wrap; gap: 8px;">
+                    <div id="llmTimestamp" class="text-muted qimen-meta"></div>
+                    <div style="display:inline-flex;gap:8px;">
+                        <button type="button" id="emailAnalysisBtn" class="btn suite-btn-secondary btn-xs btn-open-email-modal" title="寄送完整解盤到信箱">
+                            <i data-lucide="mail"></i> 寄送解盤
+                        </button>
+                        <button type="button" id="copyAnalysisBtn" class="btn suite-btn-secondary btn-xs" title="複製完整解盤內容">
+                            <i data-lucide="copy"></i> 複製解盤內容
+                        </button>
+                    </div>
+                </div>
+
+                <div id="llmAnalysisContent" class="llm-analysis-content markdown-body"></div>
+
+                <!-- 底部操作列 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--claude-border, #eee); padding-top: 14px; flex-wrap: wrap; gap: 10px;">
+                    <button id="reAnalyzeButton" class="btn suite-btn-secondary">
+                        <i data-lucide="refresh-cw"></i> 重新解盤
+                    </button>
+                    <div style="display:inline-flex;gap:8px;">
+                        <button type="button" id="emailAnalysisBtnBottom" class="btn suite-btn-secondary btn-sm btn-open-email-modal" title="寄送完整解盤到信箱">
+                            <i data-lucide="mail"></i> 寄送解盤
+                        </button>
+                        <button type="button" id="copyAnalysisBtnBottom" class="btn suite-btn-secondary btn-sm" title="複製完整解盤內容">
+                            <i data-lucide="copy"></i> 複製解盤內容
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 錯誤狀態 -->
+            <div id="llmErrorPanel" style="display: none; margin-top: 16px;">
+                <div class="alert alert-warning">
+                    <strong>抱歉！</strong> 解盤服務暫時不可用，請稍後再試。
+                </div>
+                <div id="llmErrorContent" class="text-muted"></div>
+                <div class="text-center" style="margin-top: 12px;">
+                    <button id="retryLLMAnalysis" class="btn suite-btn-secondary">
+                        <i data-lucide="rotate-ccw"></i> 重試
+                    </button>
+                </div>
+            </div>
+        </div>
+        <% } else { %>
+        <div class="suite-card" style="padding: 20px; margin-bottom: 24px;">
+            <div class="alert alert-info" role="alert" style="margin-bottom: 0;">
+                <strong>提示：</strong> 解盤功能需要先完成服務設定。<a href="/api/llm-config" target="_blank">查看配置</a>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- 階段 2：時空起盤 · 精度與自定 -->
         <div class="suite-card" style="padding: 24px; margin-bottom: 24px;">
             <div class="qimen-stage-header">
-                <span class="qimen-stage-badge">壹</span>
+                <span class="qimen-stage-badge">貳</span>
                 <div>
                     <h2 class="qimen-stage-title">時空起盤 · 精度校準</h2>
                     <p class="qimen-stage-desc">可自由選擇傳統時辰或進階13分鐘九時段拆補法，亦可自定義時空排盤</p>
@@ -245,13 +410,13 @@
             </div>
         </div>
 
-        <!-- 階段 2：九宮全息 · 盤面總攬 -->
+        <!-- 階段 3：九宮全息 · 盤面總攬與專業玄學依據 -->
         <div class="suite-card" style="padding: 24px; margin-bottom: 24px;">
             <div class="qimen-stage-header">
-                <span class="qimen-stage-badge">貳</span>
+                <span class="qimen-stage-badge">參</span>
                 <div>
                     <h2 class="qimen-stage-title">九宮全息 · 盤面總攬</h2>
-                    <p class="qimen-stage-desc">洛書九宮、三奇六儀、八門、九星與八神全息排盤</p>
+                    <p class="qimen-stage-desc">洛書九宮、三奇六儀、八門、九星與八神排盤（AI 宗師推演之專業玄學佐證）</p>
                 </div>
             </div>
 
@@ -558,175 +723,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- 階段 3：宗師解盤 · 照見當下 (LLM Analysis) -->
-        <% if (enableLLM) { %>
-        <div class="suite-card" style="padding: 24px; margin-bottom: 24px;">
-            <div class="qimen-stage-header">
-                <span class="qimen-stage-badge">參</span>
-                <div>
-                    <h2 class="qimen-stage-title" style="display: flex; align-items: center; gap: 8px;">
-                        <span>宗師解盤 · 照見當下</span>
-                        <span class="suite-tag suite-tag-gold" style="font-size: 12px;">四維奇門透析</span>
-                    </h2>
-                    <p class="qimen-stage-desc">
-                        依據當前奇門全盤九宮、值符值使動態，提供全方位運勢吉凶剖析與因勢利導策略
-                    </p>
-                </div>
-            </div>
-
-            <!-- 初始狀態：顯示解盤按鈕 -->
-            <div id="llmInitialPanel" class="text-center" style="padding: 20px 0;">
-                <p class="text-muted" style="font-size: 15px; margin-bottom: 16px;">點擊下方按鈕，由 AI 宗師深入解析當前奇門盤面</p>
-                <button id="startLLMAnalysis" class="btn suite-btn-primary btn-lg">
-                    <i data-lucide="sparkles"></i> 開始解盤 ➔
-                </button>
-                <div class="text-muted qimen-meta" style="margin-top: 14px;">
-                    <i data-lucide="info"></i> 
-                    系統將綜合天時九星、地利九宮、人和八門與神助八神，提供清晰建議
-                </div>
-            </div>
-
-            <!-- 載入狀態 -->
-            <div id="llmLoadingPanel" style="display: none; padding: 24px 0;">
-                <div class="text-center">
-                    <div class="progress progress-striped active" style="max-width: 380px; margin: 0 auto 16px;">
-                        <div class="progress-bar progress-bar-info" style="width: 100%">
-                            <span class="sr-only">解盤中...</span>
-                        </div>
-                    </div>
-                    <p style="font-size: 16px; font-weight: 600;"><i data-lucide="hourglass"></i> 正在分析您的奇門盤…</p>
-                    <p class="text-muted">天干地支推演與神煞吉凶剖析中，請稍候</p>
-                </div>
-            </div>
-
-            <!-- 解盤結果 -->
-            <div id="llmResultPanel" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1.5px solid var(--claude-border, #eee); flex-wrap: wrap; gap: 8px;">
-                    <div id="llmTimestamp" class="text-muted qimen-meta"></div>
-                    <div style="display:inline-flex;gap:8px;">
-                        <button type="button" id="emailAnalysisBtn" class="btn suite-btn-secondary btn-xs btn-open-email-modal" title="寄送完整解盤到信箱">
-                            <i data-lucide="mail"></i> 寄送解盤
-                        </button>
-                        <button type="button" id="copyAnalysisBtn" class="btn suite-btn-secondary btn-xs" title="複製完整解盤內容">
-                            <i data-lucide="copy"></i> 複製解盤內容
-                        </button>
-                    </div>
-                </div>
-
-                <div id="llmAnalysisContent" class="llm-analysis-content markdown-body"></div>
-
-                <!-- 底部操作列 -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--claude-border, #eee); padding-top: 16px; flex-wrap: wrap; gap: 10px;">
-                    <button id="reAnalyzeButton" class="btn suite-btn-secondary">
-                        <i data-lucide="refresh-cw"></i> 重新解盤
-                    </button>
-                    <div style="display:inline-flex;gap:8px;">
-                        <button type="button" id="emailAnalysisBtnBottom" class="btn suite-btn-secondary btn-sm btn-open-email-modal" title="寄送完整解盤到信箱">
-                            <i data-lucide="mail"></i> 寄送解盤
-                        </button>
-                        <button type="button" id="copyAnalysisBtnBottom" class="btn suite-btn-secondary btn-sm" title="複製完整解盤內容">
-                            <i data-lucide="copy"></i> 複製解盤內容
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 錯誤狀態 -->
-            <div id="llmErrorPanel" style="display: none;">
-                <div class="alert alert-warning">
-                    <strong>抱歉！</strong> 解盤服務暫時不可用，請稍後再試。
-                </div>
-                <div id="llmErrorContent" class="text-muted"></div>
-                <div class="text-center" style="margin-top: 15px;">
-                    <button id="retryLLMAnalysis" class="btn suite-btn-secondary">
-                        <i data-lucide="rotate-ccw"></i> 重試
-                    </button>
-                </div>
-            </div>
-        </div>
-        <% } else { %>
-        <div class="suite-card" style="padding: 20px; margin-bottom: 24px;">
-            <div class="alert alert-info" role="alert" style="margin-bottom: 0;">
-                <strong>提示：</strong> 解盤功能需要先完成服務設定。<a href="/api/llm-config" target="_blank">查看配置</a>
-            </div>
-        </div>
-        <% } %>
-
-        <!-- 階段 4：專題用神 · 深度問答 -->
-        <% if (enableLLM) { %>
-        <div class="suite-card" style="padding: 24px; margin-bottom: 30px;">
-            <div class="qimen-stage-header">
-                <span class="qimen-stage-badge">肆</span>
-                <div>
-                    <h2 class="qimen-stage-title" style="display: flex; align-items: center; gap: 8px;">
-                        <span>專題用神 · 深度問答</span>
-                        <span class="suite-tag suite-tag-gold" style="font-size: 12px;">多輪對話續問</span>
-                    </h2>
-                    <p class="qimen-stage-desc">
-                        針對工作升遷、求財投資、姻緣合婚、訴訟健康等具體提問，系統自動鎖定專屬用神與客動靜之機。
-                    </p>
-                </div>
-            </div>
-
-            <!-- 對話歷史區域 -->
-            <div id="conversationHistory" class="conversation-history" style="display: none; max-height: 420px; overflow-y: auto; margin-bottom: 16px; padding: 14px; background: rgba(0, 0, 0, 0.02); border-radius: 12px; border: 1px solid var(--claude-border, #E8E0D6);"></div>
-            
-            <form id="qimenQuestionForm" toolname="qimen_question" tooldescription="針對目前奇門盤面提出具體問題並取得解讀" toolautosubmit onsubmit="return false;">
-                <div class="form-group" style="margin-bottom: 14px;">
-                    <label class="suite-form-label"><i data-lucide="target"></i> 占問事項類別（自動鎖定專題用神與主客動靜）：</label>
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <select class="form-control suite-input" id="qimenPurpose" name="purpose" toolparamdescription="占問事項類別，決定主用神方向" style="max-width: 320px; display: inline-block;">
-                            <option value="綜合" selected>🌐 綜合運勢（全盤統攬）</option>
-                            <option value="求財">💰 求財投資（主用神：生門 / 戊）</option>
-                            <option value="事業">💼 工作事業（主用神：開門 / 值符）</option>
-                            <option value="感情">❤️ 感情婚姻（主用神：六合 / 乙庚）</option>
-                            <option value="考試">📚 考試升學（主用神：景門 / 天輔）</option>
-                            <option value="健康">🏥 疾病健康（主用神：天芮 / 死門）</option>
-                            <option value="出行">🚗 出行方位（主用神：目標方位宮）</option>
-                            <option value="官司">⚖️ 官司合約（主用神：驚門 / 開門）</option>
-                        </select>
-                        <span id="yongshenTip" class="label label-primary qimen-meta-badge" style="padding: 7px 12px; border-radius: 16px; font-size: 13px;">
-                            🎯 主用神：值符 / 日干
-                        </span>
-                    </div>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label class="suite-form-label" for="userQuestion"><i data-lucide="help-circle"></i> 請輸入您想占問的具體問題或事項：</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control suite-input" id="userQuestion" name="question"
-                               toolparamdescription="您想詢問的具體問題或狀況（例如：今天適合投資嗎？感情運勢如何？）"
-                               placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？" style="height: 44px;">
-                        <span class="input-group-btn">
-                            <button class="btn suite-btn-primary" type="submit" id="askLLMQuestion" style="height: 44px; padding: 0 20px;">
-                                <i data-lucide="message-square"></i> 詢問 ➔
-                            </button>
-                            <button class="btn suite-btn-secondary" type="button" id="emailConversation" style="display: none; height: 44px;" title="寄送對話紀錄到 Email">
-                                <i data-lucide="mail"></i>
-                            </button>
-                            <button class="btn suite-btn-secondary" type="button" id="clearConversation" style="display: none; height: 44px;" title="清除對話，開始新問題">
-                                <i data-lucide="trash-2"></i>
-                            </button>
-                        </span>
-                    </div>
-                </div>
-                <div id="questionTurnstileWrapper" style="margin-top: 10px; margin-bottom: 12px;">
-                    <%- include('partials/turnstile-widget.html', { widgetId: 'question-turnstile', action: 'llm_analysis', explicit: true }) %>
-                </div>
-            </form>
-            
-            <div id="llmQuestionResponse" class="well" style="display: none; margin-top: 15px; border-radius: 10px;">
-                <div class="response-content"></div>
-                <div class="text-muted response-time qimen-meta" style="margin-top: 10px;"></div>
-            </div>
-            
-            <div class="text-muted qimen-meta" style="margin-top: 12px; font-size: 13.5px;">
-                <i data-lucide="info"></i> 
-                您可以直接詢問關於當前奇門盤的任何問題，系統會基於排盤結果給出建議。<strong>支援續問功能</strong>，會延續對話脈絡。
-            </div>
-        </div>
-        <% } %>
 
         <%- include('partials/ads-bottom.html') %>
     </div>

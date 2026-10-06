@@ -443,6 +443,21 @@ $(document).ready(function() {
         $('#yongshenTip').text(tips[p] || '🎯 主用神：值符 / 日干');
     });
 
+    // 專題用神膠囊快速點擊切換與代入提問
+    $(document).on('click', '.qimen-pill', function() {
+        $('.qimen-pill').removeClass('active');
+        $(this).addClass('active');
+        var purpose = $(this).attr('data-purpose');
+        var prompt = $(this).attr('data-prompt');
+        if (purpose) {
+            $('#qimenPurpose').val(purpose).trigger('change');
+        }
+        if (prompt) {
+            $('#userQuestion').val(prompt);
+            showToast('已鎖定用神：「' + $(this).text().trim() + '」，並代入參考提問', 'success');
+        }
+    });
+
     // LLM 問答功能（支援續問）
     $('#askLLMQuestion').click(function() {
         var question = $('#userQuestion').val().trim();

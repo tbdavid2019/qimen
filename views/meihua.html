@@ -378,31 +378,8 @@
             </div>
         </div>
 
-        <!-- 易經卦爻辭卡片 -->
-        <div id="meihuaTexts" class="suite-card" style="display: none; padding: 24px; margin-bottom: 24px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
-                <i data-lucide="book-open" style="color: #e11d48;"></i>
-                <h3 class="suite-card-title" style="margin: 0; font-size: 18px; font-weight: 800;">周易卦爻辭詳解</h3>
-            </div>
-            <div class="meihua-section-title" id="guaCiTitle" style="font-size: 16px; color: #e11d48;"></div>
-            <p id="guaCi" class="meihua-meta" style="line-height: 1.8; margin-bottom: 16px; padding: 12px; background: rgba(0,0,0,0.02); border-radius: 8px; border: 1px solid rgba(225, 29, 72, 0.2);"></p>
-
-            <div class="table-responsive">
-                <table class="table table-bordered meihua-yaoci-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 15%;">爻位</th>
-                            <th style="width: 45%;">爻辭（古文）</th>
-                            <th style="width: 40%;">白話解讀</th>
-                        </tr>
-                    </thead>
-                    <tbody id="yaoCiTable"></tbody>
-                </table>
-            </div>
-        </div>
-
         <!-- 階段 4：宗師解卦 · 照見當下 (LLM Deep Interpretation) -->
-        <div id="meihuaLLMSection" class="suite-card meihua-ai-section" style="margin-bottom: 30px;">
+        <div id="meihuaLLMSection" class="suite-card meihua-ai-section" style="margin-bottom: 24px;">
             <div class="meihua-stage-header" style="margin-bottom: 12px;">
                 <span class="meihua-stage-badge">肆</span>
                 <div>
@@ -447,6 +424,29 @@
                     </button>
                 </div>
             </form>
+        </div>
+
+        <!-- 易經卦爻辭卡片 -->
+        <div id="meihuaTexts" class="suite-card" style="display: none; padding: 24px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                <i data-lucide="book-open" style="color: #e11d48;"></i>
+                <h3 class="suite-card-title" style="margin: 0; font-size: 18px; font-weight: 800;">周易卦爻辭詳解</h3>
+            </div>
+            <div class="meihua-section-title" id="guaCiTitle" style="font-size: 16px; color: #e11d48;"></div>
+            <p id="guaCi" class="meihua-meta" style="line-height: 1.8; margin-bottom: 16px; padding: 12px; background: rgba(0,0,0,0.02); border-radius: 8px; border: 1px solid rgba(225, 29, 72, 0.2);"></p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered meihua-yaoci-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">爻位</th>
+                            <th style="width: 45%;">爻辭（古文）</th>
+                            <th style="width: 40%;">白話解讀</th>
+                        </tr>
+                    </thead>
+                    <tbody id="yaoCiTable"></tbody>
+                </table>
+            </div>
         </div>
 
         <%- include('partials/ads-bottom.html') %>

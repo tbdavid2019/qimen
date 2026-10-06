@@ -1572,9 +1572,9 @@ body {
     font-size: var(--type-reading);
     line-height: var(--leading-reading);
     background-color: #fafafa;
-    padding: 15px;
-    border-radius: 5px;
-    border-left: 4px solid #337ab7;
+    padding: 18px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(51, 122, 183, 0.25);
 }
 
 /* 共用 Markdown 排版（奇門與梅花 AI 回覆） */
@@ -1613,11 +1613,11 @@ body {
 
 .markdown-body blockquote {
     margin: 12px 0;
-    padding: 10px 16px;
-    background: #fdfaf6;
-    border-left: 4px solid var(--claude-primary, #cc6b49);
+    padding: 12px 18px;
+    background: rgba(204, 107, 73, 0.06);
+    border: 1px solid rgba(204, 107, 73, 0.2);
     color: #5a493d;
-    border-radius: 0 8px 8px 0;
+    border-radius: 8px;
     font-size: 0.95em;
     line-height: 1.6;
 }
@@ -2310,5 +2310,51 @@ body.qimen-page .wuxing-shui:hover::after {
     color: var(--claude-text-muted, #8C7E74);
     margin: 0;
     line-height: 1.5;
+}
+
+.qimen-purpose-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.qimen-pill {
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--claude-border, #E8E0D6);
+    background: var(--claude-card, #fff);
+    color: var(--claude-text-body, #4A3F39);
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.qimen-pill:hover {
+    border-color: var(--claude-primary, #CC6B49);
+    color: var(--claude-primary, #CC6B49);
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 12px rgba(204, 107, 73, 0.15);
+}
+
+.qimen-pill.active {
+    background: linear-gradient(135deg, #CC6B49 0%, #B85D3B 100%);
+    color: #ffffff;
+    border-color: #B85D3B;
+    box-shadow: 0 4px 14px rgba(204, 107, 73, 0.35);
+}
+
+[data-theme="dark"] .qimen-pill {
+    background: var(--claude-card, #221E1B);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--claude-text-main, #FAF7F2);
+}
+
+[data-theme="dark"] .qimen-pill.active {
+    background: linear-gradient(135deg, #D97757 0%, #C15F3D 100%);
+    color: #ffffff;
+    border-color: #D97757;
 }
 
