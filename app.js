@@ -1,10 +1,15 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const fs = require('fs');
 const {Lunar, Solar} = require('lunar-javascript');
 
 // 載入環境變數
 require('dotenv').config();
+
+const PWA_BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_DEPLOYMENT_ID || `local-${Date.now().toString(36)}`;
+const PWA_SERVICE_WORKER = fs.readFileSync(path.join(__dirname, 'lib/pwa-sw.js'), 'utf8')
+    .replace('__PWA_BUILD_ID__', JSON.stringify(PWA_BUILD_ID));
 
 // 導入奇門遁甲計算模塊
 const qimen = require('./lib/qimen');
@@ -88,6 +93,13 @@ function validateZiweiQuestion(body) {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 app.engine('html', require('ejs').renderFile);
+app.locals.pwaBuildId = PWA_BUILD_ID;
+
+// Service worker only manages release updates. It deliberately does not cache app or API responses.
+app.get('/sw.js', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.type('application/javascript').send(PWA_SERVICE_WORKER);
+});
 
 // 靜態文件服務
 app.use(express.static(path.join(__dirname, 'public')));

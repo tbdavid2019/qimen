@@ -58,6 +58,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#111a20">
+    <meta name="pwa-build-id" content="<%= pwaBuildId %>">
 
     <script>
         (function() {
@@ -81,9 +82,18 @@
     <link rel="stylesheet" href="css/style-new.css">
     <link rel="stylesheet" href="css/dark-mode.css">
     <link rel="stylesheet" href="css/divination-suite.css">
+    <link rel="stylesheet" href="css/pwa-update.css">
 </head>
 
 <body class="qimen-page suite-page">
+    <section id="pwa-update-banner" class="pwa-update-banner" role="status" aria-live="polite" aria-atomic="true" aria-labelledby="pwa-update-message" hidden>
+        <p id="pwa-update-message" class="pwa-update-message"><%= currentLang === 'zh-cn' ? '新版已准备好，可以更新了。' : '新版已準備好，可以更新了。' %></p>
+        <div class="pwa-update-actions">
+            <button id="pwa-update-action" type="button" class="pwa-update-button pwa-update-button-primary">立即更新 ➜</button>
+            <button id="pwa-update-later" type="button" class="pwa-update-button pwa-update-button-secondary"><%= currentLang === 'zh-cn' ? '稍后' : '稍後' %></button>
+        </div>
+    </section>
+
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -900,6 +910,7 @@
     <script src="js/markdown-renderer.js"></script>
     <script src="js/app.js"></script>
     <script src="js/webmcp.js"></script>
+    <script src="js/pwa-update.js"></script>
 </body>
 
 </html>

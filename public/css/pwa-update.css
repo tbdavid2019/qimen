@@ -1,0 +1,126 @@
+.pwa-update-banner {
+    position: fixed;
+    z-index: 1200;
+    top: calc(env(safe-area-inset-top, 0px) + 14px);
+    left: 50%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    width: min(540px, calc(100vw - 28px));
+    padding: 14px 16px;
+    color: #20352b;
+    background: linear-gradient(120deg, #eff8f2 0%, #fff 76%);
+    border: 1.5px solid #8fc6a8;
+    border-radius: 14px;
+    box-shadow: 0 14px 34px rgba(28, 83, 57, 0.2), 0 3px 10px rgba(28, 83, 57, 0.1);
+    transform: translateX(-50%);
+    animation: pwa-update-enter 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pwa-update-banner[hidden],
+.pwa-update-banner [hidden] {
+    display: none;
+}
+
+.pwa-update-message {
+    min-width: 0;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.pwa-update-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pwa-update-button {
+    min-height: 44px;
+    padding: 9px 16px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.pwa-update-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.pwa-update-button:focus-visible {
+    outline: 3px solid #216b4b;
+    outline-offset: 3px;
+}
+
+.pwa-update-button:disabled {
+    cursor: progress;
+    opacity: 0.72;
+}
+
+.pwa-update-button-primary {
+    color: #fff;
+    background: linear-gradient(135deg, #39765d 0%, #28654c 100%);
+    box-shadow: 0 4px 12px rgba(40, 101, 76, 0.2);
+}
+
+.pwa-update-button-primary:hover:not(:disabled) {
+    box-shadow: 0 7px 16px rgba(40, 101, 76, 0.27);
+}
+
+.pwa-update-button-secondary {
+    color: #365346;
+    background: rgba(229, 239, 233, 0.88);
+    border-color: #d7e5dc;
+}
+
+[data-theme="dark"] .pwa-update-banner {
+    color: #e3f2e9;
+    background: linear-gradient(120deg, rgba(26, 55, 42, 0.98), rgba(34, 39, 36, 0.98));
+    border-color: #5c9a77;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), 0 0 18px rgba(65, 153, 105, 0.18);
+}
+
+[data-theme="dark"] .pwa-update-button-primary {
+    color: #10271a;
+    background: linear-gradient(135deg, #a5d9b8 0%, #78bf95 100%);
+}
+
+[data-theme="dark"] .pwa-update-button-secondary {
+    color: #dcefe3;
+    background: rgba(75, 94, 82, 0.8);
+    border-color: #597363;
+}
+
+@keyframes pwa-update-enter {
+    from { opacity: 0; transform: translate(-50%, -8px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (max-width: 520px) {
+    .pwa-update-banner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        padding: 13px;
+    }
+
+    .pwa-update-actions {
+        justify-content: flex-end;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pwa-update-banner {
+        animation: none;
+    }
+
+    .pwa-update-button {
+        transition: none;
+    }
+}
