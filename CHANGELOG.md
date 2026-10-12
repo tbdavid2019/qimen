@@ -11,6 +11,11 @@
 - 新增不快取頁面與 API 的 Service Worker；以 Vercel 部署 SHA 識別版本，對 Worker 回應停用 HTTP 快取，並在頁面重新顯示時檢查更新。
 - 新增 PWA 更新服務與奇門遁甲主頁提示的整合測試。
 
+### 發布前相依套件安全更新
+
+- 更新 Axios、Express、body-parser、proxy-addr、qs 與 brace-expansion 的 lockfile 版本，修補正式依賴中的已知漏洞。
+- `npm audit --omit=dev` 結果為 0 vulnerabilities。`braces@3.0.3` 仍由開發用 nodemon 依賴帶入；上游目前未提供修補版本，該套件不屬於正式依賴。
+
 ## [2026-10-06]
 
 ### 奇門遁甲與梅花易數 AI 解盤諮詢動線重構：置頂專題用神膠囊、大幅降低非專業用戶認知摩擦力
