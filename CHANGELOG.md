@@ -4,6 +4,12 @@
 
 ## [2026-10-20]
 
+### 全站視覺識別統一：全量收斂為正統陰陽太極 Logo (Taiji)
+
+- **左上角品牌圖示 (Navbar Brand Icon)**：將原本之紅色燈籠 Emoji (`🏮`) 升級為精緻向量太極徽標 (`public/favicon.svg`)，搭配高雅微光外圈，支援 Hover 180° 滑順減速旋轉動態，展現動態平衡與正統東方玄學意境。
+- **網站圖示 (Favicon & PWA App Icons)**：校正 `public/favicon.svg` 之幾何座標與圓弧同心精度，讓現代瀏覽器分頁標籤與 iOS/Android PWA 主畫面圖示 (`apple-touch-icon.png`、`android-chrome-*.png`) 保持 100% 一致。
+- **社群分享預覽圖 (Open Graph & Twitter Card)**：全站 10 大頁面（奇門遁甲、六爻神卦、梅花易數、紫微斗數、生辰八字、易經風水、韋特塔羅、月老姻緣、解答之書、姓名分析）全面統整掛載 `https://qi.david888.com/og-image.png`，在 LINE、Facebook、Discord、X/Twitter 分享皆呈現清晰大器的太極品牌名片。
+
 ### 全站 10 大頁面 Hero 標題極簡瘦身、首屏空間大幅釋放
 
 - **徹底清除冗長廢話文案**：針對全站 10 大頁面（奇門遁甲、六爻神卦、梅花易數、生辰八字、易經風水、韋特塔羅、月老姻緣、解答之書、中文姓名分析、紫微斗數），移除原本佔用 4 行的形容詞標籤與自我感動式副標長文。
