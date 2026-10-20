@@ -442,6 +442,12 @@ body.suite-page .answerbook-mode-btn.active span {
     color: #f7edd8 !important;
 }
 
+body.suite-page .tarot-mode-btn.active .tarot-mode-badge {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: var(--saffron) !important;
+    border: 1px solid rgba(255, 176, 16, 0.4) !important;
+}
+
 /* Bazi Ten Gods High-Contrast Text */
 body.suite-page .bazi-god-cell,
 body.suite-page .bazi-god-name {
@@ -786,6 +792,13 @@ html[data-theme="dark"] {
     font-weight: 600 !important;
 }
 
+[data-theme="dark"] body.suite-page .tarot-mode-btn.active .tarot-mode-badge {
+    background: rgba(14, 24, 36, 0.15) !important;
+    color: #0e1824 !important;
+    border: 1px solid rgba(14, 24, 36, 0.3) !important;
+    font-weight: 700 !important;
+}
+
 [data-theme="dark"] body.suite-page .bazi-god-cell,
 [data-theme="dark"] body.suite-page .bazi-god-name {
     color: var(--saffron) !important;
@@ -804,6 +817,16 @@ body.suite-page select:focus-visible,
 body.suite-page textarea:focus-visible {
     outline: none !important;
     box-shadow: 0 0 0 3px rgba(255, 176, 16, 0.5) !important;
+}
+
+@media (forced-colors: active) {
+    body.suite-page a:focus-visible,
+    body.suite-page button:focus-visible,
+    body.suite-page input:focus-visible,
+    body.suite-page select:focus-visible,
+    body.suite-page textarea:focus-visible {
+        outline: 2px solid Highlight !important;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
