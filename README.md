@@ -359,6 +359,19 @@ npm start
 - **權杖單次使用與即時清理 (Single-use Token & Instant Reset)**：
   無論問答解盤成功或失敗，前端與 WebMCP 均於 `complete`/`finally` 區塊立即重置 Turnstile Widget 並清除快取 Token，確保單次驗證權杖絕不重複發送，並讓續問流暢無縫。
 
+### 🔑 進階設定：自備金鑰中心 (BYOK Hub)
+
+系統原生支援 **BYOK (Bring Your Own Key)** 自備金鑰架構，使用者可自備個人 API Key 串接各大主流 AI 供應商進行占卜推論與解盤：
+
+- **支援供應商 (Providers)**：Cloudflare Workers AI (本站預設)、Google Gemini、Groq、OpenAI、xAI、Anthropic、阿里通義千問 (Qwen)、Custom / 自訂相容端點。
+- **動態取得可用模型清單 (Get Model List)**：透過 `POST /api/byok/models` 端點，使用者填入自身金鑰後即可一鍵向供應商拉取當前帳號可用模型清單填入下拉選單，亦支援手動自由輸入任何自訂模型名稱。
+- **無痕轉發與隱私保護 (Zero-Persistence Proxy)**：
+  - 憑證存放於使用者瀏覽器（支援 Session 暫存或本機記住），不建立帳號亦無伺服端資料庫。
+  - 請求透過 HTTPS 安全傳送，後端僅於記憶體中進行單次轉發，敏感金鑰欄位在讀取後立即自 Request 物件清除，嚴格杜絕持久化至資料庫、檔案日誌或 Discord 紀錄。
+  - 嚴格 SSRF 安全防護：自訂 Base URL 經過全面 IPv4/IPv6、環回（Loopback）、私有保留網段及雲端元數據端點過濾，並採用關閉 Redirect 之嚴格連線機制。
+  - 獨立 Rate Limiter 限流：保護測試與清單端點，防止連線池遭惡意濫用。
+- **全站所有模組無縫支援**：奇門遁甲、梅花易數、六爻神卦、紫微斗數、生辰八字、易經風水、韋特塔羅、月老姻緣、解答之書、姓名分析全面打通。
+
 ---
 
 ## 📜 專案理念與社群規範

@@ -1,0 +1,50 @@
+/* Web Fonts: JetBrains Mono + Gen Jyuu Gothic (源柔黑體) */
+
+/* 1. JetBrains Mono via Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+/* 2. Gen Jyuu Gothic (源柔黑體) Local WOFF2 */
+@font-face {
+    font-family: 'Gen Jyuu Gothic';
+    src: url('/fonts/genjyuu-gothic-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Gen Jyuu Gothic';
+    src: url('/fonts/genjyuu-gothic-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Gen Jyuu Gothic';
+    src: url('/fonts/genjyuu-gothic-700.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --font-primary: 'JetBrains Mono', 'Gen Jyuu Gothic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* 全域字體套用 */
+body, input, button, select, textarea, .suite-card, .btn, .navbar, .form-control {
+    font-family: var(--font-primary) !important;
+}
+
+/* 使用者指定樣式類別 */
+.jetbrains-mono {
+    font-family: "JetBrains Mono", monospace !important;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+.gen-jyuu-gothic {
+    font-family: "Gen Jyuu Gothic", sans-serif !important;
+}

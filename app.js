@@ -17,6 +17,7 @@ const meihua = require('./lib/meihua');
 const meihuaText = require('./lib/meihua-text');
 const i18n = require('./lib/i18n');
 const LLMAnalysisService = require('./lib/llm-analysis');
+const { fetchProviderModels, resolveLlmService, validateBaseURL, PROVIDER_DEFAULT_MODELS, byokRateLimiter } = require('./lib/byok');
 const DiscordWebhook = require('./lib/discord-webhook');
 const APITimeHandler = require('./lib/api-time-handler');
 const { parseCivilTime } = require('./lib/civil-time');
@@ -101,8 +102,14 @@ app.get('/sw.js', (req, res) => {
     res.type('application/javascript').send(PWA_SERVICE_WORKER);
 });
 
-// 靜態文件服務
-app.use(express.static(path.join(__dirname, 'public')));
+// 靜態文件服務 (針對字型資源設定長期快取 immutable)
+app.use(express.static(path.join(__dirname, 'public'), {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.woff2') || filePath.endsWith('.woff') || filePath.endsWith('.ttf')) {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+    }
+}));
 app.get('/llms.txt', (req, res) => res.type('text/plain').sendFile(path.join(__dirname, 'llms.txt')));
 // Browser UI consumes the same versioned catalog used by the Node evaluator.
 app.get('/data/fengshui/layout-catalog.json', (req, res) => {
@@ -215,7 +222,8 @@ app.post('/api/name-analysis-question', async (req, res) => {
         }
 
         const boundedResult = nameAnalysis.formatQuestionPrompt(result, followup);
-        const analysis = await llmService.analyzeService('nameAnalysis', boundedResult, { userQuestion: followup, language: body.lang || 'zh-tw' });
+        const activeLlm = resolveLlmService(req, llmService);
+        const analysis = await activeLlm.analyzeService('nameAnalysis', boundedResult, { userQuestion: followup, language: body.lang || 'zh-tw' });
         const { turnstileToken: _turnstileToken, 'cf-turnstile-response': _cfTurnstileResponse, ...recordInput } = body;
         const discord = await sendModuleRecord('中文姓名分析', recordInput, result, analysis.analysis || analysis.fallback || '');
         res.json({ success: true, result, analysis: analysis.analysis || analysis.fallback || null, metadata: analysis.success ? { provider: analysis.provider, model: analysis.model } : null, discord });
@@ -871,7 +879,7 @@ const ziweiQuestionHandler = createServiceQuestionHandler({
     resultKey: 'chart',
     validate: validateZiweiQuestion,
     calculate: calculateZiweiChart,
-    analyze: llmService.analyzeZiwei.bind(llmService),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeZiwei(result, opts),
     discord: discordWebhook
 });
 app.post('/api/ziwei-question', ziweiQuestionHandler);
@@ -882,7 +890,7 @@ const tarotQuestionHandler = createServiceQuestionHandler({
     resultKey: 'reading',
     validate: validateTarotQuestion,
     calculate: drawCards,
-    analyze: llmService.analyzeTarot.bind(llmService),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeTarot(result, opts),
     discord: discordWebhook
 });
 app.post('/api/tarot-question', tarotQuestionHandler);
@@ -893,7 +901,7 @@ const fengshuiQuestionHandler = createServiceQuestionHandler({
     resultKey: 'report',
     validate: validateFengShuiQuestion,
     calculate: calculateFengshuiQuestion,
-    analyze: llmService.analyzeFengShui.bind(llmService),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeFengShui(result, opts),
     discord: discordWebhook
 });
 app.post('/api/fengshui-question', fengshuiQuestionHandler);
@@ -904,7 +912,7 @@ const bazi2QuestionHandler = createServiceQuestionHandler({
     resultKey: 'chart',
     validate: validateBaziQuestion,
     calculate: calculateBazi,
-    analyze: llmService.analyzeBazi2.bind(llmService),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeBazi2(result, opts),
     discord: discordWebhook
 });
 app.post('/api/bazi2-question', bazi2QuestionHandler);
@@ -915,7 +923,7 @@ const yinyuanQuestionHandler = createServiceQuestionHandler({
     resultKey: 'result',
     validate: validateYinyuanQuestion,
     calculate: calculateYinyuanQuestion,
-    analyze: llmService.analyzeYinyuan.bind(llmService),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeYinyuan(result, opts),
     discord: discordWebhook
 });
 app.post('/api/yinyuan-question', yinyuanQuestionHandler);
@@ -924,7 +932,7 @@ app.get('/api/yinyuan-question', yinyuanQuestionHandler);
 const answerBookClient = new AnswerBookClient();
 const answerbookQuestionHandler = createAnswerbookQuestionHandler({
     client: answerBookClient,
-    analyze: llmService.analyzeAnswerbook.bind(llmService),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeAnswerbook(result, opts),
     discord: discordWebhook
 });
 app.post('/api/answerbook-question', answerbookQuestionHandler);
@@ -935,7 +943,7 @@ const liuyaoQuestionHandler = createServiceQuestionHandler({
     resultKey: 'result',
     validate: (body) => body,
     calculate: (body) => calculateLiuyao(body),
-    analyze: llmService.analyzeLiuyao.bind(llmService),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeLiuyao(result, opts),
     discord: discordWebhook
 });
 app.post('/api/liuyao-question', liuyaoQuestionHandler);
@@ -953,7 +961,8 @@ const handleSuiteModuleLlmAnalysis = async (req, res) => {
         const { result, question = '', conversationHistory = [] } = req.body || {};
         if (!result) return res.status(400).json({ success: false, error: '缺少計算結果' });
 
-        const aiResult = await llmService.analyzeService(moduleKey, result, {
+        const activeLlm = resolveLlmService(req, llmService);
+        const aiResult = await activeLlm.analyzeService(moduleKey, result, {
             userQuestion: question,
             conversationHistory
         });
@@ -1383,7 +1392,8 @@ app.post('/api/llm-analysis', turnstileMiddleware({ action: ['llm_analysis', 'qi
             }
         }
 
-        const analysisResult = await llmService.analyzeQimen(qimenData, {
+        const activeLlm = resolveLlmService(req, llmService);
+        const analysisResult = await activeLlm.analyzeQimen(qimenData, {
             purpose,
             userQuestion,
             conversationHistory,
@@ -1505,6 +1515,9 @@ app.post('/api/qimen-question', async (req, res) => {
             }
         }
 
+        // 提前解析 BYOK 並清除敏感金鑰
+        const activeLlm = resolveLlmService(req, llmService);
+
         // 發送問題到 Discord
         const webhookContext = { datetime, mode, purpose, timezone, lang };
         const questionResult = await discordWebhook.sendUserQuestion(question.trim(), qimenPan, webhookContext);
@@ -1519,17 +1532,17 @@ app.post('/api/qimen-question', async (req, res) => {
         // LLM 分析
         let analysisResult;
         try {
-            analysisResult = await llmService.analyzeQimen(qimenPan, {
+            analysisResult = await activeLlm.analyzeQimen(qimenPan, {
                 purpose,
                 userQuestion: question.trim(),
                 language: lang
             });
         } catch (llmError) {
-            console.error('LLM 分析錯誤:', llmError);
+            console.error('LLM 分析錯誤:', llmError?.message || llmError);
             return res.status(500).json({
                 success: false,
                 error: 'LLM 分析失敗',
-                message: llmError.message,
+                message: llmError?.message || 'LLM 分析失敗',
                 qimenInfo: APITimeHandler.formatTimeInfo(qimenDate, timezone),
                 discordSent: discordQuestionSent
             });
@@ -1614,7 +1627,8 @@ app.post('/api/meihua/llm-analysis', turnstileMiddleware({ action: ['llm_analysi
             }
         }
 
-        const analysisResult = await llmService.analyzeMeihua(meihuaData, {
+        const activeLlm = resolveLlmService(req, llmService);
+        const analysisResult = await activeLlm.analyzeMeihua(meihuaData, {
             purpose,
             userQuestion,
             conversationHistory,
@@ -1732,6 +1746,9 @@ app.post('/api/meihua-question', async (req, res) => {
             zonggua: meihuaText.getHexagramText(meihuaData.zonggua?.num)
         };
 
+        // 提前解析 BYOK 並在發送 Discord 紀錄前清除敏感金鑰
+        const activeLlm = resolveLlmService(req, llmService);
+
         const questionResult = await discordWebhook.sendUserQuestion(question.trim(), meihuaData, req.body || {});
         let discordQuestionSent = false;
         if (questionResult.success) {
@@ -1741,7 +1758,7 @@ app.post('/api/meihua-question', async (req, res) => {
             console.warn('Failed to send Meihua API question to Discord:', questionResult.reason);
         }
 
-        const analysisResult = await llmService.analyzeMeihua(meihuaData, {
+        const analysisResult = await activeLlm.analyzeMeihua(meihuaData, {
             purpose,
             userQuestion: question.trim(),
             language: lang
@@ -1808,12 +1825,56 @@ app.get('/api/llm-config', (req, res) => {
         provider: llmService.provider,
         model: llmService.model,
         models: llmService.models,
-        supportedProviders: ['openai', 'anthropic', 'ollama', 'qwen'],
+        supportedProviders: ['openai', 'anthropic', 'ollama', 'groq', 'gemini', 'xai', 'custom', 'qwen'],
         discord: {
             enabled: discordWebhook.isEnabled(),
             configured: !!process.env.DISCORD_WEBHOOK_URL
         }
     });
+});
+
+// BYOK: 動態取得可用模型清單 API
+app.post('/api/byok/models', byokRateLimiter, async (req, res) => {
+    try {
+        const { provider, apiKey, baseURL } = req.body || {};
+        if (!apiKey || !String(apiKey).trim()) {
+            return res.status(400).json({ success: false, error: '請提供 API Key' });
+        }
+        const models = await fetchProviderModels({ provider, apiKey, baseURL });
+        res.json({ success: true, provider, models });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+// BYOK: 連線與模型測試 API
+app.post('/api/byok/test', byokRateLimiter, async (req, res) => {
+    try {
+        const { provider, apiKey, model, baseURL } = req.body || {};
+        if (!apiKey || !String(apiKey).trim()) {
+            return res.status(400).json({ success: false, error: '請提供 API Key' });
+        }
+        const safeBaseURL = validateBaseURL(baseURL);
+        const providerKey = (provider || 'openai').trim().toLowerCase();
+        const chosenModel = (model || '').trim() || PROVIDER_DEFAULT_MODELS[providerKey] || 'gpt-4o-mini';
+
+        const testService = new LLMAnalysisService({
+            provider: providerKey,
+            apiKey: apiKey.trim(),
+            model: chosenModel,
+            models: [chosenModel],
+            baseURL: safeBaseURL || undefined
+        });
+        const result = await testService.callLLM('請用簡短一句話回覆：連線測試成功');
+        res.json({
+            success: true,
+            provider: testService.provider,
+            model: testService.model,
+            reply: result?.content || result
+        });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error?.message || '測試失敗' });
+    }
 });
 
 // 測試 Discord webhook（僅限非生產環境）

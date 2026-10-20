@@ -2,7 +2,28 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
-## [2026-10-12]
+## [2026-10-20]
+
+### 全站 10 大頁面 Hero 標題極簡瘦身、首屏空間大幅釋放
+
+- **徹底清除冗長廢話文案**：針對全站 10 大頁面（奇門遁甲、六爻神卦、梅花易數、生辰八字、易經風水、韋特塔羅、月老姻緣、解答之書、中文姓名分析、紫微斗數），移除原本佔用 4 行的形容詞標籤與自我感動式副標長文。
+- **單行水平緊湊排版 (`.suite-hero-compact`)**：將各頁 H1 標題與核心高對比小標籤整合成單行居中，容器高度縮減 150px+，使用者一進入頁面即可直接進行設問輸入、時間排盤或起卦操作，大幅提升資訊密度與操作流暢度。
+
+### 全站字型升級：JetBrains Mono + Gen Jyuu Gothic（源柔黑體）
+
+- **本地端託管高品質 WOFF2 字型**：在 `public/fonts/` 下載託管源柔黑體 400（Regular）、500（Medium）、700（Bold）WOFF2 檔案，附帶 SIL OFL 授權文件，伺服器設定長期快取 (`Cache-Control: public, max-age=31536000, immutable`)。
+- **全域排版字型規範**：建立 `public/css/fonts.css`，以 JetBrains Mono 作為英數與等寬字型基礎，以 Gen Jyuu Gothic（源柔黑體）作為繁體中文主力字型，提供 `.jetbrains-mono` 與 `.gen-jyuu-gothic` 專屬樣式類別。
+
+### 端到端自備金鑰中心 (BYOK Hub) 正式上線
+
+- **純供應商架構（無過時模型硬編碼）**：全站導航列新增 `⚙️ BYOK` 入口，喚起自備金鑰中心 Modal。供應商清單涵蓋 Cloudflare (預設)、Google Gemini、Groq、OpenAI、xAI、Anthropic、阿里通義千問 (Qwen)、Custom / 自訂相容端點。
+- **動態取得可用模型清單 (Get Model List)**：新增 `/api/byok/models` 端點，支援使用者填入自身 API Key 後一鍵向供應商拉取當前帳號可用模型清單填入下拉選單，並支援自訂手動指定模型。
+- **無痕轉發與隱私保護 (Zero-Persistence Proxy)**：API Key 存放於使用者瀏覽器（支援 Session 暫存或本機記住），透過 HTTPS 安全傳輸，後端伺服器記憶體單次轉發即焚，絕不持久化儲存於資料庫、日誌或 Discord Webhook。
+- **多層級安全防線 (Security Hardening)**：
+  - 嚴格 SSRF 深度防禦：Base URL 完整過濾 IPv4/IPv6 環回 (Loopback)、私有內部網段 (RFC 1918 / RFC 4193)、雲端元數據位址 (169.254.169.254 / Google metadata)，並停用 HTTP Redirect 避免路徑逃逸。
+  - 獨立 API Rate Limiter：為 `/api/byok/models` 與 `/api/byok/test` 提供滑動視窗限流防護，防止代理連線池濫用。
+  - 前端同源與路徑白名單攔截：僅在同源占卜解盤端點注入憑證，杜絕跨域洩漏。
+- **全模組無縫支援**：前端透過全域 fetch 與 jQuery 攔截自動攜帶 BYOK 標頭，後端 `app.js` 與 `lib/llm-analysis.js` 動態實例化，全站所有占卜解盤模組（奇門、梅花、六爻、紫微、八字、風水、塔羅、姻緣、解答之書、姓名分析）即刻生效。
 
 ### 奇門遁甲 PWA 新版提示與安全套用流程
 

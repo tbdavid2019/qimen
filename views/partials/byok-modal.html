@@ -1,0 +1,147 @@
+<!-- 進階設定：自備金鑰中心 (BYOK Hub Modal) -->
+<div class="modal fade" id="byokModal" tabindex="-1" role="dialog" aria-labelledby="byokModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 580px; margin: 30px auto;">
+        <div class="modal-content byok-modal-card">
+            <!-- Modal Header -->
+            <div class="byok-header">
+                <div class="byok-title-group">
+                    <div class="byok-icon-box">
+                        <i data-lucide="settings"></i>
+                    </div>
+                    <div>
+                        <h4 class="modal-title byok-modal-title" id="byokModalTitle">
+                            進階設定：自備金鑰中心 (BYOK Hub)
+                        </h4>
+                        <p class="byok-modal-desc">
+                            自備各大 AI 供應商金鑰自由選用模型，不佔用本站每日配額限制。
+                        </p>
+                    </div>
+                </div>
+                <button type="button" class="close byok-close-btn" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body byok-body">
+                <!-- Tab Indicator -->
+                <div class="byok-tab-bar">
+                    <span class="byok-tab-pill active">
+                        <i data-lucide="cpu" style="width: 15px; height: 15px;"></i> AI 分析模型 (BYOK LLM)
+                    </span>
+                </div>
+
+                <!-- Intro Card -->
+                <div class="byok-feature-card">
+                    <div class="byok-feature-head">
+                        <span class="byok-feature-title">
+                            <i data-lucide="sparkles" style="width: 15px; height: 15px;"></i> 自備 AI 模型推論
+                        </span>
+                        <span class="byok-feature-badge">支援動態 Get Model List</span>
+                    </div>
+                    <p class="byok-feature-text">
+                        您可以自備個人 API Key 串接各大 AI 供應商，支援動態取得可用模型清單，不佔用本站每日配額限制。
+                    </p>
+                </div>
+
+                <!-- Form Controls -->
+                <form id="byokForm" onsubmit="return false;">
+                    <!-- 供應商選擇 -->
+                    <div class="byok-form-group">
+                        <div class="byok-label-row">
+                            <label for="byokProvider" class="byok-label">
+                                <i data-lucide="cloud" style="width: 15px; height: 15px;"></i> 選擇 AI 提供商 (Provider)
+                            </label>
+                            <span class="byok-sub-hint" id="byokProviderHint">預設 Cloudflare</span>
+                        </div>
+                        <select class="form-control byok-select" id="byokProvider">
+                            <option value="cloudflare">Cloudflare (預設)</option>
+                            <option value="gemini">Google Gemini</option>
+                            <option value="groq">Groq</option>
+                            <option value="openai">OpenAI</option>
+                            <option value="xai">xAI</option>
+                            <option value="anthropic">Anthropic</option>
+                            <option value="qwen">阿里通義千問 (Qwen)</option>
+                            <option value="custom">Custom / 自訂相容端點</option>
+                        </select>
+                    </div>
+
+                    <!-- 自備金鑰與模型設定區 (切換至非預設時展開) -->
+                    <div id="byokCustomFields" style="display: none;">
+                        <!-- API Key -->
+                        <div class="byok-form-group">
+                            <label for="byokApiKey" class="byok-label">
+                                <i data-lucide="key" style="width: 15px; height: 15px;"></i> API 金鑰 (API Key)
+                            </label>
+                            <div class="byok-input-password-wrap">
+                                <input type="password" class="form-control byok-input" id="byokApiKey" placeholder="請填入您的 API Key" autocomplete="off">
+                                <button type="button" class="byok-toggle-eye" id="byokToggleKeyVis" title="顯示/隱藏金鑰">
+                                    <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 模型選取與動態獲取 -->
+                        <div class="byok-form-group">
+                            <div class="byok-label-row">
+                                <label for="byokModel" class="byok-label">
+                                    <i data-lucide="cpu" style="width: 15px; height: 15px;"></i> 選擇模型 (Model)
+                                </label>
+                                <button type="button" class="byok-btn-fetch-models" id="byokBtnFetchModels">
+                                    <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i> 動態取得可用模型清單
+                                </button>
+                            </div>
+                            <!-- 下拉選單 (動態拉取成功後優先使用) -->
+                            <select class="form-control byok-select" id="byokModelSelect" style="display: none; margin-bottom: 8px;">
+                                <option value="">-- 請先點擊動態拉取清單，或手動在下方輸入 --</option>
+                            </select>
+                            <!-- 手動指定模型文字輸入框 -->
+                            <input type="text" class="form-control byok-input" id="byokModel" placeholder="輸入或由上方清單選擇模型名稱">
+                        </div>
+
+                        <!-- 自訂 Base URL -->
+                        <div class="byok-form-group">
+                            <label for="byokBaseURL" class="byok-label">
+                                <i data-lucide="globe" style="width: 15px; height: 15px;"></i> 自訂端點網址 (Base URL，選填)
+                            </label>
+                            <input type="text" class="form-control byok-input" id="byokBaseURL" placeholder="留空時自動使用該供應商官方預設端點">
+                        </div>
+
+                        <!-- 儲存偏好 -->
+                        <div class="byok-form-group" style="margin-bottom: 8px;">
+                            <label style="font-size: 12px; font-weight: normal; color: var(--claude-text-muted, #8C7E74); cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                <input type="checkbox" id="byokRememberDevice" checked>
+                                在此裝置瀏覽器保持記住金鑰（取消勾選則僅在本次分頁會話有效）
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 狀態回饋區域 -->
+                    <div id="byokAlert" class="byok-status-alert" style="display: none;"></div>
+
+                    <!-- 無痕轉發與隱私承諾 -->
+                    <div class="byok-security-card">
+                        <div class="byok-security-head">
+                            <i data-lucide="shield-check" class="byok-security-icon"></i>
+                            <strong>無痕轉發與隱私保護 (Zero-Persistence Proxy)</strong>
+                        </div>
+                        <p class="byok-security-text">
+                            您的 API 金鑰僅保存在本機瀏覽器。請求透過 HTTPS 安全傳輸，後端伺服器僅於記憶體中進行單次轉發，推論完成立即清除敏感憑證，絕不持久化儲存於資料庫或檔案日誌。
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div class="modal-footer byok-footer">
+                <button type="button" class="btn byok-btn-reset" id="byokBtnReset">清除並還原預設</button>
+                <div class="byok-footer-right">
+                    <button type="button" class="btn byok-btn-test" id="byokBtnTest" style="display: none;">
+                        <i data-lucide="zap" style="width: 14px; height: 14px;"></i> 測試連線
+                    </button>
+                    <button type="button" class="btn byok-btn-save" id="byokBtnSave">儲存設定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

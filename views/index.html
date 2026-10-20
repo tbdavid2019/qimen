@@ -126,6 +126,13 @@
             <!-- 語言切換選單與右側功能 -->
             <ul class="nav navbar-nav navbar-right">
                 <li>
+                    <a href="#" id="byokHubToggle" class="byok-nav-btn" role="button" title="自備金鑰中心 (BYOK Hub)">
+                        <i data-lucide="key" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: -2px;"></i>
+                        <span class="byok-nav-label">BYOK</span>
+                        <span class="byok-active-indicator" style="display: none;">●</span>
+                    </a>
+                </li>
+                <li>
                     <a href="#" id="darkModeToggle" class="dark-mode-toggle"
                        data-label-light="暗黑" data-label-dark="明亮"
                        data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式"
@@ -151,19 +158,12 @@
     </nav>
 
     <div class="container">
-        <!-- 英雄區 (Punchy Hero Banner) -->
-        <div class="qimen-hero">
-            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                <span class="suite-badge suite-badge-rose"><i data-lucide="shield"></i> 帝王之術 · 因時借勢</span>
-                <span class="suite-badge suite-badge-gold"><i data-lucide="compass"></i> 九宮拆補精確至13分</span>
-                <span class="suite-badge"><i data-lucide="zap"></i> 主客動靜克應直斷</span>
-            </div>
-            <h1 style="font-size: 28px; font-weight: 800; margin: 0 0 10px 0; letter-spacing: -0.5px;">
+        <!-- 精簡英雄區 (Compact Hero) -->
+        <div class="qimen-hero suite-hero-compact">
+            <h1 class="suite-hero-heading">
                 ⚔️ <%= t('main.pageTitle') %>
+                <span class="suite-badge suite-badge-rose"><i data-lucide="shield"></i> 帝王之術</span>
             </h1>
-            <p style="font-size: 14.5px; font-weight: 500; color: var(--claude-text-muted, #5c4d43); max-width: 650px; margin: 0 auto; line-height: 1.6;">
-                天時、地利、人和、神助四維合參。出奇制勝，因時借勢，為您的當下生活與重大決策提供理性行動指引。
-            </p>
         </div>
 
         <%- include('partials/ads-mobile.html') %>
