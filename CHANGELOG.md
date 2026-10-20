@@ -4,6 +4,16 @@
 
 ## [2026-10-20]
 
+### 奇門遁甲試樣全新「Saffron-Atelier」配色主題（2MD 工坊美學）
+
+- **試樣主題嚴密隔離上線 (`public/css/theme-atelier.css`, `views/index.html`)**：
+  - 汲取 2MD（Pantone 14-1064 Saffron-Atelier）色彩美學，首頁採用番紅金黃（`#ffb010`）、午夜深藍（`#17324d`）、赤陶土（`#a9471d`）、宣紙米白（`#fff9e8` / `#fcf5e5`）與松煙墨黑（`#2b251a`）五色體系。
+  - 嚴格 Scoped 於 `body.qimen-page`，完全隔離於奇門首頁，絕不污染其他 9 大模組頁面。
+  - 保留九宮盤原生吉凶色系與輔助標記，補正 `--suite-*` 全域變數對齊，確保問事用神膠囊與操作按鈕視覺一致。
+  - 完整支援 Dark Mode 暗黑模式（`#0e1824` 午夜畫布與金黃高光）。
+  - 通過 Impeccable 工藝檢查（0 警告）與全量自動化測試（296/296 測試通過）。
+  - 通過 Codex Code Review 與 OpenCode Code Review 雙軌審查。
+
 ### 全站視覺識別統一：全量收斂為正統陰陽太極 Logo (Taiji)
 
 - **左上角品牌圖示 (Navbar Brand Icon)**：將原本之紅色燈籠 Emoji (`🏮`) 升級為精緻向量太極徽標 (`public/favicon.svg`)，搭配高雅微光外圈，支援 Hover 180° 滑順減速旋轉動態，展現動態平衡與正統東方玄學意境。
