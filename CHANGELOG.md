@@ -4,6 +4,12 @@
 
 ## [2026-10-20]
 
+### 全站 10 大產品埋入 Flow Analytics 統計追蹤碼
+
+- **全站追蹤碼部署 (`views/*.html`)**：
+  - 在全站 10 大頁面（奇門遁甲、梅花易數、紫微斗數、六爻神卦、生辰八字、易經風水、韋特塔羅、月老姻緣、解答之書、姓名分析）的 `<head>` 區塊統一埋入 Flow 流量追蹤腳本 (`<script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>`)。
+  - 使用 `defer` 非同步延遲載入，確保不阻塞頁面 DOM 解析與首屏渲染。
+
 ### 全站 10 大產品全面換裝「Saffron-Atelier」配色主題（2MD 工坊美學）
 
 - **全模組美學換裝 (`public/css/theme-atelier.css`, `views/*.html`)**：
