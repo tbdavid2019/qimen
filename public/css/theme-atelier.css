@@ -423,12 +423,30 @@ body.suite-page .tarot-mode-btn.active,
 body.suite-page .answerbook-mode-btn.active,
 body.qimen-page .qimen-pill.active,
 body.qimen-page .qimen-pill:hover,
+body.qimen-page .time-mode-selector .btn-group label.active,
+body.qimen-page .time-mode-selector .btn-group label:has(input[type="radio"]:checked),
+body.qimen-page #traditionalModeBtn.active,
+body.qimen-page #advancedModeBtn.active,
 body.meihua-page .meihua-pill.active,
 body.meihua-page .meihua-pill:hover {
     background: var(--deep-blue) !important;
     color: var(--saffron) !important;
     border-color: var(--deep-blue) !important;
     box-shadow: 0 3px 10px rgba(23, 50, 77, 0.25) !important;
+}
+
+body.qimen-page .time-mode-selector .btn-group label.active small,
+body.qimen-page .time-mode-selector .btn-group label:has(input[type="radio"]:checked) small,
+body.qimen-page #traditionalModeBtn.active small,
+body.qimen-page #advancedModeBtn.active small {
+    color: #fcf6ea !important;
+    opacity: 0.92 !important;
+}
+
+body.qimen-page .time-mode-selector .btn-group label:not(.active):hover {
+    background: var(--saffron-light) !important;
+    border-color: var(--deep-blue) !important;
+    color: var(--deep-blue) !important;
 }
 
 body.suite-page .gender-pill.disabled,
@@ -777,11 +795,29 @@ html[data-theme="dark"] {
 [data-theme="dark"] body.suite-page .tarot-mode-btn.active,
 [data-theme="dark"] body.suite-page .answerbook-mode-btn.active,
 [data-theme="dark"] body.qimen-page .qimen-pill.active,
-[data-theme="dark"] body.qimen-page .qimen-pill:hover {
+[data-theme="dark"] body.qimen-page .qimen-pill:hover,
+[data-theme="dark"] body.qimen-page .time-mode-selector .btn-group label.active,
+[data-theme="dark"] body.qimen-page .time-mode-selector .btn-group label:has(input[type="radio"]:checked),
+[data-theme="dark"] body.qimen-page #traditionalModeBtn.active,
+[data-theme="dark"] body.qimen-page #advancedModeBtn.active {
     background: var(--saffron) !important;
     color: #0e1824 !important;
     border-color: var(--saffron) !important;
     box-shadow: 0 3px 10px rgba(255, 176, 16, 0.35) !important;
+}
+
+[data-theme="dark"] body.qimen-page .time-mode-selector .btn-group label.active small,
+[data-theme="dark"] body.qimen-page .time-mode-selector .btn-group label:has(input[type="radio"]:checked) small,
+[data-theme="dark"] body.qimen-page #traditionalModeBtn.active small,
+[data-theme="dark"] body.qimen-page #advancedModeBtn.active small {
+    color: #0e1824 !important;
+    opacity: 0.88 !important;
+}
+
+[data-theme="dark"] body.qimen-page .time-mode-selector .btn-group label:not(.active):hover {
+    background: rgba(255, 176, 16, 0.15) !important;
+    border-color: var(--saffron) !important;
+    color: #fcf6ea !important;
 }
 
 [data-theme="dark"] body.suite-page .ziwei-palace-cell {

@@ -4,6 +4,15 @@
 
 ## [2026-10-20]
 
+### 🎨 奇門遁甲「時空起盤 · 精度校準」Atelier 深色高對比選中態修復
+
+- **精度校準切換按鈕選中樣式補齊 (`public/css/theme-atelier.css`)**：
+  - 修復「傳統模式（兩小時一盤）」與「進階模式（13分鐘拆補）」在 Saffron-Atelier 主題下因 `body.qimen-page .btn-default` 之 `!important` 規則覆蓋，導致預選或點擊「進階模式（13分鐘法）」時未呈現預期深藍/金黃選中底色的問題。
+  - 補齊 `.time-mode-selector .btn-group label.active`、`:has(input[type="radio"]:checked)`、`#traditionalModeBtn.active`、`#advancedModeBtn.active` 的專屬權重覆蓋。
+  - 日間模式（Light Mode）選中呈現午夜深藍底（`#17324d`）＋番紅金黃字（`#ffb010`），副標小字自動轉為高可讀性米白（`#fcf6ea`）。
+  - 暗黑模式（Dark Mode）選中呈現番紅金黃底（`#ffb010`）＋午夜墨藍字（`#0e1824`），副標小字保持極致對比。
+  - 補齊未選中 Hover 互動態（暖金輕微光暈反饋），兼顧觸控與滑鼠懸浮反饋體驗。
+
 ### ⚡ 紫微斗數「男生真實尺寸速測」性別防呆與 UI 雙核置灰鎖定優化
 
 - **前端性別智能置灰與鎖定 (`views/ziwei.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`, `public/css/theme-atelier.css`)**：
