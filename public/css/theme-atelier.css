@@ -371,13 +371,20 @@ body.qimen-page .qimen-stage-badge {
     border: 1px solid var(--card-border) !important;
 }
 
-body.suite-page .label-primary.qimen-meta-badge,
+body.suite-page .label-primary,
+body.suite-page .badge-primary,
 body.suite-page #yongshenTip,
-body.qimen-page .label-primary.qimen-meta-badge,
-body.qimen-page #yongshenTip {
+body.suite-page .qimen-meta-badge,
+body.qimen-page .label-primary,
+body.qimen-page .badge-primary,
+body.qimen-page #yongshenTip,
+body.qimen-page .qimen-meta-badge {
+    background: var(--deep-blue) !important;
     background-color: var(--deep-blue) !important;
+    background-image: none !important;
     color: var(--saffron) !important;
-    border: 1px solid var(--card-border) !important;
+    border: 1.5px solid var(--card-border) !important;
+    font-weight: 700 !important;
 }
 
 body.suite-page .qimen-pill,
@@ -581,6 +588,7 @@ html[data-theme="dark"] {
 [data-theme="dark"] body.suite-page .basic-info,
 [data-theme="dark"] body.suite-page .pan-legend,
 [data-theme="dark"] body.suite-page .auspicious-legend,
+[data-theme="dark"] body.suite-page .suite-details,
 [data-theme="dark"] body.qimen-page .panel-default,
 [data-theme="dark"] body.qimen-page .panel-primary,
 [data-theme="dark"] body.qimen-page .suite-card,
@@ -615,6 +623,26 @@ html[data-theme="dark"] {
 [data-theme="dark"] body.qimen-page .panel-primary > .panel-body {
     background: #142336 !important;
     color: #fcf6ea !important;
+}
+
+[data-theme="dark"] body.suite-page .suite-details summary {
+    color: var(--saffron) !important;
+}
+
+[data-theme="dark"] body.suite-page .label-primary,
+[data-theme="dark"] body.suite-page .badge-primary,
+[data-theme="dark"] body.suite-page #yongshenTip,
+[data-theme="dark"] body.suite-page .qimen-meta-badge,
+[data-theme="dark"] body.qimen-page .label-primary,
+[data-theme="dark"] body.qimen-page .badge-primary,
+[data-theme="dark"] body.qimen-page #yongshenTip,
+[data-theme="dark"] body.qimen-page .qimen-meta-badge {
+    background: #1c3d5f !important;
+    background-color: #1c3d5f !important;
+    background-image: none !important;
+    color: var(--saffron) !important;
+    border: 1.5px solid var(--card-border) !important;
+    font-weight: 700 !important;
 }
 
 [data-theme="dark"] body.suite-page .suite-hero-compact,
