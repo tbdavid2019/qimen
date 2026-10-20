@@ -166,13 +166,17 @@
                         <input type="text" class="form-control suite-input" id="ziweiName" name="name" placeholder="例如：張先生" data-webmcp-field="name" toolparamdescription="姓名或稱謂">
                     </div>
                     <div class="col-md-4 col-sm-6 mb-3">
-                        <label class="suite-form-label">性別</label>
-                        <div class="gender-pill-group">
-                            <label class="gender-pill active">
+                        <div class="ziwei-gender-header">
+                            <label class="suite-form-label mb-0" style="margin-bottom: 0;">性別</label>
+                            <span id="ziweiGenderModeHint" class="ziwei-gender-hint-tag" style="<%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? '' : 'display: none;' %>">⚡ 男生尺寸速測專用</span>
+                        </div>
+                        <div class="gender-pill-group" id="ziweiGenderPillGroup">
+                            <label class="gender-pill <%= (typeof activeMode === 'undefined' || activeMode !== 'spouse') ? 'active' : '' %>" id="ziweiMalePill">
                                 <input type="radio" name="sex" value="男" checked data-webmcp-field="sex" toolparamdescription="命主性別，男或女"> 👨 男
                             </label>
-                            <label class="gender-pill">
-                                <input type="radio" name="sex" value="女" data-webmcp-field="sex" toolparamdescription="命主性別，男或女"> 👩 女
+                            <label class="gender-pill <%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? 'disabled' : '' %>" id="ziweiFemalePill" title="<%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? '男生真實尺寸評估僅適用於男性命盤；女生若測另一半請填男方生辰並選男' : '' %>">
+                                <input type="radio" name="sex" value="女" id="ziweiFemaleRadio" <%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? 'disabled' : '' %> data-webmcp-field="sex" toolparamdescription="命主性別，男或女"> 👩 女
+                                <span class="gender-disabled-badge" id="ziweiFemaleBadge" style="<%= (typeof activeMode !== 'undefined' && activeMode === 'male-size') ? '' : 'display: none;' %>">限男盤</span>
                             </label>
                         </div>
                     </div>

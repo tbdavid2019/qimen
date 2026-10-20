@@ -113,7 +113,7 @@ export const ZiweiMaleSizeInputSchema = z.object({
   date: z.string().describe("Birth date in YYYY-MM-DD format."),
   time: z.string().optional().default("12:00").describe("Birth time in HH:mm format."),
   shichen: z.enum(["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]).optional().describe("Traditional birth shichen."),
-  sex: z.enum(["男", "女"]).optional().default("男"),
+  sex: z.enum(["男"]).optional().default("男").describe("性別（此功能僅限男生命盤）"),
   calendar: z.enum(["solar", "lunar"]).optional().default("solar"),
   leap: z.boolean().optional().default(false).describe("Whether the lunar month is a leap month.")
 }).strict();

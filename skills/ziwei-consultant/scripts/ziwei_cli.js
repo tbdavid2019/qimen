@@ -97,6 +97,15 @@ function run() {
 
         let result;
         if (inputData.mode === 'male-size') {
+            const rawSex = inputData.sex;
+            const normalizedSex = (rawSex === '男' || rawSex === 'male') ? '男' : (rawSex === '女' || rawSex === 'female') ? '女' : (rawSex === undefined ? '男' : null);
+            if (!normalizedSex) {
+                throw new Error('請選擇有效性別（男），男生真實尺寸評估僅適用於男性命盤。');
+            }
+            if (normalizedSex !== '男') {
+                throw new Error('男生真實尺寸評估僅適用於男性命盤。女性生理健康請參照疾厄宮主星分析。');
+            }
+            inputData.sex = '男';
             result = evaluateMaleSize(inputData);
         } else if (inputData.mode === 'spouse' || inputData.mode === 'future-spouse') {
             result = evaluateFutureSpouse(inputData);

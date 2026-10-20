@@ -223,6 +223,25 @@ test('紫微斗數 CLI 支援 --spouse 模式獨立輸出未來另一半 JSON', 
     assert.equal(parsed.ageGap.tier, '同齡或差距不大 (上下 1-3 歲以內)');
 });
 
+test('紫微斗數 CLI 支援 --male-size 模式且嚴格校驗男性性別', () => {
+    const cliPath = path.join(__dirname, '../skills/ziwei-consultant/scripts/ziwei_cli.js');
+    // 正常男性測算
+    const stdout = execSync(`node "${cliPath}" --date 1981-08-11 --time 10:00 --sex male --male-size`, { encoding: 'utf-8' });
+    const parsed = JSON.parse(stdout);
+    assert.equal(parsed.tier, '大/中杯');
+    assert.equal(parsed.cmRange, '11 - 13 cm');
+
+    // 拒絕女性
+    assert.throws(() => {
+        execSync(`node "${cliPath}" --date 1981-08-11 --time 10:00 --sex female --male-size`, { encoding: 'utf-8', stdio: 'pipe' });
+    }, /僅適用於男性命盤/);
+
+    // 拒絕無效性別
+    assert.throws(() => {
+        execSync(`node "${cliPath}" --date 1981-08-11 --time 10:00 --sex invalid --male-size`, { encoding: 'utf-8', stdio: 'pipe' });
+    }, /請選擇有效性別/);
+});
+
 test('紫微斗數未來另一半支援 female 性別別名且判定為女性命盤看丈夫', () => {
     const spouseFemale = evaluateFutureSpouse({ date: '1981-08-11', time: '09:00', sex: 'female' });
     assert.equal(spouseFemale.targetGender, '男性伴侶（丈夫）');

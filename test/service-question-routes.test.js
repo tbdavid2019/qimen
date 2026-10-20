@@ -228,6 +228,18 @@ test('紫微男生真實尺寸端點 /api/ziwei/male-size 正常運作且不經�
 });
 
 test('紫微男生真實尺寸端點嚴格驗證日期並拒絕偽造宮位', async () => {
+    // 拒絕女性命盤請求，返回 400 與明確防呆代碼
+    const resFemale = await postJson('/api/ziwei/male-size', {
+        date: '1981-08-11',
+        time: '10:00',
+        sex: '女'
+    });
+    assert.equal(resFemale.status, 400);
+    const dataFemale = await resFemale.json();
+    assert.equal(dataFemale.success, false);
+    assert.equal(dataFemale.code, 'FEMALE_NOT_APPLICABLE');
+    assert.match(dataFemale.error, /僅適用於男性命盤/);
+
     // 拒絕無效日期 (2026-02-31)
     const resInvalidDate = await postJson('/api/ziwei/male-size', {
         date: '2026-02-31',
@@ -285,5 +297,9 @@ test('紫微 Canonical Routes 直達頁面回傳正確的 Canonical URL 與 SEO 
     const htmlMale = await resMale.text();
     assert.match(htmlMale, /<link rel="canonical" href="https:\/\/qi\.david888\.com\/ziwei\/male-size">/);
     assert.match(htmlMale, /3秒測男生真實尺寸/);
+    assert.match(htmlMale, /class="gender-pill disabled" id="ziweiFemalePill"/);
+    assert.match(htmlMale, /id="ziweiFemaleRadio" disabled/);
+    assert.match(htmlMale, /限男盤/);
+    assert.match(htmlMale, /⚡ 男生尺寸速測專用/);
 });
 

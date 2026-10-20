@@ -290,20 +290,20 @@ export declare const ZiweiMaleSizeInputSchema: z.ZodObject<{
     date: z.ZodString;
     time: z.ZodDefault<z.ZodOptional<z.ZodString>>;
     shichen: z.ZodOptional<z.ZodEnum<["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]>>;
-    sex: z.ZodDefault<z.ZodOptional<z.ZodEnum<["男", "女"]>>>;
+    sex: z.ZodDefault<z.ZodOptional<z.ZodEnum<["男"]>>>;
     calendar: z.ZodDefault<z.ZodOptional<z.ZodEnum<["solar", "lunar"]>>>;
     leap: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, "strict", z.ZodTypeAny, {
     date: string;
     time: string;
-    sex: "男" | "女";
+    sex: "男";
     calendar: "solar" | "lunar";
     leap: boolean;
     shichen?: "子" | "丑" | "寅" | "卯" | "辰" | "巳" | "午" | "未" | "申" | "酉" | "戌" | "亥" | undefined;
 }, {
     date: string;
     time?: string | undefined;
-    sex?: "男" | "女" | undefined;
+    sex?: "男" | undefined;
     shichen?: "子" | "丑" | "寅" | "卯" | "辰" | "巳" | "午" | "未" | "申" | "酉" | "戌" | "亥" | undefined;
     calendar?: "solar" | "lunar" | undefined;
     leap?: boolean | undefined;

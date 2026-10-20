@@ -431,6 +431,28 @@ body.meihua-page .meihua-pill:hover {
     box-shadow: 0 3px 10px rgba(23, 50, 77, 0.25) !important;
 }
 
+body.suite-page .gender-pill.disabled,
+body.suite-page .gender-pill.disabled:hover,
+body.suite-page .gender-pill.disabled.active {
+    background: rgba(150, 150, 150, 0.08) !important;
+    color: var(--suite-text-muted, #8c857b) !important;
+    border: 1.5px dashed rgba(150, 150, 150, 0.35) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+[data-theme="dark"] body.suite-page .gender-pill.disabled,
+[data-theme="dark"] body.suite-page .gender-pill.disabled:hover,
+[data-theme="dark"] body.suite-page .gender-pill.disabled.active {
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    border: 1.5px dashed rgba(255, 255, 255, 0.18) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
 /* Mode Cards Child Text Color in Active State */
 body.suite-page .tarot-mode-btn.active .tarot-mode-title,
 body.suite-page .answerbook-mode-btn.active strong {

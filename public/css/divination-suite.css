@@ -290,6 +290,88 @@ body.suite-page {
     box-shadow: 0 0 0 1px var(--suite-primary);
 }
 
+.gender-pill.disabled,
+.gender-pill:has(input[type="radio"]:disabled) {
+    opacity: 0.55;
+    cursor: not-allowed !important;
+    /* pointer-events: auto 刻意保留，確保使用者點擊被置灰選項時能被 JS 事件攔截並彈出 Toast 防呆引導 */
+    pointer-events: auto !important;
+    background: rgba(150, 150, 150, 0.08) !important;
+    border: 1.5px dashed rgba(150, 150, 150, 0.35) !important;
+    color: var(--suite-text-muted, #8c857b) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.gender-pill.disabled:hover,
+.gender-pill:has(input[type="radio"]:disabled):hover {
+    border-color: rgba(150, 150, 150, 0.45) !important;
+    background: rgba(150, 150, 150, 0.12) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.gender-disabled-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    margin-left: 6px;
+    border-radius: 999px;
+    background: rgba(245, 158, 11, 0.15);
+    color: #b45309;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    line-height: 1.3;
+    letter-spacing: 0.2px;
+}
+
+[data-theme="dark"] .gender-disabled-badge {
+    background: rgba(245, 158, 11, 0.22);
+    color: #fde68a;
+    border-color: rgba(245, 158, 11, 0.45);
+}
+
+.ziwei-gender-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 7px;
+}
+
+.ziwei-gender-hint-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #b45309;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.28);
+    border-radius: 12px;
+    padding: 2px 8px;
+    line-height: 1.2;
+}
+
+[data-theme="dark"] .ziwei-gender-hint-tag {
+    color: #fde68a;
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.4);
+}
+
+@keyframes pillAttentionPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4);
+    }
+}
+
+.gender-pill-pulse {
+    animation: pillAttentionPulse 0.45s cubic-bezier(0.16, 1, 0.3, 1) 2;
+}
+
 /* Collapsible Advanced Options */
 .suite-details {
     margin-top: 14px;

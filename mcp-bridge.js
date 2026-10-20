@@ -294,7 +294,7 @@ const tools = [
         date: { type: "string", description: "出生日期 YYYY-MM-DD" },
         time: { type: "string", description: "出生時間 HH:mm" },
         shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
-        sex: { type: "string", enum: ["男", "女"], default: "男", description: "性別" },
+        sex: { type: "string", enum: ["男"], default: "男", description: "性別（此功能僅限男生命盤）" },
         calendar: { type: "string", enum: ["solar", "lunar"], default: "solar", description: "曆法" },
         leap: { type: "boolean", default: false, description: "農曆是否閏月" }
       },

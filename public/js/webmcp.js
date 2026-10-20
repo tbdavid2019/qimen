@@ -1386,7 +1386,7 @@
 					date: { type: "string", description: "出生日期 YYYY-MM-DD" },
 					time: { type: "string", description: "出生時間 HH:mm" },
 					shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
-					sex: { type: "string", enum: ["男", "女"], description: "性別" },
+					sex: { type: "string", enum: ["男"], default: "男", description: "性別（此功能僅限男生命盤）" },
 					calendar: { type: "string", enum: ["solar", "lunar"], description: "曆法" },
 					leap: { type: "boolean", description: "農曆是否閏月" }
 				},
@@ -1395,11 +1395,14 @@
 			execute: async (args) => {
 				const date = args?.date;
 				if (!date) throw new Error("請提供出生日期 (date)");
+				if (args?.sex && (args.sex === "女" || args.sex === "female")) {
+					throw new Error("男生真實尺寸評估僅適用於男性命盤。女性生理健康請參照疾厄宮主星分析。");
+				}
 				const payload = {
 					date,
 					time: args?.time || "12:00",
 					shichen: args?.shichen,
-					sex: args?.sex || "男",
+					sex: "男",
 					calendar: args?.calendar || "solar",
 					leap: !!args?.leap
 				};

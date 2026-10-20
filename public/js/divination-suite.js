@@ -34,6 +34,44 @@
         return map[element] || '';
     };
 
+    function showSuiteToast(message, type = 'warning') {
+        if (typeof window.showToast === 'function' && window.showToast !== showSuiteToast) {
+            window.showToast(message, type);
+            return;
+        }
+        let container = document.getElementById('suiteToastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'suiteToastContainer';
+            container.className = 'suite-toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = 'suite-toast suite-toast-' + type;
+        let iconName = 'alert-circle';
+        if (type === 'success') iconName = 'check-circle';
+        else if (type === 'error') iconName = 'alert-triangle';
+        else if (type === 'info') iconName = 'info';
+
+        toast.innerHTML = `<span class="toast-icon"><i data-lucide="${iconName}"></i></span><span class="toast-text">${message}</span>`;
+        container.appendChild(toast);
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+        function removeToast() {
+            if (!toast.classList.contains('closing')) {
+                toast.classList.add('closing');
+                setTimeout(() => {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 250);
+            }
+        }
+        toast.addEventListener('click', removeToast);
+        setTimeout(removeToast, 4200);
+    }
+    window.showSuiteToast = showSuiteToast;
+    if (!window.showToast) window.showToast = showSuiteToast;
+
     // --- Visual Board Renderers ---
 
     let currentTarotReading = null;
@@ -2046,6 +2084,43 @@
         const spouseResultCard = document.getElementById('spouseResultCard');
         const maleSizeResultCard = document.getElementById('maleSizeResultCard');
 
+        function updateZiweiGenderLock(isMaleSizeMode) {
+            const maleRadio = form?.querySelector('input[name="sex"][value="男"]');
+            const femaleRadio = form?.querySelector('input[name="sex"][value="女"]');
+            const femalePill = document.getElementById('ziweiFemalePill') || femaleRadio?.closest('.gender-pill');
+            const malePill = document.getElementById('ziweiMalePill') || maleRadio?.closest('.gender-pill');
+            const femaleBadge = document.getElementById('ziweiFemaleBadge');
+            const genderModeHint = document.getElementById('ziweiGenderModeHint');
+
+            if (isMaleSizeMode) {
+                if (maleRadio) {
+                    maleRadio.checked = true;
+                    malePill?.classList.add('active');
+                }
+                if (femaleRadio) {
+                    femaleRadio.checked = false;
+                    femaleRadio.disabled = true;
+                }
+                if (femalePill) {
+                    femalePill.classList.remove('active');
+                    femalePill.classList.add('disabled');
+                    femalePill.setAttribute('title', '男生真實尺寸評估僅適用於男性命盤；女生若測伴侶請填男方生辰並選男');
+                }
+                if (femaleBadge) femaleBadge.style.display = 'inline-block';
+                if (genderModeHint) genderModeHint.style.display = 'inline-block';
+            } else {
+                if (femaleRadio) {
+                    femaleRadio.disabled = false;
+                }
+                if (femalePill) {
+                    femalePill.classList.remove('disabled');
+                    femalePill.removeAttribute('title');
+                }
+                if (femaleBadge) femaleBadge.style.display = 'none';
+                if (genderModeHint) genderModeHint.style.display = 'none';
+            }
+        }
+
         function setZiweiMode(mode, updateUrl = true) {
             actionRow?.classList.toggle('single-action', mode !== 'chart');
             btnModeChart?.classList.toggle('active', mode === 'chart');
@@ -2055,6 +2130,9 @@
             if (ziweiModeInput) ziweiModeInput.value = mode;
 
             const turnstileWrapper = document.getElementById('suiteTurnstileWrapper');
+
+            // 同步男性尺寸模式下的性別鎖定狀態
+            updateZiweiGenderLock(mode === 'male-size');
 
             if (mode === 'spouse') {
                 if (spouseBanner) spouseBanner.style.display = 'block';
@@ -2077,15 +2155,6 @@
                 if (visualBoard) visualBoard.hidden = true;
                 if (aiSection) aiSection.hidden = true;
                 if (spouseResultCard) spouseResultCard.hidden = true;
-
-                // Ensure male radio is checked and active for male size test
-                const maleRadio = form?.querySelector('input[name="sex"][value="男"]');
-                const femaleRadio = form?.querySelector('input[name="sex"][value="女"]');
-                if (maleRadio && !maleRadio.checked) {
-                    maleRadio.checked = true;
-                    maleRadio.closest('.gender-pill')?.classList.add('active');
-                    femaleRadio?.closest('.gender-pill')?.classList.remove('active');
-                }
                 if (updateUrl && window.history?.pushState && location.pathname !== '/ziwei/male-size') {
                     window.history.pushState({ mode: 'male-size' }, '', '/ziwei/male-size');
                 }
@@ -2109,6 +2178,33 @@
         btnModeChart?.addEventListener('click', () => setZiweiMode('chart', true));
         btnModeSpouse?.addEventListener('click', () => setZiweiMode('spouse', true));
         btnModeMaleSize?.addEventListener('click', () => setZiweiMode('male-size', true));
+
+        // 綁定女生選項在「男生尺寸速測」模式下的即時防呆提示
+        const femalePillEl = document.getElementById('ziweiFemalePill');
+        const malePillEl = document.getElementById('ziweiMalePill');
+        femalePillEl?.addEventListener('click', (e) => {
+            const currentMode = ziweiModeInput?.value;
+            if (currentMode === 'male-size') {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const maleRadio = form?.querySelector('input[name="sex"][value="男"]');
+                if (maleRadio) {
+                    maleRadio.checked = true;
+                    malePillEl?.classList.add('active');
+                }
+                femalePillEl.classList.remove('active');
+
+                if (malePillEl) {
+                    malePillEl.classList.remove('gender-pill-pulse');
+                    void malePillEl.offsetWidth; // 強制重繪
+                    malePillEl.classList.add('gender-pill-pulse');
+                    setTimeout(() => malePillEl?.classList.remove('gender-pill-pulse'), 1000);
+                }
+
+                showSuiteToast('💡「男生真實尺寸速測」僅適用於男性命盤！女生若要測算另一半或心儀對象，請直接輸入男方的出生時辰並維持選擇「男」👨。', 'warning');
+            }
+        });
 
         // Support browser Back/Forward (popstate)
         window.addEventListener('popstate', (e) => {
@@ -2146,11 +2242,17 @@
         }
         if (urlParams.get('sex')) {
             const sexVal = urlParams.get('sex');
-            const targetRadio = form?.querySelector(`input[name="sex"][value="${sexVal}"]`);
-            if (targetRadio) {
-                targetRadio.checked = true;
-                form.querySelectorAll('.gender-pill').forEach((p) => p.classList.remove('active'));
-                targetRadio.closest('.gender-pill')?.classList.add('active');
+            const currentMode = ziweiModeInput?.value;
+            if (currentMode === 'male-size' && (sexVal === '女' || sexVal === 'female')) {
+                // 男性尺寸模式鎖定男性命盤，不允許覆蓋為女性，彈出提示引導
+                showSuiteToast('💡「男生真實尺寸速測」僅適用於男性命盤！女生若要測算另一半或心儀對象，請直接輸入男方的出生時辰並維持選擇「男」👨。', 'warning');
+            } else {
+                const targetRadio = form?.querySelector(`input[name="sex"][value="${sexVal}"]`);
+                if (targetRadio) {
+                    targetRadio.checked = true;
+                    form.querySelectorAll('.gender-pill').forEach((p) => p.classList.remove('active'));
+                    targetRadio.closest('.gender-pill')?.classList.add('active');
+                }
             }
         }
 

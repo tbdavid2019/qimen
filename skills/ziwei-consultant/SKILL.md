@@ -50,6 +50,7 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --time 09:00
 ```bash
 node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --time 10:00 --sex 男 --male-size
 ```
+> **注意**：男生真實尺寸速測僅適用於男性命盤，`--sex` 僅支援 `男`（傳入 `女` 將拒絕計算）。
 
 #### Canonical Routes 直達體系與 API
 - 完整排盤直達：`GET /ziwei` (Canonical: `https://qi.david888.com/ziwei`)

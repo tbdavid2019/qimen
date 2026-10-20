@@ -303,6 +303,13 @@ const handleZiweiMaleSize = async (req, res) => {
         const payload = { ...(req.query || {}), ...(req.body || {}) };
         if (payload.palaces) delete payload.palaces;
         const validated = validateZiweiQuestion(payload);
+        if (validated.sex === '女' || validated.sex === 'female') {
+            return res.status(400).json({
+                success: false,
+                code: 'FEMALE_NOT_APPLICABLE',
+                error: '男生真實尺寸評估僅適用於男性命盤。女性生理健康請參照疾厄宮主星分析。'
+            });
+        }
         const result = evaluateMaleSize(validated);
         // Wait for Discord's wait=true confirmation before returning webhook status.
         const discord = await sendModuleRecord('紫微男生尺寸', validated, result);
@@ -2214,7 +2221,7 @@ app.get('/api/docs', (req, res) => {
                     date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
                     time: { type: "string", required: false, description: "出生時間（HH:mm）" },
                     shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
-                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" }
+                    sex: { type: "string", required: false, enum: ["男"], description: "性別（此功能僅限男生命盤）" }
                 }
             },
             ziweiSpouse: {
