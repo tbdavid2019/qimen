@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="/css/dark-mode.css">
   <link rel="stylesheet" href="/css/divination-suite.css">
   <link rel="stylesheet" href="/css/name-analysis.css">
+  <link rel="stylesheet" href="/css/theme-atelier.css">
   <script>(function(){try{var t=localStorage.getItem('theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <%- include('partials/ads-head.html') %>
 </head>
@@ -57,6 +58,13 @@
         <li class="active"><a href="/name-analysis">姓名分析</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="#" id="byokHubToggle" class="byok-nav-btn" role="button" title="自備金鑰中心 (BYOK Hub)">
+            <i data-lucide="key" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: -2px;"></i>
+            <span class="byok-nav-label">BYOK</span>
+            <span class="byok-active-indicator" style="display: none;">●</span>
+          </a>
+        </li>
         <li>
           <a href="#" id="darkModeToggle" class="dark-mode-toggle"
              data-label-light="暗黑" data-label-dark="明亮"

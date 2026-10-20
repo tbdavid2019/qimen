@@ -1,11 +1,24 @@
 /* ==========================================================================
-   2MD Saffron-Atelier Design System (Pilot Demo for index.html)
+   2MD Saffron-Atelier Design System (Divination Suite Master Theme)
    Inspired by https://2md.aiurl.tw/
-   Color Theme: Pantone 14-1064 TPG Saffron, Deep Blue, Cinnabar Clay, Warm Cream & Pine Ink
+   Color Theme: Pantone 14-1064 TPG Saffron, Midnight Deep Blue, Cinnabar Clay, Warm Cream & Pine Ink
+   Applies across all 10 Divination Suite Products:
+   - 奇門遁甲 (Qimen)
+   - 梅花易數 (Meihua)
+   - 紫微斗數 (Ziwei)
+   - 六爻神卦 (Liuyao)
+   - 生辰八字 (Bazi)
+   - 易經風水 (Fengshui)
+   - 韋特塔羅 (Tarot)
+   - 月老姻緣 (Yinyuan)
+   - 解答之書 (Answerbook)
+   - 姓名分析 (Name Analysis)
    ========================================================================== */
 
-/* 1. Base Variables for Qimen Page */
-body.qimen-page {
+/* 1. Base Variables for All Suite Pages */
+body.suite-page,
+body.qimen-page,
+body.meihua-page {
     /* 2MD 5-Color Core Tokens */
     --saffron: #ffb010;
     --saffron-hover: #f2a600;
@@ -26,7 +39,17 @@ body.qimen-page {
     --card-border-subtle: #ebd9b0;
     --text-muted: #6b5e47;
 
-    /* Override System Variables */
+    /* Divination Suite Variables Alignment */
+    --suite-bg: var(--canvas);
+    --suite-card-bg: var(--warm-cream);
+    --suite-border: var(--card-border);
+    --suite-text: var(--ink);
+    --suite-text-muted: var(--text-muted);
+    --suite-primary: var(--saffron);
+    --suite-primary-hover: var(--saffron-hover);
+    --suite-shadow: 0 8px 24px rgba(43, 37, 26, 0.08), 0 2px 6px rgba(43, 37, 26, 0.04);
+
+    /* Claude & Legacy Variables Alignment */
     --claude-bg: var(--canvas);
     --claude-bg-subtle: var(--canvas-subtle);
     --claude-card: var(--warm-cream-card);
@@ -43,51 +66,61 @@ body.qimen-page {
     --claude-border-focus: var(--deep-blue);
     --claude-shadow-md: 0 8px 24px rgba(43, 37, 26, 0.08), 0 2px 6px rgba(43, 37, 26, 0.04);
 
-    /* Divination Suite Variables Alignment */
-    --suite-primary: var(--saffron);
-    --suite-primary-hover: var(--saffron-hover);
-    --suite-card-bg: var(--warm-cream);
-    --suite-border: var(--card-border);
-    --suite-text: var(--ink);
-    --suite-text-muted: var(--text-muted);
-
     background-color: var(--canvas) !important;
     color: var(--ink) !important;
 }
 
-/* 2. Top Navigation Bar (Deep Midnight Blue with Antique Gold Accent) */
-body.qimen-page .navbar.navbar-inverse.navbar-fixed-top {
+/* 2. Top Navigation Bar (Midnight Deep Blue with Saffron Gold Accents) */
+body.suite-page .navbar.navbar-inverse.navbar-fixed-top,
+body.qimen-page .navbar.navbar-inverse.navbar-fixed-top,
+body.meihua-page .navbar.navbar-inverse.navbar-fixed-top {
     background-color: var(--deep-blue) !important;
     border: none !important;
     border-bottom: 2px solid var(--card-border) !important;
     box-shadow: 0 4px 20px rgba(23, 50, 77, 0.32) !important;
 }
 
-body.qimen-page .navbar-inverse .navbar-brand {
+body.suite-page .navbar-inverse .navbar-brand,
+body.qimen-page .navbar-inverse .navbar-brand,
+body.meihua-page .navbar-inverse .navbar-brand {
     color: var(--cream-text) !important;
     font-weight: 800 !important;
     letter-spacing: -0.2px;
 }
 
-body.qimen-page .navbar-inverse .navbar-brand::before {
+body.suite-page .navbar-inverse .navbar-brand::before,
+body.qimen-page .navbar-inverse .navbar-brand::before,
+body.meihua-page .navbar-inverse .navbar-brand::before {
     box-shadow: 0 0 0 1.5px var(--card-border), 0 2px 8px rgba(0, 0, 0, 0.45) !important;
 }
 
-body.qimen-page .navbar-inverse .navbar-nav > li > a {
+body.suite-page .navbar-inverse .navbar-nav > li > a,
+body.qimen-page .navbar-inverse .navbar-nav > li > a,
+body.meihua-page .navbar-inverse .navbar-nav > li > a {
     color: #f7edd8 !important;
     font-weight: 600 !important;
 }
 
+body.suite-page .navbar-inverse .navbar-nav > li > a:hover,
+body.suite-page .navbar-inverse .navbar-nav > li > a:focus,
 body.qimen-page .navbar-inverse .navbar-nav > li > a:hover,
-body.qimen-page .navbar-inverse .navbar-nav > li > a:focus {
+body.qimen-page .navbar-inverse .navbar-nav > li > a:focus,
+body.meihua-page .navbar-inverse .navbar-nav > li > a:hover,
+body.meihua-page .navbar-inverse .navbar-nav > li > a:focus {
     background-color: rgba(255, 176, 16, 0.15) !important;
     color: var(--saffron) !important;
 }
 
-/* Active Nav Pill: Saffron Gold with Deep Ink Text (Exact 2MD Style) */
+/* Active Nav Pill: Saffron Gold with Deep Blue Bold Text */
+body.suite-page .navbar-inverse .navbar-nav > .active > a,
+body.suite-page .navbar-inverse .navbar-nav > .active > a:hover,
+body.suite-page .navbar-inverse .navbar-nav > .active > a:focus,
 body.qimen-page .navbar-inverse .navbar-nav > .active > a,
 body.qimen-page .navbar-inverse .navbar-nav > .active > a:hover,
-body.qimen-page .navbar-inverse .navbar-nav > .active > a:focus {
+body.qimen-page .navbar-inverse .navbar-nav > .active > a:focus,
+body.meihua-page .navbar-inverse .navbar-nav > .active > a,
+body.meihua-page .navbar-inverse .navbar-nav > .active > a:hover,
+body.meihua-page .navbar-inverse .navbar-nav > .active > a:focus {
     background: var(--saffron) !important;
     color: var(--deep-blue) !important;
     font-weight: 800 !important;
@@ -95,95 +128,150 @@ body.qimen-page .navbar-inverse .navbar-nav > .active > a:focus {
     box-shadow: 0 2px 10px rgba(255, 176, 16, 0.4) !important;
 }
 
-body.qimen-page .byok-nav-btn {
+/* Navigation Utilities (BYOK Hub & Dark Mode Toggle) */
+body.suite-page .byok-nav-btn,
+body.qimen-page .byok-nav-btn,
+body.meihua-page .byok-nav-btn {
     color: #f7edd8 !important;
     border: 1px solid rgba(221, 197, 139, 0.4) !important;
     background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 16px !important;
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+    padding: 6px 12px !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-body.qimen-page .byok-nav-btn:hover {
+body.suite-page .byok-nav-btn:hover,
+body.qimen-page .byok-nav-btn:hover,
+body.meihua-page .byok-nav-btn:hover {
     background: rgba(255, 176, 16, 0.2) !important;
     color: var(--saffron) !important;
     border-color: var(--saffron) !important;
 }
 
-body.qimen-page .dark-mode-toggle {
+body.suite-page .dark-mode-toggle,
+body.qimen-page .dark-mode-toggle,
+body.meihua-page .dark-mode-toggle {
     color: #f7edd8 !important;
     border: 1px solid rgba(221, 197, 139, 0.4) !important;
     background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 16px !important;
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+    padding: 6px 12px !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-body.qimen-page .dark-mode-toggle:hover {
+body.suite-page .dark-mode-toggle:hover,
+body.qimen-page .dark-mode-toggle:hover,
+body.meihua-page .dark-mode-toggle:hover {
     background: rgba(255, 176, 16, 0.2) !important;
     color: var(--saffron) !important;
     border-color: var(--saffron) !important;
 }
 
-/* 3. Hero Banner (Slim Compact Header) */
+/* 3. Hero Banners (Slim Compact Single-Line Headers) */
+body.suite-page .suite-hero-compact,
+body.suite-page .suite-hero,
+body.suite-page .meihua-hero,
+body.suite-page .liuyao-hero,
+body.suite-page .name-hero,
 body.qimen-page .suite-hero-compact,
-body.qimen-page .qimen-hero.suite-hero-compact {
+body.qimen-page .qimen-hero.suite-hero-compact,
+body.meihua-page .meihua-hero.suite-hero-compact {
     background: linear-gradient(135deg, rgba(255, 249, 232, 0.95) 0%, rgba(252, 245, 229, 0.98) 100%) !important;
     border: 1.5px solid var(--card-border) !important;
     border-radius: 14px !important;
     box-shadow: 0 4px 16px rgba(43, 37, 26, 0.05) !important;
     padding: 12px 18px !important;
-    margin: 12px 0 18px 0 !important;
+    margin: 12px auto 18px auto !important;
 }
 
-body.qimen-page .suite-hero-compact h1 {
+body.suite-page .suite-hero-compact h1,
+body.suite-page .suite-hero-compact .suite-hero-heading,
+body.qimen-page .suite-hero-compact h1,
+body.meihua-page .suite-hero-compact h1 {
     color: var(--deep-blue) !important;
     font-weight: 800 !important;
 }
 
-body.qimen-page .suite-hero-compact .suite-badge,
-body.qimen-page .suite-hero-compact .suite-badge-rose {
+body.suite-page .suite-hero-compact .suite-hero-badge,
+body.suite-page .suite-hero-compact .suite-badge:not(.suite-badge-rose),
+body.qimen-page .suite-hero-compact .suite-badge:not(.suite-badge-rose),
+body.meihua-page .suite-hero-compact .suite-hero-badge {
     background: var(--deep-blue) !important;
     color: var(--saffron) !important;
     border: 1px solid var(--card-border) !important;
     font-weight: 700 !important;
 }
 
-/* 4. Panels & Cards (Antique Warm Cream Paper with Saffron Accents) */
+/* 4. Panels & Cards (Antique Warm Cream Xuan Paper with Saffron Accents) */
+body.suite-page .panel-default,
+body.suite-page .suite-card,
+body.suite-page .meihua-card,
+body.suite-page .liuyao-card,
+body.suite-page .fs-compass-card,
+body.suite-page .name-card,
+body.suite-page .tarot-card,
+body.suite-page .byok-modal-card,
 body.qimen-page .panel-default,
-body.qimen-page .suite-card {
+body.qimen-page .suite-card,
+body.meihua-page .suite-card,
+body.meihua-page .meihua-card {
     background: var(--warm-cream) !important;
     border: 1.5px solid var(--card-border) !important;
     border-radius: 14px !important;
     box-shadow: 0 4px 18px rgba(43, 37, 26, 0.06) !important;
 }
 
+body.suite-page .panel-heading,
 body.qimen-page .panel-heading {
     background: linear-gradient(180deg, #fffdf5 0%, #fff7e4 100%) !important;
     border-bottom: 1.5px solid var(--card-border) !important;
     color: var(--deep-blue) !important;
 }
 
+body.suite-page .panel-title,
 body.qimen-page .panel-title {
     color: var(--deep-blue) !important;
     font-weight: 800 !important;
 }
 
+body.suite-page .panel-primary,
 body.qimen-page .panel-primary {
     border: 1.5px solid var(--card-border) !important;
     border-radius: 12px !important;
 }
 
+body.suite-page .panel-primary > .panel-heading,
 body.qimen-page .panel-primary > .panel-heading {
     background: var(--deep-blue) !important;
     color: var(--saffron) !important;
     border-bottom: 1.5px solid var(--card-border) !important;
 }
 
+body.suite-page .panel-primary > .panel-heading .panel-title,
 body.qimen-page .panel-primary > .panel-heading .panel-title {
     color: var(--saffron) !important;
 }
 
-body.qimen-page .basic-info {
+body.suite-page .panel-primary > .panel-body,
+body.qimen-page .panel-primary > .panel-body {
+    background: var(--warm-cream) !important;
+    color: var(--ink) !important;
+}
+
+body.suite-page .basic-info,
+body.qimen-page .basic-info,
+body.suite-page .suite-details {
     background: var(--warm-cream-card) !important;
     border: 1.5px solid var(--card-border) !important;
     border-radius: 12px !important;
 }
 
+body.suite-page .pan-legend,
+body.suite-page .auspicious-legend,
 body.qimen-page .pan-legend,
 body.qimen-page .auspicious-legend {
     background: var(--warm-cream-card) !important;
@@ -191,7 +279,12 @@ body.qimen-page .auspicious-legend {
     border-radius: 10px !important;
 }
 
-/* 5. Inputs & Selects */
+/* 5. Inputs, Selects & Textareas */
+body.suite-page .form-control,
+body.suite-page select.form-control,
+body.suite-page textarea.form-control,
+body.suite-page .suite-input,
+body.suite-page .suite-textarea,
 body.qimen-page .form-control {
     background-color: var(--warm-cream-card) !important;
     border: 1.5px solid var(--card-border) !important;
@@ -199,12 +292,23 @@ body.qimen-page .form-control {
     border-radius: 8px !important;
 }
 
+body.suite-page .form-control:focus,
+body.suite-page select.form-control:focus,
+body.suite-page textarea.form-control:focus,
+body.suite-page .suite-input:focus,
+body.suite-page .suite-textarea:focus,
 body.qimen-page .form-control:focus {
     border-color: var(--deep-blue) !important;
     box-shadow: 0 0 0 3px rgba(23, 50, 77, 0.15) !important;
 }
 
-/* 6. Buttons & CTAs */
+/* 6. Primary Buttons & CTAs */
+body.suite-page .btn-primary,
+body.suite-page .suite-btn-primary,
+body.suite-page .suite-btn-submit,
+body.suite-page .name-submit-btn,
+body.suite-page .byok-btn-save,
+body.suite-page .fs-btn-action,
 body.qimen-page .btn-primary,
 body.qimen-page .suite-btn-primary {
     background: linear-gradient(135deg, var(--saffron) 0%, #f59e0b 100%) !important;
@@ -216,13 +320,26 @@ body.qimen-page .suite-btn-primary {
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+body.suite-page .btn-primary:hover,
+body.suite-page .suite-btn-primary:hover,
+body.suite-page .suite-btn-submit:hover,
+body.suite-page .name-submit-btn:hover,
+body.suite-page .byok-btn-save:hover,
+body.suite-page .fs-btn-action:hover,
 body.qimen-page .btn-primary:hover,
 body.qimen-page .suite-btn-primary:hover {
     background: var(--saffron-hover) !important;
     transform: translateY(-1px) !important;
     box-shadow: 0 6px 18px rgba(255, 176, 16, 0.45) !important;
+    color: var(--deep-blue) !important;
 }
 
+/* 7. Secondary / Default Buttons */
+body.suite-page .btn-default,
+body.suite-page .suite-btn-secondary,
+body.suite-page .suite-copy-btn,
+body.suite-page .byok-btn-reset,
+body.suite-page .byok-btn-test,
 body.qimen-page .btn-default,
 body.qimen-page .suite-btn-secondary {
     background: var(--warm-cream-card) !important;
@@ -233,6 +350,11 @@ body.qimen-page .suite-btn-secondary {
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+body.suite-page .btn-default:hover,
+body.suite-page .suite-btn-secondary:hover,
+body.suite-page .suite-copy-btn:hover,
+body.suite-page .byok-btn-reset:hover,
+body.suite-page .byok-btn-test:hover,
 body.qimen-page .btn-default:hover,
 body.qimen-page .suite-btn-secondary:hover {
     background: var(--saffron-light) !important;
@@ -240,13 +362,17 @@ body.qimen-page .suite-btn-secondary:hover {
     color: var(--deep-blue) !important;
 }
 
-/* 7. Stage Badges, Meta Badges & Question Pills */
+/* 8. Stage Badges, Meta Badges & Question Pills across all modules */
+body.suite-page .qimen-stage-badge,
+body.suite-page .meihua-step-badge,
 body.qimen-page .qimen-stage-badge {
     background: var(--deep-blue) !important;
     color: var(--saffron) !important;
     border: 1px solid var(--card-border) !important;
 }
 
+body.suite-page .label-primary.qimen-meta-badge,
+body.suite-page #yongshenTip,
 body.qimen-page .label-primary.qimen-meta-badge,
 body.qimen-page #yongshenTip {
     background-color: var(--deep-blue) !important;
@@ -254,7 +380,18 @@ body.qimen-page #yongshenTip {
     border: 1px solid var(--card-border) !important;
 }
 
-body.qimen-page .qimen-pill {
+body.suite-page .qimen-pill,
+body.suite-page .meihua-pill,
+body.suite-page .liuyao-pill,
+body.suite-page .gender-pill,
+body.suite-page .suite-chip-radio span,
+body.suite-page .fs-category-pills .btn,
+body.suite-page .meihua-tab-btn,
+body.suite-page .liuyao-tab-btn,
+body.suite-page .tarot-mode-btn,
+body.suite-page .answerbook-mode-btn,
+body.qimen-page .qimen-pill,
+body.meihua-page .meihua-pill {
     background: var(--warm-cream-card) !important;
     border: 1.5px solid var(--card-border) !important;
     color: var(--deep-blue) !important;
@@ -263,15 +400,49 @@ body.qimen-page .qimen-pill {
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+body.suite-page .qimen-pill.active,
+body.suite-page .qimen-pill:hover,
+body.suite-page .meihua-pill.active,
+body.suite-page .meihua-pill:hover,
+body.suite-page .liuyao-pill.active,
+body.suite-page .liuyao-pill:hover,
+body.suite-page .gender-pill.active,
+body.suite-page .gender-pill:hover,
+body.suite-page .suite-chip-radio input:checked + span,
+body.suite-page .fs-category-pills .btn.active,
+body.suite-page .meihua-tab-btn.active,
+body.suite-page .liuyao-tab-btn.active,
+body.suite-page .tarot-mode-btn.active,
+body.suite-page .answerbook-mode-btn.active,
 body.qimen-page .qimen-pill.active,
-body.qimen-page .qimen-pill:hover {
+body.qimen-page .qimen-pill:hover,
+body.meihua-page .meihua-pill.active,
+body.meihua-page .meihua-pill:hover {
     background: var(--deep-blue) !important;
     color: var(--saffron) !important;
     border-color: var(--deep-blue) !important;
     box-shadow: 0 3px 10px rgba(23, 50, 77, 0.25) !important;
 }
 
-/* 8. Nine-Palace Board (九宮盤) Harmonization - Preserves Auspicious/Inauspicious Colors */
+/* Mode Cards Child Text Color in Active State */
+body.suite-page .tarot-mode-btn.active .tarot-mode-title,
+body.suite-page .answerbook-mode-btn.active strong {
+    color: var(--saffron) !important;
+}
+
+body.suite-page .tarot-mode-btn.active .tarot-mode-desc,
+body.suite-page .answerbook-mode-btn.active span {
+    color: #f7edd8 !important;
+}
+
+/* Bazi Ten Gods High-Contrast Text */
+body.suite-page .bazi-god-cell,
+body.suite-page .bazi-god-name {
+    color: var(--clay) !important;
+    font-weight: 700 !important;
+}
+
+/* 9. Specialized Board Grids (Qimen Nine-Palace & Ziwei Twelve-Palace) */
 body.qimen-page .qimen-pan-container {
     background: transparent !important;
 }
@@ -284,7 +455,6 @@ body.qimen-page .qimen-pan {
     overflow: hidden;
 }
 
-/* Only apply 1.5px grid border and neutral background to cells without specific auspicious status */
 body.qimen-page .gong:not(.da_ji):not(.xiao_ji):not(.xiao_xiong):not(.da_xiong) {
     border-right: 1.5px solid var(--card-border);
     border-bottom: 1.5px solid var(--card-border);
@@ -295,7 +465,6 @@ body.qimen-page .gong:not(.da_ji):not(.xiao_ji):not(.xiao_xiong):not(.da_xiong) 
     background-color: #fffdf7;
 }
 
-/* Maintain proper perimeter boundaries */
 body.qimen-page .gong:nth-child(3n) {
     border-right: none !important;
 }
@@ -306,13 +475,31 @@ body.qimen-page .gong:nth-child(9) {
     border-bottom: none !important;
 }
 
-/* 9. PWA Update Banner Harmonization */
+/* Ziwei Twelve Palaces */
+body.suite-page .ziwei-palace-cell {
+    background: var(--warm-cream-card) !important;
+    border: 1.5px solid var(--card-border) !important;
+}
+
+body.suite-page .ziwei-palace-cell.is-ming {
+    border: 2px solid var(--saffron) !important;
+    box-shadow: 0 0 12px rgba(255, 176, 16, 0.25) !important;
+}
+
+body.suite-page .ziwei-palace-name {
+    color: var(--deep-blue) !important;
+    font-weight: 800 !important;
+}
+
+/* 10. PWA Update Banner Harmonization */
+body.suite-page .pwa-update-banner,
 body.qimen-page .pwa-update-banner {
     background: var(--deep-blue) !important;
     border-bottom: 2px solid var(--card-border) !important;
     color: var(--cream-text) !important;
 }
 
+body.suite-page .pwa-update-button-primary,
 body.qimen-page .pwa-update-button-primary {
     background: var(--saffron) !important;
     color: var(--deep-blue) !important;
@@ -320,18 +507,40 @@ body.qimen-page .pwa-update-button-primary {
     border: 1.5px solid #6b5b38 !important;
 }
 
+body.suite-page .pwa-update-button-secondary,
 body.qimen-page .pwa-update-button-secondary {
     background: rgba(255, 255, 255, 0.1) !important;
     color: #f7edd8 !important;
     border: 1px solid var(--card-border) !important;
 }
 
-/* 10. Dark Mode Adaptation for 2MD Theme */
+/* 11. Dark Mode Adaptation for All Suite Products */
+[data-theme="dark"],
+html[data-theme="dark"] {
+    background-color: #0e1824 !important;
+}
+
+[data-theme="dark"] body.suite-page,
 [data-theme="dark"] body.qimen-page,
-body.qimen-page[data-theme="dark"] {
+[data-theme="dark"] body.meihua-page {
+    /* Foundation Variables Overrides - Prevents dual-palette bleed-through */
+    --suite-bg: #0e1824 !important;
+    --suite-card-bg: #142336 !important;
+    --suite-border: #7a6642 !important;
+    --suite-text: #fcf6ea !important;
+    --suite-text-muted: #b8a892 !important;
+    --claude-bg: #0e1824 !important;
+    --claude-bg-subtle: #132233 !important;
+    --claude-card: #142336 !important;
+    --claude-card-subtle: #182a3f !important;
+    --claude-border: #7a6642 !important;
+    --claude-text-main: #fcf6ea !important;
+    --claude-text-body: #d6cbba !important;
+    --claude-text-muted: #b8a892 !important;
+
     --canvas: #0e1824;
     --canvas-subtle: #132233;
-    --warm-cream: #152538;
+    --warm-cream: #142336;
     --warm-cream-card: #182a3f;
     --deep-blue: #1c3d5f;
     --deep-blue-hover: #254d77;
@@ -346,16 +555,32 @@ body.qimen-page[data-theme="dark"] {
     color: #fcf6ea !important;
 }
 
-[data-theme="dark"] body.qimen-page .navbar.navbar-inverse.navbar-fixed-top {
+[data-theme="dark"] body.suite-page .navbar.navbar-inverse.navbar-fixed-top,
+[data-theme="dark"] body.qimen-page .navbar.navbar-inverse.navbar-fixed-top,
+[data-theme="dark"] body.meihua-page .navbar.navbar-inverse.navbar-fixed-top {
     background-color: #0a131d !important;
     border-bottom: 2px solid var(--card-border) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
 }
 
-[data-theme="dark"] body.qimen-page .navbar-inverse .navbar-brand {
+[data-theme="dark"] body.suite-page .navbar-inverse .navbar-brand,
+[data-theme="dark"] body.qimen-page .navbar-inverse .navbar-brand,
+[data-theme="dark"] body.meihua-page .navbar-inverse .navbar-brand {
     color: var(--cream-text) !important;
 }
 
+[data-theme="dark"] body.suite-page .panel-default,
+[data-theme="dark"] body.suite-page .panel-primary,
+[data-theme="dark"] body.suite-page .suite-card,
+[data-theme="dark"] body.suite-page .meihua-card,
+[data-theme="dark"] body.suite-page .liuyao-card,
+[data-theme="dark"] body.suite-page .fs-compass-card,
+[data-theme="dark"] body.suite-page .name-card,
+[data-theme="dark"] body.suite-page .tarot-card,
+[data-theme="dark"] body.suite-page .byok-modal-card,
+[data-theme="dark"] body.suite-page .basic-info,
+[data-theme="dark"] body.suite-page .pan-legend,
+[data-theme="dark"] body.suite-page .auspicious-legend,
 [data-theme="dark"] body.qimen-page .panel-default,
 [data-theme="dark"] body.qimen-page .panel-primary,
 [data-theme="dark"] body.qimen-page .suite-card,
@@ -368,47 +593,73 @@ body.qimen-page[data-theme="dark"] {
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
 }
 
+[data-theme="dark"] body.suite-page .panel-heading,
 [data-theme="dark"] body.qimen-page .panel-heading {
     background: linear-gradient(180deg, #1a2c42 0%, #142336 100%) !important;
     border-bottom-color: var(--card-border) !important;
     color: var(--saffron) !important;
 }
 
+[data-theme="dark"] body.suite-page .panel-title,
 [data-theme="dark"] body.qimen-page .panel-title {
     color: var(--saffron) !important;
 }
 
+[data-theme="dark"] body.suite-page .panel-primary > .panel-heading,
 [data-theme="dark"] body.qimen-page .panel-primary > .panel-heading {
     background: #0d1b2a !important;
     color: var(--saffron) !important;
 }
 
+[data-theme="dark"] body.suite-page .panel-primary > .panel-body,
 [data-theme="dark"] body.qimen-page .panel-primary > .panel-body {
     background: #142336 !important;
     color: #fcf6ea !important;
 }
 
+[data-theme="dark"] body.suite-page .suite-hero-compact,
+[data-theme="dark"] body.suite-page .suite-hero,
+[data-theme="dark"] body.suite-page .meihua-hero,
+[data-theme="dark"] body.suite-page .liuyao-hero,
+[data-theme="dark"] body.suite-page .name-hero,
 [data-theme="dark"] body.qimen-page .suite-hero-compact,
 [data-theme="dark"] body.qimen-page .qimen-hero.suite-hero-compact {
     background: linear-gradient(135deg, rgba(20, 35, 54, 0.95) 0%, rgba(14, 24, 36, 0.98) 100%) !important;
     border-color: var(--card-border) !important;
 }
 
+[data-theme="dark"] body.suite-page .suite-hero-compact h1,
+[data-theme="dark"] body.suite-page .suite-hero-compact .suite-hero-heading,
 [data-theme="dark"] body.qimen-page .suite-hero-compact h1 {
     color: var(--saffron) !important;
 }
 
+[data-theme="dark"] body.suite-page .form-control,
+[data-theme="dark"] body.suite-page select.form-control,
+[data-theme="dark"] body.suite-page textarea.form-control,
+[data-theme="dark"] body.suite-page .suite-input,
+[data-theme="dark"] body.suite-page .suite-textarea,
 [data-theme="dark"] body.qimen-page .form-control {
     background-color: var(--warm-cream-card) !important;
     border-color: var(--card-border) !important;
     color: #fcf6ea !important;
 }
 
+[data-theme="dark"] body.suite-page .form-control:focus,
+[data-theme="dark"] body.suite-page select.form-control:focus,
+[data-theme="dark"] body.suite-page textarea.form-control:focus,
+[data-theme="dark"] body.suite-page .suite-input:focus,
+[data-theme="dark"] body.suite-page .suite-textarea:focus,
 [data-theme="dark"] body.qimen-page .form-control:focus {
     border-color: var(--saffron) !important;
     box-shadow: 0 0 0 3px rgba(255, 176, 16, 0.25) !important;
 }
 
+[data-theme="dark"] body.suite-page .btn-default,
+[data-theme="dark"] body.suite-page .suite-btn-secondary,
+[data-theme="dark"] body.suite-page .suite-copy-btn,
+[data-theme="dark"] body.suite-page .byok-btn-reset,
+[data-theme="dark"] body.suite-page .byok-btn-test,
 [data-theme="dark"] body.qimen-page .btn-default,
 [data-theme="dark"] body.qimen-page .suite-btn-secondary {
     background: var(--warm-cream-card) !important;
@@ -416,6 +667,11 @@ body.qimen-page[data-theme="dark"] {
     color: #fcf6ea !important;
 }
 
+[data-theme="dark"] body.suite-page .btn-default:hover,
+[data-theme="dark"] body.suite-page .suite-btn-secondary:hover,
+[data-theme="dark"] body.suite-page .suite-copy-btn:hover,
+[data-theme="dark"] body.suite-page .byok-btn-reset:hover,
+[data-theme="dark"] body.suite-page .byok-btn-test:hover,
 [data-theme="dark"] body.qimen-page .btn-default:hover,
 [data-theme="dark"] body.qimen-page .suite-btn-secondary:hover {
     background: rgba(255, 176, 16, 0.2) !important;
@@ -434,12 +690,36 @@ body.qimen-page[data-theme="dark"] {
     border-color: #4a3e2a;
 }
 
+[data-theme="dark"] body.suite-page .qimen-pill,
+[data-theme="dark"] body.suite-page .meihua-pill,
+[data-theme="dark"] body.suite-page .liuyao-pill,
+[data-theme="dark"] body.suite-page .gender-pill,
+[data-theme="dark"] body.suite-page .suite-chip-radio span,
+[data-theme="dark"] body.suite-page .fs-category-pills .btn,
+[data-theme="dark"] body.suite-page .meihua-tab-btn,
+[data-theme="dark"] body.suite-page .liuyao-tab-btn,
+[data-theme="dark"] body.suite-page .tarot-mode-btn,
+[data-theme="dark"] body.suite-page .answerbook-mode-btn,
 [data-theme="dark"] body.qimen-page .qimen-pill {
     background: var(--warm-cream-card) !important;
     border-color: var(--card-border) !important;
     color: #fcf6ea !important;
 }
 
+[data-theme="dark"] body.suite-page .qimen-pill.active,
+[data-theme="dark"] body.suite-page .qimen-pill:hover,
+[data-theme="dark"] body.suite-page .meihua-pill.active,
+[data-theme="dark"] body.suite-page .meihua-pill:hover,
+[data-theme="dark"] body.suite-page .liuyao-pill.active,
+[data-theme="dark"] body.suite-page .liuyao-pill:hover,
+[data-theme="dark"] body.suite-page .gender-pill.active,
+[data-theme="dark"] body.suite-page .gender-pill:hover,
+[data-theme="dark"] body.suite-page .suite-chip-radio input:checked + span,
+[data-theme="dark"] body.suite-page .fs-category-pills .btn.active,
+[data-theme="dark"] body.suite-page .meihua-tab-btn.active,
+[data-theme="dark"] body.suite-page .liuyao-tab-btn.active,
+[data-theme="dark"] body.suite-page .tarot-mode-btn.active,
+[data-theme="dark"] body.suite-page .answerbook-mode-btn.active,
 [data-theme="dark"] body.qimen-page .qimen-pill.active,
 [data-theme="dark"] body.qimen-page .qimen-pill:hover {
     background: var(--saffron) !important;
@@ -448,6 +728,63 @@ body.qimen-page[data-theme="dark"] {
     box-shadow: 0 3px 10px rgba(255, 176, 16, 0.35) !important;
 }
 
+[data-theme="dark"] body.suite-page .ziwei-palace-cell {
+    background: #142336 !important;
+    border-color: var(--card-border) !important;
+}
+
+[data-theme="dark"] body.suite-page .ziwei-palace-cell.is-shen {
+    box-shadow: inset 0 0 0 1.5px var(--saffron) !important;
+}
+
+[data-theme="dark"] body.suite-page .ziwei-palace-name {
+    color: var(--saffron) !important;
+}
+
+[data-theme="dark"] body.suite-page .ziwei-palace-ganzhi {
+    color: var(--text-muted) !important;
+}
+
+/* Dark Mode Mode Cards Child Text Color in Active State */
+[data-theme="dark"] body.suite-page .tarot-mode-btn.active .tarot-mode-title,
+[data-theme="dark"] body.suite-page .answerbook-mode-btn.active strong {
+    color: #0e1824 !important;
+    font-weight: 800 !important;
+}
+
+[data-theme="dark"] body.suite-page .tarot-mode-btn.active .tarot-mode-desc,
+[data-theme="dark"] body.suite-page .answerbook-mode-btn.active span {
+    color: #17324d !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="dark"] body.suite-page .bazi-god-cell,
+[data-theme="dark"] body.suite-page .bazi-god-name {
+    color: var(--saffron) !important;
+}
+
+[data-theme="dark"] body.suite-page .pwa-update-banner,
 [data-theme="dark"] body.qimen-page .pwa-update-banner {
     color: var(--cream-text) !important;
+}
+
+/* 12. Accessibility: Focus-Visible & Reduced Motion Support */
+body.suite-page a:focus-visible,
+body.suite-page button:focus-visible,
+body.suite-page input:focus-visible,
+body.suite-page select:focus-visible,
+body.suite-page textarea:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(255, 176, 16, 0.5) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.suite-page *,
+    body.qimen-page *,
+    body.meihua-page * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

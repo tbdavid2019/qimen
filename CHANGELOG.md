@@ -4,15 +4,16 @@
 
 ## [2026-10-20]
 
-### 奇門遁甲試樣全新「Saffron-Atelier」配色主題（2MD 工坊美學）
+### 全站 10 大產品全面換裝「Saffron-Atelier」配色主題（2MD 工坊美學）
 
-- **試樣主題嚴密隔離上線 (`public/css/theme-atelier.css`, `views/index.html`)**：
-  - 汲取 2MD（Pantone 14-1064 Saffron-Atelier）色彩美學，首頁採用番紅金黃（`#ffb010`）、午夜深藍（`#17324d`）、赤陶土（`#a9471d`）、宣紙米白（`#fff9e8` / `#fcf5e5`）與松煙墨黑（`#2b251a`）五色體系。
-  - 嚴格 Scoped 於 `body.qimen-page`，完全隔離於奇門首頁，絕不污染其他 9 大模組頁面。
-  - 保留九宮盤原生吉凶色系與輔助標記，補正 `--suite-*` 全域變數對齊，確保問事用神膠囊與操作按鈕視覺一致。
-  - 完整支援 Dark Mode 暗黑模式（`#0e1824` 午夜畫布與金黃高光）。
-  - 通過 Impeccable 工藝檢查（0 警告）與全量自動化測試（296/296 測試通過）。
-  - 通過 Codex Code Review 與 OpenCode Code Review 雙軌審查。
+- **全模組美學換裝 (`public/css/theme-atelier.css`, `views/*.html`)**：
+  - 將 2MD（Pantone 14-1064 Saffron-Atelier）五色體系全面推廣至全站 10 大產品（奇門遁甲、梅花易數、紫微斗數、六爻神卦、生辰八字、易經風水、韋特塔羅、月老姻緣、解答之書、姓名分析）。
+  - 核心基調：番紅金黃（`#ffb010`）、午夜深藍（`#17324d`）、赤陶土（`#a9471d`）、宣紙米白（`#fff9e8` / `#fffcf2`）與松煙墨黑（`#2b251a`）。
+  - 全站頂部導航列全面統一為午夜深藍底色，搭配金黃 Hover 懸浮光暈、旋轉太極 Logo、Saffron 圓角 Active Pill，以及右側一致掛載之 BYOK 自備金鑰按鈕與暗黑模式切換鈕。
+  - 各模組表單、卡片、按鈕、用神膠囊（問事焦點、起卦選項、性別膠囊、模式切換）、紫微十二宮盤格、八字四柱排盤表、風水羅盤盤面等均無縫融入 Saffron-Atelier 高度對比與溫潤宣紙工藝。
+  - 全模組完整適配 Dark Mode 暗黑模式（`#0e1824` 午夜畫布、`#142336` 暗藍卡片與金色微光）。
+  - 嚴格通過 Impeccable 工藝檢查（0 警告）與全量自動化測試（296/296 測試通過）。
+  - 通過 Codex Code Review 與 OpenCode Code Review 雙軌審查後發布。
 
 ### 全站視覺識別統一：全量收斂為正統陰陽太極 Logo (Taiji)
 
