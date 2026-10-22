@@ -294,6 +294,9 @@ app.get('/meihua', (req, res) => {
 });
 app.get('/answerbook', (req, res) => res.render('answerbook', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'answerbook' }));
 app.get('/liuyao', (req, res) => res.render('liuyao', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'liuyao', activeMode: req.query.mode || 'coins' }));
+app.get('/cezi', (req, res) => res.render('cezi', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'cezi' }));
+app.get('/wellness', (req, res) => res.render('wellness', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'wellness' }));
+app.get('/yunqi', (req, res) => res.redirect(301, '/wellness'));
 
 function sendModuleRecord(moduleName, input, result, analysis = '') {
     return discordWebhook.sendDivinationRecord(moduleName, input, result, analysis)
@@ -1068,7 +1071,23 @@ const liuyaoQuestionHandler = createServiceQuestionHandler({
 app.post('/api/liuyao-question', liuyaoQuestionHandler);
 app.get('/api/liuyao-question', liuyaoQuestionHandler);
 
-const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書', liuyao: '六爻神卦' };
+const wellnessQuestionHandler = createServiceQuestionHandler({
+    moduleName: '五運六氣養生',
+    resultKey: 'result',
+    validate: (body) => body,
+    calculate: (body) => calculateYunqiWellness({
+        targetYear: body.targetYear || body.year,
+        currentHour: body.currentHour !== undefined ? body.currentHour : body.hour,
+        date: body.birthDate || body.date
+    }),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeWellness(result, opts),
+    discord: discordWebhook
+});
+app.post('/api/wellness-question', wellnessQuestionHandler);
+app.get('/api/wellness-question', wellnessQuestionHandler);
+app.post('/api/wellness/question', wellnessQuestionHandler);
+
+const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書', liuyao: '六爻神卦', wellness: '五運六氣養生' };
 
 const handleSuiteModuleLlmAnalysis = async (req, res) => {
     const moduleKey = req.params.module || (req.path && req.path.includes('/tarot/') ? 'tarot' : null);

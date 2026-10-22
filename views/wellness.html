@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>五運六氣養生顧問 · 二十四節氣與子午流注經絡鐘 · 照見體質順應天時</title>
+    <meta name="description" content="依據《黃帝內經》正統五運六氣推演：輸入出生日期或當前年份，即時解碼先天體質稟賦（歲運太過不及）、當前流年客氣（司天在泉）、24節氣飲食起居指南與12時辰子午流注當令經絡穴位。">
+    <link rel="canonical" href="https://qi.david888.com/wellness">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="五運六氣養生顧問 · 二十四節氣與子午流注經絡鐘 · 照見體質順應天時">
+    <meta property="og:description" content="依據《黃帝內經》正統五運六氣推演：解碼先天體質稟賦、流年司天在泉、24節氣飲食起居與12時辰子午流注當令經絡。">
+    <meta property="og:url" content="https://qi.david888.com/wellness">
+    <meta property="og:site_name" content="333 一句提醒·照見當下">
+    <meta property="og:image" content="https://qi.david888.com/og-image.png">
+    <meta property="og:image:secure_url" content="https://qi.david888.com/og-image.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://qi.david888.com/og-image.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#111a20">
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {}
+        })();
+    </script>
+    <%- include('partials/ads-head.html') %>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style-new.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/divination-suite.css">
+    <link rel="stylesheet" href="/css/theme-atelier.css">
+    <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
+    <style>
+        .meridian-clock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .meridian-shichen-card {
+            background: var(--suite-bg-card, rgba(255,255,255,0.03));
+            border: 1px solid var(--suite-border);
+            border-radius: 10px;
+            padding: 12px;
+            transition: all 0.2s ease;
+        }
+        .meridian-shichen-card.active {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1.5px solid #10b981;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+        [data-theme="dark"] .meridian-shichen-card.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 95, 70, 0.25) 100%);
+            border-color: #059669;
+        }
+        .meridian-card-time {
+            font-size: 11.5px;
+            color: var(--suite-text-muted);
+            margin-bottom: 4px;
+        }
+        .meridian-card-name {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--suite-primary);
+        }
+        .meridian-card-action {
+            font-size: 12px;
+            color: var(--suite-text);
+            margin-top: 6px;
+            line-height: 1.45;
+        }
+    </style>
+</head>
+<body class="suite-page" data-suite="wellness" data-llm-enabled="<%= enableLLM ? 'true' : 'false' %>">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切換導航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">333 一句提醒·照見當下</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">奇門遁甲</a></li>
+                <li><a href="/ziwei">紫微斗數</a></li>
+                <li><a href="/liuyao">六爻神卦</a></li>
+                <li><a href="/meihua">梅花易數</a></li>
+                <li><a href="/bazi2">八字命理</a></li>
+                <li><a href="/fengshui">易經風水</a></li>
+                <li><a href="/tarot">韋特塔羅</a></li>
+                <li><a href="/yinyuan">月老姻緣</a></li>
+                <li><a href="/answerbook">解答之書</a></li>
+                <li><a href="/name-analysis">姓名分析</a></li>
+                <li><a href="/cezi">✍️ 測字占事</a></li>
+                <li class="active"><a href="/wellness">🌿 五運養生</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" id="byokHubToggle" class="byok-nav-btn" role="button" title="自備金鑰中心 (BYOK Hub)">
+                        <i data-lucide="key" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: -2px;"></i>
+                        <span class="byok-nav-label">BYOK</span>
+                        <span class="byok-active-indicator" style="display: none;">●</span>
+                    </a>
+                </li>
+                <li><a href="#" id="darkModeToggle" class="dark-mode-toggle" data-label-light="暗黑" data-label-dark="明亮" data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式" role="button" aria-pressed="false"><span class="dark-mode-label">暗黑</span></a></li>
+                <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">888人生K線</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="suite-container">
+        <section class="suite-hero suite-hero-compact">
+            <div class="suite-hero-heading">
+                <h1>五運六氣 · 節氣經絡養生</h1>
+                <span class="suite-hero-badge">🌿 黃帝內經 · 順應天時</span>
+            </div>
+            <p class="suite-hero-desc" style="max-width: 680px; margin: 8px auto 0; text-align: center; color: var(--suite-text-muted); font-size: 14.5px;">
+                《素問·天元紀大論》：「不知年之所加，氣之盛衰，虛實之所起，不可以為工矣。」透過五運六氣解碼天地氣候節奏、體質偏頗、節氣食養與子午流注經絡穴位。
+            </p>
+        </section>
+
+        <section class="suite-card">
+            <form id="wellnessForm" toolname="wellness_consultation" tooldescription="中醫五運六氣、二十四節氣與十二時辰子午流注養生報告" toolautosubmit>
+                <div class="suite-form-row">
+                    <div class="suite-form-group">
+                        <label for="wellnessTargetYear">當前分析年份（流年客氣）</label>
+                        <input type="number" id="wellnessTargetYear" name="targetYear" class="form-control input-lg" value="2026" toolparamdescription="欲分析的流年西元年份，如 2026">
+                    </div>
+                    <div class="suite-form-group">
+                        <label for="wellnessTargetHour">當前分析時辰 / 時間（子午流注）</label>
+                        <select id="wellnessTargetHour" name="targetHour" class="form-control input-lg" toolparamdescription="欲查詢的經絡時辰">
+                            <option value="0">子時 (23:00 - 00:59 · 膽經當令)</option>
+                            <option value="2">丑時 (01:00 - 02:59 · 肝經當令)</option>
+                            <option value="4">寅時 (03:00 - 04:59 · 肺經當令)</option>
+                            <option value="6">卯時 (05:00 - 06:59 · 大腸經當令)</option>
+                            <option value="8">辰時 (07:00 - 08:59 · 胃經當令)</option>
+                            <option value="10" selected>巳時 (09:00 - 10:59 · 脾經當令)</option>
+                            <option value="12">午時 (11:00 - 12:59 · 心經當令)</option>
+                            <option value="14">未時 (13:00 - 14:59 · 小腸經當令)</option>
+                            <option value="16">申時 (15:00 - 16:59 · 膀胱經當令)</option>
+                            <option value="18">酉時 (17:00 - 18:59 · 腎經當令)</option>
+                            <option value="20">戌時 (19:00 - 20:59 · 心包經當令)</option>
+                            <option value="22">亥時 (21:00 - 22:59 · 三焦經當令)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <details class="suite-details" style="margin-top: 14px; margin-bottom: 20px;">
+                    <summary style="cursor: pointer; font-size: 13.5px; font-weight: 700; color: var(--suite-primary);">
+                        🧬 可選：加入我的出生生辰（解讀先天本命五運六氣稟賦）
+                    </summary>
+                    <div class="suite-details-body suite-form-row" style="margin-top: 12px;">
+                        <div class="suite-form-group">
+                            <label for="wellnessBirthDate">出生公曆日期 (YYYY-MM-DD)</label>
+                            <input type="date" id="wellnessBirthDate" name="birthDate" class="form-control" toolparamdescription="出生公曆日期，用於推算本命體質">
+                        </div>
+                    </div>
+                </details>
+
+                <div class="suite-submit-container">
+                    <button type="submit" id="btnSubmitWellness" class="suite-btn-submit">
+                        <span>🌿 立即排定五運六氣與子午流注養生鐘 ➔</span>
+                    </button>
+                </div>
+            </form>
+
+            <%- include('partials/ads-mobile.html') %>
+
+            <div id="wellnessLoading" class="suite-loading-state" style="display: none;">
+                <div class="suite-spinner"></div>
+                <div id="wellnessLoadingText">正在推演流年五運六氣、二十四節氣與子午流注經絡…</div>
+            </div>
+
+            <div id="wellnessError" class="alert alert-danger" style="display: none; margin-top: 16px;" role="alert"></div>
+
+            <!-- 養生分析展示區 -->
+            <div id="wellnessResultContainer" style="display: none; margin-top: 24px;"></div>
+
+            <!-- AI 養生顧問追問對話區 -->
+            <section id="wellnessFollowUpSection" class="suite-card" style="display: none; margin-top: 20px; border-top: 2px solid var(--suite-primary);">
+                <h3 style="margin-top: 0; font-size: 16.5px; font-weight: 800; color: var(--suite-primary); display: flex; align-items: center; gap: 8px;">
+                    <span>💬 向五運六氣養生顧問提問</span>
+                    <span class="suite-tag suite-tag-gold" style="font-size: 11px;">中醫智慧</span>
+                </h3>
+                <div id="wellnessFollowUpHistory" class="suite-conversation-list" style="margin-bottom: 14px;"></div>
+                <form id="wellnessFollowUpForm" onsubmit="return false;">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <textarea id="wellnessFollowUpInput" class="form-control" rows="2" placeholder="針對體質或當令節氣提問，例如：我出生年水運太過，今年少陰君火司天，飲食應如何搭配才不會心腎不交？"></textarea>
+                    </div>
+                    <div id="wellnessTurnstileWrapper" style="margin-bottom: 10px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'wellness-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
+                    </div>
+                    <button type="button" id="btnWellnessAskFollowup" class="btn suite-btn-primary">
+                        <i data-lucide="send"></i> 送出提問 ➔
+                    </button>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <%- include('partials/ads-bottom.html') %>
+    <%- include('partials/result-email.html') %>
+    <%- include('partials/site-footer.html') %>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/lucide.min.js"></script>
+    <script src="/js/markdown-renderer.js"></script>
+    <script src="/js/result-email.js"></script>
+    <script src="/js/webmcp.js"></script>
+    <script src="/js/wellness.js"></script>
+</body>
+</html>

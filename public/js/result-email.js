@@ -8,7 +8,8 @@
   const serviceNames = {
     'name-analysis': '中文姓名分析', 'tarot': '韋特塔羅／生命靈數', 'ziwei': '紫微斗數',
     'meihua': '梅花易數', 'bazi2': '八字命理', 'fengshui': '易經風水',
-    'yinyuan': '月老姻緣', 'answerbook': '解答之書', 'liuyao': '六爻神卦'
+    'yinyuan': '月老姻緣', 'answerbook': '解答之書', 'liuyao': '六爻神卦',
+    'cezi': '測字占事', 'wellness': '五運六氣養生'
   };
   const routeService = () => {
     const segment = location.pathname.split('/').filter(Boolean)[0];
@@ -275,7 +276,7 @@
   }
   window.publishSuiteEmailResult = publish;
 
-  const relevantPath = (path) => /\/api\/(name-analysis(?:\/(verify|generate)|-question)|tarot(?:\/numerology|\/reading|-question|\/llm-analysis)|ziwei(?:\/chart|\/spouse|\/male-size|-question|\/llm-analysis)?|meihua(?:-question|\/qigua|\/llm-analysis)?|liuyao(?:-question|\/toss-coin|\/cast-dayan|\/cast-datetime|\/cast-manual|\/llm-analysis)?|suite-ai\/liuyao|(?:bazi2|fengshui|yinyuan)(?:-question|\/chart|\/report|\/reading|\/llm-analysis|\/evaluate-layout|\/luantou)|answerbook(?:-question|\/llm-analysis)|[a-z0-9-]+\/llm-analysis|llm-analysis)/i.test(path);
+  const relevantPath = (path) => /\/api\/(name-analysis(?:\/(verify|generate|cezi)|-question)|tarot(?:\/numerology|\/reading|-question|\/llm-analysis)|ziwei(?:\/chart|\/spouse|\/male-size|-question|\/llm-analysis)?|meihua(?:-question|\/qigua|\/llm-analysis)?|liuyao(?:-question|\/toss-coin|\/cast-dayan|\/cast-datetime|\/cast-manual|\/llm-analysis)?|suite-ai\/liuyao|(?:bazi2|fengshui|yinyuan)(?:-question|\/chart|\/report|\/reading|\/llm-analysis|\/evaluate-layout|\/luantou|\/yunqi-wellness)|wellness(?:-question|\/question)|answerbook(?:-question|\/llm-analysis)|[a-z0-9-]+\/llm-analysis|llm-analysis)/i.test(path);
   const originalFetch = window.fetch.bind(window);
   window.fetch = async (...args) => {
     const response = await originalFetch(...args);

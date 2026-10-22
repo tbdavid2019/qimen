@@ -1695,6 +1695,24 @@
 				birthDate: { type: "string", description: "問事者出生日期 (YYYY-MM-DD，選填)" }
 			},
 			required: ["character", "question"]
+		}),
+		cezi_divination: createSuiteTool("cezi_divination", "漢字測字占事，輸入單一漢字與占問事項，結合說文解字拆形、康熙筆畫、81數理、梅花字卦與八字喜忌推演占斷。", "/api/name-analysis/cezi", {
+			type: "object",
+			properties: {
+				char: { type: "string", minLength: 1, maxLength: 2, description: "占事測字漢字（1個字）" },
+				character: { type: "string", minLength: 1, maxLength: 2, description: "占事測字漢字（同 char）" },
+				question: { type: "string", description: "占問具體事項" },
+				birthDate: { type: "string", description: "問事者出生日期 (YYYY-MM-DD，選填)" }
+			},
+			required: ["question"]
+		}),
+		wellness_consultation: createSuiteTool("wellness_consultation", "中醫五運六氣、二十四節氣與十二時辰子午流注養生報告推演。", "/api/bazi2/yunqi-wellness", {
+			type: "object",
+			properties: {
+				targetYear: { type: "integer", default: 2026, description: "欲分析的流年西元年份，如 2026" },
+				currentHour: { type: "integer", minimum: 0, maximum: 23, description: "當前小時 (0-23) 用於子午流注當令經絡" },
+				date: { type: "string", description: "出生公曆日期 (YYYY-MM-DD，選填用於先天本命體質稟賦)" }
+			}
 		})
 	});
 
@@ -1752,6 +1770,19 @@
 				toolDefinitions.ziwei_future_spouse,
 				toolDefinitions.switch_theme,
 				toolDefinitions.send_conversation_email,
+			];
+		} else if (pathname === "/cezi") {
+			toolsToRegister = [
+				toolDefinitions.cezi_divination,
+				toolDefinitions.name_cezi_divination,
+				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email
+			];
+		} else if (pathname === "/wellness" || pathname === "/yunqi") {
+			toolsToRegister = [
+				toolDefinitions.wellness_consultation,
+				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email
 			];
 		} else if (pathname === "/name-analysis") {
 			toolsToRegister = [

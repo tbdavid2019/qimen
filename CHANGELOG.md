@@ -4,6 +4,27 @@
 
 ## [2026-10-22]
 
+### ✍️ 獨立測字占事 (`/cezi`) 與 🌿 獨立五運養生 (`/wellness`) 雙模組上線與全站導航貫通
+
+- **獨立測字占事專頁 (`views/cezi.html`, `public/js/cezi.js`, `GET /cezi`)**：
+  - 打造獨立極致直覺的測字占事互動專頁，解決先前僅隱藏於姓名分析子標籤、無法由外部直達的問題。
+  - 核心功能：單個漢字輸入（超大獨立漢字預覽框）、高頻問事分類膠囊快速點選、選填八字生辰互補、4 大結果解讀卡片（字形五行筆畫考據、梅花字卦成卦、81 數理吉凶、宗師直斷與行動錦囊）。
+  - 整合 AI 宗師連續深度追問對話區（`POST /api/name-analysis-question`）與 Cloudflare Turnstile 防護。
+  - 整合 `js-open-result-email` 報告寄送模組，支援一鍵將測字分析發送至個人電子信箱。
+- **獨立五運六氣與子午流注經絡養生專頁 (`views/wellness.html`, `public/js/wellness.js`, `GET /wellness`, `GET /yunqi`)**：
+  - 打造正統《黃帝內經》五運六氣與子午流注經絡養生專屬介面，支援 `/wellness` 及 `/yunqi` 301 轉址。
+  - 核心功能：指定流年歲運太過/不及推演、司天在泉客氣氣候節奏、可選輸入出生生辰解讀先天本命五運六氣體質稟賦、當令 24 節氣食養起居宜忌，以及 12 時辰子午流注互動鐘（當令經絡綠光高亮、點選即查經絡穴位保健指引）。
+  - 打造專屬 AI 中醫養生顧問追問端點 (`POST /api/wellness/question`, `POST /api/wellness-question`)，支援 Discord Webhook 紀錄存檔與連續多輪對話。
+  - 整合 `js-open-result-email` 報告寄送模組，支援一鍵將五運六氣養生報告發送至個人電子信箱。
+- **全站 12 頁頂部導航欄貫通 (`views/*.html`)**：
+  - 全數 12 個視圖（`index.html`, `ziwei.html`, `liuyao.html`, `meihua.html`, `bazi2.html`, `fengshui.html`, `tarot.html`, `yinyuan.html`, `answerbook.html`, `name-analysis.html`, `cezi.html`, `wellness.html`）導覽列同步補齊 `✍️ 測字占事` (`/cezi`) 與 `🌿 五運養生` (`/wellness`) 導航項目，保持高質感與全端一致性。
+- **首頁專屬 Punchy & Prominent 導流探索區 (`views/index.html`)**：
+  - 於首頁上方置頂嵌入兩大特色功能高對比雙色漸層導流卡片，支援微光懸浮動態回饋、主標粗體與強烈行動箭頭 CTA（「立即揭秘 ➔」、「立即推演 ➔」），杜絕訪客找不到獨立入口之痛點。
+- **WebMCP 標準宣告對齊 (`public/js/webmcp.js`)**：
+  - 擴充並註冊 `cezi_divination` 與 `wellness_consultation` WebMCP 工具定義，宣告於 `/cezi` 與 `/wellness` 獨立路由中。
+- **郵件格式化模組擴充 (`public/js/email-formatter.js`, `lib/email-formatter.js`)**：
+  - 前後端通用郵件格式化模組新增 `formatCeziReport` 與 `formatWellnessReport`，優雅輸出 Markdown 郵件格式，杜絕 raw JSON。
+
 ### 🔮 東方智慧全套升級 Tier 1~Tier 4 全功能落地（八字 2.0 / 陽宅三要形煞 / 月老合婚 / 奇六梅三術同參 / 測字占事 / WebMCP 擴充）
 
 - **生辰八字 2.0 深度擴充 (`views/bazi2.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)**：

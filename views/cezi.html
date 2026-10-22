@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>測字占事 · 拆字觸機易理顧問 · 一字照見吉凶機鋒</title>
+    <meta name="description" content="線上正統漢字測字占事系統：輸入心中浮現之單一漢字與欲占之事，透過康熙筆畫、字形結構拆字解構、81數理吉凶、梅花易數字卦與生辰五行喜用合參，直斷吉凶趨勢與行動對策。">
+    <link rel="canonical" href="https://qi.david888.com/cezi">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="測字占事 · 拆字觸機易理顧問 · 一字照見吉凶機鋒">
+    <meta property="og:description" content="線上正統漢字測字占事系統：輸入單字觸機起卦，透過康熙筆畫、拆字結構、81數理、梅花字卦與八字五行補益，直斷吉凶機鋒。">
+    <meta property="og:url" content="https://qi.david888.com/cezi">
+    <meta property="og:site_name" content="333 一句提醒·照見當下">
+    <meta property="og:image" content="https://qi.david888.com/og-image.png">
+    <meta property="og:image:secure_url" content="https://qi.david888.com/og-image.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://qi.david888.com/og-image.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#111a20">
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {}
+        })();
+    </script>
+    <%- include('partials/ads-head.html') %>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style-new.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/divination-suite.css">
+    <link rel="stylesheet" href="/css/theme-atelier.css">
+    <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
+    <style>
+        .cezi-single-char-input {
+            width: 96px;
+            height: 96px;
+            font-size: 52px;
+            font-weight: 800;
+            text-align: center;
+            line-height: 96px;
+            border-radius: 16px;
+            border: 2.5px solid #f59e0b;
+            background: var(--suite-bg, #fff);
+            color: #b45309;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+            margin: 0 auto;
+            display: block;
+            transition: all 0.2s ease;
+        }
+        .cezi-single-char-input:focus {
+            border-color: #d97706;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+            transform: scale(1.04);
+        }
+        .cezi-purpose-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .cezi-purpose-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--suite-border);
+            background: var(--suite-bg-card, rgba(255,255,255,0.04));
+            color: var(--suite-text);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .cezi-purpose-pill:hover, .cezi-purpose-pill.active {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+        [data-theme="dark"] .cezi-single-char-input {
+            background: #1e1b18;
+            color: #fbbf24;
+            border-color: #d97706;
+        }
+        [data-theme="dark"] .cezi-purpose-pill:hover, [data-theme="dark"] .cezi-purpose-pill.active {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fef3c7;
+        }
+    </style>
+</head>
+<body class="suite-page" data-suite="cezi" data-llm-enabled="<%= enableLLM ? 'true' : 'false' %>">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切換導航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">333 一句提醒·照見當下</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">奇門遁甲</a></li>
+                <li><a href="/ziwei">紫微斗數</a></li>
+                <li><a href="/liuyao">六爻神卦</a></li>
+                <li><a href="/meihua">梅花易數</a></li>
+                <li><a href="/bazi2">八字命理</a></li>
+                <li><a href="/fengshui">易經風水</a></li>
+                <li><a href="/tarot">韋特塔羅</a></li>
+                <li><a href="/yinyuan">月老姻緣</a></li>
+                <li><a href="/answerbook">解答之書</a></li>
+                <li><a href="/name-analysis">姓名分析</a></li>
+                <li class="active"><a href="/cezi">✍️ 測字占事</a></li>
+                <li><a href="/wellness">🌿 五運養生</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" id="byokHubToggle" class="byok-nav-btn" role="button" title="自備金鑰中心 (BYOK Hub)">
+                        <i data-lucide="key" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: -2px;"></i>
+                        <span class="byok-nav-label">BYOK</span>
+                        <span class="byok-active-indicator" style="display: none;">●</span>
+                    </a>
+                </li>
+                <li><a href="#" id="darkModeToggle" class="dark-mode-toggle" data-label-light="暗黑" data-label-dark="明亮" data-title-light="切換為暗黑模式" data-title-dark="切換為明亮模式" role="button" aria-pressed="false"><span class="dark-mode-label">暗黑</span></a></li>
+                <li><a href="https://bazi.david888.com/" target="_blank" rel="noopener">888人生K線</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="suite-container">
+        <section class="suite-hero suite-hero-compact">
+            <div class="suite-hero-heading">
+                <h1>測字占事 · 拆字觸機</h1>
+                <span class="suite-hero-badge">✍️ 一字定乾坤 · 觸機知吉凶</span>
+            </div>
+            <p class="suite-hero-desc" style="max-width: 680px; margin: 8px auto 0; text-align: center; color: var(--suite-text-muted); font-size: 14.5px;">
+                心有所動，字現機鋒。輸入當下心中浮現的一個漢字與想問之事，宗師以說文拆形、康熙筆畫、81數理與梅花字卦，全方位剖析事態吉凶。
+            </p>
+        </section>
+
+        <section class="suite-card">
+            <form id="standaloneCeziForm" toolname="cezi_divination" tooldescription="漢字測字占事：輸入單一漢字與問題取得拆字象數理吉凶直斷" toolautosubmit>
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <label for="ceziCharInput" style="display: block; font-size: 15px; font-weight: 700; color: var(--suite-primary); margin-bottom: 12px;">
+                        請在下方方格填寫「心中浮現的一個漢字」：
+                    </label>
+                    <input type="text" id="ceziCharInput" name="character" class="cezi-single-char-input" maxlength="2" placeholder="字" autofocus required autocomplete="off" toolparamdescription="欲測之單個漢字，如：明、泰、轉、安">
+                    <span style="display: block; font-size: 12.5px; color: var(--suite-text-muted); margin-top: 8px;">
+                        💡 觸機起念，憑第一直覺寫下之字最為靈驗
+                    </span>
+                </div>
+
+                <div class="suite-form-group">
+                    <label for="ceziQuestionInput" style="font-weight: 700;">欲占問之具體事項（求問主題與焦點）</label>
+                    <input type="text" id="ceziQuestionInput" name="question" class="form-control input-lg" placeholder="例如：下半年這筆合夥創業是否適合推進？" required toolparamdescription="欲占問之具體事項或困惑">
+                    <div class="cezi-purpose-pills">
+                        <button type="button" class="cezi-purpose-pill" data-text="近期事業升遷與跳槽轉職是否順利？">💼 事業跳槽</button>
+                        <button type="button" class="cezi-purpose-pill" data-text="眼前這筆投資與合夥能否賺錢獲利？">💰 求財投資</button>
+                        <button type="button" class="cezi-purpose-pill" data-text="我和對方的感情婚姻走向如何？">❤️ 感情婚姻</button>
+                        <button type="button" class="cezi-purpose-pill" data-text="這次重大考核、考試能否順利通過？">📚 考試晉升</button>
+                        <button type="button" class="cezi-purpose-pill" data-text="目前面臨的重大抉擇應該進還是守？">🧭 重大抉擇</button>
+                    </div>
+                </div>
+
+                <details class="suite-details" style="margin-top: 14px; margin-bottom: 20px;">
+                    <summary style="cursor: pointer; font-size: 13.5px; font-weight: 700; color: var(--suite-primary);">
+                        ⚙️ 可選：加入我的出生生辰（五行喜用神合參加權）
+                    </summary>
+                    <div class="suite-details-body suite-form-row" style="margin-top: 12px;">
+                        <div class="suite-form-group">
+                            <label for="ceziBirthDateInput">出生西曆日期</label>
+                            <input type="date" id="ceziBirthDateInput" name="birthDate" class="form-control" toolparamdescription="問事者出生公曆日期 YYYY-MM-DD">
+                        </div>
+                        <div class="suite-form-group">
+                            <label for="ceziSexInput">性別</label>
+                            <select id="ceziSexInput" name="sex" class="form-control">
+                                <option value="男" selected>男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                    </div>
+                </details>
+
+                <div class="suite-submit-container">
+                    <button type="submit" id="btnSubmitCezi" class="suite-btn-submit">
+                        <span>✍️ 立即測字起卦斷吉凶 ➔</span>
+                    </button>
+                </div>
+            </form>
+
+            <%- include('partials/ads-mobile.html') %>
+
+            <div id="ceziLoading" class="suite-loading-state" style="display: none;">
+                <div class="suite-spinner"></div>
+                <div id="ceziLoadingText">正在以漢字起卦，推演康熙筆畫、梅花易數與象數義理…</div>
+            </div>
+
+            <div id="ceziError" class="alert alert-danger" style="display: none; margin-top: 16px;" role="alert"></div>
+
+            <!-- 測字結果展示區 -->
+            <div id="ceziResultCard" style="display: none; margin-top: 24px;"></div>
+
+            <!-- AI 追問對話區 -->
+            <section id="ceziFollowUpSection" class="suite-card" style="display: none; margin-top: 20px; border-top: 2px solid var(--suite-primary);">
+                <h3 style="margin-top: 0; font-size: 16.5px; font-weight: 800; color: var(--suite-primary); display: flex; align-items: center; gap: 8px;">
+                    <span>💬 針對此字提出深度追問</span>
+                    <span class="suite-tag suite-tag-gold" style="font-size: 11px;">AI 宗師直斷</span>
+                </h3>
+                <div id="ceziFollowUpHistory" class="suite-conversation-list" style="margin-bottom: 14px;"></div>
+                <form id="ceziFollowUpForm" onsubmit="return false;">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <textarea id="ceziFollowUpInput" class="form-control" rows="2" placeholder="針對測字結果進一步請教，例如：如果要避開此凶格，下個月應該注意什麼方位？"></textarea>
+                    </div>
+                    <div id="ceziTurnstileWrapper" style="margin-bottom: 10px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'cezi-followup-turnstile', action: 'name_analysis_question', explicit: true }) %>
+                    </div>
+                    <button type="button" id="btnCeziAskFollowup" class="btn suite-btn-primary">
+                        <i data-lucide="send"></i> 送出追問 ➔
+                    </button>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <%- include('partials/ads-bottom.html') %>
+    <%- include('partials/result-email.html') %>
+    <%- include('partials/site-footer.html') %>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/lucide.min.js"></script>
+    <script src="/js/markdown-renderer.js"></script>
+    <script src="/js/result-email.js"></script>
+    <script src="/js/webmcp.js"></script>
+    <script src="/js/cezi.js"></script>
+</body>
+</html>

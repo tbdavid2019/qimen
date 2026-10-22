@@ -217,6 +217,8 @@
 | **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (4種視角), `time_factor`, `seed`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
 | **解答之書** | `mode` (direct/question), `question`, `conversationHistory` | `/answerbook` | `POST /api/answerbook-question` | `skills/answerbook-consultant/scripts/ask_answerbook.js` | `answerbook_reading` |
 | **中文姓名分析** | 驗名 `name` (2–8 字), `surname`, `profile`; 取名 `givenNameLength` (1–4), `includeChars`, `excludeChars`, `desiredElements`, `nameStyle`, `birthData`, `limit`; 測字 `text`, `matter`, `sex` | `/name-analysis` | `POST /api/name-analysis/verify`, `/api/name-analysis/generate`, `/api/name-analysis/cezi`, `/api/name-analysis-question` | `skills/name-analysis-consultant/scripts/name_analysis_cli.js` | `name_analysis_verify`, `name_analysis_generate`, `name_analysis_question`, `name_cezi_divination` |
+| **獨立測字占事** | `char` (單字), `question` (事項), `birthDate` (選填八字互補), `sex` | `/cezi` | `POST /api/name-analysis/cezi`, `POST /api/name-analysis-question` | `skills/name-analysis-consultant/scripts/name_analysis_cli.js` | `cezi_divination`, `name_cezi_divination` |
+| **五運六氣養生** | `targetYear`, `currentHour` (時辰 0-23), `birthDate` (先天體質), `question` | `/wellness` (`/yunqi`) | `POST /api/bazi2/yunqi-wellness`, `POST /api/wellness/question` | `lib/advanced-wisdom.js` | `wellness_consultation` |
 | **三術同參會診** | `question`, `category`, `datetime`, `method` | `/liuyao` | `POST /api/combo/decision` | `skills/liuyao-consultant/scripts/ask_liuyao.js` | `combo_decision_hecan` |
 | **時間範圍校正** | `startDate`, `endDate`, `timezone`, `precision` | `/` | `GET/POST /api/time/range` | `lib/civil-time.js` | `date_range_normalize` |
 
@@ -239,6 +241,26 @@
 - 驗名：`POST /api/name-analysis/verify`，JSON 範例 `{"name":"歐陽明月清風","profile":"taiwanKangxi"}`。可選 `surname` 明確指定姓氏。
 - 取名：`POST /api/name-analysis/generate`，JSON 範例 `{"surname":"歐陽","givenNameLength":3,"includeChars":["安"],"excludeChars":["凶"],"desiredElements":["木"],"nameStyle":"feminine","limit":20}`。`nameStyle` 支援 `auto`（預設，參照已提供的 `birthData.sex`，無性別資料時中性）、`feminine`、`masculine`、`neutral`。候選排序結合編輯整理的風格字表、CCNC 365 萬筆姓名語料中按標註性別統計的用字與名字字組，以及明確條件；只是可覆寫的軟性習慣，不代表性別判定。候選會列出風格相符／不同的字及語料觀察數。
 - 測字：`POST /api/name-analysis/cezi`，JSON 範例 `{"text":"安","matter":"事業升遷","sex":"乾造"}`。支援輸入一個或多個漢字，解析漢字字形結構、部首象徵、康熙筆畫與五行屬性，自動起梅花易數占事卦（本互變錯綜五卦），連動 81 數理與八字五行補益，提供宗師斷語、字相吉凶與拆字解構玄機，完整支援多輪連續追問對話與結果郵件寄送。
+
+### 獨立專頁：測字占事 (`/cezi`)
+提供獨立直覺的單字問事專屬介面，免去傳統起卦繁瑣排盤：
+- **路徑**：`/cezi`
+- **核心功能**：輸入單個漢字與具體占問事項（可點選「求財投資」、「工作升遷」、「感情婚姻」、「重大抉擇」等快捷膠囊），可選填出生生辰進行命盤五行喜忌互補。
+- **後端端點**：`POST /api/name-analysis/cezi`、`POST /api/name-analysis-question`（支援 AI 宗師深度連續追問）。
+- **WebMCP**：`cezi_divination`、`name_cezi_divination`。
+- **報告匯出**：整合 `js-open-result-email` 一鍵發送完整測字占事報告至電子信箱。
+
+### 獨立專頁：五運六氣與子午流注經絡養生 (`/wellness`)
+依據《黃帝內經》正統五運六氣推演，解碼流年客氣、本命體質稟賦與 12 時辰經絡氣血循行：
+- **路徑**：`/wellness`（兼相容 `/yunqi` 301 轉址）
+- **核心功能**：
+  1. **流年歲運與客氣推演**：分析指定流年之中運（太過/不及）、司天之氣、在泉之氣與氣候臟腑影響。
+  2. **先天體質稟賦解碼**：輸入出生年月日，推算先天本命大運與司天在泉偏頗，提供客製化調養大法。
+  3. **當令二十四節氣食養起居**：動態對應立春、雨水等 24 節氣之五行屬性、飲食宜忌與作息建議。
+  4. **十二時辰子午流注經絡鐘**：即時高亮當令經絡與推薦作息，點選任一時辰即刻切換該經脈穴位保健法。
+- **後端端點**：`POST /api/bazi2/yunqi-wellness`、`POST /api/wellness/question`（支援中醫養生顧問 AI 連續追問）。
+- **WebMCP**：`wellness_consultation`。
+- **報告匯出**：支援一鍵寄送完整五運六氣養生報告至個人電子信箱。
 - 問答：`POST /api/name-analysis-question`，傳入驗名或取名參數並可附 `question`（最多 1,000 字）。沒有設定 LLM 或未提供問題時只回傳確定性結果。驗名與取名的完整輸入和結果送至 Discord webhook；若使用補充解讀，姓名及確定性分析結果會送至設定的 LLM，原始出生日期與時間不加入 LLM prompt，衍生八字摘要可能包含在分析結果中。
 - 數理：五格採 `data/name-analysis/method-profiles.json` 所列版本；81 數理與三才分項呈現，不合併成單一「命運分數」。名字部分超過兩字時標示延伸算法，生肖部首喜忌則因缺乏可驗證來源而未啟用。風格字表可由 `GET /data/name-analysis/name-style-profiles.json` 讀取，方法／來源可由 `GET /data/name-analysis/method-profiles.json` 讀取。
 - 命名候選字取自專案整理且符合字義／筆畫資料的字池，排序參考來源與限制見 `data/name-analysis/SOURCES.md`。CCNC 是中國大陸來源且以一至二字名字為主；長名字僅使用字頻與首兩字的相鄰字統計。語料量不等於台灣新生兒頻率，這些統計不是個人性別判定或姓名品質評分。統計檔可由 `GET /data/name-analysis/name-corpus-profile.json` 查閱，來源授權為 GPL-3.0 並保留授權全文；專案及衍生統計採 AGPL-3.0。
