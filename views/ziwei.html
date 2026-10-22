@@ -250,7 +250,12 @@
 
         <!-- 解讀與追問區域 -->
         <div id="suiteAiSection" class="suite-card" hidden>
-            <div class="suite-board-title" style="margin-bottom: 16px;">🏮 紫微命理解讀</div>
+            <div class="suite-board-title" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                <span>🏮 紫微命理解讀</span>
+                <button type="button" class="suite-copy-btn js-open-result-email" title="將完整排盤與問答寄至信箱">
+                    ✉️ 寄送至信箱
+                </button>
+            </div>
             
             <div id="suiteAiLoading" class="suite-loading-box" hidden>
                 <div class="suite-spinner"></div>
@@ -268,6 +273,11 @@
                     <span class="input-group-btn">
                         <button class="btn suite-btn-secondary" type="submit">發送追問</button>
                     </span>
+                </div>
+                <div class="suite-followup-actions-bar">
+                    <button type="button" class="suite-btn-email-inline js-open-result-email">
+                        ✉️ 將完整命盤、解讀與以上問答寄到我的信箱 ➔
+                    </button>
                 </div>
             </form>
         </div>

@@ -2,6 +2,38 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-10-22]
+
+### ✉️ 全站問答寄信系統深度修復與內嵌按鈕全模組補齊
+
+- **解答之書輕量化 (`views/answerbook.html`)**：
+  - 依使用者明確指令移除「解答之書」的結果寄信視窗與腳本模組，保持單純輕量之當下隨機啟示體驗。
+- **寄信核心重大修復與多輪追問完整匯出 (`public/js/result-email.js`)**：
+  - **修復 AI 解讀覆寫 Bug**：升級 `publish(service, report, summary, opts)` 參數相容性，當傳入物件參數時自動識別 `opts`，並智慧保留已存在之 AI 深度解讀（`supplement` / `initialSupplement`），絕不把剛產生的宗師解讀沖刷抹除。
+  - **多輪對話歷史無縫組裝 (`buildSuiteEmailExportHistory`)**：新增 `buildExportHistory()` 函式，完整自動讀取全域對話流（`window.conversationHistory` / `window.meihuaConversationHistory`），首筆保留純命盤/卦象/姓名學結構，接續依序匯出使用者之提問與宗師的各輪深度解答，支援單元測試校驗。
+  - **全域內嵌按鈕事件代理 (`window.openSuiteResultEmailDialog`)**：抽離視窗開啟邏輯為具名函式，並於 `document` 層級掛載 `.js-open-result-email` 點擊事件代理，全站任何內嵌按鈕皆能一鍵召喚寄信彈窗。
+  - **自動狀態提示更新**：當偵測到補充解讀或多輪對話產生時，自動將懸浮按鈕文案更新為「✉️ 寄送完整結果與問答」。
+- **全站 8 大問答頁面內嵌寄信入口補齊 (`views/*.html`, `public/js/*.js`)**：
+  - **六爻神卦 (`views/liuyao.html`, `public/js/liuyao.js`)**：於 AI 解讀標題列新增「寄送至信箱」複製鈕，並於追問框底部新增「✉️ 將完整卦象、宗師解讀與以上問答寄到我的信箱 ➔」快捷列；新起卦時自動重置對話歷史。
+  - **梅花易數 (`views/meihua.html`, `public/js/meihua.js`)**：於解卦表單操作區新增「✉️ 寄送解卦與問答至信箱」按鈕，並於各輪 AI 解卦氣泡標題列嵌入寄信鈕；起卦時重置對話歷史並與全域同步。
+  - **命理套件 5 模組 (`views/bazi2.html`, `views/ziwei.html`, `views/fengshui.html`, `views/tarot.html`, `views/yinyuan.html`, `public/js/divination-suite.js`)**：於 AI 解讀標題列與追問表單底部統一嵌入寄信入口；並於「看出未來另一半」、「男生真實尺寸速測」、「生命靈數與靈魂牌」三大確定性直斷卡片底部附帶寄信按鈕。
+  - **中文姓名分析 (`views/name-analysis.html`, `public/js/name-analysis.js`)**：於排盤結果底部附帶寄信入口；支援多輪連續追問對話歷史累加呈現（不覆蓋前題），表單操作列新增彈性寄信快捷鈕。
+
+### 📱 全站手機版 RWD 與觸控體驗優化（遵循 Impeccable 與 Mobile-Native 規範，WCAG AA/AAA）
+
+- **頂部 10 模組導覽列橫向滾動與自動置中 (`public/js/theme.js`, `public/js/divination-suite.js`, `public/css/style-new.css`, `public/css/divination-suite.css`)**：
+  - 新增輕量自動置中腳本：進入頁面時將當前啟用的導覽模組標籤自動置中於橫向可捲動視區中央（`behavior: 'auto'`），防止觸發頁面垂直跳動。
+  - 加入 `scroll-snap-type: x proximity`、`touch-action: manipulation` 與 `-webkit-overflow-scrolling: touch`，手機版右側添加漸層遮罩提示橫向滑動可能。
+- **三大九宮格／十二宮盤手機防擠壓與防截斷**：
+  - **奇門遁甲九宮格 (`public/css/style-new.css` / `public/css/style.css`)**：在 `< 576px` 手機寬度下將 `.pan-grid` 設為 `aspect-ratio: auto` 與彈性行高，宮位 `.gong` 最小高度 112px，消除固定比例導致的內容被截斷或窄螢幕溢出問題。
+  - **紫微斗數十二宮盤 (`public/css/divination-suite.css`)**：在 `< 640px` 手機直向瀏覽下，將 `.ziwei-grid` 縮減間距至 3px、字體 11.5px、單宮最小高度 92px，字詞自動折行防爆版。
+  - **易經風水九宮格 (`public/css/divination-suite.css`)**：物件膠囊 `.fs-cat-pill` / `.fs-item-pill` 放大為 40px 高度觸控舒適標靶，九宮格單元格內距與間距優化。
+- **全站表單防 iOS 自動強制放大與操作按鈕規格升級**：
+  - 在全站 `@media (max-width: 768px)` 下，強制各類輸入框（`input`、`select`、`textarea`）為 `font-size: 16px !important;`，徹底根除 iOS Safari 點擊聚焦時的畫面自動放大體驗問題。
+  - 全站追問與操作列按鈕全面達標 44px 最小觸控標靶高度。
+  - 打造高質感 `.suite-followup-actions-bar` 與 `.suite-btn-email-inline`，採用暖金琥珀漸層、微光暈懸浮陰影與高對比深金/墨金字體，深淺色模式皆超越 WCAG AA/AAA 標準。
+  - 優化手機版懸浮寄信按鈕避讓底部追問輸入框，並自適應 safe-area-inset-bottom。
+
 ## [2026-10-20]
 
 ### 🎨 奇門遁甲「時空起盤 · 精度校準」Atelier 深色高對比選中態修復

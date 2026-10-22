@@ -422,3 +422,103 @@ body {
 .wuxing-yang {
     color: #FF9800 !important; /* 阳-橙色 */
 }
+
+/* ==========================================================================
+   奇門九宮格手機版防擠壓與防截斷、導覽列優化
+   ========================================================================== */
+
+.suite-top-nav {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.suite-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 6px 12px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.suite-nav-inner::-webkit-scrollbar {
+    display: none;
+}
+.suite-nav-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: center;
+    min-height: 40px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2C221E;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    text-decoration: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+.suite-nav-pill.active {
+    color: #fff;
+    background: linear-gradient(135deg, #c2410c, #9a3412);
+    border-color: #9a3412;
+    font-weight: 700;
+}
+[data-theme="dark"] .suite-nav-pill {
+    color: #EDE5DC;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+[data-theme="dark"] .suite-nav-pill.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #c2410c, #9a3412);
+    border-color: #ea580c;
+}
+
+@media (max-width: 768px) {
+    .suite-top-nav {
+        -webkit-mask-image: linear-gradient(to right, #000 92%, transparent 100%);
+        mask-image: linear-gradient(to right, #000 92%, transparent 100%);
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="email"],
+    select,
+    textarea,
+    .form-control {
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .pan-grid {
+        display: grid !important;
+        aspect-ratio: auto !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        grid-template-rows: repeat(3, auto) !important;
+        gap: 4px !important;
+    }
+    .gong {
+        aspect-ratio: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 112px !important;
+        padding: 6px 4px !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+    .gong-content {
+        padding: 4px !important;
+        height: auto !important;
+    }
+}

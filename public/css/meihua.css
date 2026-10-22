@@ -495,3 +495,22 @@ body.meihua-page {
     from { opacity: 1; transform: translateY(0) scale(1); }
     to { opacity: 0; transform: translateY(-10px) scale(0.95); }
 }
+
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea,
+    .form-control,
+    .suite-input,
+    .suite-textarea {
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .meihua-action-bar button,
+    .suite-submit-container button {
+        min-height: 44px !important;
+    }
+}

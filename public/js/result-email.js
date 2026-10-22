@@ -230,12 +230,29 @@
 
   const getFormatter = () => window.DivinationEmailFormatter || Formatter;
 
-  function publish(service, report, summary) {
+  function publish(service, report, summary, opts = {}) {
     if (!report) return;
+    if (summary && typeof summary === 'object') {
+      opts = summary;
+      summary = opts.summary || (opts.question ? `占問：${opts.question}` : '');
+    }
     const sName = service || routeService();
     const fmt = getFormatter();
+
+    // 僅在明確傳入 opts.supplement 或同一次排盤物件重發時保留已存在的 AI 解讀，避免新排盤沿用舊解讀
+    const isSameReport = Boolean(
+      lastReport &&
+      lastReport.module === sName &&
+      (lastReport.raw === report || (lastReport.raw && lastReport.raw.result && lastReport.raw.result === report))
+    );
+    let supplement = opts.supplement || '';
+    if (!supplement && isSameReport) {
+      supplement = lastReport.initialSupplement || lastReport.supplement || '';
+    }
+
+    const formatOpts = supplement ? { supplement, ...opts } : { ...opts };
     const humanSummary = (fmt.formatChartSummary ? fmt.formatChartSummary(sName, report, summary) : (fmt.formatSummary ? fmt.formatSummary(sName, report) : summary)) || summary || '';
-    const humanText = fmt.formatHumanReadableReport ? fmt.formatHumanReadableReport(sName, report) : fmt.formatReport(sName, report);
+    const humanText = fmt.formatHumanReadableReport ? fmt.formatHumanReadableReport(sName, report, formatOpts) : fmt.formatReport(sName, report, formatOpts);
     const humanSubject = fmt.formatSubject(sName, report);
     
     lastReport = {
@@ -244,8 +261,14 @@
       text: humanText,
       subject: humanSubject,
       raw: report,
-      module: sName
+      module: sName,
+      supplement: supplement || '',
+      initialSupplement: supplement || (isSameReport ? (lastReport?.initialSupplement || '') : '')
     };
+    const openBtn = document.getElementById('suiteResultEmailOpen');
+    if (openBtn) {
+      openBtn.textContent = lastReport.supplement ? '✉️ 寄送完整結果與問答' : '✉️ 寄送結果至信箱';
+    }
     launcher.hidden = false;
     document.body.classList.add('has-suite-email-result');
     window.lastSuiteResult = report;
@@ -274,10 +297,15 @@
             if (isSupplement && lastReport?.module === service) {
               const supplement = safe.analysis || safe.result || safe;
               const suppText = typeof supplement === 'string' ? supplement : (supplement.analysis || JSON.stringify(supplement, null, 2));
+              lastReport.initialSupplement = lastReport.initialSupplement || suppText;
               lastReport.supplement = suppText;
               const fmt = getFormatter();
               lastReport.text = fmt.formatHumanReadableReport ? fmt.formatHumanReadableReport(service, lastReport.raw, { supplement: suppText }) : fmt.formatReport(service, lastReport.raw, { supplement: suppText });
               window.lastSuiteResult = { calculation: lastReport.raw, supplement };
+              const openBtn = document.getElementById('suiteResultEmailOpen');
+              if (openBtn) {
+                openBtn.textContent = '✉️ 寄送完整結果與問答';
+              }
             } else {
               publish(service, safe, summary);
             }
@@ -323,15 +351,71 @@
     });
   }
 
-  document.getElementById('suiteResultEmailOpen').addEventListener('click', async () => {
+  async function openEmailDialog() {
     status.textContent = ''; status.dataset.state = '';
     sendButton.disabled = false; sendButton.textContent = '確認寄送 ➔';
     try { input.value = localStorage.getItem('user_consultation_email') || ''; } catch (_) {}
-    if (typeof modal.showModal === 'function') modal.showModal(); else modal.setAttribute('open', '');
+    if (typeof modal.showModal === 'function') {
+      if (!modal.open) {
+        try { modal.showModal(); } catch (_) { modal.setAttribute('open', ''); }
+      }
+    } else {
+      modal.setAttribute('open', '');
+    }
     try { await ensureTurnstile(); } catch (error) { status.textContent = error.message; status.dataset.state = 'error'; }
+  }
+  window.openSuiteResultEmailDialog = openEmailDialog;
+
+  const openBtn = document.getElementById('suiteResultEmailOpen');
+  if (openBtn) {
+    openBtn.addEventListener('click', openEmailDialog);
+  }
+
+  // 全域內嵌按鈕點擊代理（Event Delegation），任何頁面的 .js-open-result-email 皆可觸發開啟彈窗
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.js-open-result-email, [data-open-result-email]');
+    if (btn) {
+      e.preventDefault();
+      openEmailDialog();
+    }
   });
+
   modal.querySelector('.suite-email-close').addEventListener('click', () => modal.close());
   modal.querySelector('.suite-email-cancel').addEventListener('click', () => modal.close());
+
+  function buildExportHistory() {
+    const rawConv = (Array.isArray(window.conversationHistory) && window.conversationHistory.length > 0)
+      ? window.conversationHistory
+      : (Array.isArray(window.meihuaConversationHistory) && window.meihuaConversationHistory.length > 0
+          ? window.meihuaConversationHistory
+          : []);
+
+    if (!lastReport) {
+      if (rawConv.length > 0) {
+        return rawConv.map(msg => ({ role: msg.role, content: msg.content }));
+      }
+      return [];
+    }
+
+    if (rawConv.length > 0) {
+      const fmt = getFormatter();
+      // 第一筆放純排盤／命盤／姓名報告（不帶 supplement 以免與 rawConv 內第一輪重複）
+      const chartOnlyText = fmt.formatHumanReadableReport
+        ? fmt.formatHumanReadableReport(lastReport.service, lastReport.raw, {})
+        : fmt.formatReport(lastReport.service, lastReport.raw, {});
+      const history = [{ role: 'assistant', content: chartOnlyText }];
+      for (const msg of rawConv) {
+        if (msg && msg.role && msg.content) {
+          history.push({ role: msg.role, content: msg.content });
+        }
+      }
+      return history;
+    }
+
+    return [{ role: 'assistant', content: lastReport.text || `# ${lastReport.service}結果\n\n${lastReport.summary}` }];
+  }
+  window.buildSuiteEmailExportHistory = buildExportHistory;
+
   sendButton.addEventListener('click', async () => {
     status.textContent = ''; status.dataset.state = '';
     const email = input.value.trim();
@@ -344,7 +428,7 @@
     sendButton.disabled = true; sendButton.textContent = '正在寄送…';
     try {
       try { localStorage.setItem('user_consultation_email', email); } catch (_) {}
-      const history = [{ role: 'assistant', content: lastReport.text || `# ${lastReport.service}結果\n\n${lastReport.summary}` }];
+      const history = buildExportHistory();
       const payload = {
         email,
         service: lastReport.service,

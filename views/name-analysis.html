@@ -153,7 +153,10 @@
           <div id="name-turnstile" class="turnstile-explicit" data-action="llm_analysis" data-sitekey="<%= turnstileSiteKey || '' %>"></div>
           <p id="nameTurnstileNote" class="name-turnstile-note" role="status"></p>
         </div>
-        <button class="btn name-question-btn" type="submit">取得補充解讀 ➔</button>
+        <div class="name-question-actions">
+          <button class="btn name-question-btn" type="submit">取得補充解讀 ➔</button>
+          <button class="btn suite-btn-email-inline js-open-result-email" type="button">✉️ 寄送完整報告與問答至信箱</button>
+        </div>
         <div id="nameQuestionAnswer" class="name-question-answer" role="status" aria-live="polite"></div>
       </form>
       <p class="name-source-note">資料來源與算法限制：<a href="/data/name-analysis/method-profiles.json">查看方法檔</a>。生肖部首喜忌未納入，避免套用來源不明的規則。</p>

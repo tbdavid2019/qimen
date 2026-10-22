@@ -15,6 +15,27 @@
     let conversationHistory = [];
     window.conversationHistory = conversationHistory;
 
+    function centerActiveNavPill() {
+        const navContainers = document.querySelectorAll('.navbar-inverse .navbar-collapse.collapse, .suite-nav-inner');
+        navContainers.forEach((navInner) => {
+            const activeItem = navInner.querySelector('li.active, .suite-nav-pill.active') ||
+                navInner.querySelector(`a[href="${location.pathname}"]`)?.closest('li, .suite-nav-pill');
+            if (activeItem && navInner.scrollWidth > navInner.clientWidth) {
+                const targetLeft = Math.max(0, activeItem.offsetLeft - navInner.clientWidth / 2 + activeItem.offsetWidth / 2);
+                if (typeof navInner.scrollTo === 'function') {
+                    navInner.scrollTo({ left: targetLeft, behavior: 'auto' });
+                } else {
+                    navInner.scrollLeft = targetLeft;
+                }
+            }
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', centerActiveNavPill);
+    } else {
+        centerActiveNavPill();
+    }
+
     const escapeHtml = (str) => String(str || '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -247,6 +268,11 @@
                 </section>
                 ` : ''}
                 <p class="numerology-method-note">${escapeHtml(numerologyData.method?.limitations || numerologyData.note || '')} 九宮格與連線依頁面列明的計數口徑計算；不同生命靈數流派可能採用不同算法。</p>
+                <div class="suite-followup-actions-bar">
+                    <button type="button" class="suite-btn-email-inline js-open-result-email">
+                        ✉️ 將此份完整報告寄到我的信箱 ➔
+                    </button>
+                </div>
             </div>
         `;
         visualBoard.hidden = false;
@@ -1120,6 +1146,12 @@
                     👉 想看我的人生大運與完整格局？一鍵解鎖完整紫微命盤
                 </button>
             </div>
+
+            <div class="suite-followup-actions-bar">
+                <button type="button" class="suite-btn-email-inline js-open-result-email">
+                    ✉️ 將此份完整報告寄到我的信箱 ➔
+                </button>
+            </div>
         `;
 
         const unlockBtn = document.getElementById('btnUnlockFullZiwei');
@@ -1210,6 +1242,12 @@
             <div class="text-center mt-3">
                 <button type="button" id="btnUnlockFullZiweiSpouse" class="btn suite-btn-primary btn-lg">
                     👉 想看我的人生大運與完整格局？一鍵解鎖完整紫微命盤
+                </button>
+            </div>
+
+            <div class="suite-followup-actions-bar">
+                <button type="button" class="suite-btn-email-inline js-open-result-email">
+                    ✉️ 將此份完整報告寄到我的信箱 ➔
                 </button>
             </div>
 
@@ -1730,6 +1768,8 @@
     form?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = buildPayload();
+        conversationHistory = [];
+        window.conversationHistory = conversationHistory;
 
         // Basic date validation for bazi2 and ziwei
         if ((page === 'bazi2' || page === 'ziwei') && !payload.date) {

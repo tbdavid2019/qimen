@@ -748,6 +748,9 @@
             }
 
             latestDivinationResult = data.result;
+            if (typeof window !== 'undefined') {
+                window.conversationHistory = [];
+            }
             renderLiuyaoBoard(data.result);
 
             if (data.analysis) {
@@ -1000,7 +1003,7 @@
                     window.conversationHistory.push({ role: 'assistant', content: data.analysis });
                     window.lastSuiteResult = { calculation: result, analysis: data.analysis };
                     if (typeof window.publishSuiteEmailResult === 'function') {
-                        window.publishSuiteEmailResult('六爻神卦', result, `【${result.benGua?.name || '六爻卦'}】排盤解讀`);
+                        window.publishSuiteEmailResult('六爻神卦', result, { question: question || '六爻神卦排盤分析', supplement: data.analysis });
                     }
                 }
                 // 當主解讀完成並展開追問時，初始化追問專用 Turnstile

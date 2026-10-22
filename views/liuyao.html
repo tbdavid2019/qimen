@@ -284,7 +284,7 @@
                 <button type="button" id="btnCopyLiuyao" class="btn suite-btn-secondary" title="複製完整卦象與宗師解盤">
                     <i data-lucide="copy"></i> 複製卦象與解盤
                 </button>
-                <button type="button" id="btnEmailLiuyao" class="btn suite-btn-secondary" title="將結果寄送到電子信箱">
+                <button type="button" id="btnEmailLiuyao" class="btn suite-btn-secondary js-open-result-email" title="將結果寄送到電子信箱">
                     <i data-lucide="mail"></i> 寄送結果至信箱
                 </button>
                 <button type="button" id="btnRestartLiuyao" class="btn suite-btn-secondary" title="重新起卦">
@@ -303,6 +303,9 @@
                         <span class="suite-tag suite-tag-gold">智能納甲推演</span>
                         <button type="button" id="btnCopyAiAnalysis" class="suite-copy-btn" title="複製解讀內容">
                             <i data-lucide="copy"></i> 複製解讀
+                        </button>
+                        <button type="button" id="btnEmailAiAnalysis" class="suite-copy-btn js-open-result-email" title="將完整卦象、解讀與問答寄至信箱">
+                            <i data-lucide="mail"></i> 寄送至信箱
                         </button>
                     </div>
                 </div>
@@ -327,6 +330,12 @@
                                 <i data-lucide="send"></i> 送出追問 ➔
                             </button>
                         </span>
+                    </div>
+
+                    <div class="suite-followup-actions-bar">
+                        <button type="button" class="suite-btn-email-inline js-open-result-email">
+                            <i data-lucide="mail"></i> 將完整卦象、宗師解讀與以上問答寄到我的信箱 ➔
+                        </button>
                     </div>
                 </div>
             </div>

@@ -351,6 +351,9 @@ body {
         box-shadow: none !important;
         background: transparent !important;
         -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        -webkit-mask-image: linear-gradient(to right, #000 93%, transparent 100%);
+        mask-image: linear-gradient(to right, #000 93%, transparent 100%);
         scrollbar-width: thin;
         scrollbar-color: var(--claude-border) transparent;
     }
@@ -384,6 +387,10 @@ body {
         font-size: 14px;
         justify-content: center;
         white-space: nowrap;
+        scroll-snap-align: center;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
     }
     .navbar-inverse .navbar-right {
         display: flex !important;
@@ -2383,6 +2390,28 @@ body.qimen-page .wuxing-shui:hover::after {
     background: var(--claude-card, #221E1B);
     border-color: rgba(255, 255, 255, 0.12);
     color: var(--claude-text-main, #FAF7F2);
+}
+
+@media (max-width: 576px) {
+    .pan-grid {
+        aspect-ratio: auto !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        grid-template-rows: repeat(3, auto) !important;
+        gap: 4px !important;
+    }
+    .gong {
+        aspect-ratio: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 112px !important;
+        padding: 6px 4px !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+    .gong-content {
+        padding: 4px !important;
+        height: auto !important;
+    }
 }
 
 [data-theme="dark"] .qimen-pill.active {

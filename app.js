@@ -223,7 +223,11 @@ app.post('/api/name-analysis-question', async (req, res) => {
 
         const boundedResult = nameAnalysis.formatQuestionPrompt(result, followup);
         const activeLlm = resolveLlmService(req, llmService);
-        const analysis = await activeLlm.analyzeService('nameAnalysis', boundedResult, { userQuestion: followup, language: body.lang || 'zh-tw' });
+        const analysis = await activeLlm.analyzeService('nameAnalysis', boundedResult, {
+            userQuestion: followup,
+            conversationHistory: Array.isArray(body.conversationHistory) ? body.conversationHistory : [],
+            language: body.lang || 'zh-tw'
+        });
         const { turnstileToken: _turnstileToken, 'cf-turnstile-response': _cfTurnstileResponse, ...recordInput } = body;
         const discord = await sendModuleRecord('中文姓名分析', recordInput, result, analysis.analysis || analysis.fallback || '');
         res.json({ success: true, result, analysis: analysis.analysis || analysis.fallback || null, metadata: analysis.success ? { provider: analysis.provider, model: analysis.model } : null, discord });

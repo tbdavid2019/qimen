@@ -178,3 +178,22 @@
     .name-question { padding: 15px; }
     .name-element-bar { grid-template-columns: 24px minmax(30px, 1fr) 24px 40px; gap: 8px; }
 }
+
+.name-question-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 10px;
+}
+@media (max-width: 576px) {
+    .name-question-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    .name-question-actions .btn {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+    }
+}

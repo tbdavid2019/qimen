@@ -3799,3 +3799,216 @@ body.suite-page .name-useful-panel h4 {
     from { opacity: 1; transform: translateY(0) scale(1); }
     to { opacity: 0; transform: translateY(-10px) scale(0.95); }
 }
+
+/* ==========================================================================
+   全站手機版 RWD 與觸控體驗優化 (Mobile-Native & Impeccable Design System)
+   ========================================================================== */
+
+/* Suite Top Nav (10-Module Pill Bar) */
+.suite-top-nav {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.suite-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 6px 12px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.suite-nav-inner::-webkit-scrollbar {
+    display: none;
+}
+.suite-nav-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: center;
+    min-height: 40px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--suite-text, #2C221E);
+    background: var(--suite-card-bg, #f3f4f6);
+    border: 1px solid var(--suite-border, #e5e7eb);
+    text-decoration: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+.suite-nav-pill:hover {
+    color: var(--suite-primary, #b45309);
+    background: var(--suite-bg, #fef3c7);
+    text-decoration: none;
+}
+.suite-nav-pill.active {
+    color: #fff;
+    background: linear-gradient(135deg, #c2410c, #9a3412);
+    border-color: #9a3412;
+    box-shadow: 0 4px 12px rgba(154, 52, 18, 0.25);
+    font-weight: 700;
+}
+[data-theme="dark"] .suite-nav-pill {
+    color: var(--suite-text, #EDE5DC);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+[data-theme="dark"] .suite-nav-pill.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #c2410c, #9a3412);
+    border-color: #ea580c;
+}
+@media (max-width: 768px) {
+    .suite-top-nav {
+        -webkit-mask-image: linear-gradient(to right, #000 92%, transparent 100%);
+        mask-image: linear-gradient(to right, #000 92%, transparent 100%);
+    }
+}
+
+/* Suite Followup Inline Email Action Bar (Punchy & Prominent, WCAG AA/AAA) */
+.suite-followup-actions-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 18px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.suite-btn-email-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.2px;
+    color: #92400e;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1.5px solid #f59e0b;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.16);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.suite-btn-email-inline:hover {
+    color: #78350f;
+    border-color: #d97706;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.26);
+    text-decoration: none;
+}
+
+.suite-btn-email-inline:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+}
+
+.suite-btn-email-inline:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .suite-btn-email-inline {
+    color: #fde68a;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.25) 100%);
+    border-color: #f59e0b;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.22);
+}
+
+[data-theme="dark"] .suite-btn-email-inline:hover {
+    color: #ffffff;
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.38) 100%);
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.35);
+}
+
+/* 全站手機版輸入框 16px 防 iOS Safari 強制縮放放大 */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="email"],
+    select,
+    textarea,
+    .form-control,
+    .suite-input,
+    .suite-follow-up-input {
+        font-size: 16px !important;
+    }
+}
+
+/* 紫微斗數十二宮盤手機版防擠壓 */
+@media (max-width: 640px) {
+    .ziwei-grid,
+    .ziwei-board-grid {
+        gap: 3px !important;
+        font-size: 11.5px !important;
+    }
+    .ziwei-cell,
+    .ziwei-palace-cell {
+        padding: 5px 4px !important;
+        min-height: 92px !important;
+        overflow-wrap: break-word !important;
+    }
+    .ziwei-center,
+    .ziwei-center-info {
+        padding: 10px 8px !important;
+    }
+}
+
+/* 易經風水九宮格與全站追問按鈕手機版優化 */
+@media (max-width: 576px) {
+    .fs-cat-pill,
+    .fs-cat-btn,
+    .fs-item-pill {
+        min-height: 40px !important;
+        padding: 8px 12px !important;
+        font-size: 13.5px !important;
+        touch-action: manipulation !important;
+    }
+    .fs-nine-grid {
+        gap: 6px !important;
+    }
+    .fs-grid-cell,
+    .fs-palace-cell {
+        min-height: 100px !important;
+        padding: 7px 5px !important;
+    }
+    .suite-follow-up-form,
+    .suite-followup-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .suite-follow-up-form button,
+    .suite-followup-form button,
+    .liuyao-action-bar button,
+    .meihua-action-bar button,
+    .name-question-actions button {
+        min-height: 44px !important;
+    }
+    .suite-btn-email-inline {
+        width: 100% !important;
+        font-size: 13.5px !important;
+        padding: 10px 14px !important;
+    }
+}

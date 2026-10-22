@@ -201,6 +201,8 @@
     byId('fullName').required = mode === 'verify';
     byId('submitName').textContent = mode === 'verify' ? '立即分析姓名 ➔' : '立即產生命名候選 ➔';
     byId('nameQuestionForm').hidden = true;
+    window.conversationHistory = [];
+    byId('nameQuestionAnswer').replaceChildren();
     status.textContent = '';
     results.replaceChildren();
   }));
@@ -229,6 +231,7 @@
     let endpoint = '/api/name-analysis/verify';
     let body = { name: String(formData.get('name') || '').trim(), surname: surname || undefined, profile: formData.get('profile'), birthData: birth, mode: 'verify' };
     lastRequest = { ...body };
+    window.conversationHistory = [];
     if (mode === 'generate') {
       endpoint = '/api/name-analysis/generate';
       body = {
@@ -246,6 +249,8 @@
 
     status.textContent = '正在整理姓名與生辰資料…';
     results.replaceChildren();
+    window.conversationHistory = [];
+    byId('nameQuestionAnswer').replaceChildren();
     byId('nameQuestionForm').hidden = true;
     if (window.turnstile && turnstileWidgetId !== null) {
       turnstileToken = '';
@@ -270,6 +275,7 @@
         }).join('');
         results.innerHTML = styleIntro + (cards || '<div class="name-empty-state">目前條件下找不到完整候選。請放寬條件或調整字數後重試。</div>');
       }
+      results.innerHTML += '<div class="suite-followup-actions-bar"><button type="button" class="suite-btn-email-inline js-open-result-email">✉️ 將完整姓名分析報告寄到我的信箱 ➔</button></div>';
       status.textContent = mode === 'verify' ? '姓名與生辰資料已整理完成。' : `已依條件整理 ${data.result.candidates.length} 個候選。`;
       await showQuestionForm();
     } catch (error) {
@@ -277,31 +283,68 @@
     }
   });
 
+  function renderNameConversation(statusHint = '') {
+    const answer = byId('nameQuestionAnswer');
+    const history = Array.isArray(window.conversationHistory) ? window.conversationHistory : [];
+    let convHtml = '';
+    if (history.length > 0) {
+      convHtml += '<div class="name-conversation-list">';
+      for (let i = 0; i < history.length; i += 2) {
+        const u = history[i];
+        const a = history[i + 1];
+        const aHtml = a?.content && window.MarkdownRenderer?.render
+          ? window.MarkdownRenderer.render(a.content)
+          : esc(a?.content || '已完成確定性姓名分析。');
+        convHtml += `
+          <div class="name-conversation-turn" style="margin-bottom: 16px; padding: 14px; background: var(--suite-card-bg, rgba(255,255,255,0.85)); border-radius: 12px; border: 1.5px solid var(--suite-border, #e5e7eb);">
+            <div style="font-weight: 700; color: #b45309; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <span>問：${esc(u?.content || '')}</span>
+            </div>
+            <div class="markdown-body" style="font-size: 14.5px; line-height: 1.7;">${aHtml}</div>
+          </div>
+        `;
+      }
+      convHtml += '</div>';
+    }
+    if (statusHint) {
+      convHtml += `<div class="name-question-status-note" style="margin: 8px 0; color: var(--suite-text-muted, #667085);">${esc(statusHint)}</div>`;
+    }
+    if (history.length > 0) {
+      convHtml += '<div class="suite-followup-actions-bar" style="margin-top: 14px;"><button type="button" class="suite-btn-email-inline js-open-result-email">✉️ 寄送完整報告與問答至信箱 ➔</button></div>';
+    }
+    answer.innerHTML = convHtml;
+  }
+
   byId('nameQuestionForm').addEventListener('submit', async (event) => {
     event.preventDefault();
     const question = byId('nameQuestion').value.trim();
-    const answer = byId('nameQuestionAnswer');
-    if (!question) { answer.textContent = '請先寫下想了解的問題。'; return; }
+    if (!question) { renderNameConversation('請先寫下想了解的問題。'); return; }
     if (turnstileConfig?.enabled && !turnstileToken) {
       byId('nameTurnstileNote').textContent = '請先完成 Cloudflare 人機驗證。';
       return;
     }
     const button = byId('nameQuestionForm').querySelector('button[type="submit"]');
     button.disabled = true;
-    answer.textContent = '正在整理補充解讀…';
+    renderNameConversation('正在整理補充解讀…');
     try {
       const response = await fetch('/api/name-analysis-question', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...lastRequest, question, turnstileToken, 'cf-turnstile-response': turnstileToken })
+        body: JSON.stringify({ ...lastRequest, question, conversationHistory: window.conversationHistory || [], turnstileToken, 'cf-turnstile-response': turnstileToken })
       });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.error || '補充解讀失敗');
-      answer.innerHTML = data.analysis && window.MarkdownRenderer?.render
-        ? window.MarkdownRenderer.render(data.analysis)
-        : esc(data.analysis || '已完成確定性姓名分析。');
+      
+      if (!Array.isArray(window.conversationHistory)) {
+        window.conversationHistory = [];
+      }
+      window.conversationHistory.push({ role: 'user', content: question });
+      window.conversationHistory.push({ role: 'assistant', content: data.analysis });
+
+      renderNameConversation();
+      byId('nameQuestion').value = '';
     } catch (error) {
-      answer.textContent = error.message;
+      renderNameConversation(error.message);
     } finally {
       if (window.turnstile && turnstileWidgetId !== null) {
         try { window.turnstile.reset(turnstileWidgetId); } catch (error) {}

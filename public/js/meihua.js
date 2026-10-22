@@ -354,6 +354,9 @@ function bindMeihuaEvents() {
             throw new Error(result.error || '未知錯誤');
         }
 
+        window.meihuaConversationHistory = [];
+        window.conversationHistory = [];
+        renderMeihuaConversation();
         updateResult(result.data);
         toggleMeihuaLLM(true);
         return result.data;
@@ -389,6 +392,9 @@ function bindMeihuaEvents() {
             throw new Error(result.error || '未知錯誤');
         }
 
+        window.meihuaConversationHistory = [];
+        window.conversationHistory = [];
+        renderMeihuaConversation();
         updateResult(result.data);
         toggleMeihuaLLM(true);
         return result.data;
@@ -414,6 +420,9 @@ function bindMeihuaEvents() {
             throw new Error(result.error || '未知錯誤');
         }
 
+        window.meihuaConversationHistory = [];
+        window.conversationHistory = [];
+        renderMeihuaConversation();
         updateResult(result.data);
         toggleMeihuaLLM(true);
         return result.data;
@@ -652,6 +661,7 @@ function bindMeihuaEvents() {
                     }
                     window.meihuaConversationHistory.push({ role: 'user', content: question });
                     window.meihuaConversationHistory.push({ role: 'assistant', content: result.analysis });
+                    window.conversationHistory = window.meihuaConversationHistory;
                     renderMeihuaConversation();
                     questionInput.value = '';
                     showToast('宗師解卦完成！', 'success');
@@ -778,9 +788,14 @@ function renderMeihuaConversation() {
             html += '<div class="conversation-msg assistant-msg" style="margin-bottom: 20px;">';
             html += '<div class="conversation-msg-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">';
             html += '  <span class="conversation-result-label" style="font-weight:700; color:#e11d48;"><i data-lucide="sparkles"></i> 🌸 梅花解卦</span>';
-            html += `  <button type="button" class="btn btn-default btn-xs meihua-copy-btn conversation-copy-button" data-msg-idx="${index}" title="複製解讀內容">`;
-            html += '    <i data-lucide="copy"></i> 複製內容';
-            html += '  </button>';
+            html += '  <div style="display:inline-flex; gap:6px; align-items:center;">';
+            html += '    <button type="button" class="btn btn-default btn-xs js-open-result-email conversation-copy-button" title="寄送完整解卦與問答至信箱">';
+            html += '      <i data-lucide="mail"></i> 寄送至信箱';
+            html += '    </button>';
+            html += `    <button type="button" class="btn btn-default btn-xs meihua-copy-btn conversation-copy-button" data-msg-idx="${index}" title="複製解讀內容">`;
+            html += '      <i data-lucide="copy"></i> 複製內容';
+            html += '    </button>';
+            html += '  </div>';
             html += '</div>';
             html += `<div class="conversation-bubble assistant-bubble markdown-body conversation-answer">${MarkdownRenderer.render(msg.content)}</div>`;
             html += '</div>';
