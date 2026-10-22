@@ -5,7 +5,12 @@ body.meihua-page {
     padding-bottom: 60px;
     background-color: var(--suite-bg, #FAF7F2);
     color: var(--suite-text, #2C221E);
-    font-family: 'JetBrains Mono', 'Gen Jyuu Gothic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+    font-family: 'Gen Jyuu Gothic', -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Segoe UI", Roboto, "JetBrains Mono", sans-serif;
+}
+
+/* 數值表格與徽章：保持數字等寬對齊且字高與中文一致 */
+table, .table, .meihua-hero-badge, .badge, .label, [class*="-badge"], [class*="-pill"], [class*="-tag"], .tabular-nums {
+    font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 767px) {

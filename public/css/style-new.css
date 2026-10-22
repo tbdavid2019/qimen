@@ -36,33 +36,33 @@
     --claude-shadow-lg: 0 16px 40px rgba(74, 58, 42, 0.09), 0 4px 12px rgba(74, 58, 42, 0.04);
 
     /* 共用字級 token：大字清晰、舒適閱讀、全站統一 */
-    --type-hero-title: 32px;
-    --type-panel-title: 20px;
-    --type-display: 18px;
-    --type-body: 18px;
-    --type-reading: 17px;
-    --type-label: 16px;
-    --type-meta: 16px;
-    --type-caption: 15px;
-    --type-micro: 15px;
-    --leading-body: 1.7;
-    --leading-reading: 1.8;
+    --type-hero-title: 24px;
+    --type-panel-title: 19px;
+    --type-display: 17.5px;
+    --type-body: 16px;
+    --type-reading: 16px;
+    --type-label: 15px;
+    --type-meta: 14px;
+    --type-caption: 13.5px;
+    --type-micro: 12.5px;
+    --leading-body: 1.65;
+    --leading-reading: 1.75;
 }
 
 /* 手機版全站閱讀級距：內文約 14pt，輔助文字至少 11pt。 */
 @media (max-width: 767px) {
     :root {
-        --type-hero-title: 30px;
-        --type-panel-title: 23px;
-        --type-display: 20px;
-        --type-body: 19px;
-        --type-reading: 19px;
-        --type-label: 18px;
-        --type-meta: 17px;
-        --type-caption: 15px;
-        --type-micro: 15px;
+        --type-hero-title: 21px;
+        --type-panel-title: 18px;
+        --type-display: 17px;
+        --type-body: 16px;
+        --type-reading: 16px;
+        --type-label: 15px;
+        --type-meta: 14px;
+        --type-caption: 13.5px;
+        --type-micro: 12.5px;
         --leading-body: 1.65;
-        --leading-reading: 1.7;
+        --leading-reading: 1.72;
     }
 }
 
@@ -72,7 +72,7 @@ body {
     padding-top: 72px;
     font-size: var(--type-body);
     background-color: var(--claude-bg);
-    font-family: 'JetBrains Mono', 'Gen Jyuu Gothic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    font-family: 'Gen Jyuu Gothic', -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Segoe UI", Roboto, "JetBrains Mono", sans-serif;
     color: var(--claude-text-body);
     -webkit-font-smoothing: antialiased;
 }
@@ -2079,17 +2079,6 @@ input:tool-submit-active {
     line-height: 1.5;
 }
 
-.qimen-page .panel .text-muted[style*="font-size: 12px"],
-.qimen-page .panel [style*="font-size: 12px"],
-.qimen-page .panel .text-muted[style*="font-size:12px"],
-.qimen-page .panel [style*="font-size:12px"] {
-    font-size: var(--type-meta);
-}
-
-.qimen-page .panel [style*="font-size: 11px"],
-.qimen-page .panel [style*="font-size:11px"] {
-    font-size: var(--type-caption);
-}
 
 .qimen-page .panel .form-control {
     font-size: var(--type-body);
@@ -2178,80 +2167,22 @@ input:tool-submit-active {
     border: 1px solid var(--claude-border, #E8E0D6);
     box-shadow: var(--claude-shadow-xs, 0 1px 3px rgba(0,0,0,0.04));
     color: var(--claude-text-body, #4A3F39);
-    font-size: var(--type-reading) !important;
-    line-height: var(--leading-reading) !important;
 }
 
-/* 新舊排盤結果中的 legacy inline font-size，集中映射到 token。 */
-body [style*="font-size: 10px"],
-body [style*="font-size:10px"] { font-size: var(--type-micro) !important; }
-body [style*="font-size: 11px"],
-body [style*="font-size:11px"] { font-size: var(--type-caption) !important; }
-body [style*="font-size: 12px"],
-body [style*="font-size:12px"] { font-size: var(--type-meta) !important; }
-body [style*="font-size: 13px"],
-body [style*="font-size:13px"] { font-size: var(--type-label) !important; }
-body [style*="font-size: 13.5px"],
-body [style*="font-size:13.5px"] { font-size: var(--type-label) !important; }
-body [style*="font-size: 14px"],
-body [style*="font-size:14px"] { font-size: max(15px, var(--type-caption)) !important; }
+.markdown-body,
+.conversation-answer,
+.suite-message-bubble {
+    font-size: var(--type-reading, 16px);
+    line-height: var(--leading-reading, 1.75);
+}
 
-/* Readable baseline across Qimen, Meihua, and every suite module. */
-body :where(p, li, td, th, dd, dt, summary) {
-    font-size: max(18px, var(--type-reading)) !important;
-    line-height: 1.65;
-}
-body :where(small, .small, .text-muted, .font-small, .item, .label, .circle-mark, .auspicious-sample, .auspicious-text, .gong-name, .gong-gongname2, .gong-explain, .site-footer-provider, .webmcp-agent-indicator) {
-    font-size: max(15px, var(--type-caption)) !important;
-    line-height: 1.5;
-}
-body label,
-body input,
-body select,
-body textarea,
-body button,
-body .btn,
-body .navbar-inverse .navbar-nav > li > a,
-body .navbar-inverse .navbar-brand,
-body .navbar-inverse .dark-mode-toggle,
-body .dropdown-menu > li > a {
-    font-size: max(16px, var(--type-label)) !important;
-}
-body #startLLMAnalysis,
-body .panel-title .label,
-body .auspicious-legend h4 {
-    font-size: max(16px, var(--type-label)) !important;
+/* 數值表格與徽章：保持數字等寬對齊且字高與中文一致 */
+table, .table, .badge, .label, [class*="-badge"], [class*="-pill"], [class*="-tag"], .tabular-nums {
+    font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 767px) {
-    body :where(p, li, td, th, dd, dt, summary) {
-        font-size: max(19px, var(--type-reading)) !important;
-        line-height: 1.7;
-    }
-    body :where(small, .small, .text-muted, .font-small, .item, .label, .circle-mark, .auspicious-sample, .auspicious-text, .gong-name, .gong-gongname2, .gong-explain, .site-footer-provider, .webmcp-agent-indicator) {
-        font-size: max(15px, var(--type-caption)) !important;
-    }
     body .navbar-inverse .navbar-nav > li > a { min-height: 44px; }
-}
-
-body.qimen-page .gong.da_ji::before,
-body.qimen-page .gong.xiao_ji::before,
-body.qimen-page .gong.ping::before,
-body.qimen-page .gong.xiao_xiong::before,
-body.qimen-page .gong.da_xiong::before,
-body.qimen-page .gong.zhifu::after,
-body.qimen-page .gong.zhishi::before,
-body.qimen-page .sample-da-ji::before,
-body.qimen-page .sample-xiao-ji::before,
-body.qimen-page .sample-ping::before,
-body.qimen-page .sample-xiao-xiong::before,
-body.qimen-page .sample-da-xiong::before,
-body.qimen-page .wuxing-mu:hover::after,
-body.qimen-page .wuxing-huo:hover::after,
-body.qimen-page .wuxing-tu:hover::after,
-body.qimen-page .wuxing-jin:hover::after,
-body.qimen-page .wuxing-shui:hover::after {
-    font-size: max(15px, var(--type-caption)) !important;
 }
 
 /* Cloudflare Turnstile 人機安全驗證容器樣式 */

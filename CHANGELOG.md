@@ -4,6 +4,22 @@
 
 ## [2026-10-22]
 
+### 🔤 全站字體與字級階層系統重構（解決字體忽大忽小問題）
+
+- **中英數字體優先順序校準 (`public/css/fonts.css`, `public/css/style-new.css`, `public/css/divination-suite.css`, `public/css/meihua.css`)**：
+  - 調整 `--font-primary` 字體宣告順序，將 `'Gen Jyuu Gothic'`（源柔黑體）及系統黑體排在 `'JetBrains Mono'` 等寬字體之前，根除中文字句中夾雜之數字、百分比、英文字元視覺體積過大的混排問題。
+  - 保留 `--font-mono` 給純代碼及等寬數值情境。
+  - 為數值表格與徽章（`table`, `.table`, `.badge`, `.label`, `[class*="-badge"]`, `[class*="-pill"]`, `[class*="-tag"]`, `.tabular-nums`）引入 `font-variant-numeric: tabular-nums;`，確保數字整齊對齊且字高與中文和諧一致。
+- **校準 5 階字級 Token 變數 (`public/css/style-new.css`)**：
+  - 桌機基準字級收斂：`--type-hero-title: 24px`、`--type-panel-title: 19px`、`--type-display: 17.5px`、`--type-body: 16px`、`--type-reading: 16px`、`--type-label: 15px`、`--type-meta: 14px`、`--type-caption: 13.5px`、`--type-micro: 12.5px`，行高收斂至 `1.65` / `1.75`。
+  - 手機版（`max-width: 767px`）字級收斂：`--type-hero-title: 21px`、`--type-panel-title: 18px`、`--type-display: 17px`、`--type-body: 16px`、`--type-reading: 16px`，行高 `1.65` / `1.72`。
+- **清理破壞性暴力 `!important` 覆寫與屬性攔截器 (`public/css/style-new.css`, `public/css/divination-suite.css`)**：
+  - 移除 `public/css/style-new.css` 中所有 `[style*="font-size:"]` 屬性攔截器，以及 `body :where(p, li, td, th, dd, dt, summary) { font-size: max(18px/19px) !important; }` 等無差別覆寫（根除 `<p>` 19px 與相鄰容器 13.5px 忽大忽小的不協調感）。
+  - 移除 `public/css/divination-suite.css` 中 `body.suite-page [style*="font-size:"]` 與長達 130 個 class 之黑白名單 `:where(...)` 覆寫區塊。
+  - 替換為乾淨、語意化元件規則（`.markdown-body, .conversation-answer, .suite-message-bubble { font-size: var(--type-reading, 16px); line-height: var(--leading-reading, 1.75); }`）與手機版導覽列觸控友善高度。
+- **新增單元測試 (`test/typography.test.js`)**：
+  - 驗證字體優先順序、5 階字級 Token 與暴力覆寫清理成果，100% 測試覆蓋通過。
+
 ### ✉️ 全站問答寄信系統深度修復與內嵌按鈕全模組補齊
 
 - **解答之書輕量化 (`views/answerbook.html`)**：
