@@ -6,7 +6,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const { calculateFengShui, diagnoseShaqi, diagnoseLuantou, getAllShaQiLibrary, chooseZeri } = require(path.join(__dirname, '../../../lib/fengshui.js'));
+const { calculateFengShui, diagnoseShaqi, diagnoseLuantou, getAllShaQiLibrary, chooseZeri, evaluateMenZhuZao } = require(path.join(__dirname, '../../../lib/fengshui.js'));
+const { searchAuspiciousTimes } = require(path.join(__dirname, '../../../lib/advanced-wisdom.js'));
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -81,6 +82,24 @@ function parseArgs() {
             params.mode = 'zeri';
         } else if (arg === '--month' && args[i + 1]) {
             params.month = Number(args[++i]);
+        } else if ((arg === '--gate-dir' || arg === '--gateDir') && args[i + 1]) {
+            params.gateDir = args[++i];
+            params.mode = 'men-zhu-zao';
+        } else if ((arg === '--master-dir' || arg === '--masterDir') && args[i + 1]) {
+            params.masterDir = args[++i];
+        } else if ((arg === '--stove-dir' || arg === '--stoveDir') && args[i + 1]) {
+            params.stoveDir = args[++i];
+        } else if ((arg === '--start-date' || arg === '--startDate') && args[i + 1]) {
+            params.startDate = args[++i];
+            params.mode = 'qimen-zeri';
+        } else if ((arg === '--end-date' || arg === '--endDate') && args[i + 1]) {
+            params.endDate = args[++i];
+        } else if (arg === '--direction' && args[i + 1]) {
+            params.direction = args[++i];
+        } else if (arg === '--purpose' && args[i + 1]) {
+            params.purpose = args[++i];
+        } else if ((arg === '--min-score' || arg === '--minScore') && args[i + 1]) {
+            params.minScore = Number(args[++i]);
         } else if (!arg.startsWith('--')) {
             rawInline = arg;
         }
@@ -139,6 +158,10 @@ function run() {
             result = diagnoseLuantou(inputData.shaList || [inputData.shaType || '天斬煞']);
         } else if (inputData.mode === 'zeri') {
             result = chooseZeri(inputData.matter || '入宅/喬遷', inputData.year || 2026, inputData.month || 5);
+        } else if (inputData.mode === 'men-zhu-zao' || inputData.mode === 'menzhu') {
+            result = evaluateMenZhuZao(inputData);
+        } else if (inputData.mode === 'qimen-zeri' || inputData.mode === 'auspicious-search') {
+            result = searchAuspiciousTimes(inputData);
         } else if (inputData.mode === 'evaluate-layout') {
             // Keep CLI semantics identical to the deterministic HTTP endpoint:
             // calculate orientation and flying-star chart before layout evaluation.

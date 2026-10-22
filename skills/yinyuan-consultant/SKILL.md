@@ -133,9 +133,9 @@ node skills/yinyuan-consultant/scripts/ask_yinyuan.js --mode ziwei-marriage --da
 
 或發送 `POST /api/yinyuan-question` 獲取結構化測算與行動建議。
 
-### `ask_yinyuan.js` 參數
+### `ask_yinyuan.js` 與 `yinyuan_cli.js` 參數
 
-支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（必填）、`--mode fortune|zodiac|ziwei-marriage|peach-blossom|bazi-match|red-thread|marriage-palace|taohua-luck`、`--firstYear`、`--secondYear`、`--firstZodiac`、`--secondZodiac`、`--name`、`--sex`、`--stickNum`、`--calendar`、`--date`、`--time`、`--stage`、`--seekingSex`、`--preference`、`--status`、`--scope`、`--seed`、`--chart`、`--firstChart`、`--secondChart`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
+支援 inline JSON、stdin JSON，以及命令列旗標：`--question`（必填）、`--mode fortune|zodiac|ziwei-marriage|peach-blossom|bazi-match|red-thread|marriage-palace|taohua-luck`、`--scene marriage|partnership|colleague`（雙人全息合盤場景：八字合婚、創業合夥合盤、職場搭檔合參）、`--firstYear`、`--secondYear`、`--firstZodiac`、`--secondZodiac`、`--name`、`--sex`、`--stickNum`、`--calendar`、`--date`、`--time`、`--stage`、`--seekingSex`、`--preference`、`--status`、`--scope`、`--seed`、`--chart`、`--firstChart`、`--secondChart`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ---
 

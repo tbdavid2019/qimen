@@ -1647,6 +1647,54 @@
 				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
 			},
 			required: ["question"]
+		}),
+		bazi_inverse_lookup: createSuiteTool("bazi_inverse_lookup", "已知四柱干支反查西曆生辰日期與時辰範圍，支援設定起始與結束年份。", "/api/bazi2/inverse-lookup", {
+			type: "object",
+			properties: {
+				pillars: { type: "string", description: "四柱干支，年月日時以空格分隔（例如：甲子 丙寅 丁卯 戊申）" },
+				startYear: { type: "integer", default: 1940, description: "搜尋起始西元年" },
+				endYear: { type: "integer", default: 2030, description: "搜尋結束西元年" }
+			},
+			required: ["pillars"]
+		}),
+		bazi_time_sensitivity: createSuiteTool("bazi_time_sensitivity", "出生時辰不確定敏感度分析與定時校準，橫向比對全天或特定時段各時辰對日主強弱、喜用神、格局與袁天罡稱骨骨重之實質差異。", "/api/bazi2/time-sensitivity", {
+			type: "object",
+			properties: {
+				date: { type: "string", description: "出生西曆日期 (YYYY-MM-DD)" },
+				calendar: { type: "string", enum: ["solar", "lunar"], default: "solar", description: "曆法" },
+				sex: { type: "string", enum: ["男", "女"], default: "男", description: "性別" },
+				timeRange: { type: "string", enum: ["all", "morning", "afternoon", "evening", "night"], default: "all", description: "候選時辰時段範圍" }
+			},
+			required: ["date"]
+		}),
+		zeri_auspicious_search: createSuiteTool("zeri_auspicious_search", "傳統協紀辨方與奇門吉時獵手綜合擇日吉時搜尋，精選 Top 5 黃金時辰。", "/api/zeri/search", {
+			type: "object",
+			properties: {
+				matter: { type: "string", enum: ["入宅/喬遷", "開業/開市", "動土/裝修", "婚嫁/嫁娶"], default: "入宅/喬遷", description: "擇日事項" },
+				year: { type: "integer", description: "目標年份" },
+				month: { type: "integer", minimum: 1, maximum: 12, description: "目標月份" },
+				gateDir: { type: "string", description: "大門或坐向方位（可選）" },
+				residentYear: { type: "integer", description: "福主出生年份（避開生肖相沖）" }
+			},
+			required: ["matter", "year", "month"]
+		}),
+		combo_decision_hecan: createSuiteTool("combo_decision_hecan", "重大決策三卜同參會診，聚合奇門遁甲、六爻神卦、梅花易數三大數術體系，產出共識度、三術比對與明確行動錦囊。", "/api/combo/decision", {
+			type: "object",
+			properties: {
+				question: { type: "string", description: "重大決策問事內容（如轉職、合夥創業、大額投資）" },
+				datetime: { type: "string", description: "起卦時間 (可選，預設當前時間)" },
+				category: { type: "string", enum: ["求財投資", "事業升遷", "考試學業", "戀愛婚姻", "身體健康", "求子生產", "出行尋物", "合夥創業", "重大抉擇", "綜合運勢"], default: "重大抉擇", description: "問題分類" }
+			},
+			required: ["question"]
+		}),
+		name_cezi_divination: createSuiteTool("name_cezi_divination", "測字占事，輸入單一漢字與占問事項，結合說文解字拆形、康熙筆畫、81數理、梅花字卦與八字喜忌推演占斷。", "/api/name-analysis/cezi", {
+			type: "object",
+			properties: {
+				character: { type: "string", minLength: 1, maxLength: 2, description: "占事測字漢字（1個字）" },
+				question: { type: "string", description: "占問具體事項" },
+				birthDate: { type: "string", description: "問事者出生日期 (YYYY-MM-DD，選填)" }
+			},
+			required: ["character", "question"]
 		})
 	});
 
@@ -1692,6 +1740,7 @@
 			toolsToRegister = [
 				toolDefinitions.fengshui_report,
 				toolDefinitions.fengshui_layout_evaluation,
+				...(typeof document !== "undefined" && typeof document.getElementById === "function" ? [toolDefinitions.zeri_auspicious_search] : []),
 				toolDefinitions.switch_theme,
 				toolDefinitions.send_conversation_email,
 			];
@@ -1705,7 +1754,14 @@
 				toolDefinitions.send_conversation_email,
 			];
 		} else if (pathname === "/name-analysis") {
-			toolsToRegister = [toolDefinitions.name_analysis_verify, toolDefinitions.name_analysis_generate, toolDefinitions.name_analysis_question, toolDefinitions.switch_theme, toolDefinitions.send_conversation_email];
+			toolsToRegister = [
+				toolDefinitions.name_analysis_verify,
+				toolDefinitions.name_analysis_generate,
+				toolDefinitions.name_analysis_question,
+				toolDefinitions.name_cezi_divination,
+				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email
+			];
 		} else if (pathname === "/tarot" || pathname.startsWith("/tarot/")) {
 			toolsToRegister = [
 				toolDefinitions.tarot_reading,
@@ -1713,8 +1769,23 @@
 				toolDefinitions.switch_theme,
 				toolDefinitions.send_conversation_email
 			];
-		} else if (["/bazi2", "/yinyuan", "/answerbook", "/liuyao"].includes(pathname)) {
-			const suiteTool = { "/bazi2": "bazi2_chart", "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading", "/liuyao": "liuyao_cast_divination" }[pathname];
+		} else if (pathname === "/bazi2") {
+			toolsToRegister = [
+				toolDefinitions.bazi2_chart,
+				toolDefinitions.bazi_inverse_lookup,
+				toolDefinitions.bazi_time_sensitivity,
+				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email
+			];
+		} else if (pathname === "/liuyao") {
+			toolsToRegister = [
+				toolDefinitions.liuyao_cast_divination,
+				...(typeof document !== "undefined" && typeof document.getElementById === "function" ? [toolDefinitions.combo_decision_hecan] : []),
+				toolDefinitions.switch_theme,
+				toolDefinitions.send_conversation_email
+			];
+		} else if (["/yinyuan", "/answerbook"].includes(pathname)) {
+			const suiteTool = { "/yinyuan": "yinyuan_reading", "/answerbook": "answerbook_reading" }[pathname];
 			toolsToRegister = [toolDefinitions[suiteTool], toolDefinitions.switch_theme, toolDefinitions.send_conversation_email];
 		} else {
 			// Default / or /custom (具備對話紀錄與 #emailConversationModal)
@@ -1902,6 +1973,7 @@
 
 	return {
 		tools: toolDefinitions,
+		getImperativeTools: () => toolDefinitions,
 		getModelContext,
 		isSupported: () => !!getModelContext(),
 		getRegisteredTools: () => registeredTools.slice(),

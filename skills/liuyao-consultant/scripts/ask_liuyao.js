@@ -12,6 +12,7 @@
 
 const { readJsonOrStdin } = require('../../_shared/cli-input');
 const { calculateLiuyao } = require('../../../lib/liuyao');
+const { evaluateDecisionCombo } = require('../../../lib/advanced-wisdom');
 
 async function readInput() {
     return readJsonOrStdin(
@@ -26,6 +27,17 @@ async function main() {
     if (!input.question && !input.lines) {
         process.stderr.write('Error: question or lines is required\nUsage: node ask_liuyao.js <question|json>\n');
         process.exitCode = 1;
+        return;
+    }
+
+    if (input.mode === 'combo' || input.method === 'combo' || input.combo === true) {
+        const combo = evaluateDecisionCombo({
+            question: input.question,
+            datetime: input.datetime,
+            category: input.category,
+            purpose: input.purpose
+        });
+        process.stdout.write(`${JSON.stringify({ success: true, combo, ...combo }, null, 2)}\n`);
         return;
     }
 

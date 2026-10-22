@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const { analyzeName, generateNames } = require('../../../lib/name-analysis');
 const { calculateBazi } = require('../../../lib/bazi2');
+const { analyzeCezi } = require('../../../lib/advanced-wisdom');
 
 function parseArgs(args) {
   const out = {};
@@ -8,7 +9,7 @@ function parseArgs(args) {
     const token = args[i];
     if (!token.startsWith('--')) continue;
     const key = token.slice(2);
-    if (key === 'generate' || key === 'verify') { out.mode = key; continue; }
+    if (key === 'generate' || key === 'verify' || key === 'cezi') { out.mode = key; continue; }
     if (key === 'unknown-hour') { out.allowUnknownHour = true; continue; }
     if (key === 'leap-month') { out.leap = true; continue; }
     const value = args[i + 1];
@@ -38,6 +39,17 @@ async function main() {
     if (raw.trim()) input = JSON.parse(raw);
   }
   input = { ...(input || {}), ...parseArgs(process.argv.slice(2)) };
+  if (input.mode === 'cezi' || (!input.name && !input.surname && (input.char || input.character || input.text))) {
+    const result = analyzeCezi({
+      char: input.char || input.character || input.text,
+      question: input.question || input.matter || '請解此字所示之事態吉凶',
+      birthDate: input.birthDate || input['birth-date'] || input.birthData?.date,
+      sex: input.sex || input['birth-sex'] || input.birthData?.sex || '男',
+      profile: input.profile
+    });
+    process.stdout.write(`${JSON.stringify({ success: true, result }, null, 2)}\n`);
+    return;
+  }
   if (input.birthData) {
     const birth = input.birthData;
     if (!birth.date || !['男', '女'].includes(birth.sex)) throw new Error('八字參考需提供 birthData.date 與 birthData.sex');

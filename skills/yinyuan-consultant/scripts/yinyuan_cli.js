@@ -58,6 +58,8 @@ function parseArgs() {
             params.stickNum = Number(args[++i]);
         } else if (arg === '--status' && args[i + 1]) {
             params.status = args[++i];
+        } else if (arg === '--scene' && args[i + 1]) {
+            params.scene = args[++i];
         } else if (!arg.startsWith('--')) {
             rawInline = arg;
         }
@@ -107,7 +109,11 @@ function run() {
         } else if (mode === 'peach-blossom' || mode === 'taohua-luck') {
             result = peachBlossomLuck(inputData.firstYear || inputData.date || 1990, inputData.status || '單身');
         } else if (mode === 'bazi-match') {
-            result = baziMatchFull(inputData.first || { date: inputData.firstDate }, inputData.second || { date: inputData.secondDate });
+            result = baziMatchFull(
+                inputData.first || { date: inputData.firstDate, sex: inputData.firstSex || '男' },
+                inputData.second || { date: inputData.secondDate, sex: inputData.secondSex || '女' },
+                { scene: inputData.scene || 'marriage' }
+            );
         } else if (mode === 'red-thread') {
             result = redThreadFull(inputData);
         } else {

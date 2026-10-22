@@ -272,6 +272,59 @@
                         </div>
                     </details>
 
+                    <!-- 《陽宅三要》門・主・灶快速配星 -->
+                    <div class="fs-menzhuzao-inputs" style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 10px; padding: 14px 16px; margin-top: 14px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span class="suite-tag" style="background: #ecfdf5; color: #065f46; font-weight: 800;">📖 《陽宅三要》</span>
+                            <strong style="font-size: 14.5px; color: var(--suite-primary);">大門・主臥・廚灶快速配星（選填）</strong>
+                        </div>
+                        <p style="font-size: 13px; color: var(--suite-text-muted); margin: 0 0 10px;">三者方位相生相比為大吉，若相互剋伐可即時獲得化解調理方。</p>
+                        <div class="suite-form-row">
+                            <div class="suite-form-group">
+                                <label for="fsGateDir">大門方位</label>
+                                <select class="form-control" id="fsGateDir" name="gateDir" toolparamdescription="大門所在八卦方位">
+                                    <option value="" selected>依房屋朝向推定</option>
+                                    <option value="南">離門 (正南)</option>
+                                    <option value="北">坎門 (正北)</option>
+                                    <option value="東">震門 (正東)</option>
+                                    <option value="西">兌門 (正西)</option>
+                                    <option value="東南">巽門 (東南)</option>
+                                    <option value="西北">乾門 (西北)</option>
+                                    <option value="東北">艮門 (東北)</option>
+                                    <option value="西南">坤門 (西南)</option>
+                                </select>
+                            </div>
+                            <div class="suite-form-group">
+                                <label for="fsMasterDir">主臥方位</label>
+                                <select class="form-control" id="fsMasterDir" name="masterDir" toolparamdescription="主臥室所在八卦方位">
+                                    <option value="" selected>未指定 / 依九宮標註</option>
+                                    <option value="南">離宮 (正南)</option>
+                                    <option value="北">坎宮 (正北)</option>
+                                    <option value="東">震宮 (正東)</option>
+                                    <option value="西">兌宮 (正西)</option>
+                                    <option value="東南">巽宮 (東南)</option>
+                                    <option value="西北">乾宮 (西北)</option>
+                                    <option value="東北">艮宮 (東北)</option>
+                                    <option value="西南">坤宮 (西南)</option>
+                                </select>
+                            </div>
+                            <div class="suite-form-group">
+                                <label for="fsStoveDir">廚灶方位</label>
+                                <select class="form-control" id="fsStoveDir" name="stoveDir" toolparamdescription="廚房瓦斯爐灶所在八卦方位">
+                                    <option value="" selected>未指定 / 依九宮標註</option>
+                                    <option value="南">離宮 (正南)</option>
+                                    <option value="北">坎宮 (正北)</option>
+                                    <option value="東">震宮 (正東)</option>
+                                    <option value="西">兌宮 (正西)</option>
+                                    <option value="東南">巽宮 (東南)</option>
+                                    <option value="西北">乾宮 (西北)</option>
+                                    <option value="東北">艮宮 (東北)</option>
+                                    <option value="西南">坤宮 (西南)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- STEP 2 · 快速九宮物件標註器 (Interactive 9-Grid Layout Editor) -->
                     <div id="fsNineGridSection" class="fs-step2-card">
                         <div class="fs-step2-header">
@@ -343,11 +396,13 @@
                     <div class="suite-form-group">
                         <label for="shaType">選擇疑似面臨的煞氣形態（外局形煞 / 內局空間六事）</label>
                         <select class="form-control input-lg" id="shaType" name="shaType" toolparamdescription="形煞類型，使用中文 canonical 名稱">
-                            <optgroup label="🏛️ 外局形煞 (建築與道路環境)">
+                            <optgroup label="🏛️ 外局形煞 (建築與道路環境 · 14種)">
                                 <option value="天斬煞" selected>天斬煞（兩棟高樓窄縫如刀劈正對窗戶）</option>
-                                <option value="路沖煞">路沖煞 / 槍煞（大門或陽台正對筆直長路或長廊）</option>
+                                <option value="路沖煞">路沖煞（大門或陽台正對筆直長路道路直沖）</option>
+                                <option value="槍煞">槍煞（筆直長走廊直刺房門）</option>
                                 <option value="壁刀煞">壁刀煞（鄰棟建築外牆邊角如刀切入本宅）</option>
-                                <option value="反弓煞">反弓煞 / 反弓水（道路或河流弧形彎道弓背頂宅）</option>
+                                <option value="反弓煞">反弓煞（道路弧形彎道弓背頂宅）</option>
+                                <option value="反弓水">反弓水（河道水渠呈弧形反弓割宅）</option>
                                 <option value="鐮刀煞">鐮刀煞（高架橋或陸橋弧形彎道橫切中低樓層）</option>
                                 <option value="穿心煞">穿心煞（大樓下方有捷運地下道或大門直對立柱）</option>
                                 <option value="白虎煞">白虎煞（右側建築動土施工或右高左低欺青龍）</option>
@@ -357,12 +412,13 @@
                                 <option value="頂心煞">頂心煞（門前正對路燈桿、電線桿或大樹幹）</option>
                                 <option value="火形煞">火形煞（屋外正對高壓電塔、尖角屋頂或變壓器）</option>
                             </optgroup>
-                            <optgroup label="🚪 內局空間六事 (格局與動線)">
+                            <optgroup label="🚪 內局空間六事 (格局與動線 · 10種)">
                                 <option value="穿堂煞">穿堂煞（大門直對客廳落地窗/陽台，第一漏財格）</option>
                                 <option value="門沖床">門沖床（臥房房門直沖床頭或床身擾亂睡眠）</option>
                                 <option value="樑壓床">樑壓床（臥房床頭上方有橫樑壓頂）</option>
                                 <option value="橫樑壓頂">橫樑壓頂（沙發、書桌或辦公椅正上方有樑）</option>
-                                <option value="樑壓灶">樑壓灶 / 門沖灶（瓦斯爐上方有橫樑或與門直沖）</option>
+                                <option value="樑壓灶">樑壓灶（廚房瓦斯爐上方有橫樑橫壓）</option>
+                                <option value="門沖灶">門沖灶（廚房門或大門直沖瓦斯爐灶）</option>
                                 <option value="水火相沖">水火相沖（瓦斯爐與水槽緊鄰或正對冰箱）</option>
                                 <option value="廁居中宮">廁居中宮（衛生間浴廁位於房屋九宮正中心）</option>
                                 <option value="開門見灶">開門見灶（一進大門視線直見瓦斯爐灶）</option>

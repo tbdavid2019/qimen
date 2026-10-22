@@ -3851,3 +3851,167 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
         padding: 10px 14px !important;
     }
 }
+
+/* ==========================================================================
+   Tier 1-4 Metaphysics Suite Advanced UI Components ("Punchy & Prominent")
+   ========================================================================== */
+
+/* 1. 八字輔助工具箱 (Bazi Tools: Inverse Lookup & Time Sensitivity) */
+.bazi-tool-card {
+    background: var(--suite-bg-card, rgba(255, 255, 255, 0.04));
+    border: 1.5px solid var(--suite-border, rgba(0, 0, 0, 0.08));
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.bazi-tool-card:hover {
+    border-color: var(--suite-primary, #b45309);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+.bazi-tool-results {
+    border-top: 1px dashed var(--suite-border);
+    padding-top: 10px;
+    animation: fadeInSlide 0.25s ease-out;
+}
+
+/* 2. 袁天罡稱骨算命卡 (Chenggu Numerology) */
+.chenggu-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.chenggu-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.22) !important;
+}
+.chenggu-poem {
+    letter-spacing: 0.5px;
+    font-size: 15px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* 3. 五運六氣與子午流注養生卡 (Yunqi & Meridian Wellness) */
+.yunqi-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.yunqi-card:hover {
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.12) !important;
+}
+
+/* 4. 陽宅三要與吉時獵手卡 (Men Zhu Zao & Golden Slots) */
+.menzhuzao-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.menzhuzao-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(16, 185, 129, 0.18) !important;
+}
+.golden-slots-card {
+    transition: box-shadow 0.2s ease;
+}
+.golden-slots-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 5. 重大決策三術同參 (Decision Combo: Qimen × Liuyao × Meihua) */
+.decision-combo-promo {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.decision-combo-promo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25) !important;
+}
+.decision-combo-card {
+    animation: fadeInSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1.5px solid var(--suite-border);
+    border-radius: 14px;
+    padding: 20px 22px;
+}
+.decision-system-grid .system-card {
+    transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.decision-system-grid .system-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--suite-primary);
+}
+
+/* 6. 測字占事 (Name Cezi Divination) */
+.cezi-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cezi-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.cezi-glyph-box {
+    animation: pulseSubtle 3s ease-in-out infinite;
+}
+
+@keyframes pulseSubtle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark Mode Theme Adaptations */
+[data-theme="dark"] .bazi-tool-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .chenggu-card {
+    background: linear-gradient(135deg, rgba(180, 83, 9, 0.2) 0%, rgba(120, 53, 15, 0.35) 100%) !important;
+    border-color: rgba(245, 158, 11, 0.4) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+}
+[data-theme="dark"] .chenggu-poem {
+    background: rgba(0, 0, 0, 0.3) !important;
+    color: #fde68a !important;
+    border-left-color: #f59e0b !important;
+    text-shadow: none;
+}
+[data-theme="dark"] .chenggu-card h3,
+[data-theme="dark"] .chenggu-card p {
+    color: #fef3c7 !important;
+}
+[data-theme="dark"] .decision-combo-promo {
+    background: linear-gradient(135deg, rgba(180, 83, 9, 0.25) 0%, rgba(120, 53, 15, 0.4) 100%) !important;
+    border-color: rgba(245, 158, 11, 0.4) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+}
+[data-theme="dark"] .decision-combo-promo h4 {
+    color: #fef3c7 !important;
+}
+[data-theme="dark"] .decision-combo-promo p {
+    color: #fde68a !important;
+}
+[data-theme="dark"] .menzhuzao-card {
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.3) 0%, rgba(6, 95, 70, 0.2) 100%) !important;
+    border-color: rgba(16, 185, 129, 0.4) !important;
+}
+[data-theme="dark"] .menzhuzao-card h4 {
+    color: #a7f3d0 !important;
+}
+[data-theme="dark"] .cezi-card header {
+    background: linear-gradient(135deg, rgba(180, 83, 9, 0.2) 0%, rgba(120, 53, 15, 0.35) 100%) !important;
+    border-bottom-color: rgba(245, 158, 11, 0.3) !important;
+}
+[data-theme="dark"] .cezi-card header h2 {
+    color: #fef3c7 !important;
+}
+[data-theme="dark"] .cezi-card header p {
+    color: #fde68a !important;
+}
+[data-theme="dark"] .cezi-glyph-box {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-color: #f59e0b !important;
+    color: #fde68a !important;
+}

@@ -97,8 +97,9 @@
   - 自動依問題類別鎖定專屬用神：求財投資（妻財）、事業升遷（官鬼）、考試學業/合約（父母）、戀愛婚姻（妻財/官鬼/世應）、身體健康/消災（子孫/官鬼）、求子晚輩（子孫）、出行尋物/人際（世應）、綜合運勢。
 - **純排盤 API 端點 (`POST /api/liuyao`)**：純演算法快速排盤無 LLM 延遲，支援自選 `lines`、`method` 或 `datetime`。
 - **問答與解讀 API 端點 (`POST /api/liuyao-question`)**：整合宗師解讀與多輪對話追問。
+- **重大決策三術同參 (`POST /api/combo/decision`)**：面臨重大人生或商業抉擇時，一鍵整合奇門時空天盤、六爻事態主客世應與梅花體用易變，交叉比對各術共識與分歧盲點，輸出綜合會診裁決、置信度評級與三步走實施指南。
 - **標準 CLI 工具**：`skills/liuyao-consultant/scripts/ask_liuyao.js` 支援命令列參數與 stdin JSON 輸入。
-- **WebMCP 支援**：`liuyao_cast_divination` 供瀏覽器 AI 代理直接調用與自動宣告式表單適配。
+- **WebMCP 支援**：`liuyao_cast_divination` 與 `combo_decision_hecan` 供瀏覽器 AI 代理直接調用與自動宣告式表單適配。
 
 ### 4. 🌸 梅花易數 (`/meihua` & `/api/meihua-question`)
 - **起卦方式**：
@@ -115,13 +116,17 @@
 - **格局與喜用神**：正官格、七殺格、正偏財格、食神格、傷官格、印格、建祿格、陽刃格等判定，指明生扶/泄秀之喜用神與忌神。
 - **吉凶神煞**：天乙貴人、文昌貴人、驛馬、桃花咸池、華蓋、將星、祿神、羊刃、月德貴人。
 - **大運與流年**：十年大運排盤、流年干支生剋互動與歷史關鍵轉折年份驗證。
+- **四柱干支反查公曆 (`POST /api/bazi2/inverse-lookup`)**：支援輸入四柱干支（年柱、月柱、日柱、時柱）反向逆推 1900~2100 年間符合之西曆與農曆日期清單，顯示真實起運歲數與交運年份，一鍵套用排盤。
+- **時辰不確定敏感度定時校準 (`POST /api/bazi2/time-sensitivity`)**：全天 12 個候選時辰格局、日主強弱、喜用神與關鍵神煞（羊刃、魁罡、金神）矩陣對比；精煉跨時辰不變事實（定海神針）與生活事實校準問卷，輔助精確校準出生時辰。
+- **唐代袁天罡稱骨算命**：精準計算年月日時骨重幾兩幾錢，提供古籍詩歌批註與現代白話命途解析。
+- **五運六氣與子午流注臟腑養生**：依出生年五運六氣司天在泉分析體質盲點與五行生剋偏頗，結合十二經絡流注提供食療、穴位與作息建議。
 
 ### 6. 🏮 月老 · 姻緣測算 (`/yinyuan` & `/api/yinyuan-question`)
 - **100 支月老靈籤 (`fortune`)**：支援自選籤號（1-100）或🎲誠心搖籤按鈕、信士姓名/性別（Radio Pills 快速點選）、出生日期、感情狀態（單身/暗戀/熱戀/備婚/已婚/分手挽回）與問事主題。
 - **生肖配對 (`zodiac`)**：12 生肖快速選擇或出生西元年份、相處階段（初識/曖昧/熱戀/備婚/已婚）、三合/六合/六沖/六害契合評分與磨合錦囊。
 - **紫微夫妻宮 (`ziwei-marriage`)**：姓名、性別、公曆/農曆雙曆法、出生年月日、十二時辰下拉、感情狀態、14 主星四化與配偶特質畫像。
 - **桃花運勢 (`peach-blossom`)**：出生年月日、性別、感情狀態、2026年度/近期3-6個月查詢範圍、本命桃花位（子午卯酉）與開運法。
-- **八字合婚 (`bazi-match`)**：甲方與乙方雙方姓名、性別、公曆/農曆、出生年月日、出生時辰、關係階段與四柱天合地合互補評分。
+- **八字合婚 (`bazi-match`)**：甲方與乙方雙方姓名、性別、公曆/農曆、出生年月日、出生時辰。支援三大關係場景（婚姻家庭、事業合夥、職場同事），全面整合男女雙方東西四命配對（`mingGuaMatch`）、四柱天干地支合沖刑害全掃描（`pillarScan`）與場景專屬磨合建議（`sceneAdvice`）。
 - **紅線測算 (`red-thread`)**：命主姓名、性別、尋找對象性別、理想型特質偏好、單身狀態、正緣外貌氣質/職業/相遇場景與時機窗口。
 
 ### 7. 🏡 易經風水 / 陽宅分析 (`/fengshui` & `/api/fengshui-question`)
@@ -144,8 +149,9 @@
   - 流年九星飛臨，標註傳統星曜名稱；健康、家庭與財務結果不作確定性預測。
   - 八宅明鏡（四吉方：生氣/天醫/延年/伏位；四凶方：絕命/五鬼/六煞/禍害）。
   - 居住者命卦（男命/女命東四命/西四命配對）與空間功能區佈局優化。
-- **形煞診斷與化解 (`shaqi`)**：路沖煞、天斬煞、壁刀煞、反弓煞、穿堂風、橫梁壓頂、鏡對床等 24 種外局與內局形煞「移形易位」化解法。
-- **協紀辨方擇日 (`zeri`)**：入宅喬遷、開業開市、動土裝修、婚嫁之建除十二神黃道吉日吉時，避太歲、歲破、三煞。
+- **形煞診斷與化解 (`shaqi`)**：完整 24 種形煞選擇器，涵蓋 14 種外局形煞（路沖煞、天斬煞、壁刀煞、反弓煞等）與 10 種內局空間六事（穿堂風、橫梁壓頂、開門見灶等）之「移形易位」化解法。
+- **《陽宅三要》門・主・灶快速配星法**：分析大門、主臥、廚房之八宅九星生剋吉凶格局（生氣、延年、天醫、伏位四吉，絕命、五鬼、六煞、禍害四凶），提供精確現代佈局化解建議。
+- **協紀辨方擇日與吉時獵手 (`zeri`)**：入宅喬遷、開業開市、動土裝修、婚嫁之建除十二神黃道吉日；結合奇門遁甲天地盤與八字喜用神，自動推算「吉時獵手」黃金時辰 Top 5 排行榜。
 - **確定性純算 API 端點 (`POST /api/fengshui/evaluate-layout`)**：純演算法評估室內格局，不呼叫 LLM，供 Agent 與外部系統直接查詢。
   - 官方 MCP 提供 `fengshui_layout_evaluation`；WebMCP 與 bridge 使用同一方向宮位／canonical ID／最多 9 段入路契約。
 
@@ -204,12 +210,14 @@
 | **奇門遁甲** | `question`, `purpose` (8大專題), `mode` (adv/trad), `datetime`, `conversationHistory` | `/` & `/custom` | `POST /api/qimen-question` | `skills/qimen-consultant/scripts/qimen_cli.js` & `ask_qimen.js` | `qimen_divination`, `qimen_question`, `qimen_custom_paipan` |
 | **紫微斗數** | `question`, `date`, `time`, `shichen`, `sex`, `calendar`, `leap`, `name`, `conversationHistory`, `mode` (chart/spouse/male-size) | `/ziwei`, `/ziwei/spouse`, `/ziwei/male-size` | `POST /api/ziwei-question`, `POST /api/ziwei/spouse`, `POST /api/ziwei/male-size` | `skills/ziwei-consultant/scripts/ziwei_cli.js` & `ask_ziwei.js` | `ziwei_chart`, `ziwei_future_spouse`, `ziwei_male_size` |
 | **梅花易數** | `question`, `method` (time/number/text), `text`, `num1..3`, `purpose`, `conversationHistory` | `/meihua` | `POST /api/meihua-question` | `skills/meihua-consultant/scripts/ask_meihua.js` | `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_qigua_text`, `meihua_question`, `meihua_divination` |
-| **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory` | `/bazi2` | `POST /api/bazi2-question` | `skills/bazi2-consultant/scripts/ask_bazi2.js` | `bazi2_chart` |
-| **月老姻緣** | `question`, `mode` (6大模式), `name`, `sex`, `stickNum` (1-100), `calendar`, `date`, `time`, `status`, `stage`, `scope`, `seekingSex`, `first/secondZodiac`, `first/secondYear`, `first/second` (雙方四柱), `preference` | `/yinyuan` | `POST /api/yinyuan-question` | `skills/yinyuan-consultant/scripts/ask_yinyuan.js` | `yinyuan_reading` |
-| **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri/evaluate-layout), `facing`, `heading`, `northReference`, `declination`, `headingSource`, `layoutObjects`, `entryPath`, `pathQuality`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question`, `POST /api/fengshui/evaluate-layout`, `POST /api/fengshui/report` | `skills/fengshui-consultant/scripts/fengshui_cli.js` & `ask_fengshui.js` | `fengshui_report`, `fengshui_layout_evaluation` |
+| **六爻神卦** | `question`, `category`, `method` (coins/dayan/datetime/manual), `lines`, `datetime`, `conversationHistory` | `/liuyao` | `POST /api/liuyao-question`, `POST /api/liuyao` | `skills/liuyao-consultant/scripts/ask_liuyao.js` | `liuyao_cast_divination` |
+| **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory`, `yearPillar`, `monthPillar`, `dayPillar`, `hourPillar` | `/bazi2` | `POST /api/bazi2-question`, `POST /api/bazi2/inverse-lookup`, `POST /api/bazi2/time-sensitivity` | `skills/bazi2-consultant/scripts/ask_bazi2.js` | `bazi2_chart`, `bazi_inverse_lookup`, `bazi_time_sensitivity` |
+| **月老姻緣** | `question`, `mode` (6大模式), `scene` (marriage/business/colleague), `name`, `sex`, `stickNum` (1-100), `calendar`, `date`, `time`, `status`, `stage`, `scope`, `seekingSex`, `first/secondZodiac`, `first/secondYear`, `first/second` (雙方四柱), `preference` | `/yinyuan` | `POST /api/yinyuan-question` | `skills/yinyuan-consultant/scripts/ask_yinyuan.js` | `yinyuan_reading` |
+| **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri/evaluate-layout), `gateDir`, `masterDir`, `stoveDir`, `facing`, `heading`, `northReference`, `declination`, `headingSource`, `layoutObjects`, `entryPath`, `pathQuality`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question`, `POST /api/fengshui/evaluate-layout`, `POST /api/fengshui/report` | `skills/fengshui-consultant/scripts/fengshui_cli.js` & `ask_fengshui.js` | `fengshui_report`, `fengshui_layout_evaluation`, `zeri_auspicious_search` |
 | **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (4種視角), `time_factor`, `seed`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |
 | **解答之書** | `mode` (direct/question), `question`, `conversationHistory` | `/answerbook` | `POST /api/answerbook-question` | `skills/answerbook-consultant/scripts/ask_answerbook.js` | `answerbook_reading` |
-| **中文姓名分析** | 驗名 `name` (2–8 字), `surname`, `profile`; 取名 `givenNameLength` (1–4), `includeChars`, `excludeChars`, `desiredElements`, `nameStyle`, `birthData`, `limit` | `/name-analysis` | `POST /api/name-analysis/verify`, `/api/name-analysis/generate`, `/api/name-analysis-question` | `skills/name-analysis-consultant/scripts/name_analysis_cli.js` | `name_analysis_verify`, `name_analysis_generate`, `name_analysis_question` |
+| **中文姓名分析** | 驗名 `name` (2–8 字), `surname`, `profile`; 取名 `givenNameLength` (1–4), `includeChars`, `excludeChars`, `desiredElements`, `nameStyle`, `birthData`, `limit`; 測字 `text`, `matter`, `sex` | `/name-analysis` | `POST /api/name-analysis/verify`, `/api/name-analysis/generate`, `/api/name-analysis/cezi`, `/api/name-analysis-question` | `skills/name-analysis-consultant/scripts/name_analysis_cli.js` | `name_analysis_verify`, `name_analysis_generate`, `name_analysis_question`, `name_cezi_divination` |
+| **三術同參會診** | `question`, `category`, `datetime`, `method` | `/liuyao` | `POST /api/combo/decision` | `skills/liuyao-consultant/scripts/ask_liuyao.js` | `combo_decision_hecan` |
 | **時間範圍校正** | `startDate`, `endDate`, `timezone`, `precision` | `/` | `GET/POST /api/time/range` | `lib/civil-time.js` | `date_range_normalize` |
 
 ### 分析結果寄送
@@ -230,6 +238,7 @@
 
 - 驗名：`POST /api/name-analysis/verify`，JSON 範例 `{"name":"歐陽明月清風","profile":"taiwanKangxi"}`。可選 `surname` 明確指定姓氏。
 - 取名：`POST /api/name-analysis/generate`，JSON 範例 `{"surname":"歐陽","givenNameLength":3,"includeChars":["安"],"excludeChars":["凶"],"desiredElements":["木"],"nameStyle":"feminine","limit":20}`。`nameStyle` 支援 `auto`（預設，參照已提供的 `birthData.sex`，無性別資料時中性）、`feminine`、`masculine`、`neutral`。候選排序結合編輯整理的風格字表、CCNC 365 萬筆姓名語料中按標註性別統計的用字與名字字組，以及明確條件；只是可覆寫的軟性習慣，不代表性別判定。候選會列出風格相符／不同的字及語料觀察數。
+- 測字：`POST /api/name-analysis/cezi`，JSON 範例 `{"text":"安","matter":"事業升遷","sex":"乾造"}`。支援輸入一個或多個漢字，解析漢字字形結構、部首象徵、康熙筆畫與五行屬性，自動起梅花易數占事卦（本互變錯綜五卦），連動 81 數理與八字五行補益，提供宗師斷語、字相吉凶與拆字解構玄機，完整支援多輪連續追問對話與結果郵件寄送。
 - 問答：`POST /api/name-analysis-question`，傳入驗名或取名參數並可附 `question`（最多 1,000 字）。沒有設定 LLM 或未提供問題時只回傳確定性結果。驗名與取名的完整輸入和結果送至 Discord webhook；若使用補充解讀，姓名及確定性分析結果會送至設定的 LLM，原始出生日期與時間不加入 LLM prompt，衍生八字摘要可能包含在分析結果中。
 - 數理：五格採 `data/name-analysis/method-profiles.json` 所列版本；81 數理與三才分項呈現，不合併成單一「命運分數」。名字部分超過兩字時標示延伸算法，生肖部首喜忌則因缺乏可驗證來源而未啟用。風格字表可由 `GET /data/name-analysis/name-style-profiles.json` 讀取，方法／來源可由 `GET /data/name-analysis/method-profiles.json` 讀取。
 - 命名候選字取自專案整理且符合字義／筆畫資料的字池，排序參考來源與限制見 `data/name-analysis/SOURCES.md`。CCNC 是中國大陸來源且以一至二字名字為主；長名字僅使用字頻與首兩字的相鄰字統計。語料量不等於台灣新生兒頻率，這些統計不是個人性別判定或姓名品質評分。統計檔可由 `GET /data/name-analysis/name-corpus-profile.json` 查閱，來源授權為 GPL-3.0 並保留授權全文；專案及衍生統計採 AGPL-3.0。
@@ -249,6 +258,13 @@ LLM 導覽索引位於 [`llms.txt`](https://qi.david888.com/llms.txt)，列出�
 - 開啟支援 WebMCP 的瀏覽器（如 Chrome 150+ 或啟用 `chrome://flags/#enable-webmcp-testing`）
 - 瀏覽器內建代理或擴充套件即可透過 `document.modelContext` 自動探索並執行網頁工具；工具 schema 與 API 使用同一組 canonical enum。
 - 頁面上的 `toolname` 宣告式表單由瀏覽器直接註冊；共用 JavaScript 註冊器會自動跳過同名工具，避免重複註冊錯誤。
+- **全息命令式工具集 (Imperative Tools via `window.WebMCP.getImperativeTools()`)**：
+  - `bazi_inverse_lookup`：輸入四柱干支（年月日時干支），反查公曆日期清單。
+  - `bazi_time_sensitivity`：時辰不確定敏感度定時校準，對比 12 時辰格局並提煉校準問卷。
+  - `zeri_auspicious_search`：奇門 × 八字擇日吉時獵手，推算近期 Top 5 吉時排行榜。
+  - `combo_decision_hecan`：重大決策奇門 × 六爻 × 梅花三術同參會診，交叉比對共識與分歧盲點。
+  - `name_cezi_divination`：漢字測字占事，解構字形筆畫、起梅花占事卦並分析五行補益。
+  - 核心通用工具：`send_conversation_email`（分析結果與問答無痕寄送）、`switch_theme`（深淺色主題切換）、`get_current_pan`（當前盤面狀態讀取）。
 
 ### 2. 零依賴 MCP Bridge (JSON-RPC stdio)
 供 Claude Desktop、Cursor 或任意 MCP Client 使用：

@@ -91,6 +91,7 @@
       <div class="name-tabs" role="tablist" aria-label="姓名分析模式">
         <button type="button" class="name-tab active" data-mode="verify" role="tab" aria-selected="true">🔎 驗證現有名字</button>
         <button type="button" class="name-tab" data-mode="generate" role="tab" aria-selected="false">✨ 開始取名</button>
+        <button type="button" class="name-tab" data-mode="cezi" role="tab" aria-selected="false">✍️ 測字占事</button>
       </div>
       <form id="nameForm" toolname="name_analysis_verify" tooldescription="驗證中文姓名或依姓氏與條件產生命名候選，支援 2 至 8 字姓名。">
         <section class="name-form-section">
@@ -141,10 +142,35 @@
           </div>
         </section>
 
+        <section id="ceziFields" class="name-form-section name-cezi-section" hidden>
+          <div class="name-section-heading">
+            <span class="name-step" style="background:#fef3c7; color:#92400e;">01</span>
+            <div>
+              <h2 style="color:var(--suite-primary);">✍️ 測字問事 · 觸機破惑</h2>
+              <p>意念凝聚於一字，結合說文解字拆形、康熙筆畫、梅花易數生卦與八字喜忌合參。</p>
+            </div>
+          </div>
+          <div class="name-input-grid">
+            <div class="name-field">
+              <label for="ceziChar">欲測之漢字 <span style="color:#ef4444;">* 必填單字</span></label>
+              <input id="ceziChar" class="form-control text-center" maxlength="2" placeholder="例如：明、安、鼎、順" style="font-size: 24px; font-weight: 800; letter-spacing: 4px;">
+            </div>
+            <div class="name-field name-field-full">
+              <label for="ceziQuestion">所問何事（求財／事業／感情／決策／疾厄等） <span style="color:#ef4444;">* 必填</span></label>
+              <input id="ceziQuestion" class="form-control" placeholder="例如：近期欲轉換跑道創業，此字吉凶如何？">
+            </div>
+            <div class="name-field">
+              <label for="ceziBirthDate">問測人出生日期 <span class="name-optional-tag">選填（結合八字喜忌精準補足）</span></label>
+              <input id="ceziBirthDate" type="date" class="form-control">
+            </div>
+          </div>
+        </section>
+
         <div class="name-submit suite-submit-container"><button id="submitName" type="submit" class="btn name-submit-btn">立即分析姓名 ➔</button></div>
       </form>
       <div id="nameStatus" class="name-status" role="status" aria-live="polite"></div>
       <div id="nameResults" class="name-results" aria-live="polite"></div>
+      <div id="ceziSection" class="cezi-results-wrapper" style="display:none;" aria-live="polite"></div>
       <form id="nameQuestionForm" class="name-question" hidden>
         <div class="name-question-heading"><span>✦</span><div><h2>想再多了解一點？</h2><p>可請 AI 解釋姓名資料與八字五行參考。</p></div></div>
         <label for="nameQuestion">你的問題</label>

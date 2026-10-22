@@ -41,7 +41,7 @@ Trigger this skill whenever a user:
 
 Supports inline JSON, stdin JSON, and command-line flags:
 - `--question`: Specific question/inquiry (required).
-- `--method`: `coins` | `dayan` | `datetime` | `manual`.
+- `--method`: `coins` | `dayan` | `datetime` | `manual` | `combo` (runs Qimen × Liuyao × Meihua 3-system Hecan decision synthesis via `evaluateDecisionCombo`).
 - `--lines`: 6-character string with digits 6, 7, 8, 9 (e.g. `789687`).
 - `--category`: Query category (`求財投資`, `事業升遷`, `考試學業`, `戀愛婚姻`, `身體健康`, `出行尋物`, `綜合運勢`).
 - `--gender`: `男` | `女`.

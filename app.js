@@ -22,9 +22,10 @@ const DiscordWebhook = require('./lib/discord-webhook');
 const APITimeHandler = require('./lib/api-time-handler');
 const { parseCivilTime } = require('./lib/civil-time');
 const { drawCards, SPREADS: TAROT_SPREADS, calculateTarotNumerology, getAllTarotCards } = require('./lib/tarot');
-const { calculateBazi } = require('./lib/bazi2');
+const { calculateBazi, lookupBaziDates, analyzeBaziTimeSensitivity } = require('./lib/bazi2');
 const {
     calculateFengShui,
+    evaluateMenZhuZao,
     diagnoseShaqi,
     diagnoseLuantou,
     getAllShaQiLibrary,
@@ -34,6 +35,7 @@ const {
     validateLayoutInput,
     evaluateZhongzhouLayout
 } = require('./lib/fengshui');
+const { searchAuspiciousTimes, evaluateDecisionCombo, analyzeCezi, calculateYunqiWellness } = require('./lib/advanced-wisdom');
 const { calculateZiweiChart, evaluateMaleSize, evaluateFutureSpouse } = require('./lib/ziwei');
 const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
 const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time');
@@ -191,12 +193,23 @@ app.post('/api/name-analysis/generate', async (req, res) => {
 app.post('/api/name-analysis-question', async (req, res) => {
     try {
         const body = req.body || {};
-        const baziLens = resolveNameBirthLens(body.birthData);
-        const calculatedInput = { ...body, baziLens: baziLens || undefined, desiredElements: Array.isArray(body.desiredElements) && body.desiredElements.length ? body.desiredElements : (baziLens?.usefulElements || []) };
-        const result = body.mode === 'generate' ? nameAnalysis.generateNames(calculatedInput) : nameAnalysis.analyzeName(calculatedInput);
-        const followup = String(body.question || '').slice(0, 1000);
+        const followup = String(body.question || body.matter || '').slice(0, 1000);
+        let result;
+        if (body.mode === 'cezi') {
+            result = analyzeCezi({
+                char: body.char || body.character || body.text,
+                question: followup || '請解此字所示之事態吉凶',
+                birthDate: body.birthDate || body.birthData?.date,
+                sex: body.sex || body.birthData?.sex || '男',
+                profile: body.profile
+            });
+        } else {
+            const baziLens = resolveNameBirthLens(body.birthData);
+            const calculatedInput = { ...body, baziLens: baziLens || undefined, desiredElements: Array.isArray(body.desiredElements) && body.desiredElements.length ? body.desiredElements : (baziLens?.usefulElements || []) };
+            result = body.mode === 'generate' ? nameAnalysis.generateNames(calculatedInput) : nameAnalysis.analyzeName(calculatedInput);
+        }
         if (!followup || !process.env.LLM_API_KEY) {
-            const discord = await sendModuleRecord('中文姓名分析', body, result);
+            const discord = await sendModuleRecord(body.mode === 'cezi' ? '測字占事' : '中文姓名分析', body, result);
             return res.json({ success: true, result, analysis: null, llmAvailable: !!process.env.LLM_API_KEY, discord });
         }
 
@@ -221,7 +234,7 @@ app.post('/api/name-analysis-question', async (req, res) => {
             }
         }
 
-        const boundedResult = nameAnalysis.formatQuestionPrompt(result, followup);
+        const boundedResult = body.mode === 'cezi' ? result : nameAnalysis.formatQuestionPrompt(result, followup);
         const activeLlm = resolveLlmService(req, llmService);
         const analysis = await activeLlm.analyzeService('nameAnalysis', boundedResult, {
             userQuestion: followup,
@@ -229,7 +242,7 @@ app.post('/api/name-analysis-question', async (req, res) => {
             language: body.lang || 'zh-tw'
         });
         const { turnstileToken: _turnstileToken, 'cf-turnstile-response': _cfTurnstileResponse, ...recordInput } = body;
-        const discord = await sendModuleRecord('中文姓名分析', recordInput, result, analysis.analysis || analysis.fallback || '');
+        const discord = await sendModuleRecord(body.mode === 'cezi' ? '測字占事' : '中文姓名分析', recordInput, result, analysis.analysis || analysis.fallback || '');
         res.json({ success: true, result, analysis: analysis.analysis || analysis.fallback || null, metadata: analysis.success ? { provider: analysis.provider, model: analysis.model } : null, discord });
     } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message, code: error.code }); }
 });
@@ -573,6 +586,101 @@ const handleBaziChart = async (req, res) => {
 app.post('/api/bazi2/chart', handleBaziChart);
 app.get('/api/bazi2/chart', handleBaziChart);
 
+const handleBaziInverseLookup = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const result = lookupBaziDates(payload);
+        res.json({ success: true, ...result });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/bazi2/inverse-lookup', handleBaziInverseLookup);
+app.get('/api/bazi2/inverse-lookup', handleBaziInverseLookup);
+
+const handleBaziTimeSensitivity = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const result = analyzeBaziTimeSensitivity(payload);
+        res.json({ success: true, ...result });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/bazi2/time-sensitivity', handleBaziTimeSensitivity);
+app.get('/api/bazi2/time-sensitivity', handleBaziTimeSensitivity);
+
+const handleBaziYunqiWellness = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const result = calculateYunqiWellness(payload);
+        res.json({ success: true, ...result });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/bazi2/yunqi-wellness', handleBaziYunqiWellness);
+app.get('/api/bazi2/yunqi-wellness', handleBaziYunqiWellness);
+
+const handleZeriSearch = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const result = searchAuspiciousTimes(payload);
+        res.json({ success: true, ...result });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/zeri/search', handleZeriSearch);
+app.get('/api/zeri/search', handleZeriSearch);
+app.post('/api/fengshui/zeri-search', handleZeriSearch);
+app.get('/api/fengshui/zeri-search', handleZeriSearch);
+
+const handleFengshuiMenZhuZao = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const result = evaluateMenZhuZao(payload);
+        res.json({ success: true, ...result });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/fengshui/men-zhu-zao', handleFengshuiMenZhuZao);
+
+const handleComboMarriage = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const first = payload.first || { date: payload.firstDate || payload.date, sex: payload.firstSex || '男' };
+        const second = payload.second || { date: payload.secondDate, sex: payload.secondSex || '女' };
+        const scene = payload.scene || 'marriage';
+        const match = baziMatchFull(first, second, { scene });
+        res.json({ success: true, match });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/combo/marriage', handleComboMarriage);
+
+const handleComboDecision = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const combo = evaluateDecisionCombo(payload);
+        res.json({ success: true, combo, ...combo });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/combo/decision', handleComboDecision);
+
+const handleNameAnalysisCezi = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const result = analyzeCezi(payload);
+        res.json({ success: true, result, ...result });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/name-analysis/cezi', handleNameAnalysisCezi);
+
+const handleYinyuanMatch = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        const first = payload.first || { date: payload.firstDate || payload.date, sex: payload.firstSex || '男' };
+        const second = payload.second || { date: payload.secondDate, sex: payload.secondSex || '女' };
+        const scene = payload.scene || 'marriage';
+        const match = baziMatchFull(first, second, { scene });
+        const discord = await sendModuleRecord('姻緣合盤', payload, match);
+        res.json({ success: true, match, result: match, discord });
+    } catch (error) { res.status(error.statusCode || 400).json({ success: false, error: error.message }); }
+};
+app.post('/api/yinyuan/match', handleYinyuanMatch);
+app.get('/api/yinyuan/match', handleYinyuanMatch);
+
 const handleYinyuanReading = async (req, res) => {
     try {
         const body = { ...(req.query || {}), ...(req.body || {}) };
@@ -583,7 +691,7 @@ const handleYinyuanReading = async (req, res) => {
             if (!body.firstDate && !body.secondDate && !body.date && !body.first?.date) {
                 return res.status(400).json({ success: false, error: '請提供雙方出生日期以進行八字合婚' });
             }
-            result = baziMatchFull(body.first || body, body.second || body);
+            result = baziMatchFull(body.first || body, body.second || body, { scene: body.scene });
         } else if (mode === 'zodiac') {
             const first = body.firstZodiac || body.firstYear || body.first;
             const second = body.secondZodiac || body.secondYear || body.second;

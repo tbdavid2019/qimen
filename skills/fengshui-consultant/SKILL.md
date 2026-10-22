@@ -79,7 +79,15 @@ node skills/fengshui-consultant/scripts/ask_fengshui.js --mode yangzhai --facing
 ### `fengshui_cli.js` 與 `ask_fengshui.js` 參數
 
 支援 inline JSON、stdin JSON，以及命令列旗標：
-- `--mode yangzhai|shaqi|zeri|luantou|evaluate-layout`：運作模式。
+- `--mode yangzhai|shaqi|zeri|luantou|evaluate-layout|men-zhu-zao|qimen-zeri`：運作模式。
+- `--gate-dir` / `--gateDir`：大門方位（東、東南、南、西南、西、西北、北、東北），用於《陽宅三要》門主灶吉凶配星。
+- `--master-dir` / `--masterDir`：主臥方位。
+- `--stove-dir` / `--stoveDir`：灶位（廚房）方位。
+- `--start-date` / `--startDate`：吉時獵手起始日期 (YYYY-MM-DD)。
+- `--end-date` / `--endDate`：吉時獵手結束日期 (YYYY-MM-DD)。
+- `--direction`：奇門擇日目標方位（如「南」、「東南」、「西北」等）。
+- `--purpose`：用事目的（如「求財」、「簽約」、「開業」、「出行」、「治病」）。
+- `--min-score` / `--minScore`：吉時評分門檻（預設 60）。
 - `--heading <number>`：電子羅盤實測向首度數 `[0, 360)`，自動換算 24 山與判定正向（下卦）／兼向（替卦）／大小空亡線。
 - `--north-reference <magnetic|true>`：北基準（磁北或真北）。
 - `--declination <number>`：磁偏角。

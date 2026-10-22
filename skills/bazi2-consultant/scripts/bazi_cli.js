@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { calculateBazi } = require(path.join(__dirname, '../../../lib/bazi2.js'));
+const { calculateBazi, lookupBaziDates, analyzeBaziTimeSensitivity } = require(path.join(__dirname, '../../../lib/bazi2.js'));
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -22,6 +22,16 @@ function parseArgs() {
         if ((arg === '--solar' || arg === '--date') && args[i + 1]) {
             params.date = args[++i];
             params.calendar = 'solar';
+        } else if (arg === '--mode' && args[i + 1]) {
+            params.mode = args[++i];
+        } else if (arg === '--pillars' && args[i + 1]) {
+            params.pillars = args[++i];
+        } else if (arg === '--start-year' && args[i + 1]) {
+            params.startYear = Number(args[++i]);
+        } else if (arg === '--end-year' && args[i + 1]) {
+            params.endYear = Number(args[++i]);
+        } else if (arg === '--time-range' && args[i + 1]) {
+            params.timeRange = args[++i];
         } else if (arg === '--lunar' && args[i + 1]) {
             params.date = args[++i];
             params.calendar = 'lunar';
@@ -69,14 +79,16 @@ function parseArgs() {
     }
 
     // Try reading from stdin if available synchronously
-    try {
-        const stdinBuf = fs.readFileSync(0, 'utf-8');
-        if (stdinBuf && stdinBuf.trim().startsWith('{')) {
-            Object.assign(params, JSON.parse(stdinBuf.trim()));
-        }
-    } catch {}
+    if (!process.stdin.isTTY) {
+        try {
+            const stdinBuf = fs.readFileSync(0, 'utf-8');
+            if (stdinBuf && stdinBuf.trim().startsWith('{')) {
+                Object.assign(params, JSON.parse(stdinBuf.trim()));
+            }
+        } catch {}
+    }
 
-    if (!params.date) {
+    if (!params.date && params.mode !== 'inverse' && params.mode !== 'inverse-lookup') {
         params.date = '1990-05-15';
     }
 
@@ -86,7 +98,14 @@ function parseArgs() {
 function run() {
     try {
         const input = parseArgs();
-        const result = calculateBazi(input);
+        let result;
+        if (input.mode === 'inverse' || input.mode === 'inverse-lookup') {
+            result = lookupBaziDates(input);
+        } else if (input.mode === 'sensitivity' || input.mode === 'time-sensitivity') {
+            result = analyzeBaziTimeSensitivity(input);
+        } else {
+            result = calculateBazi(input);
+        }
         console.log(JSON.stringify(result, null, 2));
     } catch (err) {
         console.error(JSON.stringify({ success: false, error: err.message }));

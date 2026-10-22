@@ -160,10 +160,78 @@
                 </button>
             </form>
 
+            <!-- 八字輔助工具集（四柱干支反查西曆 ＆ 時辰不確定敏感度定時校準） -->
+            <details class="suite-details bazi-helper-details" style="margin-top: 16px;">
+                <summary style="font-weight: 700; color: var(--suite-primary); cursor: pointer;">🛠️ 輔助工具箱：四柱干支反查西曆 ＆ 出生時辰敏感度校準</summary>
+                <div class="suite-details-body" style="padding-top: 14px; display: grid; gap: 16px;">
+                    
+                    <!-- 1. 四柱干支反查西曆生辰 -->
+                    <div id="baziInverseBox" class="bazi-tool-card">
+                        <div class="bazi-tool-header" style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                            <span class="suite-tag" style="background:#fef3c7; color:#92400e; font-weight:800;">🔍 實用工具</span>
+                            <h4 style="margin:0; font-size:16px; font-weight:800; color:var(--suite-primary);">四柱干支反查西曆生辰</h4>
+                        </div>
+                        <p style="font-size:13.5px; color:var(--suite-text-muted); margin:4px 0 10px;">已知四柱干支（如族譜、八字條或命書），反查對應公曆出生日期與時間範圍。</p>
+                        <div class="suite-form-row">
+                            <div class="suite-form-group" style="flex:2;">
+                                <label for="baziInversePillars">四柱干支（例如：甲子 丙寅 丁卯 戊申）</label>
+                                <input type="text" class="form-control" id="baziInversePillars" placeholder="例如：甲子 丙寅 丁卯 戊申">
+                            </div>
+                            <div class="suite-form-group" style="flex:1;">
+                                <label for="baziInverseStartYear">起始年份</label>
+                                <input type="number" class="form-control" id="baziInverseStartYear" value="1940" min="1800" max="2100">
+                            </div>
+                            <div class="suite-form-group" style="flex:1;">
+                                <label for="baziInverseEndYear">結束年份</label>
+                                <input type="number" class="form-control" id="baziInverseEndYear" value="2030" min="1800" max="2100">
+                            </div>
+                        </div>
+                        <button type="button" id="btnBaziInverseLookup" class="suite-btn-secondary" style="width:100%; margin-top:8px; font-weight:700;">
+                            立即反查西曆 ➔
+                        </button>
+                        <div id="baziInverseResults" class="bazi-tool-results" style="display:none; margin-top:10px;"></div>
+                    </div>
+
+                    <!-- 2. 出生時辰不確定？時辰敏感度與定時校準 -->
+                    <div id="baziTimeSensitivityBox" class="bazi-tool-card">
+                        <div class="bazi-tool-header" style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                            <span class="suite-tag" style="background:#fee2e2; color:#991b1b; font-weight:800;">⏱️ 定時神器</span>
+                            <h4 style="margin:0; font-size:16px; font-weight:800; color:var(--suite-primary);">出生時辰不確定？時辰敏感度與定時校準</h4>
+                        </div>
+                        <p style="font-size:13.5px; color:var(--suite-text-muted); margin:4px 0 10px;">不確定出生在幾點幾分？比對當日各時辰對日主身強、喜用神、格局與袁天罡骨重的實質差異，配合人生經歷問題校準精確時辰。</p>
+                        <div class="suite-form-row">
+                            <div class="suite-form-group" style="flex:2;">
+                                <label for="baziTimeRange">候選時段範圍</label>
+                                <select class="form-control" id="baziTimeRange">
+                                    <option value="all" selected>全天十二時辰（逐一橫向比對）</option>
+                                    <option value="morning">早晨時段（寅卯辰巳 · 03:00~11:00）</option>
+                                    <option value="afternoon">午後時段（午未申 · 11:00~17:00）</option>
+                                    <option value="evening">夜晚時段（酉戌亥 · 17:00~23:00）</option>
+                                    <option value="night">深夜子丑（23:00~03:00）</option>
+                                </select>
+                            </div>
+                            <div class="suite-form-group" style="flex:1; align-self:flex-end;">
+                                <button type="button" id="btnBaziTimeSensitivity" class="suite-btn-secondary" style="width:100%; height:44px; font-weight:700;">
+                                    比對各時辰差異 ➔
+                                </button>
+                            </div>
+                        </div>
+                        <div id="baziSensitivityResults" class="bazi-tool-results" style="display:none; margin-top:10px;"></div>
+                    </div>
+
+                </div>
+            </details>
+
             <%- include('partials/ads-mobile.html') %>
 
             <!-- Visual Board -->
             <div id="suiteVisualBoard" class="suite-visual-board" hidden></div>
+
+            <!-- 袁天罡稱骨算命結果卡 -->
+            <div id="chengguBox" class="suite-card" style="display:none; margin-top:16px;"></div>
+
+            <!-- 五運六氣與子午流注養生卡 -->
+            <div id="yunqiBox" class="suite-card" style="display:none; margin-top:16px;"></div>
 
             <!-- 解讀與追問區域 -->
             <div id="suiteAiSection" class="suite-ai-section" hidden>

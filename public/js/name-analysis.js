@@ -47,6 +47,115 @@
     return glosses.length ? glosses.join('；') : '字典資料有收錄，請參考原始方法來源';
   }
 
+  function renderCezi(data) {
+    const res = data.result || data;
+    const charData = res.charDetails || res.characterDetails || {};
+    const hex = res.charHexagram || res.hexagram || {};
+    const n81Data = res.numerology81 || {};
+    const bazi = res.baziComplement || {};
+    const judgment = res.judgment || res.verdict || '';
+    const rawAdvice = res.adviceText || res.advice || '';
+    const advice = typeof rawAdvice === 'object' && rawAdvice !== null
+      ? Object.entries(rawAdvice).map(([k, v]) => `【${k}】${v}`).join(' ')
+      : String(rawAdvice || '');
+
+    return `<article class="name-result-card cezi-card" style="border: 1.5px solid var(--suite-border); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.06); margin-top: 16px;">
+      <header class="name-result-hero" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-bottom: 1.5px solid #f59e0b; padding: 18px 20px;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div class="cezi-glyph-box" style="width:64px; height:64px; border-radius:12px; background:#fff; border:2px solid #f59e0b; display:flex; align-items:center; justify-content:center; font-size:38px; font-weight:800; color:#b45309; box-shadow:0 4px 12px rgba(245,158,11,0.2);">
+            ${esc(res.char || byId('ceziChar').value)}
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+              <span class="suite-tag" style="background:#b45309; color:#fff; font-weight:800; font-size:12px;">✍️ 測字問事</span>
+              <h2 style="margin:0; font-size:20px; font-weight:800; color:#78350f;">測「${esc(res.char || byId('ceziChar').value)}」字 · 象數義理直斷</h2>
+            </div>
+            <p style="margin:0; font-size:13.5px; color:#92400e; font-weight:600;">占問事項：${esc(res.question || byId('ceziQuestion').value)}</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- 1. 漢字造字與五行 -->
+      <section class="name-result-section" style="padding: 16px 20px;">
+        <div class="name-section-title" style="margin-bottom:10px;">
+          <span>01</span><h3>字形構造與易理五行</h3><small>康熙字典考據</small>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:12px;">
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
+            <div style="font-size:12px; color:var(--suite-text-muted);">康熙筆畫</div>
+            <div style="font-size:18px; font-weight:800; color:var(--suite-primary);">${esc(res.stroke || charData.stroke || '—')} 畫</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
+            <div style="font-size:12px; color:var(--suite-text-muted);">字音拼音</div>
+            <div style="font-size:16px; font-weight:700;">${esc(res.pinyin || charData.pinyin || '—')}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
+            <div style="font-size:12px; color:var(--suite-text-muted);">五行歸屬</div>
+            <div style="font-size:18px; font-weight:800; color:#059669;">${esc(res.element || charData.element || '—')}行</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
+            <div style="font-size:12px; color:var(--suite-text-muted);">字形結構</div>
+            <div style="font-size:16px; font-weight:700;">${esc(res.structure || charData.structure || '獨體/合體')}</div>
+          </div>
+        </div>
+        ${res.definition || charData.definition ? `<div style="font-size:13px; color:var(--suite-text-muted); background:rgba(0,0,0,0.02); padding:8px 12px; border-radius:6px;">📖 字義訓詁：${esc(res.definition || charData.definition)}</div>` : ''}
+      </section>
+
+      <!-- 2. 梅花字卦與 81 數理 -->
+      <section class="name-result-section" style="padding: 16px 20px; border-top:1px solid var(--suite-border);">
+        <div class="name-section-title" style="margin-bottom:10px;">
+          <span>02</span><h3>梅花易數成卦 ✕ 81數理</h3><small>象數合參</small>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; margin-bottom:12px;">
+          <div style="background:linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border:1px solid #d8b4fe; border-radius:10px; padding:12px 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="color:#7e22ce; font-size:14px;">🌸 梅花字卦：【${esc(hex.name || hex.guaName || '易卦感應')}】</strong>
+              <span class="suite-tag" style="background:#a855f7; color:#fff; font-weight:700;">${esc(hex.grade || '吉')}</span>
+            </div>
+            <div style="font-size:13px; color:#581c87; line-height:1.5;">${esc(hex.judgment || hex.meaning || '卦氣相符，動靜得宜。')}</div>
+          </div>
+          <div style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border:1px solid #fde68a; border-radius:10px; padding:12px 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="color:#92400e; font-size:14px;">🔢 81數理：第 ${esc(n81Data.number || res.stroke || '1')} 數</strong>
+              <span class="suite-tag" style="background:#f59e0b; color:#fff; font-weight:700;">${esc(n81Data.fortune || n81Data.luck || '大吉')}</span>
+            </div>
+            <div style="font-size:13px; color:#78350f; line-height:1.5;">${esc(n81Data.meaning || n81Data.poem || '基業穩固，德望兼備。')}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 八字喜忌互補 (若有生辰) -->
+      ${bazi.analysis || bazi.summary ? `
+        <section class="name-result-section" style="padding: 16px 20px; border-top:1px solid var(--suite-border);">
+          <div class="name-section-title" style="margin-bottom:8px;">
+            <span>03</span><h3>八字命理五行喜忌對照</h3>
+          </div>
+          <div style="background:rgba(16,185,129,0.08); border-left:4px solid #10b981; padding:10px 14px; border-radius:6px; font-size:13.5px; line-height:1.6;">
+            <strong>🌱 八字互補：</strong>${esc(bazi.analysis || bazi.summary || '')}
+          </div>
+        </section>
+      ` : ''}
+
+      <!-- 4. 宗師斷語與行動錦囊 -->
+      <section class="name-result-section" style="padding: 18px 20px; background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-top:1.5px solid #3b82f6;">
+        <div style="margin-bottom:8px;">
+          <strong style="font-size:15px; color:#1e40af;">🎯 測字宗師直斷 (Judgment)：</strong>
+          <div style="font-size:14.5px; font-weight:600; color:#1e3a8a; line-height:1.6; margin-top:4px;">
+            ${esc(judgment || '此字氣機凝聚，象徵關鍵轉折，利於謀定而後動。')}
+          </div>
+        </div>
+        ${advice ? `
+          <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #93c5fd;">
+            <strong style="font-size:14px; color:#1e40af;">💡 行動錦囊指引 (Advice)：</strong>
+            <div style="font-size:14px; color:#1e3a8a; line-height:1.6; margin-top:2px;">
+              ${esc(advice)}
+            </div>
+          </div>
+        ` : ''}
+      </section>
+    </article>`;
+  }
+
   function renderCharacters(characters, selectedProfile) {
     return characters.map((character, index) => {
       const role = index === 0 ? '姓氏' : '名字';
@@ -193,13 +302,35 @@
       tab.classList.toggle('active', active);
       tab.setAttribute('aria-selected', String(active));
     });
-    byId('fullNameField').hidden = mode !== 'verify';
-    byId('lengthField').hidden = mode !== 'generate';
-    byId('constraintFields').hidden = mode !== 'generate';
-    byId('surname').maxLength = mode === 'generate' ? 3 : 7;
-    byId('surname').required = mode === 'generate';
-    byId('fullName').required = mode === 'verify';
-    byId('submitName').textContent = mode === 'verify' ? '立即分析姓名 ➔' : '立即產生命名候選 ➔';
+
+    const ceziFields = byId('ceziFields');
+    const ceziSection = byId('ceziSection');
+    const nameSection1 = document.querySelector('.name-form-section:not(#ceziFields):not(.name-birth-section):not(#constraintFields)');
+    const birthSection = document.querySelector('.name-birth-section');
+
+    if (mode === 'cezi') {
+      if (ceziFields) ceziFields.hidden = false;
+      if (nameSection1) nameSection1.hidden = true;
+      if (birthSection) birthSection.hidden = true;
+      byId('fullNameField').hidden = true;
+      byId('lengthField').hidden = true;
+      byId('constraintFields').hidden = true;
+      byId('surname').required = false;
+      byId('fullName').required = false;
+      byId('submitName').textContent = '✍️ 立即測字占事 ➔';
+    } else {
+      if (ceziFields) ceziFields.hidden = true;
+      if (nameSection1) nameSection1.hidden = false;
+      if (birthSection) birthSection.hidden = false;
+      byId('fullNameField').hidden = mode !== 'verify';
+      byId('lengthField').hidden = mode !== 'generate';
+      byId('constraintFields').hidden = mode !== 'generate';
+      byId('surname').maxLength = mode === 'generate' ? 3 : 7;
+      byId('surname').required = mode === 'generate';
+      byId('fullName').required = mode === 'verify';
+      byId('submitName').textContent = mode === 'verify' ? '立即分析姓名 ➔' : '立即產生命名候選 ➔';
+    }
+    if (ceziSection) ceziSection.style.display = 'none';
     byId('nameQuestionForm').hidden = true;
     window.conversationHistory = [];
     byId('nameQuestionAnswer').replaceChildren();
@@ -209,6 +340,48 @@
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
+
+    if (mode === 'cezi') {
+      const character = byId('ceziChar').value.trim();
+      const question = byId('ceziQuestion').value.trim();
+      const birthDate = byId('ceziBirthDate')?.value || '';
+      if (!character) {
+        status.textContent = '請輸入欲測之單個漢字。';
+        byId('ceziChar').focus();
+        return;
+      }
+      if (!question) {
+        status.textContent = '請填寫欲占問之具體事項（如創業、感情、決策等）。';
+        byId('ceziQuestion').focus();
+        return;
+      }
+
+      status.textContent = `正在以「${character}」字起卦並推演象數義理…`;
+      results.replaceChildren();
+      window.conversationHistory = [];
+      byId('nameQuestionAnswer').replaceChildren();
+      byId('nameQuestionForm').hidden = true;
+      lastRequest = { character, question, birthDate, mode: 'cezi' };
+
+      try {
+        const response = await fetch('/api/name-analysis/cezi', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ character, question, birthDate })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error(data.error || '測字占事推演失敗');
+
+        results.innerHTML = renderCezi(data);
+        results.innerHTML += '<div class="suite-followup-actions-bar" style="margin-top:14px;"><button type="button" class="suite-btn-email-inline js-open-result-email">✉️ 將完整測字占事報告寄到我的信箱 ➔</button></div>';
+        status.textContent = `「${character}」字象數理推演完成。`;
+        await showQuestionForm();
+      } catch (error) {
+        status.textContent = error.message;
+      }
+      return;
+    }
+
     const formData = new FormData(form);
     const surname = String(formData.get('surname') || '').trim();
     const birth = birthData();

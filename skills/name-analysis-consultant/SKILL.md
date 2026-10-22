@@ -35,6 +35,16 @@ stdin 範例：
 echo '{"mode":"verify","name":"歐陽明月清風","profile":"taiwanKangxi"}' | node skills/name-analysis-consultant/scripts/name_analysis_cli.js
 ```
 
+### 測字占事 (`--cezi` / `--mode cezi`)
+
+```sh
+node skills/name-analysis-consultant/scripts/name_analysis_cli.js --cezi --char 安 --question "近期轉職是否順利？" --birth-date 1990-05-15
+```
+
+- 必填 `--char`（或 `--text` / `--character`）：單一正體或簡體漢字。
+- 可選 `--question`（或 `--matter`）：欲占問之事項。
+- 可選 `--birth-date` 與 `--birth-sex`：與八字命盤喜用神進行五行互補合參。
+
 ## 輸出方法與限制
 
 - 全名驗證限制 2–8 字；名字可有 1–4 字。姓氏可手動指定，複姓邊界以索引建議。索引不是完整的歷史姓氏名錄。

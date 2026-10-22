@@ -4,6 +4,30 @@
 
 ## [2026-10-22]
 
+### 🔮 東方智慧全套升級 Tier 1~Tier 4 全功能落地（八字 2.0 / 陽宅三要形煞 / 月老合婚 / 奇六梅三術同參 / 測字占事 / WebMCP 擴充）
+
+- **生辰八字 2.0 深度擴充 (`views/bazi2.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)**：
+  - **四柱干支反查公曆 (`#baziInverseBox`, `POST /api/bazi2/inverse-lookup`)**：支援輸入年柱、月柱、日柱、時柱四組天干地支，逆向推算 1900~2100 年符合之西曆與農曆日期清單，顯示真實起運歲數與交運年份，支援一鍵點擊帶入排盤。
+  - **時辰不確定敏感度定時校準 (`#baziTimeSensitivityBox`, `POST /api/bazi2/time-sensitivity`)**：全天 12 個候選時辰格局、日主強弱、喜用神與關鍵神煞（羊刃、魁罡、金神）橫向矩陣對比；精煉跨時辰不變事實（定海神針）與相異關鍵點，並提供生活事實校準問卷（父母手足、性格節奏、職涯動向、歷史大運）及候選時辰一鍵套用。
+  - **袁天罡稱骨算命 (`#chengguBox`)**：正統唐代袁天罡稱骨演算法，精確計算年月日時骨重幾兩幾錢（如「四兩三錢」），附帶古籍原典骨重詩歌批註與現代白話命途解析。
+  - **五運六氣與子午流注臟腑養生指南 (`#yunqiBox`)**：依出生年干支大運（五運太過/不及）與司天在泉客氣，推算本命臟腑偏頗盲點與五行生剋體質；並結合十二經絡子午流注提供經絡時辰、氣血流注、養生宜忌與食療建議。
+- **易經風水與擇日吉時升級 (`views/fengshui.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)**：
+  - **24 種完整形煞診斷選擇器 (`#shaType`)**：劃分「14 種外局形煞（路沖煞、天斬煞、壁刀煞、反弓煞、鐮刀煞、穿心煞、孤陽煞、獨陰煞、剪刀煞、蜈蚣煞、火形煞、探頭煞、光煞、聲煞）」與「10 種內局空間六事（穿堂風/門對門、橫梁壓頂、開門見灶、鏡對床/門、廁居中宮、開門見廁、門沖床、廚廁相鄰、背門而坐、樓梯沖門）」，提供完整化解指引。
+  - **《陽宅三要》門・主・灶快速配星法 (`#fsGateDir`, `#fsMasterDir`, `#fsStoveDir`)**：大門、主臥、爐灶八宅九星（生氣、延年、天醫、伏位四吉，絕命、五鬼、六煞、禍害四凶）互配星曜推算與三者生剋吉凶格局判斷，提供精確格局化解建議。
+  - **奇門 × 八字「吉時獵手」黃金時辰 Top 5 (`qimenGoldenSlots`)**：結合奇門遁甲天地盤三奇得使、吉門吉格與八字喜用神，自動推算近期 7-14 天內最吉祥之黃金時辰 Top 5 排行榜（含西曆日期、時辰、干支、吉門吉星、適宜事項與評分）。
+- **月老合婚場景擴充與四柱全息掃描 (`views/yinyuan.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)**：
+  - **合婚三種場景選擇器 (`#yyMatchScene`)**：支援「婚姻家庭」、「事業合夥」、「職場同事」三大場景，依不同人際關係維度客製化配對分析。
+  - **東西四命配對檢驗 (`mingGuaMatch`)**：男女雙方主命卦（坎離震巽東四命，乾坤艮兌西四命）契合度分析（同宮吉配、異宮調和方案）。
+  - **四柱干支合沖刑害全掃描 (`pillarScan`)**：年月日時四柱天干五合、地支六合、三合局、六沖、三刑、六害詳細對照表。
+  - **場景專屬磨合建議 (`sceneAdvice`)**：依所選關係場景，輸出針對性溝通指南、分工決策原則與情緒雷區避雷手冊。
+- **六爻神卦重大決策三術同參 (`views/liuyao.html`, `public/js/liuyao.js`, `public/css/divination-suite.css`)**：
+  - **「奇門 × 六爻 × 梅花」三術同參決策會診 (`#btnRunDecisionCombo`, `#decisionComboCard`, `POST /api/combo/decision`)**：面臨重大轉折決策時，一鍵同步調用奇門遁甲、六爻神卦與梅花易數，跨術數交叉比對共識論點、盲點分歧，並輸出綜合會診裁決、置信度評級、核心戰略金句與實施三步走行動方案。
+- **中文姓名分析：測字占事模式 (`views/name-analysis.html`, `public/js/name-analysis.js`, `public/css/divination-suite.css`)**：
+  - **測字占事 Tab 與輸入區 (`data-mode="cezi"`, `#ceziFields`, `#ceziSection`, `POST /api/name-analysis/cezi`)**：輸入漢字與占問事項，解析字形結構、部首象徵、康熙筆畫、五行屬性，自動起梅花易數字占卦（本互變錯綜五卦），連動 81 數理與八字五行補益，提供宗師斷語、字相吉凶與拆字解構玄機，完整支援多輪連續追問對話與結果郵件寄送。
+- **WebMCP 標準擴充 5 大工具 (`public/js/webmcp.js`)**：
+  - 新增並匯出 5 個 imperative tools：`bazi_inverse_lookup`（八字四柱反查公曆）、`bazi_time_sensitivity`（八字時辰敏感度校準）、`zeri_auspicious_search`（奇門八字擇日吉時獵手）、`combo_decision_hecan`（奇門六爻梅花三術同參會診）、`name_cezi_divination`（中文測字占事）。
+  - 匯出 `getImperativeTools: () => toolDefinitions`，並強化瀏覽器與單元測試環境向下相容性。
+
 ### 🔤 全站字體與字級階層系統重構（解決字體忽大忽小問題）
 
 - **中英數字體優先順序校準 (`public/css/fonts.css`, `public/css/style-new.css`, `public/css/divination-suite.css`, `public/css/meihua.css`)**：
