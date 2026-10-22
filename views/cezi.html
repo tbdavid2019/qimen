@@ -117,8 +117,8 @@
                 <li><a href="/yinyuan">月老姻緣</a></li>
                 <li><a href="/answerbook">解答之書</a></li>
                 <li><a href="/name-analysis">姓名分析</a></li>
-                <li class="active"><a href="/cezi">✍️ 測字占事</a></li>
-                <li><a href="/wellness">🌿 五運養生</a></li>
+                <li class="active"><a href="/cezi">測字占事</a></li>
+                <li><a href="/wellness">五運養生</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li>
@@ -135,51 +135,45 @@
     </nav>
 
     <main class="suite-container">
-        <section class="suite-hero suite-hero-compact">
-            <div class="suite-hero-heading">
-                <h1>測字占事 · 拆字觸機</h1>
-                <span class="suite-hero-badge">✍️ 一字定乾坤 · 觸機知吉凶</span>
-            </div>
-            <p class="suite-hero-desc" style="max-width: 680px; margin: 8px auto 0; text-align: center; color: var(--suite-text-muted); font-size: 14.5px;">
-                心有所動，字現機鋒。輸入當下心中浮現的一個漢字與想問之事，宗師以說文拆形、康熙筆畫、81數理與梅花字卦，全方位剖析事態吉凶。
-            </p>
-        </section>
+        <header class="suite-hero suite-hero-compact">
+            <h1 class="suite-hero-heading">
+                測字占事
+                <span class="suite-hero-badge"><i data-lucide="feather"></i> 象數直斷</span>
+            </h1>
+        </header>
 
         <section class="suite-card">
             <form id="standaloneCeziForm" toolname="cezi_divination" tooldescription="漢字測字占事：輸入單一漢字與問題取得拆字象數理吉凶直斷" toolautosubmit>
-                <div style="text-align: center; margin-bottom: 24px;">
-                    <label for="ceziCharInput" style="display: block; font-size: 15px; font-weight: 700; color: var(--suite-primary); margin-bottom: 12px;">
-                        請在下方方格填寫「心中浮現的一個漢字」：
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <label for="ceziCharInput" class="suite-form-label" style="text-align: center; margin-bottom: 8px;">
+                        請在下方輸入心中浮現的單個漢字
                     </label>
                     <input type="text" id="ceziCharInput" name="character" class="cezi-single-char-input" maxlength="2" placeholder="字" autofocus required autocomplete="off" toolparamdescription="欲測之單個漢字，如：明、泰、轉、安">
-                    <span style="display: block; font-size: 12.5px; color: var(--suite-text-muted); margin-top: 8px;">
-                        💡 觸機起念，憑第一直覺寫下之字最為靈驗
-                    </span>
                 </div>
 
                 <div class="suite-form-group">
-                    <label for="ceziQuestionInput" style="font-weight: 700;">欲占問之具體事項（求問主題與焦點）</label>
-                    <input type="text" id="ceziQuestionInput" name="question" class="form-control input-lg" placeholder="例如：下半年這筆合夥創業是否適合推進？" required toolparamdescription="欲占問之具體事項或困惑">
-                    <div class="cezi-purpose-pills">
-                        <button type="button" class="cezi-purpose-pill" data-text="近期事業升遷與跳槽轉職是否順利？">💼 事業跳槽</button>
-                        <button type="button" class="cezi-purpose-pill" data-text="眼前這筆投資與合夥能否賺錢獲利？">💰 求財投資</button>
-                        <button type="button" class="cezi-purpose-pill" data-text="我和對方的感情婚姻走向如何？">❤️ 感情婚姻</button>
-                        <button type="button" class="cezi-purpose-pill" data-text="這次重大考核、考試能否順利通過？">📚 考試晉升</button>
-                        <button type="button" class="cezi-purpose-pill" data-text="目前面臨的重大抉擇應該進還是守？">🧭 重大抉擇</button>
+                    <label for="ceziQuestionInput" class="suite-form-label">占問事項</label>
+                    <input type="text" id="ceziQuestionInput" name="question" class="form-control" placeholder="例如：近期事業升遷與跳槽轉職是否順利？" required toolparamdescription="欲占問之具體事項或困惑">
+                    <div class="cezi-purpose-pills" style="margin-top: 8px;">
+                        <button type="button" class="cezi-purpose-pill" data-text="近期事業升遷與跳槽轉職是否順利？"><i data-lucide="briefcase"></i> 事業跳槽</button>
+                        <button type="button" class="cezi-purpose-pill" data-text="眼前這筆投資與合夥能否賺錢獲利？"><i data-lucide="coins"></i> 求財投資</button>
+                        <button type="button" class="cezi-purpose-pill" data-text="我和對方的感情婚姻走向如何？"><i data-lucide="heart"></i> 感情婚姻</button>
+                        <button type="button" class="cezi-purpose-pill" data-text="這次重大考核、考試能否順利通過？"><i data-lucide="book-open"></i> 考試晉升</button>
+                        <button type="button" class="cezi-purpose-pill" data-text="目前面臨的重大抉擇應該進還是守？"><i data-lucide="compass"></i> 重大抉擇</button>
                     </div>
                 </div>
 
-                <details class="suite-details" style="margin-top: 14px; margin-bottom: 20px;">
-                    <summary style="cursor: pointer; font-size: 13.5px; font-weight: 700; color: var(--suite-primary);">
-                        ⚙️ 可選：加入我的出生生辰（五行喜用神合參加權）
+                <details class="suite-details" style="margin-top: 14px; margin-bottom: 18px;">
+                    <summary style="cursor: pointer; font-size: var(--type-label); font-weight: 700; color: var(--suite-primary);">
+                        <i data-lucide="calendar"></i> 選填：加入出生生辰（對照八字喜忌）
                     </summary>
                     <div class="suite-details-body suite-form-row" style="margin-top: 12px;">
                         <div class="suite-form-group">
-                            <label for="ceziBirthDateInput">出生西曆日期</label>
+                            <label for="ceziBirthDateInput" class="suite-form-label">出生西曆日期</label>
                             <input type="date" id="ceziBirthDateInput" name="birthDate" class="form-control" toolparamdescription="問事者出生公曆日期 YYYY-MM-DD">
                         </div>
                         <div class="suite-form-group">
-                            <label for="ceziSexInput">性別</label>
+                            <label for="ceziSexInput" class="suite-form-label">性別</label>
                             <select id="ceziSexInput" name="sex" class="form-control">
                                 <option value="男" selected>男</option>
                                 <option value="女">女</option>
@@ -189,8 +183,8 @@
                 </details>
 
                 <div class="suite-submit-container">
-                    <button type="submit" id="btnSubmitCezi" class="suite-btn-submit">
-                        <span>✍️ 立即測字起卦斷吉凶 ➔</span>
+                    <button type="submit" id="btnSubmitCezi" class="btn suite-btn-primary btn-lg">
+                        <i data-lucide="sparkles"></i> 立即測算 ➔
                     </button>
                 </div>
             </form>
@@ -209,14 +203,14 @@
 
             <!-- AI 追問對話區 -->
             <section id="ceziFollowUpSection" class="suite-card" style="display: none; margin-top: 20px; border-top: 2px solid var(--suite-primary);">
-                <h3 style="margin-top: 0; font-size: 16.5px; font-weight: 800; color: var(--suite-primary); display: flex; align-items: center; gap: 8px;">
-                    <span>💬 針對此字提出深度追問</span>
-                    <span class="suite-tag suite-tag-gold" style="font-size: 11px;">AI 宗師直斷</span>
+                <h3 class="suite-section-title" style="margin-top: 0; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="message-square"></i>
+                    <span>向宗師深度追問</span>
                 </h3>
                 <div id="ceziFollowUpHistory" class="suite-conversation-list" style="margin-bottom: 14px;"></div>
                 <form id="ceziFollowUpForm" onsubmit="return false;">
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <textarea id="ceziFollowUpInput" class="form-control" rows="2" placeholder="針對測字結果進一步請教，例如：如果要避開此凶格，下個月應該注意什麼方位？"></textarea>
+                        <textarea id="ceziFollowUpInput" class="form-control" rows="2" placeholder="針對測字結果進一步請教…"></textarea>
                     </div>
                     <div id="ceziTurnstileWrapper" style="margin-bottom: 10px;">
                         <%- include('partials/turnstile-widget.html', { widgetId: 'cezi-followup-turnstile', action: 'name_analysis_question', explicit: true }) %>

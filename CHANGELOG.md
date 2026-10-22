@@ -2,6 +2,22 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-10-23]
+
+### 🎨 前端極致視覺重構與字體階層規範化（移除廉價 Emoji、全面回歸 Lucide SVG 圖標、統一 5 級字體階層、移除冗餘廢話標題）
+
+- **圖標系統全面淨化（Lucide SVG Icons）**：
+  - 徹底移除新頁面（`/cezi`, `/wellness`）與導航列、首頁卡片中混用的廉價原始 Emoji（如 `✍️`, `🌿`, `🌟`, `🌀`, `🧬`, `🥗`, `🌅`, `📍`, `🎯`, `✉️`）。
+  - 全面採用正統 `<i data-lucide="..."></i>` Lucide SVG 圖標（`feather`, `activity`, `sparkles`, `heart-pulse`, `cloud-sun`, `dna`, `sun`, `utensils`, `moon`, `clock`, `compass`, `mail`, `send`, `alert-circle` 等），並在動態渲染後自動執行 `lucide.createIcons()`。
+  - 全站 12 頁頂部導航欄（`views/*.html`）統一為簡潔純粹的 4 字符中文（`測字占事`、`五運養生`），杜絕 Emoji 突兀感與視覺斷層。
+- **清除冗餘贅詞與多餘副標題**：
+  - 移除 `/cezi` 與 `/wellness` 中非必要的引言與副標題段落（`<p class="suite-hero-desc">`），回歸全站統一的極簡 Hero 樣式（`.suite-hero.suite-hero-compact`）。
+  - 首頁特色探索卡片文案提煉為俐落單行直斷（「單字問吉凶 · 拆字機鋒與 81 數理直斷」、「先天體質稟賦 · 24 節氣食養與經絡鐘」）。
+- **杜絕字體忽大忽小（5 級字體 Token 規範化）**：
+  - 徹底清除 `public/js/cezi.js` 與 `public/js/wellness.js` 動態 HTML 內混雜之十數處任意行內 `font-size` 像素值（如 `11px`, `13.5px`, `14.5px`, `15px`, `16px`, `22px` 等）。
+  - 於 `public/css/divination-suite.css` 建立完整獨立樣式組件（`.wellness-result-hero`, `.cezi-result-hero`, `.wellness-hero-icon`, `.cezi-glyph-box`, `.suite-kv-grid`, `.suite-kv-card`, `.suite-kv-label`, `.suite-kv-value`, `.suite-quote-box`, `.meridian-clock-grid`, `.meridian-shichen-card`），嚴格綁定全站五級 Typography Tokens（`--type-panel-title`, `--type-label`, `--type-reading`, `--type-caption`, `--type-meta`）。
+  - 移除 `views/wellness.html` 內的行內重複 `<style>` 覆蓋，確保明暗模式及各解析度下文字排版平整統一。
+
 ## [2026-10-22]
 
 ### ✍️ 獨立測字占事 (`/cezi`) 與 🌿 獨立五運養生 (`/wellness`) 雙模組上線與全站導航貫通

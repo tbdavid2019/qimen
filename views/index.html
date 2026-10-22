@@ -123,8 +123,8 @@
                 <li><a href="/yinyuan">月老姻緣</a></li>
                 <li><a href="/answerbook">解答之書</a></li>
                 <li><a href="/name-analysis">姓名分析</a></li>
-                <li><a href="/cezi">✍️ 測字占事</a></li>
-                <li><a href="/wellness">🌿 五運養生</a></li>
+                <li><a href="/cezi">測字占事</a></li>
+                <li><a href="/wellness">五運養生</a></li>
             </ul>
             
             <!-- 語言切換選單與右側功能 -->
@@ -172,43 +172,37 @@
 
         <%- include('partials/ads-mobile.html') %>
 
-        <!-- 特色獨立新功能快捷探索區 (Punchy & Prominent Discovery Grid) -->
-        <div class="suite-features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px;">
-            <!-- ✍️ 測字占事 -->
-            <a href="/cezi" class="suite-card" style="display: flex; align-items: center; gap: 16px; padding: 18px 20px; text-decoration: none; border: 1.5px solid #fcd34d; background: linear-gradient(135deg, #fffdf5 0%, #fef3c7 100%); border-radius: 14px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.14); transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="width: 48px; height: 48px; min-width: 48px; border-radius: 12px; background: #fff; border: 2px solid #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);">
-                    ✍️
-                </div>
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <span style="font-size: 17.5px; font-weight: 800; color: #78350f;">測字占事 · 象數直斷</span>
-                        <span class="suite-tag" style="background: #b45309; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 7px;">🔥 宗師拆字</span>
+        <!-- 特色獨立功能快捷探索區 -->
+        <div class="ziwei-mode-grid" style="margin-bottom: 22px;">
+            <a href="/cezi" class="ziwei-mode-card mode-card-cezi" style="text-decoration: none;">
+                <span class="mode-card-icon">
+                    <i data-lucide="feather" style="width: 22px; height: 22px; color: #d97706;"></i>
+                </span>
+                <div class="mode-card-content">
+                    <div class="mode-card-header">
+                        <span class="mode-card-title">測字占事</span>
+                        <span class="mode-card-badge badge-cezi"><i data-lucide="sparkles" style="width: 11px; height: 11px; vertical-align: -1px;"></i> 梅花象數</span>
                     </div>
-                    <div style="font-size: 13.5px; font-weight: 500; color: #92400e; line-height: 1.45;">
-                        單字問吉凶！拆字機鋒 ✕ 梅花成卦 ✕ 81 數理直斷成敗
-                    </div>
+                    <span class="mode-card-desc">單字問吉凶 · 拆字機鋒與 81 數理直斷</span>
                 </div>
-                <span class="suite-btn-primary" style="padding: 8px 16px; border-radius: 20px; font-size: 13.5px; font-weight: 700; white-space: nowrap; background: #d97706; color: #fff; border: none;">
-                    立即揭秘 ➔
+                <span class="btn suite-btn-primary" style="padding: 6px 14px; font-size: 13px; font-weight: 700; white-space: nowrap; margin-left: 8px;">
+                    立即測算 ➔
                 </span>
             </a>
 
-            <!-- 🌿 五運養生 -->
-            <a href="/wellness" class="suite-card" style="display: flex; align-items: center; gap: 16px; padding: 18px 20px; text-decoration: none; border: 1.5px solid #a7f3d0; background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%); border-radius: 14px; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.14); transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="width: 48px; height: 48px; min-width: 48px; border-radius: 12px; background: #fff; border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
-                    🌿
-                </div>
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <span style="font-size: 17.5px; font-weight: 800; color: #064e3b;">五運六氣 · 經絡養生</span>
-                        <span class="suite-tag" style="background: #047857; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 7px;">🌿 黃帝內經</span>
+            <a href="/wellness" class="ziwei-mode-card mode-card-wellness" style="text-decoration: none;">
+                <span class="mode-card-icon">
+                    <i data-lucide="activity" style="width: 22px; height: 22px; color: #059669;"></i>
+                </span>
+                <div class="mode-card-content">
+                    <div class="mode-card-header">
+                        <span class="mode-card-title">五運六氣養生</span>
+                        <span class="mode-card-badge badge-wellness"><i data-lucide="heart-pulse" style="width: 11px; height: 11px; vertical-align: -1px;"></i> 順應天時</span>
                     </div>
-                    <div style="font-size: 13.5px; font-weight: 500; color: #065f46; line-height: 1.45;">
-                        順天應時！先天體質偏頗 ✕ 24節氣食養 ✕ 子午流注鐘
-                    </div>
+                    <span class="mode-card-desc">先天體質稟賦 · 24 節氣食養與經絡鐘</span>
                 </div>
-                <span class="suite-btn-primary" style="padding: 8px 16px; border-radius: 20px; font-size: 13.5px; font-weight: 700; white-space: nowrap; background: #059669; color: #fff; border: none;">
-                    立即推演 ➔
+                <span class="btn suite-btn-primary" style="padding: 6px 14px; font-size: 13px; font-weight: 700; white-space: nowrap; margin-left: 8px;">
+                    立即排算 ➔
                 </span>
             </a>
         </div>

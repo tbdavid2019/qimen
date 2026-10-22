@@ -96,8 +96,11 @@
                 ];
             }
         } catch (err) {
-            errorEl.textContent = `⚠️ 測字推演失敗：${err.message}`;
+            errorEl.innerHTML = `<i data-lucide="alert-circle" style="width: 16px; height: 16px; vertical-align: -2px;"></i> 測字推演失敗：${esc(err.message)}`;
             errorEl.style.display = 'block';
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
         } finally {
             loadingEl.style.display = 'none';
             submitBtn.disabled = false;
@@ -119,117 +122,120 @@
         const judgmentBadgeClass = res.judgment === '大吉' || res.judgment === '中吉' ? 'auspicious' : 'inauspicious';
 
         resultCard.innerHTML = `
-            <article class="name-result-card cezi-card" style="border: 1.5px solid var(--suite-border); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
-                <header class="name-result-hero" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-bottom: 1.5px solid #f59e0b; padding: 20px 22px;">
-                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-                        <div style="display:flex; align-items:center; gap:16px;">
-                            <div class="cezi-glyph-box" style="width:72px; height:72px; border-radius:14px; background:#fff; border:2.5px solid #f59e0b; display:flex; align-items:center; justify-content:center; font-size:42px; font-weight:800; color:#b45309; box-shadow:0 4px 14px rgba(245,158,11,0.2);">
-                                ${esc(res.char)}
-                            </div>
-                            <div>
-                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-                                    <span class="suite-tag" style="background:#b45309; color:#fff; font-weight:800; font-size:12.5px;">✍️ 測字占斷</span>
-                                    <h2 style="margin:0; font-size:22px; font-weight:800; color:#78350f;">測「${esc(res.char)}」字 · 象數理直斷</h2>
-                                </div>
-                                <p style="margin:0; font-size:14px; color:#92400e; font-weight:600;">求問事項：【${esc(res.question || questionInput.value)}】</p>
-                            </div>
+            <article class="suite-card cezi-card" style="padding: 0; overflow: hidden;">
+                <header class="cezi-result-hero">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div class="cezi-glyph-box">
+                            ${esc(res.char)}
                         </div>
-                        <span class="suite-tag ${judgmentBadgeClass}" style="font-size:16px; font-weight:800; padding:6px 16px;">
-                            ${esc(res.judgment || '大吉')}
-                        </span>
+                        <div>
+                            <div class="suite-result-heading-group">
+                                <span class="suite-badge"><i data-lucide="feather" style="width: 13px; height: 13px; vertical-align: -1px;"></i> 測字直斷</span>
+                                <h2 class="suite-result-title">測「${esc(res.char)}」字</h2>
+                            </div>
+                            <p class="suite-result-sub">占問事項：${esc(res.question || questionInput.value)}</p>
+                        </div>
                     </div>
+                    <span class="suite-tag ${judgmentBadgeClass}" style="font-size: var(--type-label); font-weight: 800; padding: 6px 14px;">
+                        ${esc(res.judgment || '大吉')}
+                    </span>
                 </header>
 
                 <!-- 1. 漢字造字與五行 -->
-                <section class="name-result-section" style="padding: 18px 22px;">
-                    <div class="name-section-title" style="margin-bottom:12px;">
-                        <span>01</span><h3>字形構造與易理五行</h3><small>康熙字典考據</small>
+                <section class="suite-section-card">
+                    <div class="suite-section-title-wrap">
+                        <i data-lucide="book-open" style="width: 16px; height: 16px; color: var(--suite-primary);"></i>
+                        <h3>字形構造與易理五行</h3>
                     </div>
-                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-bottom:12px;">
-                        <div style="background:var(--suite-bg-card, rgba(255,255,255,0.03)); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:12px; color:var(--suite-text-muted);">康熙筆畫</div>
-                            <div style="font-size:18px; font-weight:800; color:var(--suite-primary);">${esc(res.stroke)} 畫</div>
+                    <div class="suite-kv-grid">
+                        <div class="suite-kv-card">
+                            <div class="suite-kv-label">康熙筆畫</div>
+                            <div class="suite-kv-value">${esc(res.stroke)} 畫</div>
                         </div>
-                        <div style="background:var(--suite-bg-card, rgba(255,255,255,0.03)); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:12px; color:var(--suite-text-muted);">字音讀音</div>
-                            <div style="font-size:16px; font-weight:700;">${esc(res.pinyin || '—')}</div>
+                        <div class="suite-kv-card">
+                            <div class="suite-kv-label">字音讀音</div>
+                            <div class="suite-kv-value">${esc(res.pinyin || '—')}</div>
                         </div>
-                        <div style="background:var(--suite-bg-card, rgba(255,255,255,0.03)); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:12px; color:var(--suite-text-muted);">五行歸屬</div>
-                            <div style="font-size:18px; font-weight:800; color:#059669;">${esc(res.element)}行</div>
+                        <div class="suite-kv-card">
+                            <div class="suite-kv-label">五行歸屬</div>
+                            <div class="suite-kv-value">${esc(res.element)}行</div>
                         </div>
-                        <div style="background:var(--suite-bg-card, rgba(255,255,255,0.03)); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:12px; color:var(--suite-text-muted);">字形結構</div>
-                            <div style="font-size:16px; font-weight:700;">${esc(res.structure || '獨體')}</div>
+                        <div class="suite-kv-card">
+                            <div class="suite-kv-label">字形結構</div>
+                            <div class="suite-kv-value">${esc(res.structure || '獨體')}</div>
                         </div>
                     </div>
-                    <div style="font-size:13.5px; color:var(--suite-text); background:rgba(0,0,0,0.02); padding:10px 14px; border-radius:6px; line-height:1.6;">
-                        <strong>🏛️ 拆字機鋒：</strong>${esc(res.structureMeaning || res.glyphDeconstruction || '字理聚氣，順勢而為')}
-                        ${res.definition ? `<br><small style="color:var(--suite-text-muted);">📖 字典訓詁：${esc(res.definition)}</small>` : ''}
+                    <div class="suite-quote-box">
+                        <strong>拆字機鋒：</strong>${esc(res.structureMeaning || res.glyphDeconstruction || '字理聚氣，順勢而為')}
+                        ${res.definition ? `<br><small style="color: var(--suite-text-muted);">字典訓詁：${esc(res.definition)}</small>` : ''}
                     </div>
                 </section>
 
                 <!-- 2. 梅花字卦與 81 數理 -->
-                <section class="name-result-section" style="padding: 18px 22px; border-top:1px solid var(--suite-border);">
-                    <div class="name-section-title" style="margin-bottom:12px;">
-                        <span>02</span><h3>梅花易數成卦 ✕ 81數理</h3><small>象數合參</small>
+                <section class="suite-section-card">
+                    <div class="suite-section-title-wrap">
+                        <i data-lucide="sparkles" style="width: 16px; height: 16px; color: var(--suite-primary);"></i>
+                        <h3>梅花易數成卦與 81 數理</h3>
                     </div>
-                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; margin-bottom:12px;">
-                        <div style="background:linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border:1px solid #d8b4fe; border-radius:10px; padding:14px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                                <strong style="color:#7e22ce; font-size:15px;">🌸 梅花字卦：【${esc(hex.name || '成卦')}】</strong>
-                                <span class="suite-tag" style="background:#a855f7; color:#fff; font-weight:700;">${esc(hex.grade || '吉')}</span>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+                        <div class="suite-kv-card" style="text-align: left; padding: 12px 14px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <strong style="color: #7e22ce;">梅花字卦：【${esc(hex.name || '成卦')}】</strong>
+                                <span class="suite-tag" style="background: #a855f7; color: #fff;">${esc(hex.grade || '吉')}</span>
                             </div>
-                            <div style="font-size:13px; color:#581c87; line-height:1.5;">${esc(hex.judgment || hex.relation || '卦象清純，動靜皆宜。')}</div>
+                            <div style="font-size: var(--type-caption); color: var(--suite-text-muted); line-height: 1.5;">${esc(hex.judgment || hex.relation || '卦象清純，動靜皆宜。')}</div>
                         </div>
-                        <div style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border:1px solid #fde68a; border-radius:10px; padding:14px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                                <strong style="color:#92400e; font-size:15px;">🔢 81數理：第 ${esc(n81.number || res.stroke)} 數</strong>
-                                <span class="suite-tag" style="background:#f59e0b; color:#fff; font-weight:700;">${esc(n81.classification || '吉')}</span>
+                        <div class="suite-kv-card" style="text-align: left; padding: 12px 14px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <strong style="color: #92400e;">81數理：第 ${esc(n81.number || res.stroke)} 數</strong>
+                                <span class="suite-tag" style="background: #f59e0b; color: #fff;">${esc(n81.classification || '吉')}</span>
                             </div>
-                            <div style="font-size:13px; color:#78350f; line-height:1.5;">${esc(n81.meaning || '象數相成，得時得運。')}</div>
+                            <div style="font-size: var(--type-caption); color: var(--suite-text-muted); line-height: 1.5;">${esc(n81.meaning || '象數相成，得時得運。')}</div>
                         </div>
                     </div>
                 </section>
 
                 <!-- 3. 八字喜忌互補 (若有生辰) -->
                 ${bazi.evaluation || bazi.analysis || bazi.summary ? `
-                    <section class="name-result-section" style="padding: 18px 22px; border-top:1px solid var(--suite-border);">
-                        <div class="name-section-title" style="margin-bottom:8px;">
-                            <span>03</span><h3>八字五行喜忌對照</h3>
+                    <section class="suite-section-card">
+                        <div class="suite-section-title-wrap">
+                            <i data-lucide="scale" style="width: 16px; height: 16px; color: var(--suite-primary);"></i>
+                            <h3>八字五行喜忌對照</h3>
                         </div>
-                        <div style="background:rgba(16,185,129,0.08); border-left:4px solid #10b981; padding:12px 14px; border-radius:6px; font-size:13.5px; line-height:1.6;">
-                            <strong>🌱 命盤五行互補：</strong>${esc(bazi.evaluation || bazi.analysis || bazi.summary)}
+                        <div class="suite-quote-box">
+                            <strong>命盤五行互補：</strong>${esc(bazi.evaluation || bazi.analysis || bazi.summary)}
                         </div>
                     </section>
                 ` : ''}
 
                 <!-- 4. 宗師斷語與行動錦囊 -->
-                <section class="name-result-section" style="padding: 20px 22px; background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-top:1.5px solid #3b82f6;">
-                    <div style="margin-bottom:10px;">
-                        <strong style="font-size:15px; color:#1e40af;">🎯 測字宗師直斷 (Judgment)：</strong>
-                        <div style="font-size:15px; font-weight:700; color:#1e3a8a; line-height:1.6; margin-top:4px;">
-                            ${esc(res.judgment ? `綜合斷語：【${res.judgment}】` : '氣機通達，謀定後動')}
-                        </div>
+                <section class="suite-section-card" style="background: rgba(59, 130, 246, 0.04);">
+                    <div class="suite-section-title-wrap">
+                        <i data-lucide="compass" style="width: 16px; height: 16px; color: var(--suite-primary);"></i>
+                        <h3>宗師斷語與行動指引</h3>
+                    </div>
+                    <div style="font-size: var(--type-reading); font-weight: 700; color: var(--suite-primary); margin-bottom: 6px;">
+                        綜合判定：【${esc(res.judgment || '大吉')}】
                     </div>
                     ${adviceStr ? `
-                        <div style="margin-top:10px; padding-top:10px; border-top:1px dashed #93c5fd;">
-                            <strong style="font-size:14px; color:#1e40af;">💡 行動錦囊指引 (Action Advice)：</strong>
-                            <div style="font-size:14px; color:#1e3a8a; line-height:1.6; margin-top:4px;">
-                                ${esc(adviceStr)}
-                            </div>
+                        <div style="font-size: var(--type-reading); line-height: var(--leading-reading); color: var(--suite-text);">
+                            ${esc(adviceStr)}
                         </div>
                     ` : ''}
                 </section>
-                <div class="suite-followup-actions-bar" style="padding: 14px 22px; background: var(--suite-bg-card, rgba(255,255,255,0.02));">
-                    <button type="button" class="suite-btn-email-inline js-open-result-email">
-                        ✉️ 將完整測字占事報告寄到我的信箱 ➔
+
+                <div class="suite-followup-actions-bar" style="padding: 14px 20px; background: var(--suite-bg);">
+                    <button type="button" class="btn suite-btn-primary js-open-result-email">
+                        <i data-lucide="mail"></i> 寄送完整報告至信箱 ➔
                     </button>
                 </div>
             </article>
         `;
 
         resultCard.style.display = 'block';
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
         resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
@@ -270,7 +276,7 @@
 
                 turnDiv.innerHTML = `
                     <div style="font-weight:700; color:var(--suite-primary); margin-bottom:6px;">問：${esc(q)}</div>
-                    <div class="markdown-body" style="font-size:14px; line-height:1.6;">${answerHtml}</div>
+                    <div class="markdown-body" style="font-size: var(--type-reading); line-height: var(--leading-reading);">${answerHtml}</div>
                 `;
                 followUpHistory.appendChild(turnDiv);
                 followUpInput.value = '';

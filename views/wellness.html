@@ -41,47 +41,6 @@
     <link rel="stylesheet" href="/css/divination-suite.css">
     <link rel="stylesheet" href="/css/theme-atelier.css">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
-    <style>
-        .meridian-clock-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 10px;
-            margin-top: 14px;
-        }
-        .meridian-shichen-card {
-            background: var(--suite-bg-card, rgba(255,255,255,0.03));
-            border: 1px solid var(--suite-border);
-            border-radius: 10px;
-            padding: 12px;
-            transition: all 0.2s ease;
-        }
-        .meridian-shichen-card.active {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            border: 1.5px solid #10b981;
-            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
-            transform: translateY(-2px);
-        }
-        [data-theme="dark"] .meridian-shichen-card.active {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 95, 70, 0.25) 100%);
-            border-color: #059669;
-        }
-        .meridian-card-time {
-            font-size: 11.5px;
-            color: var(--suite-text-muted);
-            margin-bottom: 4px;
-        }
-        .meridian-card-name {
-            font-size: 14.5px;
-            font-weight: 700;
-            color: var(--suite-primary);
-        }
-        .meridian-card-action {
-            font-size: 12px;
-            color: var(--suite-text);
-            margin-top: 6px;
-            line-height: 1.45;
-        }
-    </style>
 </head>
 <body class="suite-page" data-suite="wellness" data-llm-enabled="<%= enableLLM ? 'true' : 'false' %>">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -103,8 +62,8 @@
                 <li><a href="/yinyuan">月老姻緣</a></li>
                 <li><a href="/answerbook">解答之書</a></li>
                 <li><a href="/name-analysis">姓名分析</a></li>
-                <li><a href="/cezi">✍️ 測字占事</a></li>
-                <li class="active"><a href="/wellness">🌿 五運養生</a></li>
+                <li><a href="/cezi">測字占事</a></li>
+                <li class="active"><a href="/wellness">五運養生</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li>
@@ -121,26 +80,23 @@
     </nav>
 
     <main class="suite-container">
-        <section class="suite-hero suite-hero-compact">
-            <div class="suite-hero-heading">
-                <h1>五運六氣 · 節氣經絡養生</h1>
-                <span class="suite-hero-badge">🌿 黃帝內經 · 順應天時</span>
-            </div>
-            <p class="suite-hero-desc" style="max-width: 680px; margin: 8px auto 0; text-align: center; color: var(--suite-text-muted); font-size: 14.5px;">
-                《素問·天元紀大論》：「不知年之所加，氣之盛衰，虛實之所起，不可以為工矣。」透過五運六氣解碼天地氣候節奏、體質偏頗、節氣食養與子午流注經絡穴位。
-            </p>
-        </section>
+        <header class="suite-hero suite-hero-compact">
+            <h1 class="suite-hero-heading">
+                五運六氣養生
+                <span class="suite-hero-badge"><i data-lucide="activity"></i> 順應天時</span>
+            </h1>
+        </header>
 
         <section class="suite-card">
             <form id="wellnessForm" toolname="wellness_consultation" tooldescription="中醫五運六氣、二十四節氣與十二時辰子午流注養生報告" toolautosubmit>
                 <div class="suite-form-row">
                     <div class="suite-form-group">
-                        <label for="wellnessTargetYear">當前分析年份（流年客氣）</label>
-                        <input type="number" id="wellnessTargetYear" name="targetYear" class="form-control input-lg" value="2026" toolparamdescription="欲分析的流年西元年份，如 2026">
+                        <label for="wellnessTargetYear" class="suite-form-label">分析年份</label>
+                        <input type="number" id="wellnessTargetYear" name="targetYear" class="form-control" value="2026" toolparamdescription="欲分析的流年西元年份，如 2026">
                     </div>
                     <div class="suite-form-group">
-                        <label for="wellnessTargetHour">當前分析時辰 / 時間（子午流注）</label>
-                        <select id="wellnessTargetHour" name="targetHour" class="form-control input-lg" toolparamdescription="欲查詢的經絡時辰">
+                        <label for="wellnessTargetHour" class="suite-form-label">當前時辰（子午流注）</label>
+                        <select id="wellnessTargetHour" name="targetHour" class="form-control" toolparamdescription="欲查詢的經絡時辰">
                             <option value="0">子時 (23:00 - 00:59 · 膽經當令)</option>
                             <option value="2">丑時 (01:00 - 02:59 · 肝經當令)</option>
                             <option value="4">寅時 (03:00 - 04:59 · 肺經當令)</option>
@@ -157,21 +113,21 @@
                     </div>
                 </div>
 
-                <details class="suite-details" style="margin-top: 14px; margin-bottom: 20px;">
-                    <summary style="cursor: pointer; font-size: 13.5px; font-weight: 700; color: var(--suite-primary);">
-                        🧬 可選：加入我的出生生辰（解讀先天本命五運六氣稟賦）
+                <details class="suite-details" style="margin-top: 14px; margin-bottom: 18px;">
+                    <summary style="cursor: pointer; font-size: var(--type-label); font-weight: 700; color: var(--suite-primary);">
+                        <i data-lucide="calendar"></i> 選填：加入出生生辰（解讀先天體質稟賦）
                     </summary>
                     <div class="suite-details-body suite-form-row" style="margin-top: 12px;">
                         <div class="suite-form-group">
-                            <label for="wellnessBirthDate">出生公曆日期 (YYYY-MM-DD)</label>
+                            <label for="wellnessBirthDate" class="suite-form-label">出生西曆日期</label>
                             <input type="date" id="wellnessBirthDate" name="birthDate" class="form-control" toolparamdescription="出生公曆日期，用於推算本命體質">
                         </div>
                     </div>
                 </details>
 
                 <div class="suite-submit-container">
-                    <button type="submit" id="btnSubmitWellness" class="suite-btn-submit">
-                        <span>🌿 立即排定五運六氣與子午流注養生鐘 ➔</span>
+                    <button type="submit" id="btnSubmitWellness" class="btn suite-btn-primary btn-lg">
+                        <i data-lucide="sparkles"></i> 立即排算 ➔
                     </button>
                 </div>
             </form>
@@ -190,14 +146,14 @@
 
             <!-- AI 養生顧問追問對話區 -->
             <section id="wellnessFollowUpSection" class="suite-card" style="display: none; margin-top: 20px; border-top: 2px solid var(--suite-primary);">
-                <h3 style="margin-top: 0; font-size: 16.5px; font-weight: 800; color: var(--suite-primary); display: flex; align-items: center; gap: 8px;">
-                    <span>💬 向五運六氣養生顧問提問</span>
-                    <span class="suite-tag suite-tag-gold" style="font-size: 11px;">中醫智慧</span>
+                <h3 class="suite-section-title" style="margin-top: 0; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="message-square"></i>
+                    <span>中醫養生顧問追問</span>
                 </h3>
                 <div id="wellnessFollowUpHistory" class="suite-conversation-list" style="margin-bottom: 14px;"></div>
                 <form id="wellnessFollowUpForm" onsubmit="return false;">
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <textarea id="wellnessFollowUpInput" class="form-control" rows="2" placeholder="針對體質或當令節氣提問，例如：我出生年水運太過，今年少陰君火司天，飲食應如何搭配才不會心腎不交？"></textarea>
+                        <textarea id="wellnessFollowUpInput" class="form-control" rows="2" placeholder="針對體質或當令節氣提問…"></textarea>
                     </div>
                     <div id="wellnessTurnstileWrapper" style="margin-bottom: 10px;">
                         <%- include('partials/turnstile-widget.html', { widgetId: 'wellness-followup-turnstile', action: 'llm_analysis', explicit: true }) %>

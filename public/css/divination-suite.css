@@ -2051,6 +2051,30 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     transform: translateY(-2px);
 }
 
+/* Card 4: Cezi */
+.mode-card-cezi {
+    background: linear-gradient(135deg, #fffdf5 0%, #fff8e1 100%);
+    border-color: #fde68a;
+}
+
+.mode-card-cezi:hover {
+    transform: translateY(-2px);
+    border-color: #f59e0b;
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.16);
+}
+
+/* Card 5: Wellness */
+.mode-card-wellness {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-color: #a7f3d0;
+}
+
+.mode-card-wellness:hover {
+    transform: translateY(-2px);
+    border-color: #10b981;
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.16);
+}
+
 /* Dark Mode Adaptation for Mode Cards */
 [data-theme="dark"] .mode-card-chart {
     background: linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(91, 33, 182, 0.08) 100%);
@@ -2083,6 +2107,16 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.35) 0%, rgba(180, 83, 9, 0.25) 100%) !important;
     border-color: #fcd34d !important;
     box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35) !important;
+}
+
+[data-theme="dark"] .mode-card-cezi {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(180, 83, 9, 0.08) 100%);
+    border-color: rgba(252, 211, 77, 0.35);
+}
+
+[data-theme="dark"] .mode-card-wellness {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.08) 100%);
+    border-color: rgba(52, 211, 153, 0.35);
 }
 
 .mode-card-icon {
@@ -2152,6 +2186,16 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .badge-malesize {
     background: #d97706;
+    color: #ffffff;
+}
+
+.badge-cezi {
+    background: #d97706;
+    color: #ffffff;
+}
+
+.badge-wellness {
+    background: #059669;
     color: #ffffff;
 }
 
@@ -2531,6 +2575,16 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .badge-malesize {
     background: #d97706;
+    color: #ffffff;
+}
+
+.badge-cezi {
+    background: #d97706;
+    color: #ffffff;
+}
+
+.badge-wellness {
+    background: #059669;
     color: #ffffff;
 }
 
@@ -4014,4 +4068,174 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     background: rgba(0, 0, 0, 0.4) !important;
     border-color: #f59e0b !important;
     color: #fde68a !important;
+}
+
+/* Cezi & Wellness Shared Refined Result Components */
+.cezi-result-hero,
+.wellness-result-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 18px 22px;
+    border-bottom: 1.5px solid var(--suite-border);
+}
+.cezi-result-hero {
+    background: linear-gradient(135deg, rgba(254, 243, 199, 0.4) 0%, rgba(253, 230, 138, 0.25) 100%);
+    border-color: #f59e0b;
+}
+.wellness-result-hero {
+    background: linear-gradient(135deg, rgba(209, 250, 229, 0.4) 0%, rgba(167, 243, 208, 0.25) 100%);
+    border-color: #10b981;
+}
+[data-theme="dark"] .cezi-result-hero {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(180, 83, 9, 0.1) 100%);
+}
+[data-theme="dark"] .wellness-result-hero {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%);
+}
+
+.cezi-glyph-box {
+    width: 58px;
+    height: 58px;
+    border-radius: 12px;
+    background: var(--suite-card-bg);
+    border: 2px solid #f59e0b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 800;
+    color: #b45309;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18);
+    flex-shrink: 0;
+}
+[data-theme="dark"] .cezi-glyph-box {
+    color: #fbbf24;
+    border-color: #d97706;
+}
+
+.wellness-hero-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--suite-card-bg);
+    border: 2px solid #10b981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #059669;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.18);
+    flex-shrink: 0;
+}
+[data-theme="dark"] .wellness-hero-icon {
+    color: #34d399;
+    border-color: #059669;
+}
+
+.suite-result-heading-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.suite-result-title {
+    font-size: var(--type-panel-title);
+    font-weight: 800;
+    margin: 0;
+    color: var(--suite-text);
+}
+.suite-result-sub {
+    font-size: var(--type-caption);
+    color: var(--suite-text-muted);
+    margin: 0;
+}
+
+.suite-section-card {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--suite-border);
+}
+.suite-section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.suite-section-title-wrap h3 {
+    margin: 0;
+    font-size: var(--type-label);
+    font-weight: 750;
+    color: var(--suite-text);
+}
+
+.suite-kv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.suite-kv-card {
+    background: var(--suite-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+.suite-kv-label {
+    font-size: var(--type-caption);
+    color: var(--suite-text-muted);
+    margin-bottom: 2px;
+}
+.suite-kv-value {
+    font-size: var(--type-display);
+    font-weight: 800;
+    color: var(--suite-text);
+}
+
+.suite-quote-box {
+    font-size: var(--type-reading);
+    line-height: var(--leading-reading);
+    background: var(--suite-bg);
+    border-left: 3px solid var(--suite-primary);
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: var(--suite-text);
+}
+
+.meridian-clock-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+.meridian-shichen-card {
+    background: var(--suite-bg);
+    border: 1px solid var(--suite-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.meridian-shichen-card.active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 95, 70, 0.18) 100%);
+    border: 1.5px solid #10b981;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+    transform: translateY(-2px);
+}
+.meridian-card-time {
+    font-size: var(--type-caption);
+    color: var(--suite-text-muted);
+    margin-bottom: 4px;
+}
+.meridian-card-name {
+    font-size: var(--type-label);
+    font-weight: 750;
+    color: var(--suite-primary);
+}
+.meridian-card-action {
+    font-size: var(--type-caption);
+    color: var(--suite-text);
+    margin-top: 4px;
+    line-height: var(--leading-body);
 }

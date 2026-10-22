@@ -94,8 +94,11 @@
                 ];
             }
         } catch (err) {
-            errorEl.textContent = `⚠️ 推演失敗：${err.message}`;
+            errorEl.innerHTML = `<i data-lucide="alert-circle" style="width: 16px; height: 16px; vertical-align: -2px;"></i> 推演失敗：${esc(err.message)}`;
             errorEl.style.display = 'block';
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
         } finally {
             loadingEl.style.display = 'none';
             submitBtn.disabled = false;
@@ -117,27 +120,29 @@
         let birthHtml = '';
         if (birth && birth.birthYear) {
             birthHtml = `
-                <section class="name-result-section" style="padding: 18px 22px; border-top: 1px solid var(--suite-border); background: rgba(59, 130, 246, 0.03);">
-                    <div class="name-section-title" style="margin-bottom: 12px;">
-                        <span>02</span><h3>先天本命體質稟賦（先天五運六氣）</h3><small>出生命盤氣質底色</small>
+                <section class="suite-section-card" style="background: rgba(59, 130, 246, 0.02);">
+                    <div class="suite-section-title-wrap">
+                        <i data-lucide="dna" style="width: 18px; height: 18px; color: var(--suite-primary);"></i>
+                        <h3>先天本命體質稟賦</h3>
+                        <span class="suite-tag" style="margin-left: auto;">出生命盤氣質</span>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px;">
-                        <div style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 8px; padding: 12px;">
-                            <div style="font-size: 12px; color: var(--suite-text-muted);">出生年干支</div>
-                            <div style="font-size: 16px; font-weight: 800; color: var(--suite-primary);">${esc(birth.birthYear)}（${esc(birth.birthGanZhi || '')}年）</div>
+                    <div class="suite-kv-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                        <div class="suite-kv-card">
+                            <div class="suite-kv-label">出生年干支</div>
+                            <div class="suite-kv-value" style="font-size: var(--type-label);">${esc(birth.birthYear)}（${esc(birth.birthGanZhi || '')}年）</div>
                         </div>
-                        <div style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 8px; padding: 12px;">
-                            <div style="font-size: 12px; color: var(--suite-text-muted);">先天歲運稟賦</div>
-                            <div style="font-size: 16px; font-weight: 800; color: #b45309;">${esc(birth.birthMovement?.nature || '')}（${esc(birth.birthMovement?.tone || '')}）</div>
+                        <div class="suite-kv-card">
+                            <div class="suite-kv-label">先天歲運稟賦</div>
+                            <div class="suite-kv-value" style="font-size: var(--type-label);">${esc(birth.birthMovement?.nature || '')}（${esc(birth.birthMovement?.tone || '')}）</div>
                         </div>
-                        <div style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 8px; padding: 12px;">
-                            <div style="font-size: 12px; color: var(--suite-text-muted);">先天司天 · 在泉</div>
-                            <div style="font-size: 15px; font-weight: 700;">${esc(birth.birthSixQi?.siTian || '')} ｜ ${esc(birth.birthSixQi?.zaiQuan || '')}</div>
+                        <div class="suite-kv-card">
+                            <div class="suite-kv-label">先天司天 · 在泉</div>
+                            <div class="suite-kv-value" style="font-size: var(--type-label);">${esc(birth.birthSixQi?.siTian || '')} ｜ ${esc(birth.birthSixQi?.zaiQuan || '')}</div>
                         </div>
                     </div>
                     ${birth.constitutionalAnalysis ? `
-                        <div style="background: rgba(16, 185, 129, 0.08); border-left: 4px solid #10b981; padding: 12px 14px; border-radius: 6px; font-size: 13.5px; line-height: 1.6;">
-                            <strong>🧬 體質調養指引：</strong>${esc(birth.constitutionalAnalysis)}
+                        <div class="suite-quote-box" style="margin-top: 10px;">
+                            <strong style="color: var(--suite-primary);"><i data-lucide="sparkles" style="width: 14px; height: 14px; vertical-align: -2px;"></i> 體質調養指引：</strong>${esc(birth.constitutionalAnalysis)}
                         </div>
                     ` : ''}
                 </section>
@@ -148,63 +153,63 @@
             const isActive = item.isCurrent;
             const cardClass = isActive ? 'meridian-shichen-card active' : 'meridian-shichen-card';
             return `
-                <div class="${cardClass}" data-shichen="${esc(item.shichen)}" style="cursor: pointer;">
+                <div class="${cardClass}" data-shichen="${esc(item.shichen)}">
                     <div class="meridian-card-time">
                         ${esc(item.timeRange || '')}
-                        ${isActive ? '<span class="suite-tag suite-tag-gold" style="float: right; font-size: 10px; padding: 2px 6px;">當令</span>' : ''}
+                        ${isActive ? '<span class="suite-tag suite-tag-gold" style="float: right; font-size: var(--type-meta); padding: 2px 6px;">當令</span>' : ''}
                     </div>
                     <div class="meridian-card-name">${esc(item.shichen)} · ${esc(item.meridian)}</div>
                     <div class="meridian-card-action">${esc(item.action)}</div>
-                    ${item.acupoint ? `<div style="font-size: 11.5px; color: var(--suite-text-muted); margin-top: 4px;">📍 重點穴位：<strong>${esc(item.acupoint)}</strong></div>` : ''}
+                    ${item.acupoint ? `<div style="font-size: var(--type-meta); color: var(--suite-text-muted); margin-top: 4px;"><i data-lucide="target" style="width: 12px; height: 12px; vertical-align: -1px;"></i> 重點穴位：<strong>${esc(item.acupoint)}</strong></div>` : ''}
                 </div>
             `;
         }).join('');
 
         resultContainer.innerHTML = `
             <article class="name-result-card wellness-card" style="border: 1.5px solid var(--suite-border); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
-                <header class="name-result-hero" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-bottom: 1.5px solid #10b981; padding: 20px 22px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
-                        <div style="display: flex; align-items: center; gap: 14px;">
-                            <div style="width: 58px; height: 58px; border-radius: 14px; background: #fff; border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 12px rgba(16,185,129,0.2);">
-                                🌿
-                            </div>
-                            <div>
-                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                    <span class="suite-tag" style="background: #047857; color: #fff; font-weight: 800; font-size: 12.5px;">黃帝內經</span>
-                                    <h2 style="margin: 0; font-size: 22px; font-weight: 800; color: #064e3b;">${esc(data.year)}（${esc(data.yearGanZhi)}年）五運六氣養生報告</h2>
-                                </div>
-                                <p style="margin: 0; font-size: 13.5px; color: #065f46; font-weight: 600;">
-                                    歲運：【${esc(data.suiYun)}】 ｜ 司天：【${esc(data.siTian)}】 ｜ 在泉：【${esc(data.zaiQuan)}】
-                                </p>
-                            </div>
+                <header class="wellness-result-hero">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div class="wellness-hero-icon">
+                            <i data-lucide="heart-pulse" style="width: 24px; height: 24px;"></i>
                         </div>
-                        <span class="suite-tag" style="background: #059669; color: #fff; font-size: 15px; font-weight: 800; padding: 6px 14px;">
-                            當令節氣：${esc(solar.currentTerm || data.solarTerm || '立春')}
-                        </span>
+                        <div>
+                            <div class="suite-result-heading-group">
+                                <span class="suite-tag badge-wellness">五運六氣</span>
+                                <h2 class="suite-result-title">${esc(data.year)}（${esc(data.yearGanZhi)}年）養生報告</h2>
+                            </div>
+                            <p class="suite-result-sub">
+                                歲運：【${esc(data.suiYun)}】 · 司天：【${esc(data.siTian)}】 · 在泉：【${esc(data.zaiQuan)}】
+                            </p>
+                        </div>
                     </div>
+                    <span class="suite-tag badge-wellness" style="padding: 6px 12px; font-weight: 700;">
+                        當令節氣：${esc(solar.currentTerm || data.solarTerm || '立春')}
+                    </span>
                 </header>
 
                 <!-- 1. 流年客氣天時氣候 -->
-                <section class="name-result-section" style="padding: 18px 22px;">
-                    <div class="name-section-title" style="margin-bottom: 12px;">
-                        <span>01</span><h3>流年歲運與客氣氣候節奏</h3><small>天地之氣盛衰</small>
+                <section class="suite-section-card">
+                    <div class="suite-section-title-wrap">
+                        <i data-lucide="cloud-sun" style="width: 18px; height: 18px; color: var(--suite-primary);"></i>
+                        <h3>流年歲運與客氣氣候節奏</h3>
+                        <span class="suite-tag" style="margin-left: auto;">天地升降</span>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 12px;">
-                        <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; border-radius: 10px; padding: 14px;">
+                    <div class="suite-kv-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+                        <div class="suite-kv-card" style="text-align: left; padding: 12px 14px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <strong style="color: #92400e; font-size: 15px;">🌟 歲運（中運）：${esc(annual.greatMovement?.nature || data.suiYun)}</strong>
-                                <span class="suite-tag" style="background: #f59e0b; color: #fff; font-weight: 700;">${esc(annual.greatMovement?.tone || '五音')}</span>
+                                <span class="suite-kv-label">歲運（中運）：<strong>${esc(annual.greatMovement?.nature || data.suiYun)}</strong></span>
+                                <span class="suite-tag" style="font-size: var(--type-meta);">${esc(annual.greatMovement?.tone || '五音')}</span>
                             </div>
-                            <div style="font-size: 13px; color: #78350f; line-height: 1.55;">
+                            <div style="font-size: var(--type-reading); line-height: var(--leading-reading); color: var(--suite-text);">
                                 ${esc(annual.greatMovement?.impact || '氣運流轉，順應中和。')}
                             </div>
                         </div>
-                        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px;">
+                        <div class="suite-kv-card" style="text-align: left; padding: 12px 14px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <strong style="color: #1e40af; font-size: 15px;">🌀 司天在泉（六氣主客）</strong>
-                                <span class="suite-tag" style="background: #3b82f6; color: #fff; font-weight: 700;">天地升降</span>
+                                <span class="suite-kv-label">司天在泉（六氣主客）</span>
+                                <span class="suite-tag" style="font-size: var(--type-meta);">客氣循行</span>
                             </div>
-                            <div style="font-size: 13px; color: #1e3a8a; line-height: 1.55;">
+                            <div style="font-size: var(--type-reading); line-height: var(--leading-reading); color: var(--suite-text);">
                                 上半年司天：<strong>${esc(data.siTian)}</strong>；下半年在泉：<strong>${esc(data.zaiQuan)}</strong>。<br>
                                 ${esc(annual.sixQi?.impact || '六氣相循，注意寒溫調和。')}
                             </div>
@@ -216,33 +221,41 @@
                 ${birthHtml}
 
                 <!-- 3. 二十四節氣食養起居 -->
-                <section class="name-result-section" style="padding: 18px 22px; border-top: 1px solid var(--suite-border);">
-                    <div class="name-section-title" style="margin-bottom: 12px;">
-                        <span>03</span><h3>【${esc(solar.currentTerm || data.solarTerm)}】當令節氣食養起居</h3><small>順應二十四節氣</small>
+                <section class="suite-section-card">
+                    <div class="suite-section-title-wrap">
+                        <i data-lucide="sun" style="width: 18px; height: 18px; color: var(--suite-primary);"></i>
+                        <h3>【${esc(solar.currentTerm || data.solarTerm)}】當令節氣食養起居</h3>
+                        <span class="suite-tag" style="margin-left: auto;">順應節氣</span>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
-                        <div style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 10px; padding: 14px;">
-                            <div style="font-weight: 700; color: #059669; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                                <span>🥗 飲食調和宜忌</span>
+                    <div class="suite-kv-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+                        <div class="suite-kv-card" style="text-align: left; padding: 12px 14px;">
+                            <div class="suite-kv-label" style="font-weight: 700; color: var(--suite-primary); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                <i data-lucide="utensils" style="width: 14px; height: 14px;"></i> 飲食調和宜忌
                             </div>
-                            <div style="font-size: 13.5px; line-height: 1.55; color: var(--suite-text);">${esc(solar.dietAdvice || advice.diet || '清淡溫熱，少食辛辣')}</div>
+                            <div style="font-size: var(--type-reading); line-height: var(--leading-reading); color: var(--suite-text);">
+                                ${esc(solar.dietAdvice || advice.diet || '清淡溫熱，少食辛辣')}
+                            </div>
                         </div>
-                        <div style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 10px; padding: 14px;">
-                            <div style="font-weight: 700; color: #2563eb; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                                <span>🌅 起居作息指引</span>
+                        <div class="suite-kv-card" style="text-align: left; padding: 12px 14px;">
+                            <div class="suite-kv-label" style="font-weight: 700; color: var(--suite-primary); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                <i data-lucide="moon" style="width: 14px; height: 14px;"></i> 起居作息指引
                             </div>
-                            <div style="font-size: 13.5px; line-height: 1.55; color: var(--suite-text);">${esc(solar.lifestyleAdvice || advice.lifestyle || '早睡早起，順應日照')}</div>
+                            <div style="font-size: var(--type-reading); line-height: var(--leading-reading); color: var(--suite-text);">
+                                ${esc(solar.lifestyleAdvice || advice.lifestyle || '早睡早起，順應日照')}
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- 4. 十二時辰子午流注經絡鐘 -->
-                <section class="name-result-section" style="padding: 18px 22px; border-top: 1px solid var(--suite-border);">
-                    <div class="name-section-title" style="margin-bottom: 8px;">
-                        <span>04</span><h3>十二時辰子午流注經絡鐘</h3><small>氣血循行當令穴位</small>
+                <section class="suite-section-card">
+                    <div class="suite-section-title-wrap">
+                        <i data-lucide="clock" style="width: 18px; height: 18px; color: var(--suite-primary);"></i>
+                        <h3>十二時辰子午流注經絡鐘</h3>
+                        <span class="suite-tag" style="margin-left: auto;">氣血循行</span>
                     </div>
-                    <div style="font-size: 13px; color: var(--suite-text-muted); margin-bottom: 10px;">
-                        人體氣血依十二時辰巡行於十二經脈。當前查詢時辰為【<strong>${esc(activeShichen.shichen || clock.shichen)} · ${esc(activeShichen.meridian || clock.meridian)}</strong>】。點擊各時辰卡片可查看當令穴位指引：
+                    <div style="font-size: var(--type-caption); color: var(--suite-text-muted); margin-bottom: 10px;">
+                        當前查詢時辰為【<strong>${esc(activeShichen.shichen || clock.shichen)} · ${esc(activeShichen.meridian || clock.meridian)}</strong>】
                     </div>
                     <div class="meridian-clock-grid">
                         ${clockCardsHtml}
@@ -250,28 +263,32 @@
                 </section>
 
                 <!-- 5. 總結指引與郵件寄送 -->
-                <section class="name-result-section" style="padding: 20px 22px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-top: 1.5px solid #10b981;">
-                    <div style="margin-bottom: 8px;">
-                        <strong style="font-size: 15px; color: #065f46;">🎯 黃帝內經養生心法錦囊：</strong>
-                        <div style="font-size: 14.5px; color: #064e3b; line-height: 1.65; margin-top: 4px;">
-                            ${esc(data.summary)}
-                        </div>
+                <section class="suite-section-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.04) 100%);">
+                    <div class="suite-section-title-wrap" style="margin-bottom: 6px;">
+                        <i data-lucide="compass" style="width: 18px; height: 18px; color: #059669;"></i>
+                        <h3 style="color: #065f46;">黃帝內經養生心法錦囊</h3>
+                    </div>
+                    <div class="suite-quote-box" style="border-left-color: #10b981;">
+                        ${esc(data.summary)}
                     </div>
                     ${Array.isArray(advice.acupuncturePoints) && advice.acupuncturePoints.length ? `
-                        <div style="margin-top: 10px; font-size: 13.5px; color: #047857;">
-                            📍 推薦保養穴位：<strong>${esc(advice.acupuncturePoints.join('、'))}</strong>
+                        <div style="margin-top: 10px; font-size: var(--type-caption); color: #047857; display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="target" style="width: 14px; height: 14px;"></i> 推薦保養穴位：<strong>${esc(advice.acupuncturePoints.join('、'))}</strong>
                         </div>
                     ` : ''}
                 </section>
-                <div class="suite-followup-actions-bar" style="padding: 14px 22px; background: var(--suite-bg-card, rgba(255,255,255,0.02));">
+                <div class="suite-followup-actions-bar" style="padding: 14px 20px;">
                     <button type="button" class="suite-btn-email-inline js-open-result-email">
-                        ✉️ 將完整五運六氣與子午流注養生報告寄到我的信箱 ➔
+                        <i data-lucide="mail"></i> 將完整五運六氣與子午流注養生報告寄到我的信箱 ➔
                     </button>
                 </div>
             </article>
         `;
 
         resultContainer.style.display = 'block';
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
         resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
@@ -312,7 +329,7 @@
 
                 turnDiv.innerHTML = `
                     <div style="font-weight: 700; color: var(--suite-primary); margin-bottom: 6px;">問：${esc(q)}</div>
-                    <div class="markdown-body" style="font-size: 14px; line-height: 1.6;">${answerHtml}</div>
+                    <div class="markdown-body" style="font-size: var(--type-reading); line-height: var(--leading-reading);">${answerHtml}</div>
                 `;
                 followUpHistory.appendChild(turnDiv);
                 followUpInput.value = '';
