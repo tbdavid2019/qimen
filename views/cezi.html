@@ -182,6 +182,10 @@
                     </div>
                 </details>
 
+                <div id="suiteTurnstileWrapper" style="margin-top: 14px; margin-bottom: 12px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'suite-turnstile', action: 'divination_analysis', explicit: true }) %>
+                </div>
+
                 <div class="suite-submit-container">
                     <button type="submit" id="btnSubmitCezi" class="btn suite-btn-primary btn-lg">
                         <i data-lucide="sparkles"></i> 立即測算 ➔
@@ -212,8 +216,8 @@
                     <div class="form-group" style="margin-bottom: 10px;">
                         <textarea id="ceziFollowUpInput" class="form-control" rows="2" placeholder="針對測字結果進一步請教…"></textarea>
                     </div>
-                    <div id="ceziTurnstileWrapper" style="margin-bottom: 10px;">
-                        <%- include('partials/turnstile-widget.html', { widgetId: 'cezi-followup-turnstile', action: 'name_analysis_question', explicit: true }) %>
+                    <div id="suiteFollowUpTurnstileWrapper" style="margin-bottom: 10px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'name_analysis_question', explicit: true }) %>
                     </div>
                     <button type="button" id="btnCeziAskFollowup" class="btn suite-btn-primary">
                         <i data-lucide="send"></i> 送出追問 ➔
@@ -227,6 +231,9 @@
     <%- include('partials/result-email.html') %>
     <%- include('partials/site-footer.html') %>
 
+    <% if ((typeof turnstileEnabled === 'undefined' || turnstileEnabled) && typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+    <% } %>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/theme.js"></script>

@@ -27,6 +27,112 @@
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     })[c]);
 
+    // --- Cloudflare Turnstile Verification ---
+    let suiteTurnstileWidgetId = null;
+    let currentSuiteTurnstileToken = '';
+    let suiteTurnstileRenderRetries = 0;
+
+    let suiteFollowUpWidgetId = null;
+    let currentFollowUpTurnstileToken = '';
+    let suiteFollowUpRenderRetries = 0;
+
+    function loadTurnstileScript(callback) {
+        if (typeof window.turnstile !== 'undefined' && typeof window.turnstile.render === 'function') {
+            return callback(null);
+        }
+        const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+        if (existing) {
+            existing.addEventListener('load', () => callback(null));
+            existing.addEventListener('error', (err) => callback(err || new Error('Turnstile script failed to load')));
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => callback(null);
+        script.onerror = (err) => callback(err || new Error('Turnstile script failed to load'));
+        document.head.appendChild(script);
+    }
+
+    function renderSuiteTurnstile() {
+        const container = document.getElementById('suite-turnstile');
+        if (!container || typeof container.getAttribute !== 'function') return;
+        const sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript((err) => {
+            if (err) {
+                console.warn('[Turnstile] Wellness suite widget failed to load:', err);
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (suiteTurnstileRenderRetries < 20) {
+                    suiteTurnstileRenderRetries++;
+                    setTimeout(renderSuiteTurnstile, 250);
+                }
+                return;
+            }
+            suiteTurnstileRenderRetries = 0;
+            if (suiteTurnstileWidgetId === null) {
+                try {
+                    const action = container.getAttribute('data-action') || 'divination_analysis';
+                    suiteTurnstileWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: 'auto',
+                        size: 'flexible',
+                        callback: (token) => { currentSuiteTurnstileToken = token; },
+                        'expired-callback': () => { currentSuiteTurnstileToken = ''; },
+                        'error-callback': () => { currentSuiteTurnstileToken = ''; }
+                    });
+                } catch (e) {
+                    console.warn('[Turnstile] Wellness suite render error:', e);
+                }
+            }
+        });
+    }
+
+    function renderSuiteFollowUpTurnstile() {
+        const container = document.getElementById('suite-followup-turnstile');
+        if (!container || typeof container.getAttribute !== 'function') return;
+        const sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        loadTurnstileScript((err) => {
+            if (err) {
+                console.warn('[Turnstile] Wellness followup widget failed to load:', err);
+                return;
+            }
+            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+                if (suiteFollowUpRenderRetries < 20) {
+                    suiteFollowUpRenderRetries++;
+                    setTimeout(renderSuiteFollowUpTurnstile, 250);
+                }
+                return;
+            }
+            suiteFollowUpRenderRetries = 0;
+            if (suiteFollowUpWidgetId === null) {
+                try {
+                    const action = container.getAttribute('data-action') || 'llm_analysis';
+                    suiteFollowUpWidgetId = window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        action: action,
+                        theme: 'auto',
+                        size: 'flexible',
+                        callback: (token) => { currentFollowUpTurnstileToken = token; },
+                        'expired-callback': () => { currentFollowUpTurnstileToken = ''; },
+                        'error-callback': () => { currentFollowUpTurnstileToken = ''; }
+                    });
+                } catch (e) {
+                    console.warn('[Turnstile] Wellness followup render error:', e);
+                }
+            }
+        });
+    }
+
+    renderSuiteTurnstile();
+
     // 初始化當前小時
     try {
         const currentH = new Date().getHours();
@@ -56,6 +162,17 @@
             return;
         }
 
+        // 驗證 Turnstile 人機驗證 (若前端有渲染且啟用)
+        let sToken = currentSuiteTurnstileToken;
+        if (!sToken && window.turnstile && suiteTurnstileWidgetId !== null) {
+            try { sToken = window.turnstile.getResponse(suiteTurnstileWidgetId); } catch (e) {}
+        }
+        const suiteTurnstileElem = document.getElementById('suite-turnstile');
+        if (!sToken && suiteTurnstileElem && typeof suiteTurnstileElem.getAttribute === 'function' && suiteTurnstileElem.getAttribute('data-sitekey')) {
+            alert('請先勾選並完成人機驗證（Cloudflare Turnstile）');
+            return;
+        }
+
         errorEl.style.display = 'none';
         resultContainer.style.display = 'none';
         followUpSection.style.display = 'none';
@@ -66,7 +183,13 @@
             const resp = await fetch('/api/bazi2/yunqi-wellness', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ targetYear, currentHour, date: birthDate })
+                body: JSON.stringify({
+                    targetYear,
+                    currentHour,
+                    date: birthDate,
+                    turnstileToken: sToken || undefined,
+                    'cf-turnstile-response': sToken || undefined
+                })
             });
             const data = await resp.json();
             if (!resp.ok || !data.success) {
@@ -92,6 +215,7 @@
                     { role: 'user', content: `查詢年份：${targetYear}，查詢時辰：${currentHour}時，出生日期：${birthDate || '未填寫'}` },
                     { role: 'assistant', content: data.summary || `完成推演：${targetYear}年歲運為【${data.suiYun}】，司天【${data.siTian}】，在泉【${data.zaiQuan}】。` }
                 ];
+                renderSuiteFollowUpTurnstile();
             }
         } catch (err) {
             errorEl.innerHTML = `<i data-lucide="alert-circle" style="width: 16px; height: 16px; vertical-align: -2px;"></i> 推演失敗：${esc(err.message)}`;
@@ -102,6 +226,10 @@
         } finally {
             loadingEl.style.display = 'none';
             submitBtn.disabled = false;
+            if (window.turnstile && suiteTurnstileWidgetId !== null) {
+                try { window.turnstile.reset(suiteTurnstileWidgetId); } catch (e) {}
+                currentSuiteTurnstileToken = '';
+            }
             if (window.lucide && typeof window.lucide.createIcons === 'function') {
                 window.lucide.createIcons();
             }
@@ -298,6 +426,17 @@
         if (!q) return;
         if (!currentWellnessData) return;
 
+        // 驗證追問 Turnstile 人機驗證 (若前端有渲染且啟用)
+        let fuToken = currentFollowUpTurnstileToken;
+        if (!fuToken && window.turnstile && suiteFollowUpWidgetId !== null) {
+            try { fuToken = window.turnstile.getResponse(suiteFollowUpWidgetId); } catch (e) {}
+        }
+        const fuElem = document.getElementById('suite-followup-turnstile');
+        if (!fuToken && fuElem && typeof fuElem.getAttribute === 'function' && fuElem.getAttribute('data-sitekey')) {
+            alert('請先勾選並完成追問人機驗證（Cloudflare Turnstile）');
+            return;
+        }
+
         askFollowupBtn.disabled = true;
         askFollowupBtn.textContent = '分析中…';
 
@@ -310,7 +449,9 @@
                     currentHour: currentWellnessData.meridianClock?.currentHour,
                     birthDate: currentWellnessData.birthYunqi?.birthDate || birthDateInput?.value,
                     question: q,
-                    conversationHistory: window.conversationHistory || []
+                    conversationHistory: window.conversationHistory || [],
+                    turnstileToken: fuToken || undefined,
+                    'cf-turnstile-response': fuToken || undefined
                 })
             });
             const data = await resp.json();
@@ -348,6 +489,10 @@
         } finally {
             askFollowupBtn.disabled = false;
             askFollowupBtn.innerHTML = '<i data-lucide="send"></i> 送出提問 ➔';
+            if (window.turnstile && suiteFollowUpWidgetId !== null) {
+                try { window.turnstile.reset(suiteFollowUpWidgetId); } catch (e) {}
+                currentFollowUpTurnstileToken = '';
+            }
             if (window.lucide && typeof window.lucide.createIcons === 'function') {
                 window.lucide.createIcons();
             }

@@ -554,6 +554,16 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
         assert.equal(liuyaoLLMRes.status, 403, '六爻前端解讀未帶 Turnstile 應被拒絕以保護 LLM Token');
         const liuyaoLLMData = await liuyaoLLMRes.json();
         assert.equal(liuyaoLLMData.code, 'TURNSTILE_TOKEN_MISSING');
+
+        // 3f. 測試五運六氣問答端點 /api/wellness/question 在啟用時強制要求 Turnstile
+        const wellnessLLMRes = await fetch(`${baseUrl}/api/wellness/question`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: '測試養生' })
+        });
+        assert.equal(wellnessLLMRes.status, 403, '五運六氣前端追問未帶 Turnstile 應被拒絕以保護 LLM Token');
+        const wellnessLLMData = await wellnessLLMRes.json();
+        assert.equal(wellnessLLMData.code, 'TURNSTILE_TOKEN_MISSING');
     } finally {
         delete process.env.TURNSTILE_FORCE_ENABLE;
         if (originalSiteKey !== undefined) {
@@ -570,7 +580,7 @@ test('Turnstile (方案A): 占卜問答 API 端點維持純淨開放，Telegram 
     }
 });
 
-test('Turnstile: 全站 9 大頁面模板均完整包含問答防護 Turnstile 元件', () => {
+test('Turnstile: 全站 11 大頁面模板均完整包含問答防護 Turnstile 元件', () => {
     const fs = require('node:fs');
     const path = require('node:path');
     const viewsDir = path.join(__dirname, '../views');
@@ -584,7 +594,9 @@ test('Turnstile: 全站 9 大頁面模板均完整包含問答防護 Turnstile �
         { file: 'tarot.html', widgetId: 'suite-turnstile' },
         { file: 'fengshui.html', widgetId: 'suite-turnstile' },
         { file: 'yinyuan.html', widgetId: 'suite-turnstile' },
-        { file: 'answerbook.html', widgetId: 'answerbook-turnstile' }
+        { file: 'answerbook.html', widgetId: 'answerbook-turnstile' },
+        { file: 'cezi.html', widgetId: 'suite-turnstile' },
+        { file: 'wellness.html', widgetId: 'suite-turnstile' }
     ];
 
     for (const { file, widgetId } of pages) {

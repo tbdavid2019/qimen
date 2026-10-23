@@ -4,6 +4,19 @@
 
 ## [2026-10-23]
 
+### 🛡️ Cloudflare Turnstile 人機防護全覆蓋（測字占事 `/cezi`、五運養生 `/wellness` 主表單與 AI 追問全面接入，修復生產環境遺漏顯式渲染與 Token 校驗）
+
+- **全站 11 大頁面模板 100% 覆蓋 Turnstile 安全驗證**：
+  - `views/cezi.html`、`views/wellness.html`、`views/name-analysis.html` 補齊 Cloudflare Turnstile API 顯式渲染腳本（`https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit`）。
+  - `cezi.html` 與 `wellness.html` 主起卦表單補齊 `#suiteTurnstileWrapper`（`widgetId: 'suite-turnstile'`），AI 追問表單補齊 `#suiteFollowUpTurnstileWrapper`（`widgetId: 'suite-followup-turnstile'`）。
+  - 更新單元測試 `test/turnstile.test.js`，將驗證清單由 9 大頁面擴充為全站 11 大頁面模板，13 項 Turnstile 測試全數 100% 通過。
+- **前端生命週期與自動重置機制貫通 (`public/js/cezi.js`, `public/js/wellness.js`)**：
+  - 實作 `loadTurnstileScript`、`renderSuiteTurnstile` 與 `renderSuiteFollowUpTurnstile`，支援主題自動適配（`theme: auto`）與靈活尺寸（`size: flexible`）。
+  - 於表單送出及 AI 追問時主動檢查 Turnstile 驗證狀態，自動將 `turnstileToken` 與 `cf-turnstile-response` 注入請求體，並於完成後自動調用 `turnstile.reset()` 清除暫存。
+- **後端端點保護健全化 (`app.js`)**：
+  - 為五運六氣 Web 端點 `POST /api/wellness/question` 掛載 `turnstileMiddleware({ action: ['llm_analysis', 'wellness_question', 'divination_analysis'] })`，杜絕爬蟲盜刷 LLM Token。
+  - 同步確保外部 CLI / Bot 專屬端點（`POST /api/wellness-question`）維持 100% 純淨開放無阻。
+
 ### 🎨 前端極致視覺重構與字體階層規範化（移除廉價 Emoji、全面回歸 Lucide SVG 圖標、統一 5 級字體階層、移除冗餘廢話標題）
 
 - **圖標系統全面淨化（Lucide SVG Icons）**：

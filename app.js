@@ -1085,7 +1085,7 @@ const wellnessQuestionHandler = createServiceQuestionHandler({
 });
 app.post('/api/wellness-question', wellnessQuestionHandler);
 app.get('/api/wellness-question', wellnessQuestionHandler);
-app.post('/api/wellness/question', wellnessQuestionHandler);
+app.post('/api/wellness/question', turnstileMiddleware({ action: ['llm_analysis', 'wellness_question', 'divination_analysis'] }), wellnessQuestionHandler);
 
 const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書', liuyao: '六爻神卦', wellness: '五運六氣養生' };
 

@@ -125,6 +125,10 @@
                     </div>
                 </details>
 
+                <div id="suiteTurnstileWrapper" style="margin-top: 14px; margin-bottom: 12px;">
+                    <%- include('partials/turnstile-widget.html', { widgetId: 'suite-turnstile', action: 'divination_analysis', explicit: true }) %>
+                </div>
+
                 <div class="suite-submit-container">
                     <button type="submit" id="btnSubmitWellness" class="btn suite-btn-primary btn-lg">
                         <i data-lucide="sparkles"></i> 立即排算 ➔
@@ -155,8 +159,8 @@
                     <div class="form-group" style="margin-bottom: 10px;">
                         <textarea id="wellnessFollowUpInput" class="form-control" rows="2" placeholder="針對體質或當令節氣提問…"></textarea>
                     </div>
-                    <div id="wellnessTurnstileWrapper" style="margin-bottom: 10px;">
-                        <%- include('partials/turnstile-widget.html', { widgetId: 'wellness-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
+                    <div id="suiteFollowUpTurnstileWrapper" style="margin-bottom: 10px;">
+                        <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
                     </div>
                     <button type="button" id="btnWellnessAskFollowup" class="btn suite-btn-primary">
                         <i data-lucide="send"></i> 送出提問 ➔
@@ -170,6 +174,9 @@
     <%- include('partials/result-email.html') %>
     <%- include('partials/site-footer.html') %>
 
+    <% if ((typeof turnstileEnabled === 'undefined' || turnstileEnabled) && typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+    <% } %>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/theme.js"></script>
