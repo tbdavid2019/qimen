@@ -2,6 +2,16 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-10-25]
+
+### ⚡️ 容器運行環境升級 Node.js 26 (v26.12.1) 與最新 CVE 安全防護加固 (Node.js 26 Runtime & Security Hardening)
+
+- **Docker 容器基底升級**：
+  - `Dockerfile` 基礎映像檔升級為 `node:26.12.1-alpine`。
+  - 全面啟用最新 V8 引擎，提升奇門遁甲、六爻、紫微斗數排盤運算與後端 API 響應效率。
+- **最新官方安全性修補（October 2026 Security Releases）完整防禦**：
+  - 完整防護 October 2026 官方安全公告 CVE（包含 CVE-2026-111497 Brotli 解碼器越界寫入 RCE 漏洞、CVE-2026-105482 DNS 截斷漏洞、CVE-2026-105483/106069 TLS 主機名檢查繞過漏洞）。
+
 ## [2026-10-23]
 
 ### 🛡️ Cloudflare Turnstile 人機防護全覆蓋（測字占事 `/cezi`、五運養生 `/wellness` 主表單與 AI 追問全面接入，修復生產環境遺漏顯式渲染與 Token 校驗）
