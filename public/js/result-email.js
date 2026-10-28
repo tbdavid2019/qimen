@@ -276,7 +276,7 @@
   }
   window.publishSuiteEmailResult = publish;
 
-  const relevantPath = (path) => /\/api\/(name-analysis(?:\/(verify|generate|cezi)|-question)|tarot(?:\/numerology|\/reading|-question|\/llm-analysis)|ziwei(?:\/chart|\/spouse|\/male-size|-question|\/llm-analysis)?|meihua(?:-question|\/qigua|\/llm-analysis)?|liuyao(?:-question|\/toss-coin|\/cast-dayan|\/cast-datetime|\/cast-manual|\/llm-analysis)?|suite-ai\/liuyao|(?:bazi2|fengshui|yinyuan)(?:-question|\/chart|\/report|\/reading|\/llm-analysis|\/evaluate-layout|\/luantou|\/yunqi-wellness)|wellness(?:-question|\/question)|answerbook(?:-question|\/llm-analysis)|[a-z0-9-]+\/llm-analysis|llm-analysis)/i.test(path);
+  const relevantPath = (path) => /\/api\/(name-analysis(?:\/(verify|generate)|-question)|name-analysis\/cezi|tarot(?:\/numerology|\/reading|-question|\/llm-analysis)|ziwei(?:\/chart|\/spouse|\/male-size|-question|\/llm-analysis)?|meihua(?:-question|\/qigua|\/llm-analysis)?|liuyao(?:-question|\/toss-coin|\/cast-dayan|\/cast-datetime|\/cast-manual|\/llm-analysis)?|suite-ai\/liuyao|(?:bazi2|fengshui|yinyuan)(?:-question|\/chart|\/report|\/reading|\/llm-analysis|\/evaluate-layout|\/luantou|\/yunqi-wellness)|wellness(?:-question|\/question)|answerbook(?:-question|\/llm-analysis)|[a-z0-9-]+\/llm-analysis|llm-analysis)/i.test(path);
   const originalFetch = window.fetch.bind(window);
   window.fetch = async (...args) => {
     const response = await originalFetch(...args);

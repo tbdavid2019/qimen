@@ -2,6 +2,15 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-10-28]
+
+### 🛡️ 修補主專案與 MCP Server 相依套件安全漏洞
+
+- 主專案升級 `body-parser`、`qs` 與 `follow-redirects` 至已修補版本，涵蓋高嚴重度 DoS 與跨網域憑證洩漏風險。
+- MCP Server 升級 `@modelcontextprotocol/sdk`、`zod`、`tsx` 及相關傳遞相依套件，涵蓋 MCP 傳輸、輸入驗證、URI 解析、IP 位址處理及開發伺服器安全修補。
+- 更新 MCP 工具 schema 以相容 Zod 4，並擴大測字的漢字辨識範圍及結果寄送 API 偵測規則。
+- 主專案與 MCP Server 的 `npm audit` 均回報 0 項漏洞。
+
 ## [2026-10-25]
 
 ### ⚡️ 容器運行環境升級 Node.js 26 (v26.12.1) 與最新 CVE 安全防護加固 (Node.js 26 Runtime & Security Hardening)
