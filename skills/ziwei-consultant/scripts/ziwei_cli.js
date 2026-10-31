@@ -41,6 +41,11 @@ function parseArgs() {
         } else if (arg === '--patterns') {
             params.mode = 'patterns';
             if (args[i + 1] && !args[i + 1].startsWith('--')) params.patterns = args[++i];
+        } else if (arg === '--domain' && args[i + 1]) {
+            params.mode = 'domain';
+            params.domain = args[++i];
+        } else if (arg === '--all-domains') {
+            params.mode = 'all-domains';
         } else if (arg === '--first' && args[i + 1]) {
             firstInline = args[++i];
         } else if (arg === '--second' && args[i + 1]) {
@@ -129,6 +134,19 @@ function run() {
             if (inputData.full || inputData.chart) {
                 result.chart = chart;
             }
+        } else if (inputData.mode === 'domain') {
+            const chart = calculateZiweiChart(inputData);
+            const topic = inputData.domain || 'overview';
+            result = {
+                topic,
+                domain: chart.domains?.[topic] || chart.domains?.overview
+            };
+        } else if (inputData.mode === 'all-domains') {
+            const chart = calculateZiweiChart(inputData);
+            result = {
+                domains: chart.domains,
+                topics: chart.topics
+            };
         } else if (inputData.mode === 'male-size') {
             const rawSex = inputData.sex;
             const normalizedSex = (rawSex === '男' || rawSex === 'male') ? '男' : (rawSex === '女' || rawSex === 'female') ? '女' : (rawSex === undefined ? '男' : null);

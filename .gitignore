@@ -68,3 +68,9 @@ typings/
 
 .impeccable/
 
+# AI Agent & IDE config
+.codex/
+.cursor/
+.gemini/
+.grok/
+

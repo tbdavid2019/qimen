@@ -77,12 +77,40 @@ test('雙人合盤輸出四項分析與 0-100 分數', () => {
     assert.ok(result.advice);
 });
 
-test('CLI 支援 --match 與 --patterns', () => {
+test('CLI 支援 --match、--patterns 與 --domain / --all-domains', () => {
     const cli = path.join(__dirname, '../skills/ziwei-consultant/scripts/ziwei_cli.js');
     const match = JSON.parse(execFileSync(process.execPath, [cli, '--match', '--first', '{"date":"1990-05-15","sex":"男"}', '--second', '{"date":"1992-08-20","sex":"女"}'], { encoding: 'utf8' }));
     assert.equal(typeof match.score, 'number');
     const patterns = JSON.parse(execFileSync(process.execPath, [cli, '--date', '1990-05-15', '--patterns'], { encoding: 'utf8' }));
     assert.ok(Array.isArray(patterns.patterns));
+    const domainRes = JSON.parse(execFileSync(process.execPath, [cli, '--date', '1990-05-15', '--domain', 'career'], { encoding: 'utf8' }));
+    assert.equal(domainRes.topic, 'career');
+    assert.ok(domainRes.domain.coreAnalysis);
+    assert.ok(domainRes.domain.sanfangAnalysis);
+    assert.ok(domainRes.domain.practicalAdvice);
+    assert.ok(domainRes.domain.classicQuote);
+    const allDomainsRes = JSON.parse(execFileSync(process.execPath, [cli, '--date', '1990-05-15', '--all-domains'], { encoding: 'utf8' }));
+    assert.equal(Object.keys(allDomainsRes.domains).length, 13);
+    assert.ok(allDomainsRes.domains.love);
+    assert.ok(allDomainsRes.domains.wealth);
+    assert.ok(allDomainsRes.domains.health);
+});
+
+test('十三大專題深度論斷引擎覆蓋 13 個維度', () => {
+    const chart = calculateZiweiChart({ date: '1990-05-15', time: '12:00', sex: '男' });
+    assert.ok(chart.domains);
+    const expectedKeys = ['overview', 'personality', 'love', 'career', 'wealth', 'health', 'family', 'children', 'move', 'friends', 'home', 'spirit', 'parents'];
+    assert.deepEqual(Object.keys(chart.domains), expectedKeys);
+    for (const key of expectedKeys) {
+        const d = chart.domains[key];
+        assert.ok(d.label, `${key} 缺少 label`);
+        assert.ok(d.palaceName, `${key} 缺少 palaceName`);
+        assert.ok(d.dingdiao, `${key} 缺少 dingdiao`);
+        assert.ok(d.coreAnalysis, `${key} 缺少 coreAnalysis`);
+        assert.ok(d.sanfangAnalysis, `${key} 缺少 sanfangAnalysis`);
+        assert.ok(d.practicalAdvice, `${key} 缺少 practicalAdvice`);
+        assert.ok(d.classicQuote, `${key} 缺少 classicQuote`);
+    }
 });
 
 test('API chart 與 match 端點回傳進階結構', async () => {
@@ -102,6 +130,24 @@ test('API chart 與 match 端點回傳進階結構', async () => {
         assert.equal(match.success, true);
         assert.equal(typeof match.match.score, 'number');
         assert.equal(match.match.firstChart.palaces.length, 12, '必須由伺服器真實排盤，而非採用假 palaces');
+
+        const domainResponse = await fetch(`${base}/api/ziwei/domain`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: '1990-05-15', sex: '男', topic: 'career' }) });
+        const domainData = await domainResponse.json();
+        assert.equal(domainData.success, true);
+        assert.equal(domainData.topic, 'career');
+        assert.ok(domainData.domain.coreAnalysis);
+        assert.ok(domainData.domain.sanfangAnalysis);
+
+        // 測試非法專題代碼回傳 400
+        const invalidTopicRes = await fetch(`${base}/api/ziwei/domain`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: '1990-05-15', sex: '男', topic: 'invalid_topic' }) });
+        assert.equal(invalidTopicRes.status, 400);
+
+        // 測試 GET 方式請求專題分析支援直接調用 (供其他 App 方便串接)
+        const getDomainRes = await fetch(`${base}/api/ziwei/domain?date=1990-05-15&sex=男&topic=career`);
+        assert.equal(getDomainRes.status, 200);
+        const getDomainData = await getDomainRes.json();
+        assert.equal(getDomainData.success, true);
+        assert.equal(getDomainData.topic, 'career');
 
         const pageResponse = await fetch(`${base}/ziwei/match`);
         assert.equal(pageResponse.status, 200);

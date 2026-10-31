@@ -79,10 +79,14 @@
 - **三合一 Canonical 路由直達體系**：
   - `/ziwei` (完整排盤) · `/ziwei/spouse` (未來另一半) · `/ziwei/male-size` (男生尺寸) 具備獨立 SEO Canonical Tags 與 History API 無縫切換。
 - **標準 CLI 工具**：`skills/ziwei-consultant/scripts/ziwei_cli.js` 支援 `--spouse` 與 `--male-size` 旗標直接輸出對應的結構化 JSON。
+- **🏛️ 十三大主題與宮位全息深度論斷系統 (`/api/ziwei/domain` & 前端互動導覽)**：
+  - **完整覆蓋 13 大人生主題**：命格總覽 (`overview`)、性格特質 (`personality`)、感情婚姻 (`love`)、事業職業 (`career`)、財富運勢 (`wealth`)、健康狀況 (`health`)、兄弟合夥 (`family`)、子女緣分 (`children`)、遷移外出 (`move`)、人際貴人 (`friends`)、田宅不動產 (`home`)、精神福德 (`spirit`)、父母長輩 (`parents`)。
+  - **確定性多維論斷庫**：包含 14 主星在 12 宮之星情細緻論斷表、六吉六煞輔星加會影響表、生年四化催化表、空宮借對宮主星機制、三方四正聯動、理性實踐建議與古籍經典名句（《紫微斗數全書》、《骨髓賦》、《太微賦》與倪海廈《天紀》心法）。
+  - **前端宮位全息聯動**：排盤後即時載入橫向標籤導覽器，點選命盤 12 宮位任一宮位即刻高亮並聯動切換該主題論斷，點選中宮可切換至命格總覽，並支援一鍵呼叫 AI 進行專項五段式深度剖析。
 - **雙人紫微合盤 (`/api/ziwei/match` 與 `/ziwei` 雙人模式)**：輸入雙方姓名、出生年月日時與性別，依命宮主星、夫妻宮投射、四化互照、煞星對衝四項權重計算 0–100 契合指數，並提供理性相處指南。
-- **進階 CLI**：`--patterns` 可輸出或篩選格局；`--match --first '{...}' --second '{...}'` 可直接輸出雙盤合婚 JSON。
+- **進階 CLI**：`--patterns` 可輸出或篩選格局；`--domain <topic>` 或 `--all-domains` 可直接輸出確定性 13 主題論斷；`--match --first '{...}' --second '{...}'` 可直接輸出雙盤合婚 JSON。
 - **📚 演算法來源與溯源追蹤 (Algorithm Provenance)**：
-  - 本模組之「34 種正統古籍格局庫」、「三組十二神煞」、「全書善本廟旺校訂」與「夫妻宮雙盤合婚評估」，算法原型參考並溯源自開源專案 [Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu)（MIT License，基於倪海廈《天紀》體系與《紫微斗數全書》善本校訂）。各核心檔案（`lib/ziwei-patterns.js`、`lib/ziwei-shensha.js`、`lib/ziwei-match.js`、`lib/ziwei.js`）皆已註記對應的上游源碼路徑，確保未來上游若有古籍考證更新時具備完整可追溯性。
+  - 本模組之「13 大主題深度解讀庫」、「34 種正統古籍格局庫」、「三組十二神煞」、「全書善本廟旺校訂」與「夫妻宮雙盤合婚評估」，算法原型參考並溯源自開源專案 [Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu)（MIT License，基於倪海廈《天紀》體系與《紫微斗數全書》善本校訂）。各核心檔案（`lib/ziwei-domains.js`、`lib/ziwei-patterns.js`、`lib/ziwei-shensha.js`、`lib/ziwei-match.js`、`lib/ziwei.js`）皆已註記對應的上游源碼路徑，確保未來上游若有古籍考證更新時具備完整可追溯性。
 
 ### 3. 🪙 六爻神卦 · 納甲筮法 (`/liuyao` & `/api/liuyao-question`)
 - **正統京房納甲體系 (`lib/liuyao.js`)**：
@@ -341,6 +345,10 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen �
 node skills/ziwei-consultant/scripts/ziwei_cli.js --match \
   --first '{"date":"1981-08-11","shichen":"巳","sex":"male"}' \
   --second '{"date":"1984-03-22","shichen":"午","sex":"female"}'
+
+# 紫微斗數 13 大主題深度論斷（如事業、感情，或一次性輸出全盤）
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --shichen 午 --sex 男 --domain career
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --shichen 午 --sex 男 --all-domains
 
 # 六爻神卦占問（支援銅錢搖卦、大衍筮法、時間起卦與手動指定爻值）
 node skills/liuyao-consultant/scripts/ask_liuyao.js --question "今年下半年換工作發展如何？" --category "事業升遷" --method coins

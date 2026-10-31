@@ -4,6 +4,43 @@
 
 ## [2026-10-31]
 
+### 🏛️ 紫微斗數 13 大人生主題與宮位全息深度論斷系統 (13-Domain Deep-Dive Interpretation Engine)
+
+- **拒絕閹割與敷衍（Zero Castrated Versions）**：徹底落地正統紫微斗數 13 大人生主題與宮位全息深度論斷：
+  - `overview` (命格總覽)
+  - `personality` (性格特質)
+  - `love` (感情婚姻)
+  - `career` (事業職業)
+  - `wealth` (財富運勢)
+  - `health` (健康狀況)
+  - `family` (兄弟合夥)
+  - `children` (子女緣分)
+  - `move` (遷移外出)
+  - `friends` (人際貴人)
+  - `home` (田宅不動產)
+  - `spirit` (精神福德)
+  - `parents` (父母長輩)
+- **確定性多維論斷庫 (`lib/ziwei-domains.js`)**：
+  - 14 主星在 12 宮之星情細緻論斷表 (`STAR_PALACE_READINGS`)、六吉六煞輔星加會影響表 (`AUX_INFLUENCES`)、生年四化催化表 (`SIHUA_IN_PALACE`)、古籍經典名句庫 (`CLASSICAL_QUOTES`，引用《紫微斗數全書》、《骨髓賦》、《太微賦》與倪海廈《天紀》心法)。
+  - 包含空宮借對宮主星機制、三方四正聯動、理性行動建議與一句定調。
+- **全介面端到端五層對齊 (Full-Stack 5-Layer Parameter Alignment)**：
+  1. **Web UI** (`public/js/ziwei.js`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)：新增 13 大主題膠囊標籤橫向滑動導覽器、點選命盤 12 宮位任一宮位即刻高亮並聯動切換該主題、點選中宮切換命格總覽、點選「請 AI 深入解讀」自動喚出追問表單並掛載 Turnstile。支援暗黑模式與標準無障礙 tab/button 鍵盤導航。
+  2. **API Endpoint** (`app.js`)：新增 `POST /api/ziwei/domain` 與 `GET /api/ziwei/domain` 端點，嚴格校驗 13 大合法 topic；支援 GET/POST 雙向調用且無 Turnstile 阻擋，方便其他 App 與外部服務直接串接。
+  3. **CLI & Skill** (`skills/ziwei-consultant/SKILL.md`, `skills/ziwei-consultant/scripts/ziwei_cli.js`)：支援 `--domain <topic>`（如 `--domain career`）與 `--all-domains`，並在 SKILL.md 詳列參數與溯源。
+  4. **WebMCP Standard** (`public/js/webmcp.js`)：註冊 `get_ziwei_domain` 工具，支援 `date`, `time`, `shichen`, `sex`, `calendar`, `topic`, `question`, `ai`，並在序列化時完整回傳 `domain`, `topic` 與 `aiAnalysis`。
+  5. **文檔與測試**：`README.md`、`CHANGELOG.md` 完整同步，單元測試維持 100% 通過（339/339 pass）。
+- **演算法來源與溯源依據 (Provenance)**：
+  - 溯源自開源專案 [Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu) (MIT License，基於倪海廈《天紀》教學體系與《紫微斗數全書》古籍善本)。各模組路徑與典籍對照：
+    - 13 大主題深度解讀庫：`lib/ziwei/db-analysis.ts` / `components/InsightPanel.tsx` → 本專案 `lib/ziwei-domains.js`
+    - 34 種正統古籍格局庫：`lib/ziwei/patterns.ts` → 本專案 `lib/ziwei-patterns.js`
+    - 三組十二神煞排盤：`lib/ziwei/shier-shen.ts` → 本專案 `lib/ziwei-shensha.js`
+    - 夫妻宮星情與合盤權重：`lib/ziwei/heming-knowledge.ts` → 本專案 `lib/ziwei-match.js`
+    - 善本星曜廟旺校正：`lib/ziwei/algorithm.ts` → 本專案 `lib/ziwei.js`
+- **Dual Code Review 審查加固 (Codex & OpenCode)**：
+  - 修復 `analyzeZiweiDomain` 調用 `callLLMWithHistory` 之運行時問題與 prompt token 輕量化。
+  - 移除資料層之 HTML escaping，由前端呈現層統一 escape，防止雙重轉義。
+  - 修正 CSS 卡片背景變數 (`--suite-card-bg`) 與行動端 Tab 42px 觸控標靶高度。
+
 ### 🎨 紫微合盤排版優化 (Impeccable Typeset: 消除字體呼大呼小與佈局失衡)
 
 - **平穩字體階層 (Restrained Typographic Scale)**：將合盤總分由過度誇張的 48px 收斂至典雅平衡的 30px（搭配 14px 分母），說明文本與指南內文由過小的 12.5px 提升至 13.5px~14px（1.6 行高），徹底消除 48px 跳落至 12.5px 的「忽大忽小」突兀斷層。

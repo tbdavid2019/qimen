@@ -37,6 +37,7 @@ const {
 } = require('./lib/fengshui');
 const { searchAuspiciousTimes, evaluateDecisionCombo, analyzeCezi, calculateYunqiWellness } = require('./lib/advanced-wisdom');
 const { calculateZiweiChart, evaluateMaleSize, evaluateFutureSpouse } = require('./lib/ziwei');
+const { DOMAIN_KEYS } = require('./lib/ziwei-domains');
 const { evaluateZiweiMatch } = require('./lib/ziwei-match');
 const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
 const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time');
@@ -379,6 +380,32 @@ const handleZiweiMatch = async (req, res) => {
     }
 };
 app.post('/api/ziwei/match', handleZiweiMatch);
+
+const handleZiweiDomain = async (req, res) => {
+    try {
+        const payload = { ...(req.query || {}), ...(req.body || {}) };
+        if (payload.palaces) delete payload.palaces;
+        const topic = payload.topic || 'overview';
+        if (!DOMAIN_KEYS.includes(topic)) {
+            return res.status(400).json({
+                success: false,
+                error: `不支援的主題代碼: ${topic}，可用主題為: ${DOMAIN_KEYS.join(', ')}`
+            });
+        }
+        const validated = validateZiweiQuestion(payload);
+        const chart = calculateZiweiChart(validated);
+        const domain = chart.domains?.[topic] || chart.domains?.overview;
+        let aiAnalysis = null;
+        if (payload.question || payload.ai === true || payload.ai === 'true') {
+            aiAnalysis = await resolveLlmService(req, llmService).analyzeZiweiDomain(chart, topic, payload.question || '');
+        }
+        res.json({ success: true, topic, domain, aiAnalysis, chart });
+    } catch (error) {
+        res.status(error.status || error.statusCode || 400).json({ success: false, error: error.message, code: error.code });
+    }
+};
+app.post('/api/ziwei/domain', handleZiweiDomain);
+app.get('/api/ziwei/domain', handleZiweiDomain);
 
 const handleTarotReading = async (req, res) => {
     try {
@@ -2402,6 +2429,20 @@ app.get('/api/docs', (req, res) => {
                     time: { type: "string", required: false, description: "出生時間（HH:mm）" },
                     shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
                     sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" }
+                }
+            },
+            ziweiDomain: {
+                method: "GET / POST",
+                path: "/api/ziwei/domain",
+                description: "紫微斗數 13 大主題深度論斷（命格總覽、性格、感情、事業、財運、健康、兄弟、子女、遷移、人際、田宅、福德、父母）",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
+                    topic: { type: "string", required: false, default: "overview", enum: ["overview", "personality", "love", "career", "wealth", "health", "family", "children", "move", "friends", "home", "spirit", "parents"], description: "13大主題代碼" },
+                    ai: { type: "boolean", required: false, description: "是否同步產出 LLM 專項深度解析" }
                 }
             },
             bazi2Question: {

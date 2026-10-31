@@ -1221,7 +1221,7 @@
             }).join('');
 
             return `
-                <div class="ziwei-palace-cell ${p.isMing ? 'is-ming' : ''} ${p.isShen ? 'is-shen' : ''}">
+                <div class="ziwei-palace-cell ${p.isMing ? 'is-ming' : ''} ${p.isShen ? 'is-shen' : ''}" data-palace="${escapeHtml(p.name)}" data-branch="${escapeHtml(branch)}">
                     <div class="ziwei-cell-header">
                         <span class="ziwei-palace-name">${escapeHtml(p.name)}${p.isMing ? ' (命)' : ''}${p.isShen ? ' (身)' : ''}</span>
                         <span class="ziwei-palace-ganzhi">${escapeHtml(p.ganzhi)}</span>
@@ -1272,6 +1272,7 @@
                 ${row4}
             </div>
             ${patternsHtml ? `<div style="margin-top:16px;"><div style="font-size: var(--type-reading); font-weight:700; margin-bottom:8px; color:var(--suite-text);">🌟 命盤特殊格局剖析</div>${patternsHtml}</div>` : ''}
+            ${window.ZiweiUI?.renderDomainExplorer ? window.ZiweiUI.renderDomainExplorer(chart) : ''}
             ${maleSizeHtml}
         `;
         visualBoard.hidden = false;

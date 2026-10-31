@@ -22,6 +22,7 @@ description: >
 本技能採用之進階演算法模組（34 種古籍格局判定庫、三組十二神煞、善本星曜廟旺校對、雙人合盤評估算法），演算法架構與知識庫原型參考自開源專案：
 - **上游開源專案**：[Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu) (MIT License)
 - **對應模組路徑**：
+  - 13 大主題深度解讀庫：`lib/ziwei/db-analysis.ts` / `components/InsightPanel.tsx` → 本專案 `lib/ziwei-domains.js`
   - 34 種正統古籍格局庫：`lib/ziwei/patterns.ts` → 本專案 `lib/ziwei-patterns.js`
   - 三組十二神煞排盤：`lib/ziwei/shier-shen.ts` → 本專案 `lib/ziwei-shensha.js`
   - 夫妻宮星情與合盤權重：`lib/ziwei/heming-knowledge.ts` → 本專案 `lib/ziwei-match.js`
@@ -82,9 +83,23 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --time 12:00
 node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --patterns '日月同宮,化祿入財'
 ```
 
+#### 十三大主題深度論斷（13-Domain Deep-Dive）
+
+支援抽取或全盤輸出「命格總覽、性格特質、感情婚姻、事業職業、財富運勢、健康狀況、兄弟合夥、子女緣分、遷移外出、人際貴人、田宅不動產、精神福德、父母長輩」之完整論斷（定調、星情深度、三方四正、理性建議與古籍出處）：
+
+```bash
+# 查詢單一專題（如事業、感情、財運等）
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --domain career
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --domain love
+
+# 一次性輸出全套 13 大主題結構
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --all-domains
+```
+
 #### Canonical Routes 直達體系與 API
 - 完整排盤直達：`GET /ziwei` (Canonical: `https://qi.david888.com/ziwei`)
 - 純排盤 JSON：`POST /api/ziwei/chart`，傳入出生日期等排盤資料；設 `skipRecord: true` 可只取得確定性命盤，不呼叫 LLM 且不送出 Discord 紀錄。
+- 13 大主題深度論斷：`POST /api/ziwei/domain`，傳入 `{ date, time, sex, topic: "career", ai: true/false }`
 - 未來另一半直達：`GET /ziwei/spouse` (Canonical: `https://qi.david888.com/ziwei/spouse`)，支援 `POST /api/ziwei/spouse`
 - 雙人合盤：`POST /api/ziwei/match`，傳入 `{ first: {...}, second: {...} }`，回傳契合分數與四項互動分析。
 - 男生真實尺寸直達：`GET /ziwei/male-size` (Canonical: `https://qi.david888.com/ziwei/male-size`)，支援 `POST /api/ziwei/male-size`

@@ -4300,3 +4300,285 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 [data-theme="dark"] .ziwei-match-advice { background:rgba(45,35,15,.6); border-color:#d97706; color:var(--suite-text); }
 [data-theme="dark"] .ziwei-match-advice strong, [data-theme="dark"] .ziwei-match-advice-title { color:#fcd34d; }
 [data-theme="dark"] .ziwei-match-advice p, [data-theme="dark"] .ziwei-match-advice-desc { color:#fef3c7; }
+
+/* ========================================================
+   紫微斗數 13 大主題與宮位全息深度解析 (13-Domain Explorer)
+   ======================================================== */
+.ziwei-palace-cell { cursor: pointer; transition: all 0.2s ease; }
+.ziwei-palace-cell:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); border-color: var(--suite-primary); }
+.ziwei-palace-cell.is-selected-cell { border-color: #f59e0b !important; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.4), 0 8px 22px rgba(245, 158, 11, 0.2); }
+.ziwei-center-info { cursor: pointer; transition: all 0.2s ease; }
+.ziwei-center-info:hover { transform: scale(1.02); }
+
+.ziwei-domains-section {
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--suite-card-bg, #ffffff);
+    border: 1.5px solid var(--suite-border, #e2e8f0);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.ziwei-domains-header {
+    margin-bottom: 14px;
+}
+
+.ziwei-domains-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--suite-text);
+}
+
+.ziwei-domains-subtitle {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--suite-text-muted);
+    line-height: 1.5;
+}
+
+.ziwei-domains-nav-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 6px 0 12px;
+    scrollbar-width: thin;
+}
+
+.ziwei-domains-nav-track {
+    display: inline-flex;
+    gap: 8px;
+    min-width: max-content;
+}
+
+.ziwei-domain-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    min-height: 42px;
+    border-radius: 999px;
+    background: var(--suite-bg, #f8fafc);
+    border: 1.5px solid var(--suite-border, #e2e8f0);
+    color: var(--suite-text);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    touch-action: manipulation;
+}
+
+@media (hover: hover) {
+    .ziwei-domain-tab-btn:hover {
+        border-color: #f59e0b;
+        background: #fffbeb;
+        color: #92400e;
+        transform: translateY(-1px);
+    }
+}
+
+.ziwei-domain-tab-btn.active {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-color: #b45309;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.28);
+}
+
+.ziwei-domain-tab-icon {
+    font-size: 14px;
+}
+
+.ziwei-domain-card {
+    border: 1.5px solid rgba(245, 158, 11, 0.25);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 251, 235, 0.4) 0%, rgba(255, 255, 255, 0.8) 100%);
+    padding: 20px;
+    margin-top: 10px;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);
+}
+
+.ziwei-domain-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.ziwei-domain-card-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.ziwei-domain-card-heading {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--suite-text);
+}
+
+.ziwei-domain-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.ziwei-domain-dayun {
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(100, 116, 139, 0.12);
+    color: var(--suite-text-muted);
+}
+
+.ziwei-domain-dingdiao {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 14px 0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+}
+
+.ziwei-dingdiao-icon {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #b45309;
+    flex-shrink: 0;
+}
+
+.ziwei-dingdiao-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #78350f;
+    font-weight: 700;
+}
+
+.ziwei-domain-body {
+    display: grid;
+    gap: 16px;
+}
+
+.ziwei-domain-section {
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.ziwei-domain-section-title {
+    margin: 0 0 8px;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--suite-primary);
+}
+
+.ziwei-domain-prose {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--suite-text);
+}
+
+.ziwei-domain-advice-box {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.ziwei-domain-advice-box .ziwei-domain-section-title {
+    color: #15803d;
+}
+
+.ziwei-domain-advice-box .ziwei-domain-prose {
+    color: #14532d;
+    font-weight: 500;
+}
+
+.ziwei-domain-source {
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(241, 245, 249, 0.7);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--suite-text-muted);
+}
+
+.ziwei-domain-source span {
+    font-weight: 700;
+}
+
+.ziwei-domain-card-footer {
+    margin-top: 16px;
+    text-align: right;
+}
+
+/* Dark mode */
+[data-theme="dark"] .ziwei-domains-section {
+    background: rgba(15, 23, 42, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .ziwei-domain-tab-btn {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--suite-text);
+}
+[data-theme="dark"] .ziwei-domain-tab-btn:hover {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+[data-theme="dark"] .ziwei-domain-tab-btn.active {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    border-color: #f59e0b;
+    color: #ffffff;
+}
+[data-theme="dark"] .ziwei-domain-card {
+    background: rgba(30, 41, 59, 0.6);
+    border-color: rgba(245, 158, 11, 0.35);
+}
+[data-theme="dark"] .ziwei-domain-card-heading {
+    color: #f8fafc;
+}
+[data-theme="dark"] .ziwei-domain-card-badge {
+    background: rgba(245, 158, 11, 0.25);
+    color: #fde68a;
+}
+[data-theme="dark"] .ziwei-domain-dingdiao {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.35);
+}
+[data-theme="dark"] .ziwei-dingdiao-text {
+    color: #fde68a;
+}
+[data-theme="dark"] .ziwei-domain-section {
+    background: rgba(15, 23, 42, 0.5);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .ziwei-domain-advice-box {
+    background: rgba(20, 83, 45, 0.25);
+    border-color: rgba(34, 197, 94, 0.35);
+}
+[data-theme="dark"] .ziwei-domain-advice-box .ziwei-domain-section-title {
+    color: #86efac;
+}
+[data-theme="dark"] .ziwei-domain-advice-box .ziwei-domain-prose {
+    color: #dcfce7;
+}
+[data-theme="dark"] .ziwei-domain-source {
+    background: rgba(15, 23, 42, 0.6);
+    color: #94a3b8;
+}

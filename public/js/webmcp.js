@@ -1302,8 +1302,10 @@
 
 				return JSON.stringify({
 					answer: data.answer || null,
-					analysis: data.analysis || null,
+					analysis: data.analysis || data.aiAnalysis || null,
 					mode: data.mode || null,
+					domain: data.domain || null,
+					topic: data.topic || null,
 					result: data.result || data.reading || data.report || data.chart || data.match || null,
 					metadata: data.metadata || null
 				}, null, 2);
@@ -1331,6 +1333,18 @@
 				sex: { type: "string", enum: ["男", "女"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, leap: { type: "boolean" }
 			}, required: ["date"]
 		}, { skipRecord: true }),
+		get_ziwei_domain: createSuiteTool("get_ziwei_domain", "獲取紫微斗數 13 大專題（命格總覽、性格、感情、事業、財運、健康、兄弟、子女、遷移、人際、田宅、福德、父母）之深度論斷與古籍依據。", "/api/ziwei/domain", {
+			type: "object", properties: {
+				date: { type: "string", format: "date", description: "出生日期 YYYY-MM-DD" },
+				time: { type: "string", description: "出生時間 HH:mm" },
+				shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] },
+				sex: { type: "string", enum: ["男", "女"] },
+				calendar: { type: "string", enum: ["solar", "lunar"] },
+				topic: { type: "string", enum: ["overview", "personality", "love", "career", "wealth", "health", "family", "children", "move", "friends", "home", "spirit", "parents"], description: "13大主題代碼" },
+				question: { type: "string", description: "針對此主題的具體諮詢問題（可選）" },
+				ai: { type: "boolean", description: "是否啟動 AI 進行深層解讀" }
+			}, required: ["date"]
+		}),
 		match_ziwei_charts: createSuiteTool("match_ziwei_charts", "雙人紫微合盤：比較命宮主星 30%、夫妻宮投射 30%、四化互照 25%、煞星對衝 15%，回傳契合指數與理性相處指南。", "/api/ziwei/match", {
 			type: "object", properties: {
 				first: { type: "object", description: "第一人出生資料", properties: { date: { type: "string", format: "date" }, time: { type: "string" }, sex: { type: "string", enum: ["男", "女"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, leap: { type: "boolean" } }, required: ["date"] },
@@ -1779,6 +1793,7 @@
 		} else if (pathname === "/ziwei" || pathname.startsWith("/ziwei/")) {
 			toolsToRegister = [
 				toolDefinitions.ziwei_chart_only,
+				toolDefinitions.get_ziwei_domain,
 				toolDefinitions.ziwei_chart,
 				toolDefinitions.ziwei_male_size,
 				toolDefinitions.ziwei_future_spouse,
