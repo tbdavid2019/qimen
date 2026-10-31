@@ -67,10 +67,10 @@
           </div>
           <div>
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-              <span class="suite-tag" style="background:#b45309; color:#fff; font-weight:800; font-size:12px;">✍️ 測字問事</span>
+              <span class="suite-tag" style="background:#b45309; color:#fff; font-weight:800; font-size:13.5px;">✍️ 測字問事</span>
               <h2 style="margin:0; font-size:20px; font-weight:800; color:#78350f;">測「${esc(res.char || byId('ceziChar').value)}」字 · 象數義理直斷</h2>
             </div>
-            <p style="margin:0; font-size:13.5px; color:#92400e; font-weight:600;">占問事項：${esc(res.question || byId('ceziQuestion').value)}</p>
+            <p style="margin:0; font-size:15px; color:#92400e; font-weight:600;">占問事項：${esc(res.question || byId('ceziQuestion').value)}</p>
           </div>
         </div>
       </header>
@@ -82,23 +82,23 @@
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:12px;">
           <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:12px; color:var(--suite-text-muted);">康熙筆畫</div>
+            <div style="font-size:15px; font-weight:600; color:var(--suite-text-muted);">康熙筆畫</div>
             <div style="font-size:18px; font-weight:800; color:var(--suite-primary);">${esc(res.stroke || charData.stroke || '—')} 畫</div>
           </div>
           <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:12px; color:var(--suite-text-muted);">字音拼音</div>
+            <div style="font-size:15px; font-weight:600; color:var(--suite-text-muted);">字音拼音</div>
             <div style="font-size:16px; font-weight:700;">${esc(res.pinyin || charData.pinyin || '—')}</div>
           </div>
           <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:12px; color:var(--suite-text-muted);">五行歸屬</div>
+            <div style="font-size:15px; font-weight:600; color:var(--suite-text-muted);">五行歸屬</div>
             <div style="font-size:18px; font-weight:800; color:#059669;">${esc(res.element || charData.element || '—')}行</div>
           </div>
           <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:12px; color:var(--suite-text-muted);">字形結構</div>
+            <div style="font-size:15px; font-weight:600; color:var(--suite-text-muted);">字形結構</div>
             <div style="font-size:16px; font-weight:700;">${esc(res.structure || charData.structure || '獨體/合體')}</div>
           </div>
         </div>
-        ${res.definition || charData.definition ? `<div style="font-size:13px; color:var(--suite-text-muted); background:rgba(0,0,0,0.02); padding:8px 12px; border-radius:6px;">📖 字義訓詁：${esc(res.definition || charData.definition)}</div>` : ''}
+        ${res.definition || charData.definition ? `<div style="font-size:15px; line-height:1.65; color:var(--suite-text-muted); background:rgba(0,0,0,0.02); padding:10px 14px; border-radius:8px;">📖 字義訓詁：${esc(res.definition || charData.definition)}</div>` : ''}
       </section>
 
       <!-- 2. 梅花字卦與 81 數理 -->
@@ -109,17 +109,17 @@
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; margin-bottom:12px;">
           <div style="background:linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border:1px solid #d8b4fe; border-radius:10px; padding:12px 14px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <strong style="color:#7e22ce; font-size:14px;">🌸 梅花字卦：【${esc(hex.name || hex.guaName || '易卦感應')}】</strong>
-              <span class="suite-tag" style="background:#a855f7; color:#fff; font-weight:700;">${esc(hex.grade || '吉')}</span>
+              <strong style="color:#7e22ce; font-size:16.5px;">🌸 梅花字卦：【${esc(hex.name || hex.guaName || '易卦感應')}】</strong>
+              <span class="suite-tag" style="background:#a855f7; color:#fff; font-weight:700; font-size:13.5px;">${esc(hex.grade || '吉')}</span>
             </div>
-            <div style="font-size:13px; color:#581c87; line-height:1.5;">${esc(hex.judgment || hex.meaning || '卦氣相符，動靜得宜。')}</div>
+            <div style="font-size:15.5px; color:#581c87; line-height:1.65;">${esc(hex.judgment || hex.meaning || '卦氣相符，動靜得宜。')}</div>
           </div>
           <div style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border:1px solid #fde68a; border-radius:10px; padding:12px 14px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <strong style="color:#92400e; font-size:14px;">🔢 81數理：第 ${esc(n81Data.number || res.stroke || '1')} 數</strong>
-              <span class="suite-tag" style="background:#f59e0b; color:#fff; font-weight:700;">${esc(n81Data.fortune || n81Data.luck || '大吉')}</span>
+              <strong style="color:#92400e; font-size:16.5px;">🔢 81數理：第 ${esc(n81Data.number || res.stroke || '1')} 數</strong>
+              <span class="suite-tag" style="background:#f59e0b; color:#fff; font-weight:700; font-size:13.5px;">${esc(n81Data.fortune || n81Data.luck || '大吉')}</span>
             </div>
-            <div style="font-size:13px; color:#78350f; line-height:1.5;">${esc(n81Data.meaning || n81Data.poem || '基業穩固，德望兼備。')}</div>
+            <div style="font-size:15.5px; color:#78350f; line-height:1.65;">${esc(n81Data.meaning || n81Data.poem || '基業穩固，德望兼備。')}</div>
           </div>
         </div>
       </section>
@@ -130,7 +130,7 @@
           <div class="name-section-title" style="margin-bottom:8px;">
             <span>03</span><h3>八字命理五行喜忌對照</h3>
           </div>
-          <div style="background:rgba(16,185,129,0.08); border-left:4px solid #10b981; padding:10px 14px; border-radius:6px; font-size:13.5px; line-height:1.6;">
+          <div style="background:rgba(16,185,129,0.08); border-left:4px solid #10b981; padding:12px 16px; border-radius:8px; font-size:15.5px; line-height:1.75;">
             <strong>🌱 八字互補：</strong>${esc(bazi.analysis || bazi.summary || '')}
           </div>
         </section>
@@ -139,15 +139,15 @@
       <!-- 4. 宗師斷語與行動錦囊 -->
       <section class="name-result-section" style="padding: 18px 20px; background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-top:1.5px solid #3b82f6;">
         <div style="margin-bottom:8px;">
-          <strong style="font-size:15px; color:#1e40af;">🎯 測字宗師直斷 (Judgment)：</strong>
-          <div style="font-size:14.5px; font-weight:600; color:#1e3a8a; line-height:1.6; margin-top:4px;">
+          <strong style="font-size:16.5px; color:#1e40af;">🎯 測字宗師直斷 (Judgment)：</strong>
+          <div style="font-size:16px; font-weight:600; color:#1e3a8a; line-height:1.75; margin-top:4px;">
             ${esc(judgment || '此字氣機凝聚，象徵關鍵轉折，利於謀定而後動。')}
           </div>
         </div>
         ${advice ? `
           <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #93c5fd;">
-            <strong style="font-size:14px; color:#1e40af;">💡 行動錦囊指引 (Advice)：</strong>
-            <div style="font-size:14px; color:#1e3a8a; line-height:1.6; margin-top:2px;">
+            <strong style="font-size:16.5px; color:#1e40af;">💡 行動錦囊指引 (Advice)：</strong>
+            <div style="font-size:16px; color:#1e3a8a; line-height:1.75; margin-top:2px;">
               ${esc(advice)}
             </div>
           </div>
@@ -473,7 +473,7 @@
             <div style="font-weight: 700; color: #b45309; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
               <span>問：${esc(u?.content || '')}</span>
             </div>
-            <div class="markdown-body" style="font-size: 14.5px; line-height: 1.7;">${aHtml}</div>
+            <div class="markdown-body" style="font-size: 16px; line-height: 1.8;">${aHtml}</div>
           </div>
         `;
       }

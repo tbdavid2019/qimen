@@ -2,6 +2,34 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-11-01]
+
+### 🔠 全站繁體中文排版基準徹底落實與 CDN 快取全面更新 (Whole-Site CJK Typography Standard & Cache-Buster Deployment)
+
+- **繁體中文排版最高準則落實（嚴格對齊 Apple iOS HIG 與東亞方塊字標準，徹底消滅全站 12px~14px 擠壓小字）**：
+  - 繁體中文結構繁複（多數漢字達 15~30 畫），小於 15px 在手機 Retina 螢幕或桌機上容易糊成一團；全站嚴禁在任何內文、段落、解析、指南、表單或說明中使用低於 15px 之微小字級。
+  - **表單與輸入元件標準化**：
+    - 全站所有文字輸入框、日期選擇、時間選擇、下拉選單、文字區域 (`input`, `select`, `textarea`, `.form-control`, `.suite-input`, `.suite-select`) 一律強制鎖定 `font-size: 16px !important;`，最小高度 `44px !important`，徹底杜絕 iOS Safari 點擊聚焦時的畫面自動放大。
+    - 表單欄位標籤 (`label`, `.suite-form-label`) 提升至 `16px !important; font-weight: 700;`。
+    - 預設提示字 (`::placeholder`) 提升至 `15px !important`。
+    - 全站按鈕 (`.suite-btn-primary`, `.btn-primary`, `.btn`, `button`) 提升至 `16px !important; font-weight: 700;`。
+  - **全站導覽與功能切換卡 (Mode Cards) 階層強化**：
+    - 主標題 (`.mode-card-title`, `.tarot-mode-title`)：`18px !important; font-weight: 800;`。
+    - 副標與功能說明 (`.mode-card-desc`, `.tarot-mode-desc`)：升級為 `15.5px !important; font-weight: 500; line-height: 1.55;`。
+    - 膠囊小標籤 (`.mode-card-badge`, `.tarot-mode-badge`)：`13.5px !important; font-weight: 750;`。
+  - **全站各術數頁面動態渲染模板深度大字化**：
+    - **紫微斗數**：合盤契合指數、命宮主星、夫妻宮投射、四化流轉、煞星衝突與理性相處指南正文一律維持 `16px ~ 16.5px`（行高 `1.8 ~ 1.85`）。
+    - **六爻神卦 (`public/js/liuyao.js`)**：朱熹考變占斷法說明升至 `15.5px`，排盤表頭升至 `15px`，三卜同參三列卡（奇門、六爻、梅花）斷語提升至 `16px`（行高 `1.75`），共識與微調要點提升至 `15.5px`，宗師行動指南提升至 `16px`。
+    - **測字占事與姓名分析 (`public/js/name-analysis.js`, `public/css/name-analysis.css`)**：康熙筆畫、拼音、五行、字形結構說明升至 `15px`，梅花字卦與 81 數理直斷升至 `15.5px ~ 16.5px`，八字互補與行動錦囊升至 `16px`。
+    - **易經風水與八字二 (`public/js/divination-suite.js`)**：佈局考據出處升至 `15px`，反查生辰與時辰敏感度表格候選按鈕升至 `15px`。
+    - **奇門遁甲 (`public/css/style-new.css`)**：盤面吉凶符號與值符值使標記升至 `15px`，手機版適配優化。
+- **全站靜態資源版本快取穿透機制 (Cache-Busting via `?v=20261101_cjk`)**：
+  - 為全站 12 大 HTML 視圖 (`views/index.html`, `ziwei.html`, `bazi2.html`, `fengshui.html`, `liuyao.html`, `meihua.html`, `name-analysis.html`, `tarot.html`, `wellness.html`, `yinyuan.html`, `answerbook.html`, `cezi.html`) 中所有本地 CSS 樣式表與 JS 腳本引入添加 `?v=20261101_cjk` 查詢參數。
+  - 徹底解決瀏覽器與 CDN 邊緣節點快取舊版樣式導致使用者看到 13px 或舊版單行合盤資料的問題。
+- **品質與安全保證**：
+  - 339 / 339 項單元與整合測試 100% 通過。
+  - 嚴格遵守零金鑰外洩原則。
+
 ## [2026-10-31]
 
 ### 🔠 全站模式切換卡與繁體中文介面字級全面提升 (Eradicate Tiny 12px~13px Typography Across Suite)

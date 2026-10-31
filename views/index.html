@@ -78,12 +78,12 @@
 
     <%- include('partials/ads-head.html') %>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/style-new.css">
-    <link rel="stylesheet" href="/css/dark-mode.css">
-    <link rel="stylesheet" href="/css/divination-suite.css">
-    <link rel="stylesheet" href="/css/pwa-update.css">
-    <link rel="stylesheet" href="/css/theme-atelier.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/style-new.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/pwa-update.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_cjk">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
 
@@ -741,7 +741,7 @@
                             <div class="col-md-4 col-sm-6">
                                 <div class="panel panel-<%= qimen.jiuGongAnalysis[i].jiXiong && qimen.jiuGongAnalysis[i].jiXiong.includes('ji') ? 'success' : qimen.jiuGongAnalysis[i].jiXiong === 'ping' ? 'info' : 'danger' %>" style="border-radius: 8px;">
                                     <div class="panel-heading" style="padding: 8px 12px;">
-                                        <h4 class="panel-title" style="font-size: 14px; font-weight: 700;"><%= i %>-<%= qimen.jiuGongAnalysis[i].gongName || '' %>
+                                        <h4 class="panel-title" style="font-size: 16.5px; font-weight: 700;"><%= i %>-<%= qimen.jiuGongAnalysis[i].gongName || '' %>
                                         <span class="pull-right label label-<%= qimen.jiuGongAnalysis[i].jiXiong && qimen.jiuGongAnalysis[i].jiXiong.includes('ji') ? 'success' : qimen.jiuGongAnalysis[i].jiXiong === 'ping' ? 'default' : 'danger' %>">
                                             <%= qimen.jiuGongAnalysis[i].jiXiongText || '平' %>
                                         </span>
@@ -919,7 +919,7 @@
                         <input type="email" class="form-control input-lg" id="conversationEmailInput" placeholder="name@example.com" required autocomplete="email">
                     </div>
                     <%- include('partials/turnstile-widget.html', { widgetId: 'email-turnstile', action: 'send_email', explicit: true }) %>
-                    <div id="emailModalAlert" class="alert" style="display: none; font-size: 14.5px; margin-top: 12px; margin-bottom: 0;"></div>
+                    <div id="emailModalAlert" class="alert" style="display: none; font-size: 15px; margin-top: 12px; margin-bottom: 0;"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -934,9 +934,9 @@
     <%- include('partials/site-footer.html') %>
 
     <!-- jQuery -->
-    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.min.js?v=20261101_cjk"></script>
     <!-- Bootstrap JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js?v=20261101_cjk"></script>
     
     <!-- 將奇門數據傳遞給前端 -->
     <script id="qimen-data" type="application/json"><%- JSON.stringify(qimen).replace(/</g, '\\u003c') %></script>
@@ -944,12 +944,12 @@
         window.enableLLM = <%= enableLLM ? 'true' : 'false' %>;
     </script>
     
-    <script src="js/theme.js"></script>
-    <script src="js/lucide.min.js"></script>
-    <script src="js/markdown-renderer.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/webmcp.js"></script>
-    <script src="js/pwa-update.js"></script>
+    <script src="js/theme.js?v=20261101_cjk"></script>
+    <script src="js/lucide.min.js?v=20261101_cjk"></script>
+    <script src="js/markdown-renderer.js?v=20261101_cjk"></script>
+    <script src="js/app.js?v=20261101_cjk"></script>
+    <script src="js/webmcp.js?v=20261101_cjk"></script>
+    <script src="js/pwa-update.js?v=20261101_cjk"></script>
 </body>
 
 </html>

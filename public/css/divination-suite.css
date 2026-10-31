@@ -120,8 +120,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .suite-form-group label {
     display: block;
-    font-size: var(--type-label);
-    font-weight: 600;
+    font-size: 16px !important;
+    font-weight: 700 !important;
     margin-bottom: 6px;
     color: var(--suite-text);
 }
@@ -132,10 +132,10 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     color: var(--suite-text);
     border-radius: 10px;
     padding: 8px 14px;
-    height: 42px !important;
-    min-height: 42px !important;
+    height: 44px !important;
+    min-height: 44px !important;
     line-height: 1.5 !important;
-    font-size: var(--type-reading);
+    font-size: 16px !important;
     box-shadow: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
@@ -143,8 +143,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .suite-form-group textarea.form-control {
     height: auto !important;
-    min-height: 80px !important;
+    min-height: 84px !important;
     padding: 10px 14px !important;
+    font-size: 16px !important;
 }
 
 .suite-form-group .form-control:focus {
@@ -178,10 +179,10 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .suite-chip-radio span {
     display: inline-block;
-    padding: 6px 14px;
+    padding: 7px 16px;
     border-radius: 20px;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
     background: var(--suite-bg);
     border: 1px solid var(--suite-border);
     color: var(--suite-text);
@@ -228,25 +229,37 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     display: block;
     margin-bottom: 7px;
     color: var(--suite-text);
-    font-size: var(--type-label);
-    font-weight: 650;
+    font-size: 16px !important;
+    font-weight: 700;
     line-height: 1.45;
 }
 
 .suite-section-title {
-    font-size: var(--type-label);
+    font-size: 16.5px;
     line-height: 1.45;
 }
 
+input,
+select,
+textarea,
+.form-control,
 .suite-input,
 .suite-textarea {
-    font-size: var(--type-reading) !important;
+    font-size: 16px !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+.form-control::placeholder,
+.suite-input::placeholder {
+    font-size: 15px !important;
 }
 
 .suite-btn-primary,
 .suite-btn-secondary {
     min-height: 46px;
-    font-size: var(--type-label) !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
 }
 
 .suite-btn-primary {
@@ -319,15 +332,15 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .gender-disabled-badge {
     display: inline-flex;
     align-items: center;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
-    padding: 1px 7px;
+    padding: 2px 9px;
     margin-left: 6px;
     border-radius: 999px;
     background: rgba(245, 158, 11, 0.15);
     color: #b45309;
     border: 1px solid rgba(245, 158, 11, 0.4);
-    line-height: 1.3;
+    line-height: 1.35;
     letter-spacing: 0.2px;
 }
 
@@ -347,14 +360,14 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .ziwei-gender-hint-tag {
     display: inline-flex;
     align-items: center;
-    font-size: 11.5px;
+    font-size: 13.5px;
     font-weight: 700;
     color: #b45309;
     background: rgba(245, 158, 11, 0.12);
     border: 1px solid rgba(245, 158, 11, 0.28);
     border-radius: 12px;
-    padding: 2px 8px;
-    line-height: 1.2;
+    padding: 3px 9px;
+    line-height: 1.3;
 }
 
 [data-theme="dark"] .ziwei-gender-hint-tag {
@@ -389,9 +402,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .suite-details summary {
     cursor: pointer;
-    font-size: 13px;
+    font-size: 15.5px;
     font-weight: 600;
-    color: var(--suite-text-muted);
+    color: var(--suite-text);
     user-select: none;
 }
 
@@ -517,7 +530,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-major-tag {
-    font-size: 11px;
+    font-size: 13.5px;
     color: var(--suite-accent);
     margin-top: 4px;
     font-weight: 600;
@@ -541,13 +554,13 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .bazi-pillar-head {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--suite-text-muted);
 }
 
 .bazi-god-cell {
-    font-size: 13px;
+    font-size: 15.5px;
     font-weight: 600;
     color: var(--suite-primary);
 }
@@ -560,17 +573,17 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .bazi-element-pill {
     display: inline-block;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 600;
-    padding: 1px 6px;
+    padding: 2px 8px;
     border-radius: 8px;
     margin-top: 2px;
 }
 
 .bazi-hidden-cell {
-    font-size: 13px;
+    font-size: 15px;
     color: var(--suite-text-muted);
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .element-wood { color: #059669; }
@@ -596,7 +609,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .element-item {
-    font-size: 13px;
+    font-size: 15.5px;
     font-weight: 600;
 }
 
@@ -633,7 +646,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .luck-cycle-age {
-    font-size: 11px;
+    font-size: 13.5px;
     color: var(--suite-text-muted);
 }
 
@@ -659,16 +672,16 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fengshui-dir-title {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--suite-text-muted);
 }
 
 .fengshui-star-badge {
     display: inline-block;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 8px;
     margin: 4px 0;
 }
@@ -714,9 +727,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .fs-badge-feature {
     display: inline-block;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px 9px;
     border-radius: 12px;
     background: rgba(204, 107, 73, 0.12);
     color: var(--suite-primary);
@@ -724,23 +737,23 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-compass-title {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     margin: 0 0 4px;
     color: var(--suite-text);
 }
 
 .fs-compass-desc {
-    font-size: 12px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .fs-start-compass-btn {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: 8px;
 }
 
@@ -782,7 +795,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .compass-dir-label {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     fill: var(--suite-text-muted);
     text-anchor: middle;
@@ -824,7 +837,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .compass-mount-label {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--suite-text);
     margin-bottom: 4px;
@@ -832,9 +845,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .compass-badge {
     display: inline-block;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px 9px;
     border-radius: 10px;
 }
 
@@ -856,13 +869,13 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .compass-meta-line {
-    font-size: 11px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     margin-bottom: 8px;
 }
 
 .compass-tilt-alert {
-    font-size: 12px;
+    font-size: 15px;
     color: #dc2626;
     background: rgba(239, 68, 68, 0.1);
     padding: 6px 10px;
@@ -878,8 +891,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-btn-action {
-    font-size: 12px;
-    padding: 6px 12px;
+    font-size: 15px;
+    padding: 7px 14px;
     border-radius: 6px;
     font-weight: 600;
 }
@@ -892,7 +905,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-slider-label {
-    font-size: 11px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     display: block;
     margin-bottom: 4px;
@@ -911,17 +924,17 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-num-input {
-    width: 70px;
-    height: 30px;
+    width: 75px;
+    height: 32px;
     text-align: center;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     font-family: monospace;
     border-radius: 6px;
 }
 
 .fs-unit {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--suite-text-muted);
 }
@@ -944,9 +957,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .fs-step2-badge {
     display: inline-block;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 10px;
     background: rgba(59, 130, 246, 0.12);
     color: #2563eb;
@@ -954,17 +967,17 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-step2-title {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     margin: 0 0 4px;
     color: var(--suite-text);
 }
 
 .fs-step2-subtext {
-    font-size: 12px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.55;
 }
 
 .fs-step2-actions-top {
@@ -974,8 +987,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-btn-clear {
-    font-size: 11px;
-    padding: 3px 8px;
+    font-size: 15px;
+    padding: 5px 12px;
 }
 
 .fs-category-pills {
@@ -986,8 +999,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-cat-btn {
-    font-size: 12px;
-    padding: 4px 10px;
+    font-size: 15px;
+    padding: 6px 14px;
     border-radius: 16px;
     border: 1px solid var(--suite-border);
     background: var(--suite-bg);
@@ -1018,8 +1031,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-item-pill {
-    font-size: 12px;
-    padding: 3px 8px;
+    font-size: 15px;
+    padding: 5px 12px;
     border-radius: 12px;
     border: 1px solid var(--suite-border);
     background: var(--suite-card-bg);
@@ -1042,8 +1055,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .fs-selection-banner {
     background: rgba(204, 107, 73, 0.08);
     border-left: 3px solid var(--suite-primary);
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 8px 12px;
+    font-size: 15px;
     border-radius: 4px;
     margin-bottom: 14px;
 }
@@ -1054,7 +1067,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-item-hint {
-    font-size: 11px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     margin-left: 4px;
 }
@@ -1092,7 +1105,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     flex-direction: column;
     gap: 3px;
     margin-bottom: 5px;
-    font-size: 12px;
+    font-size: 15.5px;
 }
 
 .fs-palace-name-row {
@@ -1106,7 +1119,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 11px;
+    font-size: 13.5px;
     line-height: 1.2;
     padding: 1px 4px;
     background: rgba(0, 0, 0, 0.04);
@@ -1139,8 +1152,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-sit-face-tag {
-    font-size: 10px;
-    padding: 1px 4px;
+    font-size: 13.5px;
+    padding: 2px 6px;
     border-radius: 4px;
     font-weight: 700;
 }
@@ -1164,7 +1177,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-empty-hint {
-    font-size: 11px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     margin: auto 0;
     opacity: 0.6;
@@ -1174,8 +1187,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    font-size: 11px;
-    padding: 1px 6px;
+    font-size: 13.5px;
+    padding: 2px 7px;
     border-radius: 4px;
     background: var(--suite-card-bg);
     border: 1px solid var(--suite-border);
@@ -1187,10 +1200,10 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     background: none;
     border: none;
     color: #dc2626;
-    font-size: 12px;
+    font-size: 13.5px;
     line-height: 1;
     cursor: pointer;
-    padding: 0 1px;
+    padding: 0 2px;
 }
 
 .fs-entry-path-box {
@@ -1202,7 +1215,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-entry-path-title {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 700;
     margin-bottom: 6px;
     color: var(--suite-text);
@@ -1218,17 +1231,17 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-path-step {
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
     background: var(--suite-primary);
     color: #fff;
-    padding: 1px 6px;
+    padding: 2px 8px;
     border-radius: 10px;
 }
 
 .fs-path-arrow {
     color: var(--suite-text-muted);
-    font-size: 11px;
+    font-size: 13.5px;
 }
 
 .fs-entry-path-add-row {
@@ -1240,7 +1253,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-path-prompt {
-    font-size: 11px;
+    font-size: 15px;
     color: var(--suite-text-muted);
 }
 
@@ -1251,28 +1264,28 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-add-path-btn {
-    font-size: 10px;
-    padding: 1px 5px;
+    font-size: 13.5px;
+    padding: 3px 8px;
 }
 
 .fs-path-quality-row {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: 15px;
 }
 
 .fs-quality-select {
     width: auto;
     max-width: 260px;
-    height: 30px;
-    font-size: 12px;
+    height: 32px;
+    font-size: 15px;
 }
 
 .fs-step2-footer-note {
-    font-size: 11px;
+    font-size: 15px;
     color: var(--suite-text-muted);
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 /* FengShui Result Visual Board Enhancements */
@@ -1285,9 +1298,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-cell-tag {
-    font-size: 10px;
-    padding: 1px 4px;
-    border-radius: 3px;
+    font-size: 13.5px;
+    padding: 2px 6px;
+    border-radius: 4px;
     background: rgba(204, 107, 73, 0.1);
     color: var(--suite-primary);
     border: 1px solid rgba(204, 107, 73, 0.2);
@@ -1299,12 +1312,12 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     align-items: center;
     flex-wrap: wrap;
     margin-bottom: 12px;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .fs-info-pill {
-    font-size: 12px;
-    padding: 2px 8px;
+    font-size: 13.5px;
+    padding: 3px 10px;
     border-radius: 12px;
     background: rgba(0, 0, 0, 0.04);
     border: 1px solid var(--suite-border);
@@ -1338,9 +1351,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-eval-rating-badge {
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 700;
-    padding: 2px 10px;
+    padding: 3px 12px;
     border-radius: 10px;
 }
 
@@ -1360,11 +1373,11 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-finding-item {
-    padding: 8px 12px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    border-left: 3px solid;
-    font-size: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid;
+    font-size: 15px;
 }
 
 .fs-finding-item.level-good {
@@ -1383,34 +1396,34 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .fs-finding-title {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 3px;
+    font-size: 16.5px;
+    font-weight: 750;
+    margin-bottom: 4px;
     color: var(--suite-text);
 }
 
 .fs-finding-desc {
-    font-size: 12px;
+    font-size: 15.5px;
     color: var(--suite-text);
-    margin-bottom: 4px;
-    line-height: 1.4;
+    margin-bottom: 6px;
+    line-height: 1.65;
 }
 
 .fs-finding-rec {
-    font-size: 12px;
+    font-size: 15.5px;
     color: var(--suite-primary);
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.65;
 }
 
 .fs-quote-cite {
-    font-size: 11px;
+    font-size: 13.5px;
     color: var(--suite-text-muted);
     font-style: italic;
     margin-top: 6px;
     border-top: 1px dashed var(--suite-border);
-    padding-top: 4px;
-    line-height: 1.4;
+    padding-top: 6px;
+    line-height: 1.5;
 }
 
 .fs-actions-list {
@@ -1421,28 +1434,31 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     display: flex;
     gap: 8px;
     align-items: flex-start;
-    font-size: 12px;
-    margin-bottom: 6px;
+    font-size: 15px;
+    margin-bottom: 8px;
+    line-height: 1.6;
 }
 
 .fs-action-priority {
     display: inline-block;
-    font-size: 10px;
+    font-size: 13.5px;
     font-weight: 700;
-    padding: 1px 5px;
+    padding: 2px 7px;
     border-radius: 4px;
     background: var(--suite-primary);
     color: #fff;
-    line-height: 1.4;
+    line-height: 1.35;
+    flex-shrink: 0;
 }
 
 .fs-missing-box {
     margin-top: 12px;
-    padding: 10px;
+    padding: 12px 14px;
     background: rgba(0, 0, 0, 0.02);
     border: 1px dashed var(--suite-border);
-    border-radius: 6px;
-    font-size: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.6;
     color: var(--suite-text-muted);
 }
 
@@ -1498,7 +1514,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .fortune-scroll-badge {
     display: inline-block;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     padding: 4px 14px;
     border-radius: 12px;
@@ -1654,7 +1670,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     color: var(--suite-text);
     border-radius: 10px;
     padding: 10px 14px;
-    font-size: 14px;
+    font-size: 16px;
     transition: all 0.2s ease;
 }
 
@@ -1666,8 +1682,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .suite-follow-up-btn {
     padding: 10px 22px;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     background: linear-gradient(135deg, #D97757 0%, #C15F3D 100%);
     color: #ffffff;
     border: none;
@@ -1750,7 +1766,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .answerbook-answer-raw {
     margin-top: 12px;
     color: var(--suite-text-muted);
-    font-size: 13px;
+    font-size: 15.5px;
+    line-height: 1.7;
     white-space: pre-line;
 }
 
@@ -1767,7 +1784,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .answerbook-status {
     margin-top: 14px;
     color: var(--suite-text-muted);
-    font-size: 13px;
+    font-size: 15px;
 }
 
 @media (max-width: 640px) {
@@ -1778,9 +1795,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 /* Tags and Badges */
 .suite-tag {
     display: inline-block;
-    padding: 3px 8px;
+    padding: 3px 9px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
     background: var(--suite-bg);
     border: 1px solid var(--suite-border);
@@ -1808,7 +1825,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     .bazi-char-cell { font-size: 18px; }
     .fengshui-grid { gap: 6px; }
     .fortune-scroll-poem { font-size: 17px; }
-    .gender-pill { font-size: 14px; padding-left: 6px; padding-right: 6px; }
+    .gender-pill { font-size: 15.5px; padding-left: 8px; padding-right: 8px; }
 }
 
 /* Ziwei 12-Palace Layout */
@@ -1902,18 +1919,18 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .ziwei-brightness {
-    font-size: 11px;
-    padding: 1px 4px;
-    border-radius: 3px;
+    font-size: 13.5px;
+    padding: 1px 5px;
+    border-radius: 4px;
     background: var(--suite-border);
     color: var(--suite-text-muted);
-    font-weight: normal;
+    font-weight: 500;
 }
 
 .ziwei-sihua-badge {
-    font-size: 11px;
-    padding: 1px 4px;
-    border-radius: 3px;
+    font-size: 13.5px;
+    padding: 1px 5px;
+    border-radius: 4px;
     font-weight: bold;
     color: #fff;
 }
@@ -1926,7 +1943,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 11px;
+    font-size: 14.5px;
     color: var(--suite-text-muted);
     margin-top: 6px;
     padding-top: 4px;
@@ -1959,7 +1976,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .site-footer-provider {
     margin: 0 !important;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--suite-text-muted);
 }
 
@@ -2154,7 +2171,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .mode-card-title {
     font-weight: 800;
-    font-size: 18px;
+    font-size: 18px !important;
     line-height: 1.35;
     color: #1e293b;
     letter-spacing: -0.2px;
@@ -2166,8 +2183,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .mode-card-badge {
     display: inline-block;
-    font-size: 13.5px;
-    font-weight: 750;
+    font-size: 13.5px !important;
+    font-weight: 750 !important;
     padding: 3px 9px;
     border-radius: 12px;
     line-height: 1.25;
@@ -2201,9 +2218,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .mode-card-desc {
     display: block;
-    font-size: 15.5px;
-    font-weight: 500;
-    line-height: 1.5;
+    font-size: 15.5px !important;
+    font-weight: 500 !important;
+    line-height: 1.55 !important;
     color: #374151;
     white-space: normal;
     overflow-wrap: anywhere;
@@ -2299,8 +2316,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .male-size-item-header {
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: 750;
+    font-size: 16.5px;
     color: var(--suite-primary);
     margin-bottom: 6px;
     display: flex;
@@ -2309,19 +2326,19 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .male-size-item-body {
-    font-size: 13px;
-    color: var(--suite-text-muted);
-    line-height: 1.5;
+    font-size: 15.5px;
+    color: var(--suite-text);
+    line-height: 1.65;
 }
 
 .male-size-advice-box {
     background: rgba(34, 197, 94, 0.08);
     border: 1px solid rgba(34, 197, 94, 0.3);
     border-radius: 10px;
-    padding: 14px 18px;
+    padding: 16px 20px;
     margin-bottom: 20px;
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.75;
     color: var(--suite-text);
 }
 
@@ -2390,9 +2407,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .spouse-tag-pill {
     display: inline-block;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
-    padding: 4px 12px;
+    padding: 5px 14px;
     margin: 3px 4px;
     border-radius: 16px;
     background: var(--suite-bg);
@@ -2415,8 +2432,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .spouse-item-header {
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: 750;
+    font-size: 16.5px;
     color: #db2777;
     margin-bottom: 8px;
     display: flex;
@@ -2429,9 +2446,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .spouse-item-body {
-    font-size: 13px;
+    font-size: 15.5px;
     color: var(--suite-text);
-    line-height: 1.6;
+    line-height: 1.65;
 }
 
 .spouse-advice-box {
@@ -2560,11 +2577,11 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .cross-link-badge {
     display: inline-block;
-    font-size: 11.5px;
+    font-size: 13.5px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: 12px;
-    line-height: 1.3;
+    line-height: 1.35;
     white-space: nowrap;
 }
 
@@ -2590,9 +2607,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .cross-link-desc {
     display: block;
-    font-size: 15px;
+    font-size: 15.5px;
     font-weight: 500;
-    line-height: 1.5;
+    line-height: 1.55;
     color: #4b5563;
     white-space: nowrap;
     overflow: hidden;
@@ -2606,9 +2623,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .cross-link-btn {
     flex-shrink: 0;
     margin-left: 12px;
-    font-size: 14px !important;
+    font-size: 15px !important;
     font-weight: 700 !important;
-    padding: 8px 18px !important;
+    padding: 9px 20px !important;
     border-radius: 20px !important;
     display: inline-flex;
     align-items: center;
@@ -2651,23 +2668,23 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     }
 
     .cross-link-title {
-        font-size: 16px;
+        font-size: 17px;
     }
 
     .cross-link-desc {
-        font-size: 12.5px;
+        font-size: 15px;
     }
 
     .cross-link-btn {
-        padding: 6px 14px !important;
-        font-size: 13px !important;
+        padding: 8px 16px !important;
+        font-size: 15px !important;
         margin-left: 8px;
     }
 
     .cross-link-icon {
-        width: 42px;
-        height: 42px;
-        font-size: 24px;
+        width: 44px;
+        height: 44px;
+        font-size: 26px;
         margin-right: 10px;
     }
 }
@@ -2695,7 +2712,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .suite-hero-compact .suite-hero-badge,
 .suite-hero-compact .suite-badge {
     margin: 0 !important;
-    font-size: 13px !important;
+    font-size: 13.5px !important;
     padding: 3px 12px !important;
     border-radius: 16px;
     font-weight: 600;
@@ -2908,15 +2925,15 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-mode-title {
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 18px !important;
+    font-weight: 800 !important;
     letter-spacing: -0.2px;
     color: var(--suite-text);
 }
 
 .tarot-mode-badge {
-    font-size: 13.5px;
-    font-weight: 750;
+    font-size: 13.5px !important;
+    font-weight: 750 !important;
     padding: 3px 9px;
     border-radius: 12px;
     white-space: nowrap;
@@ -2931,9 +2948,10 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 [data-theme="dark"] .badge-gallery { background: rgba(52, 211, 153, 0.25); color: #a7f3d0; }
 
 .tarot-mode-desc {
-    font-size: 15.5px;
+    font-size: 15.5px !important;
+    font-weight: 500 !important;
     color: #374151;
-    line-height: 1.5;
+    line-height: 1.55 !important;
     white-space: normal;
     overflow-wrap: anywhere;
 }
@@ -3008,7 +3026,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-card-en {
-    font-size: 12px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     font-style: italic;
     margin-top: -3px;
@@ -3016,7 +3034,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-card-attr {
-    font-size: 11.5px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     margin-top: 4px;
 }
@@ -3030,8 +3048,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-kw-pill {
-    font-size: 11px;
-    padding: 1px 6px;
+    font-size: 13.5px;
+    padding: 2px 8px;
     border-radius: 6px;
     background: var(--suite-bg-card, rgba(255, 255, 255, 0.05));
     border: 1px solid var(--suite-border);
@@ -3039,10 +3057,10 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-click-hint {
-    font-size: 10.5px;
+    font-size: 13.5px;
     color: var(--suite-primary);
     margin-top: 8px;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 /* Numerology Board */
@@ -3057,7 +3075,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .num-sub-label {
-    font-size: 14px;
+    font-size: 15.5px;
     font-weight: 600;
     color: var(--suite-text-muted);
     letter-spacing: 2px;
@@ -3114,7 +3132,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-num-card-title small {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--suite-text-muted);
     display: block;
@@ -3132,25 +3150,25 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-num-summary-quote {
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 15.5px;
+    line-height: 1.65;
     color: var(--suite-text);
     font-weight: 500;
 }
 
 .tarot-num-formula {
     display: inline-block;
-    padding: 6px 14px;
+    padding: 6px 16px;
     border-radius: 20px;
     background: var(--suite-bg);
     border: 1px solid var(--suite-border);
-    font-size: 13px;
+    font-size: 15px;
     color: var(--suite-text);
     margin: 8px auto;
 }
 
 .tarot-num-tip {
-    font-size: 12.5px;
+    font-size: 15px;
     color: var(--suite-text-muted);
     margin-top: 8px;
 }
@@ -3180,7 +3198,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-trait-title {
-    font-size: 13.5px;
+    font-size: 16px;
     font-weight: 700;
     margin-bottom: 6px;
 }
@@ -3188,8 +3206,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .trait-reversed .tarot-trait-title { color: #dc2626; }
 
 .tarot-trait-desc {
-    font-size: 12.5px;
-    line-height: 1.6;
+    font-size: 15.5px;
+    line-height: 1.65;
     color: var(--suite-text);
 }
 
@@ -3203,9 +3221,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .gallery-chip {
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 20px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     background: var(--suite-bg);
     border: 1.5px solid var(--suite-border);
@@ -3266,13 +3284,13 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-gallery-name {
-    font-size: 13px;
+    font-size: 15.5px;
     font-weight: 700;
     color: var(--suite-text);
 }
 
 .tarot-gallery-en {
-    font-size: 11px;
+    font-size: 13.5px;
     color: var(--suite-text-muted);
     font-style: italic;
 }
@@ -3369,7 +3387,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     color: var(--suite-text);
 }
 .tarot-modal-title small {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--suite-text-muted);
     font-style: italic;
@@ -3386,21 +3404,21 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .tarot-modal-astro {
-    font-size: 13px;
+    font-size: 15px;
     background: var(--suite-bg-card, rgba(255, 255, 255, 0.04));
     border: 1px solid var(--suite-border);
-    padding: 8px 12px;
+    padding: 8px 14px;
     border-radius: 8px;
     margin-bottom: 12px;
     color: var(--suite-text);
 }
 
 .tarot-modal-summary {
-    font-size: 13.5px;
-    line-height: 1.55;
+    font-size: 15.5px;
+    line-height: 1.65;
     background: rgba(245, 158, 11, 0.08);
     border-left: 3px solid #f59e0b;
-    padding: 10px 14px;
+    padding: 12px 16px;
     border-radius: 6px;
     margin-bottom: 14px;
     color: var(--suite-text);
@@ -3414,8 +3432,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .tarot-kw-box {
     border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 12.5px;
+    padding: 12px 14px;
+    font-size: 15px;
 }
 .tarot-kw-box.upright {
     background: rgba(16, 185, 129, 0.08);
@@ -3534,27 +3552,27 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 .numerology-identity-number { display: grid; justify-items: center; gap: 3px; }
 .numerology-identity-number .tarot-num-big { margin: 0; color: #a45b08; font-size: clamp(58px, 8vw, 82px); line-height: 1; }
-.numerology-date-label { color: #8a6d3f; font-size: 12px; font-weight: 750; letter-spacing: .08em; }
+.numerology-date-label { color: #8a6d3f; font-size: 15px; font-weight: 750; letter-spacing: .08em; }
 .numerology-identity-card .tarot-num-card-center { margin: 0; }
-.numerology-astro-tags { margin-top: 5px; color: #8a6d3f; font-size: 11px; }
+.numerology-astro-tags { margin-top: 5px; color: #8a6d3f; font-size: 13.5px; }
 .numerology-birthday-card { display: grid; justify-items: center; gap: 4px; padding: 13px 9px; border: 1px solid #f3db9a; border-radius: 12px; background: rgba(255,255,255,.68); }
-.numerology-birthday-card > span, .numerology-birthday-card small { color: #907955; font-size: 10px; }
+.numerology-birthday-card > span, .numerology-birthday-card small { color: #907955; font-size: 13.5px; }
 .numerology-birthday-card strong { color: #a45b08; font-size: 34px; line-height: 1; }
-.numerology-birthday-card b { color: #775526; font-size: 12px; }
+.numerology-birthday-card b { color: #775526; font-size: 15.5px; }
 .numerology-section-heading { display: flex; align-items: flex-start; gap: 11px; margin: 0 0 16px; }
-.numerology-section-heading > span { display: grid; flex: 0 0 30px; width: 30px; height: 30px; place-items: center; border-radius: 9px; color: #8c5804; background: #ffedb5; font-size: 11px; font-weight: 900; }
-.numerology-section-heading h3 { margin: 0; color: var(--suite-text); font-size: 17px; font-weight: 850; }
-.numerology-section-heading p { margin: 4px 0 0; color: var(--suite-text-muted); font-size: 12px; line-height: 1.55; }
+.numerology-section-heading > span { display: grid; flex: 0 0 32px; width: 32px; height: 32px; place-items: center; border-radius: 9px; color: #8c5804; background: #ffedb5; font-size: 15px; font-weight: 900; }
+.numerology-section-heading h3 { margin: 0; color: var(--suite-text); font-size: 18px; font-weight: 850; }
+.numerology-section-heading p { margin: 4px 0 0; color: var(--suite-text-muted); font-size: 15.5px; line-height: 1.55; }
 .numerology-life-profile, .numerology-grid-section, .numerology-tarot-lens { margin-top: 17px; padding: 19px; border: 1px solid rgba(217, 160, 43, .35); border-radius: 14px; background: linear-gradient(145deg, rgba(255,251,235,.8), rgba(255,255,255,.84)); }
 .numerology-insight-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.numerology-insight-card { min-width: 0; padding: 13px; border: 1px solid #ece6d7; border-left: 3px solid #d9a02b; border-radius: 10px; background: #fff; }
-.numerology-insight-card span { display: inline-flex; margin-bottom: 6px; padding: 3px 8px; border-radius: 12px; color: #80570f; background: #fff2ca; font-size: 10px; font-weight: 850; }
-.numerology-insight-card p { margin: 0; color: #4a4a43; font-size: 12px; line-height: 1.65; }
+.numerology-insight-card { min-width: 0; padding: 14px; border: 1px solid #ece6d7; border-left: 3px solid #d9a02b; border-radius: 10px; background: #fff; }
+.numerology-insight-card span { display: inline-flex; margin-bottom: 6px; padding: 3px 9px; border-radius: 12px; color: #80570f; background: #fff2ca; font-size: 13.5px; font-weight: 850; }
+.numerology-insight-card p { margin: 0; color: #4a4a43; font-size: 15.5px; line-height: 1.65; }
 .insight-strength { border-left-color: #16966c; }.insight-strength span { color: #11684e; background: #dff7e9; }
 .insight-balance { border-left-color: #df7c54; }.insight-balance span { color: #9a472a; background: #fff0e7; }
 .insight-relationship { border-left-color: #d66781; }.insight-relationship span { color: #9b3e58; background: #ffe9ef; }
 .insight-work { border-left-color: #5b88c5; }.insight-work span { color: #365f95; background: #e9f2ff; }
-.numerology-practice { display: grid; gap: 7px; margin-top: 11px; padding: 12px 14px; border-radius: 10px; background: #f7f4eb; color: #514a3c; font-size: 12px; line-height: 1.6; }
+.numerology-practice { display: grid; gap: 7px; margin-top: 11px; padding: 14px 16px; border-radius: 10px; background: #f7f4eb; color: #514a3c; font-size: 15.5px; line-height: 1.65; }
 .numerology-practice b { color: #76530e; }
 .numerology-num-traits-grid { margin-top: 12px; }
 .numerology-grid-section { background: linear-gradient(145deg, rgba(245,249,255,.94), rgba(255,255,255,.9)); border-color: rgba(120, 157, 200, .35); }
@@ -3563,32 +3581,32 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .numerology-digit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; max-width: 350px; width: 100%; margin-inline: auto; }
 .numerology-grid-cell { display: grid; align-content: center; justify-items: center; aspect-ratio: 1; min-width: 0; border: 1px solid #dbe5f0; border-radius: 11px; background: #f6f9fc; }
 .numerology-grid-cell strong { color: #65758a; font-size: clamp(20px, 3vw, 29px); line-height: 1; }
-.numerology-grid-count { margin-top: 5px; color: #8291a2; font-size: 9px; }
+.numerology-grid-count { margin-top: 5px; color: #8291a2; font-size: 13.5px; }
 .numerology-grid-cell.is-present { border-color: #eacb72; background: linear-gradient(145deg, #fff9e8, #ffefbf); }
 .numerology-grid-cell.is-present strong { color: #8f5b0c; }
 .numerology-grid-cell.count-2 { box-shadow: inset 0 0 0 2px rgba(219, 161, 46, .16); }
 .numerology-grid-cell.count-3, .numerology-grid-cell.count-4 { border-color: #dda82e; box-shadow: inset 0 0 0 3px rgba(219, 161, 46, .24); }
-.numerology-grid-reading { min-width: 0; padding: 13px; border: 1px solid #e1e9f2; border-radius: 11px; background: #fff; }
-.numerology-grid-reading h4, .numerology-lines-heading h4 { margin: 0; color: #334e6f; font-size: 13px; font-weight: 850; }
-.numerology-missing-list { display: grid; gap: 6px; margin-top: 10px; }
-.numerology-missing-list article { display: grid; grid-template-columns: 27px minmax(0,1fr); align-items: start; gap: 7px; color: #596b7b; font-size: 11px; line-height: 1.5; }
-.numerology-missing-list article b { display: grid; width: 24px; height: 24px; place-items: center; border-radius: 7px; color: #526980; background: #eaf0f6; }
-.numerology-grid-reading > p { color: #5e7081; font-size: 11px; line-height: 1.55; }
-.numerology-grid-reading .numerology-grid-caution { margin: 10px 0 0; padding: 9px; border-radius: 8px; background: #f2f6fa; color: #718092; font-size: 10px; }
+.numerology-grid-reading { min-width: 0; padding: 14px; border: 1px solid #e1e9f2; border-radius: 11px; background: #fff; }
+.numerology-grid-reading h4, .numerology-lines-heading h4 { margin: 0; color: #334e6f; font-size: 16.5px; font-weight: 850; }
+.numerology-missing-list { display: grid; gap: 8px; margin-top: 10px; }
+.numerology-missing-list article { display: grid; grid-template-columns: 28px minmax(0,1fr); align-items: start; gap: 8px; color: #596b7b; font-size: 15px; line-height: 1.55; }
+.numerology-missing-list article b { display: grid; width: 26px; height: 26px; place-items: center; border-radius: 7px; color: #526980; background: #eaf0f6; }
+.numerology-grid-reading > p { color: #5e7081; font-size: 15px; line-height: 1.6; }
+.numerology-grid-reading .numerology-grid-caution { margin: 10px 0 0; padding: 10px; border-radius: 8px; background: #f2f6fa; color: #718092; font-size: 15px; }
 .numerology-lines-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 17px 0 9px; }
-.numerology-lines-heading > span { color: #607995; font-size: 10px; }
+.numerology-lines-heading > span { color: #607995; font-size: 14.5px; }
 .numerology-lines-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
-.numerology-line-card { min-width: 0; padding: 11px; border: 1px solid #e1e9f2; border-radius: 10px; background: #fff; }
+.numerology-line-card { min-width: 0; padding: 12px; border: 1px solid #e1e9f2; border-radius: 10px; background: #fff; }
 .numerology-line-card > div { display: flex; align-items: center; gap: 8px; }
-.numerology-line-pattern { flex: 0 0 auto; color: #fff; background: #6483a6; border-radius: 8px; padding: 4px 6px; font-size: 9px; font-weight: 850; }
-.numerology-line-card h5 { margin: 0; color: #3c5875; font-size: 11px; font-weight: 850; }
-.numerology-line-card p { margin: 7px 0 0; color: #647487; font-size: 10px; line-height: 1.55; }
-.numerology-line-card small { display: inline-block; margin-top: 6px; color: #916100; font-size: 9px; }
+.numerology-line-pattern { flex: 0 0 auto; color: #fff; background: #6483a6; border-radius: 8px; padding: 4px 8px; font-size: 13.5px; font-weight: 850; }
+.numerology-line-card h5 { margin: 0; color: #3c5875; font-size: 15.5px; font-weight: 850; }
+.numerology-line-card p { margin: 7px 0 0; color: #647487; font-size: 15px; line-height: 1.6; }
+.numerology-line-card small { display: inline-block; margin-top: 6px; color: #916100; font-size: 13.5px; }
 .numerology-line-card.is-reinforced { border-color: #e8ca72; background: #fffaf0; }
-.numerology-empty-note { margin: 0; padding: 12px; border-radius: 9px; background: #f4f7fa; color: #647487; font-size: 11px; line-height: 1.6; }
+.numerology-empty-note { margin: 0; padding: 14px; border-radius: 9px; background: #f4f7fa; color: #647487; font-size: 15px; line-height: 1.65; }
 .numerology-tarot-lens { border-color: rgba(171, 139, 234, .35); background: linear-gradient(145deg, rgba(248,244,255,.92), rgba(255,255,255,.9)); }
 .numerology-tarot-lens .numerology-section-heading > span { color: #6741a0; background: #eee5ff; }
-.numerology-method-note { margin: 14px 2px 0; color: var(--suite-text-muted); font-size: 10px; line-height: 1.6; }
+.numerology-method-note { margin: 14px 2px 0; color: var(--suite-text-muted); font-size: 15px; line-height: 1.6; }
 
 [data-theme="dark"] .numerology-identity-card { border-color: rgba(234, 190, 79, .56); background: linear-gradient(130deg, rgba(76, 55, 16, .55), rgba(50, 42, 27, .68)); }
 [data-theme="dark"] .numerology-identity-number .tarot-num-big, [data-theme="dark"] .numerology-birthday-card strong { color: #f6d675; }
@@ -3636,9 +3654,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     gap: 12px;
     padding: 12px 18px;
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.45;
     background: var(--suite-card-bg, #ffffff);
     color: var(--suite-text, #1f2937);
     border: 1.5px solid var(--suite-border, #e5e7eb);
@@ -3722,10 +3740,10 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     align-items: center;
     justify-content: center;
     scroll-snap-align: center;
-    min-height: 40px;
-    padding: 8px 16px;
+    min-height: 42px;
+    padding: 8px 18px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 15.5px;
     font-weight: 600;
     color: var(--suite-text, #2C221E);
     background: var(--suite-card-bg, #f3f4f6);
@@ -3783,7 +3801,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     min-height: 44px;
     padding: 10px 22px;
     border-radius: 24px;
-    font-size: 14.5px;
+    font-size: 15.5px;
     font-weight: 700;
     line-height: 1.4;
     letter-spacing: -0.2px;
@@ -3853,7 +3871,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     .ziwei-grid,
     .ziwei-board-grid {
         gap: 3px !important;
-        font-size: 11.5px !important;
+        font-size: 14.5px !important;
     }
     .ziwei-cell,
     .ziwei-palace-cell {
@@ -3874,7 +3892,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     .fs-item-pill {
         min-height: 40px !important;
         padding: 8px 12px !important;
-        font-size: 13.5px !important;
+        font-size: 15px !important;
         touch-action: manipulation !important;
     }
     .fs-nine-grid {
@@ -3900,7 +3918,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     }
     .suite-btn-email-inline {
         width: 100% !important;
-        font-size: 13.5px !important;
+        font-size: 15.5px !important;
         padding: 10px 14px !important;
     }
 }
@@ -4243,39 +4261,53 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .ziwei-mode-card.mode-card-match { background: linear-gradient(135deg, #fff0f3, #ffd1dc); border-color: #fda4af; box-shadow: 0 8px 22px rgba(244, 63, 94, .16); }
 .ziwei-mode-card.mode-card-match:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(244, 63, 94, .24); }
 .badge-match { background: #be123c; color: #fff; }
-.ziwei-inline-badge { display:inline-flex; padding:4px 10px; border-radius:999px; background:#fef3c7; color:#92400e; font-size:12px; font-weight:800; }
+.ziwei-inline-badge { display:inline-flex; padding:4px 10px; border-radius:999px; background:#fef3c7; color:#92400e; font-size:13.5px; font-weight:800; }
 .ziwei-pattern-card { margin: 9px 0; border: 1.5px solid #cbd5e1; border-radius: 12px; overflow:hidden; background:linear-gradient(135deg, rgba(255,255,255,.95), rgba(241,245,249,.9)); box-shadow:0 5px 16px rgba(15,23,42,.08); }
 .ziwei-pattern-card.level-excellent { border-color:#34d399; background:linear-gradient(135deg,#ecfdf5,#d1fae5); }
 .ziwei-pattern-card.level-good { border-color:#fcd34d; background:linear-gradient(135deg,#fffbeb,#fef3c7); }
 .ziwei-pattern-card.level-caution { border-color:#fb7185; background:linear-gradient(135deg,#fff1f2,#ffe4e6); }
-.ziwei-pattern-card summary { cursor:pointer; display:flex; align-items:center; gap:9px; padding:12px 14px; list-style:none; font-size:15px; }
+.ziwei-pattern-card summary { cursor:pointer; display:flex; align-items:center; gap:9px; padding:12px 14px; list-style:none; font-size:16.5px; font-weight:750; }
 .ziwei-pattern-card summary::-webkit-details-marker { display:none; }
-.ziwei-pattern-badge, .ziwei-shensha-chip { display:inline-flex; align-items:center; border-radius:999px; padding:4px 9px; font-size:11.5px; font-weight:750; white-space:nowrap; }
-.ziwei-pattern-badge { background:#059669; color:white; }
+.ziwei-pattern-badge, .ziwei-shensha-chip { display:inline-flex; align-items:center; border-radius:999px; padding:4px 10px; font-size:13.5px; font-weight:750; white-space:nowrap; }
+.ziwei-pattern-badge { background:#059669; color:white; font-size:13.5px; }
 .level-good .ziwei-pattern-badge { background:#b45309; }.level-neutral .ziwei-pattern-badge { background:#0284c7; }.level-caution .ziwei-pattern-badge { background:#e11d48; }
-.ziwei-pattern-summary { color:var(--suite-text-muted); font-size:13px; font-weight:500; margin-left:auto; }
-.ziwei-pattern-body { padding:0 14px 13px; }.ziwei-pattern-condition { display:flex; gap:8px; padding:6px 0; font-size:13px; border-top:1px solid rgba(100,116,139,.18); }.ziwei-pattern-condition strong { min-width:68px; }.ziwei-pattern-condition.required strong { color:#047857; }.ziwei-pattern-condition.bonus strong { color:#a16207; }.ziwei-pattern-condition.breaking strong { color:#be123c; }.ziwei-pattern-source { margin-top:8px; color:var(--suite-text-muted); font-size:12px; font-weight:600; }
-.ziwei-shensha-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }.ziwei-shensha-chip { font-size:11px; padding:3px 8px; font-weight:700; background:rgba(14,116,144,.1); color:#0e7490; }.ziwei-shensha-chip.jiang { background:rgba(124,58,237,.1); color:#6d28d9; }.ziwei-shensha-chip.boshi { background:rgba(180,83,9,.12); color:#92400e; }
+.ziwei-pattern-summary { color:var(--suite-text-muted); font-size:15px; font-weight:500; margin-left:auto; }
+.ziwei-pattern-body { padding:0 14px 13px; }.ziwei-pattern-condition { display:flex; gap:8px; padding:7px 0; font-size:15px; line-height:1.55; border-top:1px solid rgba(100,116,139,.18); }.ziwei-pattern-condition strong { min-width:68px; }.ziwei-pattern-condition.required strong { color:#047857; }.ziwei-pattern-condition.bonus strong { color:#a16207; }.ziwei-pattern-condition.breaking strong { color:#be123c; }.ziwei-pattern-source { margin-top:8px; color:var(--suite-text-muted); font-size:15px; font-weight:600; }
+.ziwei-shensha-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }.ziwei-shensha-chip { font-size:13.5px; padding:3px 9px; font-weight:700; background:rgba(14,116,144,.1); color:#0e7490; }.ziwei-shensha-chip.jiang { background:rgba(124,58,237,.1); color:#6d28d9; }.ziwei-shensha-chip.boshi { background:rgba(180,83,9,.12); color:#92400e; }
 .ziwei-match-panel { border:2px solid #fda4af; background:linear-gradient(135deg,#fff0f3,#ffd1dc); box-shadow:0 12px 32px rgba(244,63,94,.16); }
-.ziwei-match-intro { font-size:var(--type-reading, 16px); line-height:1.75; color:var(--suite-text-muted); margin-bottom:16px; }
+.ziwei-match-intro { font-size:16px; line-height:1.75; color:var(--suite-text-muted); margin-bottom:16px; }
 .ziwei-match-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; }
-.ziwei-match-party { display:grid; gap:9px; padding:15px; border:1.5px solid rgba(244,63,94,.3); border-radius:12px; background:rgba(255,255,255,.6); }
-.ziwei-match-party h3 { margin:0 0 4px; font-size:var(--type-panel-title, 18px); font-weight:800; color:var(--suite-text); }
-.ziwei-match-submit { grid-column:1/-1; text-align:center; margin-top:8px; }
+.ziwei-match-party { display:grid; gap:10px; padding:18px; border:1.5px solid rgba(244,63,94,.3); border-radius:14px; background:rgba(255,255,255,.75); }
+.ziwei-match-party h3 { margin:0 0 6px; font-size:19px; font-weight:800; color:var(--suite-text); }
+.ziwei-match-party .suite-input,
+.ziwei-match-party .form-control,
+.ziwei-match-party select,
+.ziwei-match-party input {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    height: 44px;
+}
+.ziwei-match-submit { grid-column:1/-1; text-align:center; margin-top:10px; }
+.ziwei-match-submit button {
+    font-size: 16.5px !important;
+    font-weight: 800 !important;
+    padding: 11px 32px !important;
+    border-radius: 24px !important;
+}
 
 /* 核心修復：排版字體比例平穩，嚴格遵循全局中文字體標準 (最低 16px 正文) */
 .ziwei-match-score-hero {
     text-align: center;
-    padding: 22px 24px;
+    padding: 24px 26px;
     margin-top: 18px;
-    border-radius: 14px;
+    border-radius: 16px;
     background: linear-gradient(135deg, #be123c, #fb7185);
     color: white;
-    box-shadow: 0 10px 26px rgba(190, 18, 60, .25);
+    box-shadow: 0 10px 28px rgba(190, 18, 60, .25);
 }
 .ziwei-match-hero-label {
     display: block;
-    font-size: 16px;
+    font-size: 16.5px;
     font-weight: 700;
     letter-spacing: 0.5px;
     opacity: 0.95;
@@ -4285,8 +4317,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     display: inline-flex;
     align-items: baseline;
     justify-content: center;
-    gap: 3px;
-    font-size: 40px;
+    gap: 4px;
+    font-size: 42px;
     line-height: 1.2;
     font-weight: 800;
     margin: 8px 0 10px;
@@ -4299,8 +4331,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .ziwei-match-hero-desc {
     margin: 8px auto 0;
     max-width: 660px;
-    font-size: var(--type-reading, 16px);
-    line-height: 1.75;
+    font-size: 16.5px;
+    line-height: 1.8;
     font-weight: 500;
     opacity: 0.98;
 }
@@ -4322,49 +4354,51 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 18px 20px;
+    padding: 20px 22px;
     border-radius: 14px;
     background: rgba(255, 255, 255, .95);
     border: 1.5px solid rgba(190, 18, 60, .2);
-    box-shadow: 0 4px 12px rgba(190, 18, 60, .05);
+    box-shadow: 0 4px 14px rgba(190, 18, 60, .06);
 }
 .ziwei-match-item-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding-bottom: 10px;
+    gap: 12px;
+    padding-bottom: 12px;
     border-bottom: 1px dashed rgba(190, 18, 60, .2);
 }
 .ziwei-match-item-title {
-    font-size: var(--type-panel-title, 18px);
-    font-weight: 800;
+    font-size: 18px !important;
+    font-weight: 800 !important;
     color: var(--suite-text);
 }
 .ziwei-match-score {
-    font-size: 16px;
-    font-weight: 800;
+    font-size: 16.5px !important;
+    font-weight: 800 !important;
     color: #be123c;
     white-space: nowrap;
 }
 .ziwei-match-num {
-    font-size: 20px;
-    font-weight: 800;
+    font-size: 22px !important;
+    font-weight: 800 !important;
 }
 .ziwei-match-denom {
-    font-size: 14.5px;
-    font-weight: 600;
+    font-size: 15px !important;
+    font-weight: 600 !important;
     color: var(--suite-text-muted);
 }
 .ziwei-match-item-desc {
-    margin: 12px 0 0;
-    font-size: var(--type-reading, 16px);
-    line-height: 1.8;
+    margin: 14px 0 0;
+    font-size: 16px !important;
+    line-height: 1.85 !important;
     color: var(--suite-text);
     flex-grow: 1;
 }
 .ziwei-match-item-desc p {
     margin: 0 0 10px;
+    font-size: 16px !important;
+    line-height: 1.85 !important;
 }
 .ziwei-match-item-desc p:last-child {
     margin-bottom: 0;
@@ -4372,19 +4406,19 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 /* 夫妻宮理想正緣畫像對照區塊 */
 .ziwei-match-profiles-header {
-    margin: 24px 0 12px;
+    margin: 26px 0 14px;
 }
 .ziwei-match-profiles-heading {
-    font-size: var(--type-panel-title, 18px);
-    font-weight: 800;
+    font-size: 18.5px !important;
+    font-weight: 800 !important;
     color: var(--suite-text);
-    margin: 0 0 4px;
+    margin: 0 0 6px;
 }
 .ziwei-match-profiles-sub {
-    font-size: var(--type-reading, 16px);
+    font-size: 16px !important;
     color: var(--suite-text-muted);
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.65;
 }
 .ziwei-match-profiles {
     display: grid;
@@ -4398,26 +4432,27 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     }
 }
 .ziwei-match-profile-card {
-    padding: 18px 20px;
+    padding: 20px 22px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.95);
     border: 1.5px solid #fda4af;
     box-shadow: 0 4px 14px rgba(244, 63, 94, 0.08);
 }
 .ziwei-match-profile-title {
-    font-size: var(--type-panel-title, 18px);
-    font-weight: 800;
+    font-size: 18px !important;
+    font-weight: 800 !important;
     color: #be123c;
     margin: 0 0 12px;
 }
 .ziwei-match-profile-body {
-    font-size: var(--type-reading, 16px);
-    line-height: 1.8;
+    font-size: 16px !important;
+    line-height: 1.85 !important;
     color: var(--suite-text);
 }
 .ziwei-match-profile-line {
-    margin: 0 0 8px;
-    font-size: var(--type-reading, 16px);
+    margin: 0 0 10px;
+    font-size: 16px !important;
+    line-height: 1.85 !important;
 }
 .ziwei-match-profile-line:last-child {
     margin-bottom: 0;
@@ -4425,8 +4460,8 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 /* 理性相處指南 */
 .ziwei-match-advice {
-    margin-top: 18px;
-    padding: 20px 22px;
+    margin-top: 20px;
+    padding: 22px 24px;
     border-radius: 14px;
     background: #fffbeb;
     border: 1.5px solid #fcd34d;
@@ -4434,19 +4469,21 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 .ziwei-match-advice-title {
     display: block;
-    font-size: var(--type-panel-title, 18px);
-    font-weight: 800;
+    font-size: 18.5px !important;
+    font-weight: 800 !important;
     color: #92400e;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 .ziwei-match-advice-desc {
     margin: 0;
-    font-size: var(--type-reading, 16px);
-    line-height: 1.85;
+    font-size: 16px !important;
+    line-height: 1.85 !important;
     color: #451a03;
 }
 .ziwei-match-advice-desc p {
     margin: 0 0 10px;
+    font-size: 16px !important;
+    line-height: 1.85 !important;
 }
 .ziwei-match-advice-desc p:last-child {
     margin-bottom: 0;
@@ -4511,9 +4548,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 
 .ziwei-domains-subtitle {
     margin-top: 4px;
-    font-size: 13px;
+    font-size: 15px;
     color: var(--suite-text-muted);
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .ziwei-domains-nav-scroll {
@@ -4612,9 +4649,9 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 }
 
 .ziwei-domain-dayun {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 6px;
     background: rgba(100, 116, 139, 0.12);
     color: var(--suite-text-muted);
@@ -4688,7 +4725,7 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     padding: 12px 16px;
     border-radius: 8px;
     background: rgba(241, 245, 249, 0.7);
-    font-size: 14.5px;
+    font-size: 15px;
     line-height: 1.65;
     color: var(--suite-text-muted);
 }

@@ -128,7 +128,7 @@ body {
     left: 5px;
     color: #666;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .item {
@@ -285,7 +285,7 @@ body {
     }
 
     .item {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .legend-item {
@@ -295,7 +295,7 @@ body {
 
 @media (max-width: 480px) {
     .item {
-        font-size: 12px;
+        font-size: 15px;
     }
 
     .legend-item {
@@ -379,9 +379,9 @@ body {
     margin-bottom: 5px;
 }
 .gong-explain {
-    font-size: 12px;
-    margin-top: 3px;
-    line-height: 1.4;
+    font-size: 15px;
+    margin-top: 4px;
+    line-height: 1.6;
 }
 .suggestion-list li {
     margin-bottom: 4px;
@@ -452,10 +452,10 @@ body {
     align-items: center;
     justify-content: center;
     scroll-snap-align: center;
-    min-height: 40px;
-    padding: 8px 16px;
+    min-height: 42px;
+    padding: 8px 18px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 15.5px;
     font-weight: 600;
     color: #2C221E;
     background: #f3f4f6;

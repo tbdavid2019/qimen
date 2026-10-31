@@ -55,12 +55,12 @@
     </script>
 
     <%- include('partials/ads-head.html') %>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/style-new.css">
-    <link rel="stylesheet" href="/css/dark-mode.css">
-    <link rel="stylesheet" href="/css/divination-suite.css">
-    <link rel="stylesheet" href="/css/meihua.css">
-    <link rel="stylesheet" href="/css/theme-atelier.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/style-new.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/meihua.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_cjk">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
 
@@ -340,34 +340,34 @@
             <div class="row" style="margin-top: 10px;">
                 <div class="col-md-3 col-sm-6">
                     <div class="meihua-card text-center" style="min-height: 200px;">
-                        <div class="meihua-section-title" style="font-size: 14.5px;">互卦（中間過程）</div>
+                        <div class="meihua-section-title" style="font-size: 16.5px;">互卦（中間過程）</div>
                         <div class="meihua-section-title" id="huguaName" style="color: #6366f1;"></div>
                         <div id="huguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                        <small class="text-muted" style="display: block; margin-top: 6px;">事物中途發展的轉折</small>
+                        <small class="text-muted" style="display: block; margin-top: 6px; font-size: 15px; font-weight: 500;">事物中途發展的轉折</small>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <div class="meihua-card text-center" style="min-height: 200px;">
-                        <div class="meihua-section-title" style="font-size: 14.5px;">變卦（最終事態）</div>
+                        <div class="meihua-section-title" style="font-size: 16.5px;">變卦（最終事態）</div>
                         <div class="meihua-section-title" id="bianguaName" style="color: #ec4899;"></div>
                         <div id="bianguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                        <small class="text-muted" style="display: block; margin-top: 6px;">事態最終演進之走向</small>
+                        <small class="text-muted" style="display: block; margin-top: 6px; font-size: 15px; font-weight: 500;">事態最終演進之走向</small>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <div class="meihua-card text-center" style="min-height: 200px;">
-                        <div class="meihua-section-title" style="font-size: 14.5px;">錯卦（反面危機）</div>
+                        <div class="meihua-section-title" style="font-size: 16.5px;">錯卦（反面危機）</div>
                         <div class="meihua-section-title" id="cuoguaName" style="color: #f59e0b;"></div>
                         <div id="cuoguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                        <small class="text-muted" style="display: block; margin-top: 6px;">事物對立面與暗藏盲點</small>
+                        <small class="text-muted" style="display: block; margin-top: 6px; font-size: 15px; font-weight: 500;">事物對立面與暗藏盲點</small>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <div class="meihua-card text-center" style="min-height: 200px;">
-                        <div class="meihua-section-title" style="font-size: 14.5px;">綜卦（換位視角）</div>
+                        <div class="meihua-section-title" style="font-size: 16.5px;">綜卦（換位視角）</div>
                         <div class="meihua-section-title" id="zongguaName" style="color: #10b981;"></div>
                         <div id="zongguaLines" class="meihua-hexagram meihua-hexagram-compact"></div>
-                        <small class="text-muted" style="display: block; margin-top: 6px;">換位思考或逆向觀察</small>
+                        <small class="text-muted" style="display: block; margin-top: 6px; font-size: 15px; font-weight: 500;">換位思考或逆向觀察</small>
                     </div>
                 </div>
             </div>
@@ -469,18 +469,18 @@
     <% if ((typeof turnstileEnabled === 'undefined' || turnstileEnabled) && typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
     <% } %>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js?v=20261101_cjk"></script>
+    <script src="js/bootstrap.min.js?v=20261101_cjk"></script>
     <script type="text/javascript">
         window.enableLLM = <%= enableLLM ? 'true' : 'false' %>;
     </script>
-    <script src="js/theme.js"></script>
-    <script src="js/lucide.min.js"></script>
-    <script src="js/markdown-renderer.js"></script>
-    <script src="js/email-formatter.js"></script>
+    <script src="js/theme.js?v=20261101_cjk"></script>
+    <script src="js/lucide.min.js?v=20261101_cjk"></script>
+    <script src="js/markdown-renderer.js?v=20261101_cjk"></script>
+    <script src="js/email-formatter.js?v=20261101_cjk"></script>
     <script src="/js/result-email.js"></script>
-    <script src="js/meihua.js"></script>
-    <script src="js/webmcp.js"></script>
+    <script src="js/meihua.js?v=20261101_cjk"></script>
+    <script src="js/webmcp.js?v=20261101_cjk"></script>
 </body>
 
 </html>

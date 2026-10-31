@@ -806,7 +806,7 @@
         let zhuxiHtml = `
             <div class="zhuxi-card">
                 <div class="zhuxi-title"><i data-lucide="book-open"></i> 朱熹《易學啟蒙》考變占斷法：${escapeHtml(zx.mainRule || '')}</div>
-                <div class="text-muted" style="font-size: 14px; line-height: 1.6;">${escapeHtml(zx.explanation || '')}</div>
+                <div class="text-muted" style="font-size: 15.5px; line-height: 1.7;">${escapeHtml(zx.explanation || '')}</div>
             </div>
         `;
 
@@ -881,7 +881,7 @@
                     <div class="gua-table-responsive">
                         <table class="gua-lines-table">
                             <thead>
-                                <tr class="text-muted" style="font-size:13px;">
+                                <tr class="text-muted" style="font-size:15px;">
                                     <th title="爻位（由初爻至上爻）">爻</th>
                                     <th title="六神（青龍、朱雀、勾陳、螣蛇、白虎、玄武）">六神</th>
                                     <th title="伏神（若用神不上卦，尋伏於本宮首卦相應爻下）">伏神</th>
@@ -905,7 +905,7 @@
                     <div class="gua-table-responsive">
                         <table class="gua-lines-table">
                             <thead>
-                                <tr class="text-muted" style="font-size:13px;">
+                                <tr class="text-muted" style="font-size:15px;">
                                     <th title="爻位">爻</th>
                                     <th title="變爻轉化後之陰陽爻象">爻象</th>
                                     <th title="之卦六親">六親</th>
@@ -957,7 +957,7 @@
                     <p style="font-weight: 800; color: var(--suite-primary, #b45309); margin-bottom: 8px; font-size: 16px;">
                         請完成上方的人機安全驗證 (Cloudflare Turnstile)
                     </p>
-                    <p style="font-size: 13.5px; color: var(--suite-text-muted, #667085); margin-bottom: 16px; line-height: 1.5;">
+                    <p style="font-size: 15.5px; color: var(--suite-text-muted, #667085); margin-bottom: 16px; line-height: 1.6;">
                         卦象已排定！請在上方 Step 2 完成 Turnstile 勾選驗證，即可啟動宗師納甲深度推演與吉凶指引。
                     </p>
                     <button type="button" id="btnRetryTurnstileLLM" class="btn suite-btn-primary">
@@ -1116,10 +1116,10 @@
                         <div class="decision-combo-inner" style="padding: 6px 0;">
                             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 1.5px solid var(--suite-border); padding-bottom: 12px; margin-bottom: 14px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span class="suite-tag" style="background: #b45309; color: #fff; font-weight: 800; font-size: 13px;">🏆 會診結論</span>
-                                    <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: var(--suite-primary);">【${escapeHtml(consensus.verdict || '利於審慎開拓')}】</h3>
+                                    <span class="suite-tag" style="background: #b45309; color: #fff; font-weight: 800; font-size: 13.5px;">🏆 會診結論</span>
+                                    <h3 style="margin: 0; font-size: 19px; font-weight: 800; color: var(--suite-primary);">【${escapeHtml(consensus.verdict || '利於審慎開拓')}】</h3>
                                 </div>
-                                <span class="suite-tag" style="${ratingBadgeStyle} font-weight: 800; font-size: 13px; padding: 4px 12px; border-radius: 12px;">
+                                <span class="suite-tag" style="${ratingBadgeStyle} font-weight: 800; font-size: 13.5px; padding: 4px 12px; border-radius: 12px;">
                                     共識度：${escapeHtml(consensus.rating || (isHighConsensus ? '高度共識' : '相悖微調'))}
                                 </span>
                             </div>
@@ -1129,51 +1129,51 @@
                                 <!-- 1. 奇門遁甲 -->
                                 <div class="system-card" style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 10px; padding: 14px;">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                                        <strong style="color: var(--suite-primary); font-size: 15px;">🚪 奇門遁甲</strong>
-                                        <span class="suite-tag" style="background: #e0f2fe; color: #0369a1; font-weight: 700;">${escapeHtml(qimenData.grade || '吉格')}</span>
+                                        <strong style="color: var(--suite-primary); font-size: 16.5px;">🚪 奇門遁甲</strong>
+                                        <span class="suite-tag" style="background: #e0f2fe; color: #0369a1; font-weight: 700; font-size: 13.5px;">${escapeHtml(qimenData.grade || '吉格')}</span>
                                     </div>
-                                    <div style="font-size: 13px; color: var(--suite-text-muted); margin-bottom: 6px;">
+                                    <div style="font-size: 15px; color: var(--suite-text-muted); margin-bottom: 6px;">
                                         吉方：<strong>${escapeHtml(qimenData.bestDirection || qimenData.direction || '開門吉方')}</strong> ｜ 門星：<strong>${escapeHtml(qimenData.door || '開門')} · ${escapeHtml(qimenData.star || '天心')}</strong>
                                     </div>
-                                    <p style="margin: 0; font-size: 13.5px; color: var(--suite-text); line-height: 1.5;">${escapeHtml(qimenData.summary || qimenData.judgment || '氣機得使，利主不順客，宜守正出奇。')}</p>
+                                    <p style="margin: 0; font-size: 16px; color: var(--suite-text); line-height: 1.75;">${escapeHtml(qimenData.summary || qimenData.judgment || '氣機得使，利主不順客，宜守正出奇。')}</p>
                                 </div>
 
                                 <!-- 2. 六爻神卦 -->
                                 <div class="system-card" style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 10px; padding: 14px;">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                                        <strong style="color: var(--suite-primary); font-size: 15px;">🪙 六爻神卦</strong>
-                                        <span class="suite-tag" style="background: #fef3c7; color: #92400e; font-weight: 700;">${escapeHtml(liuyaoData.grade || '用神有氣')}</span>
+                                        <strong style="color: var(--suite-primary); font-size: 16.5px;">🪙 六爻神卦</strong>
+                                        <span class="suite-tag" style="background: #fef3c7; color: #92400e; font-weight: 700; font-size: 13.5px;">${escapeHtml(liuyaoData.grade || '用神有氣')}</span>
                                     </div>
-                                    <div style="font-size: 13px; color: var(--suite-text-muted); margin-bottom: 6px;">
+                                    <div style="font-size: 15px; color: var(--suite-text-muted); margin-bottom: 6px;">
                                         主卦：<strong>${escapeHtml(liuyaoData.guaName || '當前卦象')}</strong> ｜ 用神：<strong>${escapeHtml(liuyaoData.yongShen || '世爻得助')}</strong>
                                     </div>
-                                    <p style="margin: 0; font-size: 13.5px; color: var(--suite-text); line-height: 1.5;">${escapeHtml(liuyaoData.summary || liuyaoData.judgment || '世爻生旺，用神無傷，行事有依憑。')}</p>
+                                    <p style="margin: 0; font-size: 16px; color: var(--suite-text); line-height: 1.75;">${escapeHtml(liuyaoData.summary || liuyaoData.judgment || '世爻生旺，用神無傷，行事有依憑。')}</p>
                                 </div>
 
                                 <!-- 3. 梅花易數 -->
                                 <div class="system-card" style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 10px; padding: 14px;">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                                        <strong style="color: var(--suite-primary); font-size: 15px;">🌸 梅花易數</strong>
-                                        <span class="suite-tag" style="background: #fce7f3; color: #be185d; font-weight: 700;">${escapeHtml(meihuaData.grade || '體用比和')}</span>
+                                        <strong style="color: var(--suite-primary); font-size: 16.5px;">🌸 梅花易數</strong>
+                                        <span class="suite-tag" style="background: #fce7f3; color: #be185d; font-weight: 700; font-size: 13.5px;">${escapeHtml(meihuaData.grade || '體用比和')}</span>
                                     </div>
-                                    <div style="font-size: 13px; color: var(--suite-text-muted); margin-bottom: 6px;">
+                                    <div style="font-size: 15px; color: var(--suite-text-muted); margin-bottom: 6px;">
                                         體用：<strong>${escapeHtml(meihuaData.tiYong || '用生體')}</strong> ｜ 卦象：<strong>${escapeHtml(meihuaData.hexagram || '成卦')}</strong>
                                     </div>
-                                    <p style="margin: 0; font-size: 13.5px; color: var(--suite-text); line-height: 1.5;">${escapeHtml(meihuaData.summary || meihuaData.judgment || '五行生比，外應祥和，事順人睦。')}</p>
+                                    <p style="margin: 0; font-size: 16px; color: var(--suite-text); line-height: 1.75;">${escapeHtml(meihuaData.summary || meihuaData.judgment || '五行生比，外應祥和，事順人睦。')}</p>
                                 </div>
                             </div>
 
                             <!-- 三術共識點與微調相悖點 -->
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 14px;">
-                                <div style="background: rgba(16, 185, 129, 0.08); border-left: 4px solid #10b981; padding: 12px 14px; border-radius: 6px;">
-                                    <strong style="color: #065f46; font-size: 14px;">🎯 三術共識點 (Convergent Points)：</strong>
-                                    <ul style="margin: 6px 0 0 16px; padding: 0; font-size: 13px; color: var(--suite-text); line-height: 1.6;">
+                                <div style="background: rgba(16, 185, 129, 0.08); border-left: 4px solid #10b981; padding: 14px 16px; border-radius: 8px;">
+                                    <strong style="color: #065f46; font-size: 16px;">🎯 三術共識點 (Convergent Points)：</strong>
+                                    <ul style="margin: 8px 0 0 16px; padding: 0; font-size: 15.5px; color: var(--suite-text); line-height: 1.75;">
                                         ${convergent.length ? convergent.map(c => `<li>${escapeHtml(c)}</li>`).join('') : '<li>各數術體系在核心走向與大勢吉凶上高度契合。</li>'}
                                     </ul>
                                 </div>
-                                <div style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; padding: 12px 14px; border-radius: 6px;">
-                                    <strong style="color: #b45309; font-size: 14px;">⚖️ 細節微調點 (Divergent Nuances)：</strong>
-                                    <ul style="margin: 6px 0 0 16px; padding: 0; font-size: 13px; color: var(--suite-text); line-height: 1.6;">
+                                <div style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; padding: 14px 16px; border-radius: 8px;">
+                                    <strong style="color: #b45309; font-size: 16px;">⚖️ 細節微調點 (Divergent Nuances)：</strong>
+                                    <ul style="margin: 8px 0 0 16px; padding: 0; font-size: 15.5px; color: var(--suite-text); line-height: 1.75;">
                                         ${divergent.length ? divergent.map(d => `<li>${escapeHtml(d)}</li>`).join('') : '<li>注意節奏把控，時機未成熟前避免急躁衝動。</li>'}
                                     </ul>
                                 </div>
@@ -1181,8 +1181,8 @@
 
                             <!-- 綜合決策行動指南 -->
                             ${guide ? `
-                                <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1.5px solid #3b82f6; padding: 14px 16px; border-radius: 10px; font-size: 14px; line-height: 1.6; color: #1e3a8a;">
-                                    <strong style="font-size: 14.5px;">🧭 宗師行動指南 (Action Guide)：</strong><br>
+                                <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1.5px solid #3b82f6; padding: 16px 18px; border-radius: 10px; font-size: 16px; line-height: 1.8; color: #1e3a8a;">
+                                    <strong style="font-size: 17px; display: inline-block; margin-bottom: 6px;">🧭 宗師行動指南 (Action Guide)：</strong><br>
                                     ${escapeHtml(guide)}
                                 </div>
                             ` : ''}
@@ -1191,7 +1191,7 @@
                     comboCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } catch (err) {
                     if (comboCard) {
-                        comboCard.innerHTML = `<div style="background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 12px; border-radius: 6px; font-size: 13.5px; color: #ef4444;">⚠️ 三術同參失敗：${escapeHtml(err.message)}</div>`;
+                        comboCard.innerHTML = `<div style="background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 14px; border-radius: 8px; font-size: 15px; color: #ef4444;">⚠️ 三術同參失敗：${escapeHtml(err.message)}</div>`;
                     }
                 } finally {
                     btnCombo.disabled = false;

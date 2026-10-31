@@ -545,15 +545,15 @@
                     <div class="chenggu-card" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1.5px solid #f59e0b; border-radius: 12px; padding: 18px 20px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.15);">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <span class="suite-tag" style="background: #b45309; color: #fff; font-weight: 800; font-size: 13px;">⚖️ 袁天罡稱骨算命</span>
+                                <span class="suite-tag" style="background: #b45309; color: #fff; font-weight: 800; font-size: 13.5px;">⚖️ 袁天罡稱骨算命</span>
                                 <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #78350f;">骨重：<span style="color: #b45309;">${escapeHtml(cg.weightLabel || '')}</span></h3>
                             </div>
                             <span class="suite-tag" style="background: #fde68a; color: #92400e; font-weight: 700;">${escapeHtml(cg.grade || '吉凶平穩')}</span>
                         </div>
-                        <div class="chenggu-poem" style="background: rgba(255, 255, 255, 0.7); border-left: 4px solid #f59e0b; padding: 12px 14px; border-radius: 6px; font-size: 15px; font-weight: 700; color: #78350f; line-height: 1.7; margin-bottom: 10px; font-family: var(--font-serif, serif);">
+                        <div class="chenggu-poem" style="background: rgba(255, 255, 255, 0.7); border-left: 4px solid #f59e0b; padding: 12px 14px; border-radius: 6px; font-size: 15.5px; font-weight: 700; color: #78350f; line-height: 1.7; margin-bottom: 10px; font-family: var(--font-serif, serif);">
                             ${escapeHtml(cg.poem || '')}
                         </div>
-                        <p style="margin: 0; font-size: 13.5px; color: #92400e; line-height: 1.6;">
+                        <p style="margin: 0; font-size: 15.5px; color: #92400e; line-height: 1.65;">
                             <strong>【骨重批註】</strong>${escapeHtml(cg.interp || cg.interpretation || '')}
                         </p>
                     </div>
@@ -575,27 +575,27 @@
                     <div class="yunqi-card" style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1.5px solid var(--suite-border); border-radius: 12px; padding: 18px 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <span class="suite-tag" style="background: #ecfdf5; color: #065f46; font-weight: 800; font-size: 13px;">🌿 中醫五運六氣</span>
-                                <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: var(--suite-primary);">體質稟賦與節氣經絡養生</h3>
+                                <span class="suite-tag" style="background: #ecfdf5; color: #065f46; font-weight: 800; font-size: 13.5px;">🌿 中醫五運六氣</span>
+                                <h3 style="margin: 0; font-size: 17.5px; font-weight: 800; color: var(--suite-primary);">體質稟賦與節氣經絡養生</h3>
                             </div>
                             <span class="suite-tag" style="background: #e0f2fe; color: #0369a1; font-weight: 700;">當前節氣：${escapeHtml(solar.currentSolarTerm || '順應四時')}</span>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 12px;">
                             <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--suite-border); border-radius: 8px; padding: 12px;">
-                                <div style="font-weight: 700; color: var(--suite-primary); margin-bottom: 4px; font-size: 14px;">🧬 出生年五運六氣稟賦</div>
-                                <div style="font-size: 13px; color: var(--suite-text); line-height: 1.5;">${escapeHtml(yq.birthYunqi?.summary || '稟天地五行之氣，五臟平穩')}</div>
+                                <div style="font-weight: 700; color: var(--suite-primary); margin-bottom: 4px; font-size: 15.5px;">🧬 出生年五運六氣稟賦</div>
+                                <div style="font-size: 15px; color: var(--suite-text); line-height: 1.6;">${escapeHtml(yq.birthYunqi?.summary || '稟天地五行之氣，五臟平穩')}</div>
                             </div>
                             <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--suite-border); border-radius: 8px; padding: 12px;">
-                                <div style="font-weight: 700; color: var(--suite-primary); margin-bottom: 4px; font-size: 14px;">🌊 當前流年客氣與司天在泉</div>
-                                <div style="font-size: 13px; color: var(--suite-text); line-height: 1.5;">${escapeHtml(yq.annualYunqi?.summary || '司天在泉調和氣運')}</div>
+                                <div style="font-weight: 700; color: var(--suite-primary); margin-bottom: 4px; font-size: 15.5px;">🌊 當前流年客氣與司天在泉</div>
+                                <div style="font-size: 15px; color: var(--suite-text); line-height: 1.6;">${escapeHtml(yq.annualYunqi?.summary || '司天在泉調和氣運')}</div>
                             </div>
                         </div>
-                        <div style="background: rgba(240, 253, 244, 0.15); border-left: 4px solid #10b981; padding: 10px 14px; border-radius: 6px; margin-bottom: 10px; font-size: 13.5px; line-height: 1.6;">
+                        <div style="background: rgba(240, 253, 244, 0.15); border-left: 4px solid #10b981; padding: 12px 14px; border-radius: 6px; margin-bottom: 10px; font-size: 15px; line-height: 1.7;">
                             <strong>🍲 節氣飲食調養：</strong>${escapeHtml(solar.dietAdvice || '')}<br>
                             <strong>🧘 起居與導引：</strong>${escapeHtml(solar.lifestyleAdvice || '')}<br>
                             <strong>📍 推薦養生穴位：</strong>${escapeHtml(solar.acupointAdvice || '')}
                         </div>
-                        <div style="font-size: 13px; color: var(--suite-text-muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <div style="font-size: 15px; color: var(--suite-text-muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <span>⏱️ <strong>子午流注當前經絡：</strong>【${escapeHtml(meridian.shichen || '')} · ${escapeHtml(meridian.meridian || '')}】</span>
                             <span>${escapeHtml(meridian.action || '')}</span>
                         </div>
@@ -618,11 +618,11 @@
                     <td style="padding:8px 10px; font-weight:800; color:#b45309;">Top ${escapeHtml(s.rank || 1)}</td>
                     <td style="padding:8px 10px; font-weight:700;">${escapeHtml(s.date || '')}</td>
                     <td style="padding:8px 10px; color:var(--suite-primary); font-weight:600;">${escapeHtml(s.shichen || '')}</td>
-                    <td style="padding:8px 10px; font-size:12px; color:var(--suite-text-muted);">${escapeHtml(s.qimenDun || '')}</td>
+                    <td style="padding:8px 10px; font-size:15px; color:var(--suite-text-muted);">${escapeHtml(s.qimenDun || '')}</td>
                     <td style="padding:8px 10px;"><strong style="color:#059669;">${escapeHtml(s.bestDirection || '')}</strong></td>
                     <td style="padding:8px 10px;">${escapeHtml(s.door || '')} · ${escapeHtml(s.star || '')}</td>
                     <td style="padding:8px 10px;"><span class="suite-tag auspicious">${escapeHtml(s.grade || '大吉')}</span></td>
-                    <td style="padding:8px 10px; font-size:12.5px; color:var(--suite-text);">${escapeHtml(s.reason || '')}</td>
+                    <td style="padding:8px 10px; font-size:15px; color:var(--suite-text);">${escapeHtml(s.reason || '')}</td>
                 </tr>
             `).join('');
             return `
@@ -635,7 +635,7 @@
                         <span class="suite-tag" style="background:#fef3c7; color:#92400e; font-weight:700;">福主不沖 · 奇門吉門得使</span>
                     </div>
                     <div style="overflow-x:auto;">
-                        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <table style="width:100%; border-collapse:collapse; font-size:15px;">
                             <thead>
                                 <tr style="border-bottom:1.5px solid var(--suite-border); color:var(--suite-text-muted);">
                                     <th style="padding:6px 10px; text-align:left;">排名</th>
@@ -658,12 +658,12 @@
         function buildMenZhuZaoHtml(m) {
             if (!m) return '';
             const warnHtml = Array.isArray(m.warnings) && m.warnings.length > 0 ? `
-                <div style="background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:8px 12px; border-radius:4px; margin-top:8px; font-size:13px; color:#ef4444;">
+                <div style="background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:10px 14px; border-radius:6px; margin-top:8px; font-size:15px; color:#ef4444; line-height:1.6;">
                     <strong>⚠️ 格局提醒：</strong>${escapeHtml(m.warnings.join('；'))}
                 </div>
             ` : '';
             const remHtml = Array.isArray(m.remedies) && m.remedies.length > 0 ? `
-                <div style="background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:8px 12px; border-radius:4px; margin-top:6px; font-size:13px; color:#065f46;">
+                <div style="background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:10px 14px; border-radius:6px; margin-top:6px; font-size:15px; color:#065f46; line-height:1.6;">
                     <strong>💡 調理化解：</strong>${escapeHtml(m.remedies.join('；'))}
                 </div>
             ` : '';
@@ -673,11 +673,11 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <span class="suite-tag" style="background:#065f46; color:#fff; font-weight:800;">📖 《陽宅三要》</span>
-                            <h4 style="margin:0; font-size:16.5px; font-weight:800; color:#064e3b;">門・主・灶配星：【${escapeHtml(m.patternName || '')}】</h4>
+                            <h4 style="margin:0; font-size:17px; font-weight:800; color:#064e3b;">門・主・灶配星：【${escapeHtml(m.patternName || '')}】</h4>
                         </div>
                         <span class="suite-tag ${m.grade === '大吉' || m.grade === '吉' ? 'auspicious' : 'inauspicious'}">${escapeHtml(m.grade || '中平')}</span>
                     </div>
-                    ${m.classicQuote ? `<div style="font-size:13.5px; font-style:italic; color:#047857; margin-bottom:6px; font-family:var(--font-serif, serif);">「${escapeHtml(m.classicQuote)}」</div>` : ''}
+                    ${m.classicQuote ? `<div style="font-size:15px; font-style:italic; color:#047857; margin-bottom:6px; font-family:var(--font-serif, serif); line-height:1.6;">「${escapeHtml(m.classicQuote)}」</div>` : ''}
                     ${warnHtml}
                     ${remHtml}
                 </div>
@@ -841,14 +841,14 @@
                         <div class="fs-finding-title">${escapeHtml(f.title)} (${escapeHtml(f.palace)}宮)</div>
                         <div class="fs-finding-desc">${escapeHtml((f.evidence || []).join('；'))}</div>
                         <div class="fs-finding-rec">💡 佈局建議：${escapeHtml(f.action || '')}</div>
-                        ${f.reference ? `<div class="fs-finding-ref" style="font-size:11px; opacity:0.75; margin-top:4px;">📖 考據出處：${escapeHtml(f.reference)}</div>` : ''}
+                        ${f.reference ? `<div class="fs-finding-ref" style="font-size:15px; opacity:0.85; margin-top:4px;">📖 考據出處：${escapeHtml(f.reference)}</div>` : ''}
                     </div>
                 `;
             }).join('');
 
             const actionsHtml = (ev.actions || []).length > 0 ? `
                 <div class="fs-actions-list">
-                    <div style="font-weight:700; margin-bottom:6px; font-size:13px;">📋 優先行動指引（依急迫性排序）：</div>
+                    <div style="font-weight:700; margin-bottom:6px; font-size:15.5px;">📋 優先行動指引（依急迫性排序）：</div>
                         ${ev.actions.map((action, index) => `
                         <div class="fs-action-item">
                             <span class="fs-action-priority">P${index + 1}</span>
@@ -860,11 +860,11 @@
 
             const quotesHtml = (ev.quotesCited || []).length > 0 ? `
                 <div class="fs-quotes-list">
-                    <div style="font-weight:700; margin-bottom:6px; font-size:13px;">📜 經典引證</div>
+                    <div style="font-weight:700; margin-bottom:6px; font-size:15.5px;">📜 經典引證</div>
                     ${(ev.quotesCited || []).map(quote => `
                         <div class="fs-quote-cite">${escapeHtml(quote.source || '')}：「${escapeHtml(quote.text || '')}」<br>
                             <span style="opacity:0.85;">義理：${escapeHtml(quote.interpretation || '')}</span>
-                            ${quote.reference ? `<br><span style="font-size:11px; opacity:0.75;">📖 出處：${escapeHtml(quote.reference)}</span>` : ''}
+                            ${quote.reference ? `<br><span style="font-size:15px; opacity:0.85;">📖 出處：${escapeHtml(quote.reference)}</span>` : ''}
                         </div>
                     `).join('')}
                 </div>
@@ -884,7 +884,7 @@
                     <div class="fs-eval-header">
                         <div class="fs-eval-title">🎯 中州派玄空室內格局評估</div>
                     </div>
-                    ${findingsHtml || '<div class="text-muted" style="font-size:12px;">目前尚未在九宮中放置關鍵住宅物件。</div>'}
+                    ${findingsHtml || '<div class="text-muted" style="font-size:15px;">目前尚未在九宮中放置關鍵住宅物件。</div>'}
                     ${actionsHtml}
                     ${quotesHtml}
                     ${missingHtml}
@@ -1021,12 +1021,12 @@
             if (result.mingGuaMatch) {
                 const mg = result.mingGuaMatch;
                 mingGuaHtml = `
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:10px 14px; margin-bottom:12px; font-size:13.5px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                            <strong style="color:var(--suite-primary);">🧭 東西四命配對：</strong>
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--suite-border); border-radius:8px; padding:12px 14px; margin-bottom:12px; font-size:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <strong style="color:var(--suite-primary); font-size:15.5px;">🧭 東西四命配對：</strong>
                             <span class="suite-tag ${mg.matchGrade === '吉' || mg.matchGrade === '大吉' || mg.matchGrade === '上吉' ? 'auspicious' : 'inauspicious'}">${escapeHtml(mg.matchGrade || '中平')}</span>
                         </div>
-                        <div style="color:var(--suite-text-muted); font-size:13px; line-height:1.5;">
+                        <div style="color:var(--suite-text-muted); font-size:15px; line-height:1.6;">
                             甲方【${escapeHtml(mg.gua1 || '')}】✕ 乙方【${escapeHtml(mg.gua2 || '')}】· ${escapeHtml(mg.matchDesc || mg.description || '')}
                         </div>
                     </div>
@@ -1038,16 +1038,16 @@
             if (Array.isArray(result.pillarScan) && result.pillarScan.length > 0) {
                 const scanRows = result.pillarScan.map(p => `
                     <tr style="border-bottom:1px solid var(--suite-border);">
-                        <td style="padding:6px 10px; font-weight:700; color:var(--suite-primary);">${escapeHtml(p.pillar || '')}</td>
-                        <td style="padding:6px 10px;"><span class="suite-tag ${p.score >= 0 ? 'auspicious' : 'inauspicious'}">${escapeHtml(p.matchType || '')}</span></td>
-                        <td style="padding:6px 10px; font-size:12.5px; color:var(--suite-text);">${escapeHtml(p.description || '')}</td>
+                        <td style="padding:8px 10px; font-weight:700; color:var(--suite-primary); font-size:15px;">${escapeHtml(p.pillar || '')}</td>
+                        <td style="padding:8px 10px;"><span class="suite-tag ${p.score >= 0 ? 'auspicious' : 'inauspicious'}">${escapeHtml(p.matchType || '')}</span></td>
+                        <td style="padding:8px 10px; font-size:15px; color:var(--suite-text);">${escapeHtml(p.description || '')}</td>
                     </tr>
                 `).join('');
                 pillarScanHtml = `
                     <div style="margin:12px 0;">
-                        <div style="font-size:13.5px; font-weight:700; color:var(--suite-primary); margin-bottom:6px;">⚡ 四柱干支合沖刑害掃描</div>
+                        <div style="font-size:15.5px; font-weight:700; color:var(--suite-primary); margin-bottom:6px;">⚡ 四柱干支合沖刑害掃描</div>
                         <div style="overflow-x:auto;">
-                            <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                            <table style="width:100%; border-collapse:collapse; font-size:15px;">
                                 <thead>
                                     <tr style="border-bottom:1.5px solid var(--suite-border); color:var(--suite-text-muted);">
                                         <th style="padding:6px 10px; text-align:left;">柱別</th>
@@ -1067,9 +1067,9 @@
             if (result.sceneAdvice) {
                 const advList = Array.isArray(result.sceneAdvice) ? result.sceneAdvice : [result.sceneAdvice];
                 sceneAdviceHtml = `
-                    <div style="background:rgba(236,72,153,0.08); border-left:4px solid #ec4899; padding:12px 14px; border-radius:6px; margin-top:12px; font-size:13.5px;">
-                        <strong style="color:#db2777;">💡 ${escapeHtml(sceneLabel)} 專屬處方建議：</strong>
-                        <ul style="margin:6px 0 0 16px; padding:0; color:var(--suite-text); line-height:1.6;">
+                    <div style="background:rgba(236,72,153,0.08); border-left:4px solid #ec4899; padding:12px 14px; border-radius:6px; margin-top:12px; font-size:15px;">
+                        <strong style="color:#db2777; font-size:15.5px;">💡 ${escapeHtml(sceneLabel)} 專屬處方建議：</strong>
+                        <ul style="margin:6px 0 0 16px; padding:0; color:var(--suite-text); line-height:1.65;">
                             ${advList.map(a => `<li>${escapeHtml(a)}</li>`).join('')}
                         </ul>
                     </div>
@@ -1082,7 +1082,7 @@
                         <div style="font-size: var(--type-display); font-weight:700; color:var(--suite-primary);">
                             📜 八字合盤評分：${escapeHtml(result.score || 75)} 分（${escapeHtml(result.grade || '佳偶天成')}）
                         </div>
-                        <span class="suite-tag" style="background:#fce7f3; color:#be185d; font-weight:800; font-size:12.5px;">${escapeHtml(sceneLabel)}</span>
+                        <span class="suite-tag" style="background:#fce7f3; color:#be185d; font-weight:800; font-size:13.5px;">${escapeHtml(sceneLabel)}</span>
                     </div>
                     <div class="zodiac-score-bar" style="margin-bottom:12px;">
                         <div class="zodiac-score-fill" style="width:${Math.min(result.score || 75, 100)}%;"></div>
@@ -2668,18 +2668,18 @@
 
                 const matches = data.results || data.matches || [];
                 if (matches.length === 0) {
-                    inverseResults.innerHTML = `<div style="background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:10px; border-radius:4px; font-size:13.5px; color:#ef4444;">⚠️ 在 ${escapeHtml(startYear)}~${escapeHtml(endYear)} 年間未找到符合四柱「${escapeHtml(pillars)}」之公曆生辰。請檢查干支是否合乎月令與日上起時口訣。</div>`;
+                    inverseResults.innerHTML = `<div style="background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:12px 14px; border-radius:6px; font-size:15px; color:#ef4444; line-height:1.6;">⚠️ 在 ${escapeHtml(startYear)}~${escapeHtml(endYear)} 年間未找到符合四柱「${escapeHtml(pillars)}」之公曆生辰。請檢查干支是否合乎月令與日上起時口訣。</div>`;
                     return;
                 }
 
                 const rowsHtml = matches.map(m => `
                     <tr style="border-bottom:1px solid var(--suite-border);">
-                        <td style="padding:8px 10px; font-weight:700; color:var(--suite-primary);">${escapeHtml(m.solarDate)}</td>
-                        <td style="padding:8px 10px;">${escapeHtml(m.time || m.shichen || '')}</td>
-                        <td style="padding:8px 10px; font-size:12px; color:var(--suite-text-muted);">${escapeHtml(m.lunarText || '')}</td>
-                        <td style="padding:8px 10px; font-family:monospace; font-weight:600;">${escapeHtml(m.pillars || pillars)}</td>
+                        <td style="padding:8px 10px; font-weight:700; color:var(--suite-primary); font-size:15px;">${escapeHtml(m.solarDate)}</td>
+                        <td style="padding:8px 10px; font-size:15px;">${escapeHtml(m.time || m.shichen || '')}</td>
+                        <td style="padding:8px 10px; font-size:15px; color:var(--suite-text-muted);">${escapeHtml(m.lunarText || '')}</td>
+                        <td style="padding:8px 10px; font-family:monospace; font-weight:600; font-size:15px;">${escapeHtml(m.pillars || pillars)}</td>
                         <td style="padding:8px 10px; text-align:right;">
-                            <button type="button" class="btn btn-xs btn-primary js-apply-inverse-match" data-date="${escapeHtml(m.solarDate)}" data-time="${escapeHtml(m.time || '12:00')}" style="padding:4px 12px; font-weight:700; border-radius:12px;">
+                            <button type="button" class="btn btn-xs btn-primary js-apply-inverse-match" data-date="${escapeHtml(m.solarDate)}" data-time="${escapeHtml(m.time || '12:00')}" style="padding:5px 14px; font-weight:700; border-radius:14px; font-size:15px;">
                                 帶入排盤 ➔
                             </button>
                         </td>
@@ -2688,11 +2688,11 @@
 
                 inverseResults.innerHTML = `
                     <div style="background:var(--suite-bg-card, rgba(255,255,255,0.03)); border:1px solid var(--suite-border); border-radius:8px; padding:12px; margin-top:8px;">
-                        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:8px;">
+                        <div style="font-size:15.5px; font-weight:700; color:#10b981; margin-bottom:8px;">
                             ✅ 找到 ${matches.length} 個符合西曆生辰候選：
                         </div>
                         <div style="overflow-x:auto;">
-                            <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                            <table style="width:100%; border-collapse:collapse; font-size:15px;">
                                 <thead>
                                     <tr style="border-bottom:1.5px solid var(--suite-border); color:var(--suite-text-muted);">
                                         <th style="padding:6px 10px; text-align:left;">公曆日期</th>
@@ -2722,7 +2722,7 @@
                 });
             } catch (err) {
                 if (inverseResults) {
-                    inverseResults.innerHTML = `<div style="background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:10px; border-radius:4px; font-size:13.5px; color:#ef4444;">⚠️ 反查失敗：${escapeHtml(err.message)}</div>`;
+                    inverseResults.innerHTML = `<div style="background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:12px 14px; border-radius:6px; font-size:15px; color:#ef4444; line-height:1.6;">⚠️ 反查失敗：${escapeHtml(err.message)}</div>`;
                 }
             } finally {
                 btnInverse.disabled = false;
@@ -2749,7 +2749,7 @@
             btnSensitivity.textContent = '正在橫向比對各時辰…';
             if (sensResults) {
                 sensResults.style.display = 'block';
-                sensResults.innerHTML = '<div style="color:var(--suite-primary); padding:10px;">⏱️ 正在計算各候選時辰之日主強弱、喜用神、格局與袁天罡骨重差異…</div>';
+                sensResults.innerHTML = '<div style="color:var(--suite-primary); padding:10px; font-size:15px;">⏱️ 正在計算各候選時辰之日主強弱、喜用神、格局與袁天罡骨重差異…</div>';
             }
 
             try {
@@ -2769,16 +2769,16 @@
 
                 const candHtml = candidates.map(c => `
                     <tr style="border-bottom:1px solid var(--suite-border);">
-                        <td style="padding:8px 10px; font-weight:700; color:var(--suite-primary);">${escapeHtml(c.shichen || '')} <small style="color:var(--suite-text-muted);">(${escapeHtml(c.time || '')})</small></td>
-                        <td style="padding:8px 10px; font-family:monospace; font-weight:700;">${escapeHtml(c.hourPillar || '')}</td>
+                        <td style="padding:8px 10px; font-weight:700; color:var(--suite-primary); font-size:15px;">${escapeHtml(c.shichen || '')} <small style="color:var(--suite-text-muted);">(${escapeHtml(c.time || '')})</small></td>
+                        <td style="padding:8px 10px; font-family:monospace; font-weight:700; font-size:15px;">${escapeHtml(c.hourPillar || '')}</td>
                         <td style="padding:8px 10px;">
                             <span class="suite-tag ${c.strength === '身旺' || c.strength === '身極旺' ? 'auspicious' : 'inauspicious'}">${escapeHtml(c.strength || '')}</span>
                         </td>
-                        <td style="padding:8px 10px; color:#22c55e; font-weight:600;">${escapeHtml(c.usefulGod || '')}</td>
-                        <td style="padding:8px 10px; color:var(--suite-text);">${escapeHtml(c.gejuPattern || '')}</td>
-                        <td style="padding:8px 10px; font-weight:700; color:#b45309;">${escapeHtml(c.chengguWeight || '')}</td>
+                        <td style="padding:8px 10px; color:#22c55e; font-weight:600; font-size:15px;">${escapeHtml(c.usefulGod || '')}</td>
+                        <td style="padding:8px 10px; color:var(--suite-text); font-size:15px;">${escapeHtml(c.gejuPattern || '')}</td>
+                        <td style="padding:8px 10px; font-weight:700; color:#b45309; font-size:15px;">${escapeHtml(c.chengguWeight || '')}</td>
                         <td style="padding:8px 10px; text-align:right;">
-                            <button type="button" class="btn btn-xs btn-primary js-apply-candidate-time" data-time="${escapeHtml(c.time || '12:00')}" style="padding:4px 12px; font-weight:700; border-radius:12px;">
+                            <button type="button" class="btn btn-xs btn-primary js-apply-candidate-time" data-time="${escapeHtml(c.time || '12:00')}" style="padding:5px 14px; font-weight:700; border-radius:14px; font-size:15px;">
                                 選用此時辰 ➔
                             </button>
                         </td>
@@ -2787,8 +2787,8 @@
 
                 const questionsHtml = questions.length > 0 ? `
                     <div style="margin-top:14px; background:rgba(254,243,199,0.2); border-left:4px solid #f59e0b; padding:12px 14px; border-radius:6px;">
-                        <strong style="color:#b45309; font-size:13.5px;">💡 時辰定時校準引導（若在相鄰時辰猶豫，對照下列經歷核實）：</strong>
-                        <ul style="margin:6px 0 0 16px; padding:0; font-size:13px; color:var(--suite-text); line-height:1.6;">
+                        <strong style="color:#b45309; font-size:15.5px;">💡 時辰定時校準引導（若在相鄰時辰猶豫，對照下列經歷核實）：</strong>
+                        <ul style="margin:6px 0 0 16px; padding:0; font-size:15px; color:var(--suite-text); line-height:1.65;">
                             ${questions.map(q => `<li>${escapeHtml(q)}</li>`).join('')}
                         </ul>
                     </div>
@@ -2797,7 +2797,7 @@
                 sensResults.innerHTML = `
                     <div style="background:var(--suite-bg-card, rgba(255,255,255,0.03)); border:1px solid var(--suite-border); border-radius:8px; padding:14px; margin-top:8px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-                            <div style="font-size:14px; font-weight:800; color:var(--suite-primary);">
+                            <div style="font-size:16px; font-weight:800; color:var(--suite-primary);">
                                 ⏱️ 出生日期 ${escapeHtml(date)} · 候選時辰全維度對比
                             </div>
                             <span class="suite-tag" style="background:${stableFacts.isStrengthConsistent ? '#ecfdf5' : '#fee2e2'}; color:${stableFacts.isStrengthConsistent ? '#065f46' : '#991b1b'}; font-weight:700;">
@@ -2805,7 +2805,7 @@
                             </span>
                         </div>
                         <div style="overflow-x:auto;">
-                            <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                            <table style="width:100%; border-collapse:collapse; font-size:15px;">
                                 <thead>
                                     <tr style="border-bottom:1.5px solid var(--suite-border); color:var(--suite-text-muted);">
                                         <th style="padding:6px 10px; text-align:left;">時辰 (時間)</th>
@@ -2835,7 +2835,7 @@
                 });
             } catch (err) {
                 if (sensResults) {
-                    sensResults.innerHTML = `<div style="background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:10px; border-radius:4px; font-size:13.5px; color:#ef4444;">⚠️ 校準失敗：${escapeHtml(err.message)}</div>`;
+                    sensResults.innerHTML = `<div style="background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:12px 14px; border-radius:6px; font-size:15px; color:#ef4444; line-height:1.6;">⚠️ 校準失敗：${escapeHtml(err.message)}</div>`;
                 }
             } finally {
                 btnSensitivity.disabled = false;
