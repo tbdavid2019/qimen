@@ -4251,16 +4251,52 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
 .ziwei-pattern-card.level-caution { border-color:#fb7185; background:linear-gradient(135deg,#fff1f2,#ffe4e6); }
 .ziwei-pattern-card summary { cursor:pointer; display:flex; align-items:center; gap:9px; padding:12px 14px; list-style:none; font-size:15px; }
 .ziwei-pattern-card summary::-webkit-details-marker { display:none; }
-.ziwei-pattern-badge, .ziwei-shensha-chip { display:inline-flex; align-items:center; border-radius:999px; padding:4px 9px; font-size:11px; font-weight:800; white-space:nowrap; }
+.ziwei-pattern-badge, .ziwei-shensha-chip { display:inline-flex; align-items:center; border-radius:999px; padding:4px 9px; font-size:11.5px; font-weight:750; white-space:nowrap; }
 .ziwei-pattern-badge { background:#059669; color:white; }
 .level-good .ziwei-pattern-badge { background:#b45309; }.level-neutral .ziwei-pattern-badge { background:#0284c7; }.level-caution .ziwei-pattern-badge { background:#e11d48; }
-.ziwei-pattern-summary { color:var(--suite-text-muted); font-size:12px; font-weight:500; margin-left:auto; }
-.ziwei-pattern-body { padding:0 14px 13px; }.ziwei-pattern-condition { display:flex; gap:8px; padding:6px 0; font-size:12px; border-top:1px solid rgba(100,116,139,.18); }.ziwei-pattern-condition strong { min-width:68px; }.ziwei-pattern-condition.required strong { color:#047857; }.ziwei-pattern-condition.bonus strong { color:#a16207; }.ziwei-pattern-condition.breaking strong { color:#be123c; }.ziwei-pattern-source { margin-top:8px; color:var(--suite-text-muted); font-size:11px; font-weight:700; }
-.ziwei-shensha-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }.ziwei-shensha-chip { font-size:10px; padding:3px 7px; background:rgba(14,116,144,.1); color:#0e7490; }.ziwei-shensha-chip.jiang { background:rgba(124,58,237,.1); color:#6d28d9; }.ziwei-shensha-chip.boshi { background:rgba(180,83,9,.12); color:#92400e; }
-.ziwei-match-panel { border:2px solid #fda4af; background:linear-gradient(135deg,#fff0f3,#ffd1dc); box-shadow:0 12px 32px rgba(244,63,94,.16); }.ziwei-match-intro { font-size:13.5px; line-height:1.5; }.ziwei-match-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; }.ziwei-match-party { display:grid; gap:9px; padding:15px; border:1.5px solid rgba(244,63,94,.3); border-radius:12px; background:rgba(255,255,255,.6); }.ziwei-match-party h3 { margin:0; font-size:17px; font-weight:800; }.ziwei-match-submit { grid-column:1/-1; text-align:center; margin-top:8px; }.ziwei-match-score-hero { text-align:center; padding:18px; margin-top:18px; border-radius:14px; background:linear-gradient(135deg,#be123c,#fb7185); color:white; box-shadow:0 10px 26px rgba(190,18,60,.25); }.ziwei-match-score-hero span { font-size:13px; font-weight:700; }.ziwei-match-score-hero strong { display:block; font-size:48px; line-height:1.05; font-weight:900; }.ziwei-match-score-hero small { font-size:18px; }.ziwei-match-score-hero p { margin:8px auto 0; max-width:620px; }.ziwei-match-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-top:12px; }.ziwei-match-item { padding:12px; border-radius:11px; background:rgba(255,255,255,.72); border:1px solid rgba(190,18,60,.18); }.ziwei-match-item strong { font-size:14px; }.ziwei-match-score { float:right; color:#be123c; font-weight:800; }.ziwei-match-item p, .ziwei-match-advice p { margin:7px 0 0; font-size:12.5px; line-height:1.5; }.ziwei-match-advice { margin-top:12px; padding:13px; border-radius:11px; background:#fffbeb; border:1.5px solid #fcd34d; }.ziwei-match-error { margin-top:12px; padding:12px; color:#9f1239; background:#fff1f2; border:1px solid #fda4af; border-radius:10px; }
+.ziwei-pattern-summary { color:var(--suite-text-muted); font-size:13px; font-weight:500; margin-left:auto; }
+.ziwei-pattern-body { padding:0 14px 13px; }.ziwei-pattern-condition { display:flex; gap:8px; padding:6px 0; font-size:13px; border-top:1px solid rgba(100,116,139,.18); }.ziwei-pattern-condition strong { min-width:68px; }.ziwei-pattern-condition.required strong { color:#047857; }.ziwei-pattern-condition.bonus strong { color:#a16207; }.ziwei-pattern-condition.breaking strong { color:#be123c; }.ziwei-pattern-source { margin-top:8px; color:var(--suite-text-muted); font-size:12px; font-weight:600; }
+.ziwei-shensha-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }.ziwei-shensha-chip { font-size:11px; padding:3px 8px; font-weight:700; background:rgba(14,116,144,.1); color:#0e7490; }.ziwei-shensha-chip.jiang { background:rgba(124,58,237,.1); color:#6d28d9; }.ziwei-shensha-chip.boshi { background:rgba(180,83,9,.12); color:#92400e; }
+.ziwei-match-panel { border:2px solid #fda4af; background:linear-gradient(135deg,#fff0f3,#ffd1dc); box-shadow:0 12px 32px rgba(244,63,94,.16); }
+.ziwei-match-intro { font-size:14px; line-height:1.6; }
+.ziwei-match-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; }
+.ziwei-match-party { display:grid; gap:9px; padding:15px; border:1.5px solid rgba(244,63,94,.3); border-radius:12px; background:rgba(255,255,255,.6); }
+.ziwei-match-party h3 { margin:0; font-size:16px; font-weight:800; }
+.ziwei-match-submit { grid-column:1/-1; text-align:center; margin-top:8px; }
+
+/* 核心修復：排版字體比例平穩，避免「呼大呼小」極端落差 */
+.ziwei-match-score-hero { text-align:center; padding:18px 20px; margin-top:18px; border-radius:14px; background:linear-gradient(135deg,#be123c,#fb7185); color:white; box-shadow:0 10px 26px rgba(190,18,60,.25); }
+.ziwei-match-score-hero span, .ziwei-match-hero-label { display:block; font-size:13.5px; font-weight:700; letter-spacing:0.5px; opacity:0.95; }
+.ziwei-match-score-hero strong, .ziwei-match-hero-score { display:inline-flex; align-items:baseline; justify-content:center; gap:2px; font-size:30px; line-height:1.2; font-weight:800; margin:6px 0 8px; }
+.ziwei-match-score-hero small, .ziwei-match-hero-denom { font-size:14px; font-weight:600; opacity:0.85; }
+.ziwei-match-score-hero p, .ziwei-match-hero-desc { margin:6px auto 0; max-width:620px; font-size:14px; line-height:1.6; font-weight:500; opacity:0.95; }
+
+/* 2x2 對稱維度網格，徹底解決 3+1 單張卡片孤立掉落問題 */
+.ziwei-match-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:14px; }
+@media (max-width:640px) { .ziwei-match-grid { grid-template-columns:1fr; } }
+
+.ziwei-match-item { display:flex; flex-direction:column; justify-content:flex-start; padding:14px 16px; border-radius:12px; background:rgba(255,255,255,.8); border:1px solid rgba(190,18,60,.18); box-shadow:0 2px 8px rgba(190,18,60,.04); }
+.ziwei-match-item-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.ziwei-match-item strong, .ziwei-match-item-title { font-size:14.5px; font-weight:750; color:var(--suite-text); }
+.ziwei-match-score { font-size:14px; font-weight:750; color:#be123c; white-space:nowrap; }
+.ziwei-match-num { font-size:15px; font-weight:800; }
+.ziwei-match-denom { font-size:12.5px; font-weight:600; color:var(--suite-text-muted); }
+.ziwei-match-item p, .ziwei-match-item-desc { margin:8px 0 0; font-size:13.5px; line-height:1.6; color:var(--suite-text); flex-grow:1; }
+
+.ziwei-match-advice { margin-top:14px; padding:15px 18px; border-radius:12px; background:#fffbeb; border:1.5px solid #fcd34d; box-shadow:0 2px 8px rgba(245,158,11,.06); }
+.ziwei-match-advice strong, .ziwei-match-advice-title { display:block; font-size:15px; font-weight:800; color:#92400e; margin-bottom:6px; }
+.ziwei-match-advice p, .ziwei-match-advice-desc { margin:0; font-size:14px; line-height:1.65; color:#451a03; }
+.ziwei-match-error { margin-top:12px; padding:12px 14px; color:#9f1239; background:#fff1f2; border:1px solid #fda4af; border-radius:10px; font-size:13.5px; line-height:1.5; }
+
 @media (max-width:767px) { .ziwei-pattern-card summary { align-items:flex-start; flex-wrap:wrap; }.ziwei-pattern-summary { flex-basis:100%; margin-left:0; }.ziwei-match-form { grid-template-columns:1fr; }.ziwei-match-party { min-width:0; } }
 [data-theme="dark"] .ziwei-mode-card.mode-card-match, [data-theme="dark"] .ziwei-match-panel { background:linear-gradient(135deg,rgba(127,29,63,.28),rgba(190,18,60,.2)); color:var(--suite-text); }
 [data-theme="dark"] .ziwei-pattern-card, .dark-mode .ziwei-pattern-card { background:rgba(15,23,42,.5); color:var(--suite-text); }
 [data-theme="dark"] .ziwei-match-item { background:rgba(30,41,59,.7); border-color:rgba(244,63,94,.3); color:var(--suite-text); }
+[data-theme="dark"] .ziwei-match-item strong, [data-theme="dark"] .ziwei-match-item-title { color:#f8fafc; }
+[data-theme="dark"] .ziwei-match-score { color:#fda4af; }
+[data-theme="dark"] .ziwei-match-denom { color:#cbd5e1; }
+[data-theme="dark"] .ziwei-match-item p, [data-theme="dark"] .ziwei-match-item-desc { color:#e2e8f0; }
 [data-theme="dark"] .ziwei-match-party { background:rgba(15,23,42,.6); }
 [data-theme="dark"] .ziwei-match-advice { background:rgba(45,35,15,.6); border-color:#d97706; color:var(--suite-text); }
+[data-theme="dark"] .ziwei-match-advice strong, [data-theme="dark"] .ziwei-match-advice-title { color:#fcd34d; }
+[data-theme="dark"] .ziwei-match-advice p, [data-theme="dark"] .ziwei-match-advice-desc { color:#fef3c7; }

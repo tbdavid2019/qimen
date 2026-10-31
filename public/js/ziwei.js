@@ -32,8 +32,32 @@
 
     function renderMatchReport(report) {
         if (!report) return '';
-        const item = (title, data) => `<article class="ziwei-match-item"><strong>${escapeHtml(title)}</strong><span class="ziwei-match-score">${escapeHtml(data?.score ?? 0)} / 100</span><p>${escapeHtml(data?.desc || '')}</p></article>`;
-        return `<section class="ziwei-match-report"><div class="ziwei-match-score-hero"><span>合盤契合指數</span><strong>${escapeHtml(report.score)}<small>/100</small></strong><p>${escapeHtml(report.summary)}</p></div><div class="ziwei-match-grid">${item('命宮主星相合度', report.synastryAnalysis?.mingCompatibility)}${item('夫妻宮投射契合', report.synastryAnalysis?.fuqiProjection)}${item('四化互照', report.synastryAnalysis?.sihuaInteraction)}${item('煞星對衝', report.synastryAnalysis?.shaClash)}</div><div class="ziwei-match-advice"><strong>理性相處指南</strong><p>${escapeHtml(report.advice)}</p></div></section>`;
+        const item = (title, data) => `
+            <article class="ziwei-match-item">
+                <header class="ziwei-match-item-head">
+                    <strong class="ziwei-match-item-title">${escapeHtml(title)}</strong>
+                    <span class="ziwei-match-score"><span class="ziwei-match-num">${escapeHtml(data?.score ?? 0)}</span><span class="ziwei-match-denom"> / 100</span></span>
+                </header>
+                <p class="ziwei-match-item-desc">${escapeHtml(data?.desc || '')}</p>
+            </article>`;
+        return `
+            <section class="ziwei-match-report">
+                <div class="ziwei-match-score-hero">
+                    <span class="ziwei-match-hero-label">合盤契合指數</span>
+                    <strong class="ziwei-match-hero-score">${escapeHtml(report.score)}<small class="ziwei-match-hero-denom"> / 100</small></strong>
+                    <p class="ziwei-match-hero-desc">${escapeHtml(report.summary)}</p>
+                </div>
+                <div class="ziwei-match-grid">
+                    ${item('命宮主星相合度', report.synastryAnalysis?.mingCompatibility)}
+                    ${item('夫妻宮投射契合', report.synastryAnalysis?.fuqiProjection)}
+                    ${item('四化互照', report.synastryAnalysis?.sihuaInteraction)}
+                    ${item('煞星對衝', report.synastryAnalysis?.shaClash)}
+                </div>
+                <div class="ziwei-match-advice">
+                    <strong class="ziwei-match-advice-title">理性相處指南</strong>
+                    <p class="ziwei-match-advice-desc">${escapeHtml(report.advice)}</p>
+                </div>
+            </section>`;
     }
 
     window.ZiweiUI = { renderPatterns, renderShensha, renderMatchReport };
