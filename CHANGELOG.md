@@ -4,6 +4,22 @@
 
 ## [2026-10-31]
 
+### 🔠 全站模式切換卡與繁體中文介面字級全面提升 (Eradicate Tiny 12px~13px Typography Across Suite)
+
+- **模式切換導覽卡 (Mode Cards) 排版全面大字化**：
+  - `.mode-card-title`, `.tarot-mode-title`：從 15px~16px 全面升級至 `18px`（`font-weight: 800`）。
+  - `.mode-card-desc`, `.tarot-mode-desc`：徹底消除使用者檢測到的 12.5px/13px 小字，升級至 `15.5px`（`line-height: 1.5`、對比色深灰 `#374151`）。
+  - `.mode-card-badge`, `.tarot-mode-badge`：從 10.5px~11px 升級至 `13.5px`（`font-weight: 750`、膠囊 padding `3px 9px`）。
+- **特色功能橫幅 (Feature Banners) 移除 13px 行內樣式**：
+  - 紫微未來另一半、男生尺寸速測、塔羅生命靈數、全牌庫圖鑑橫幅副標題全面從 13px 提升至 `16px`（行高 `1.7`），標題提升至 `18px`（`font-weight: 800`）。
+- **13 大專題深度論斷區塊排版優化**：
+  - 橫向主題標籤（`.ziwei-domain-tab-btn`）從 13.5px 升至 `15.5px`（高度 44px 觸控友善）。
+  - 宮位定調語（`.ziwei-dingdiao-text`）提升至 `16.5px`（字重 750）。
+  - 專題論斷正文（`.ziwei-domain-prose`）提升至 `16px`（行高 1.85）。
+  - 古籍出處與神煞大運標籤提升至 `14px~14.5px`。
+- **全站輔助文字全面升級**：
+  - 六爻三卜同參、八字反查、時辰定時神器、梅花起卦、風水配星等所有副標與輔助說明全面從 13px/13.5px 拔高至 `15px~15.5px`，徹底杜絕模糊小字。
+
 ### 💍 紫微雙人合盤深度演算法重構與行動端 CJK 繁體中文字體標準落實 (Deep Synastry Engine & Mobile Typography Standard)
 
 - **行動端繁體中文排版規範落實（遵循 Apple HIG 與 CJK 方塊字排版準則，徹底杜絕 12px~14px 擠壓模糊小字）**：

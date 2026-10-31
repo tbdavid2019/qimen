@@ -185,7 +185,7 @@
                     </div>
                     <span class="mode-card-desc">單字問吉凶 · 拆字機鋒與 81 數理直斷</span>
                 </div>
-                <span class="btn suite-btn-primary" style="padding: 6px 14px; font-size: 13px; font-weight: 700; white-space: nowrap; margin-left: 8px;">
+                <span class="btn suite-btn-primary" style="padding: 8px 16px; font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 8px;">
                     立即測算 ➔
                 </span>
             </a>
@@ -201,7 +201,7 @@
                     </div>
                     <span class="mode-card-desc">先天體質稟賦 · 24 節氣食養與經絡鐘</span>
                 </div>
-                <span class="btn suite-btn-primary" style="padding: 6px 14px; font-size: 13px; font-weight: 700; white-space: nowrap; margin-left: 8px;">
+                <span class="btn suite-btn-primary" style="padding: 8px 16px; font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 8px;">
                     立即排算 ➔
                 </span>
             </a>
@@ -215,7 +215,7 @@
                 <div>
                     <h2 class="qimen-stage-title" style="display: flex; align-items: center; gap: 8px;">
                         <span>AI 宗師直斷 · 專題用神問答</span>
-                        <span class="suite-tag suite-tag-gold" style="font-size: 12px;">四維奇門透析</span>
+                        <span class="suite-tag suite-tag-gold" style="font-size: 13.5px;">四維奇門透析</span>
                     </h2>
                     <p class="qimen-stage-desc">
                         免讀繁複排盤術語！直接選定生活焦點或輸入心中疑問，AI 宗師自動鎖定專屬用神與主客動靜，直面解答。
@@ -254,7 +254,7 @@
                         <option value="出行">🚗 出行方位（主用神：目標方位宮）</option>
                         <option value="官司">⚖️ 官司合約（主用神：驚門 / 開門）</option>
                     </select>
-                    <span id="yongshenTip" class="label label-primary qimen-meta-badge" style="padding: 7px 12px; border-radius: 16px; font-size: 13px;">
+                    <span id="yongshenTip" class="label label-primary qimen-meta-badge" style="padding: 7px 12px; border-radius: 16px; font-size: 15px;">
                         🎯 主用神：值符 / 日干
                     </span>
                 </div>
@@ -296,8 +296,8 @@
             <hr style="margin: 20px 0 16px; border: 0; border-top: 1px dashed var(--claude-border, #E8E0D6);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                 <div>
-                    <strong style="font-size: 15px; color: var(--claude-text-main);"><i data-lucide="compass"></i> 想看當前時間點的整體盤局總評？</strong>
-                    <p class="text-muted" style="font-size: 13px; margin: 2px 0 0;">綜合值符值使、九星八門與天干克應，生成全局運勢與行動決策指引</p>
+                    <strong style="font-size: 16px; color: var(--claude-text-main);"><i data-lucide="compass"></i> 想看當前時間點的整體盤局總評？</strong>
+                    <p class="text-muted" style="font-size: 15px; margin: 4px 0 0; line-height: 1.6;">綜合值符值使、九星八門與天干克應，生成全局運勢與行動決策指引</p>
                 </div>
                 <div id="llmInitialPanel">
                     <button id="startLLMAnalysis" class="btn suite-btn-secondary" style="font-weight: 700; border-color: var(--claude-primary);">
@@ -314,8 +314,8 @@
                             <span class="sr-only">解盤中...</span>
                         </div>
                     </div>
-                    <p style="font-size: 15px; font-weight: 600;"><i data-lucide="hourglass"></i> 正在深度分析奇門全盤吉凶…</p>
-                    <p class="text-muted" style="font-size: 13px;">結合九宮拆補、動靜生剋與主客動向，請稍候</p>
+                    <p style="font-size: 16px; font-weight: 600;"><i data-lucide="hourglass"></i> 正在深度分析奇門全盤吉凶…</p>
+                    <p class="text-muted" style="font-size: 15px; line-height: 1.6;">結合九宮拆補、動靜生剋與主客動向，請稍候</p>
                 </div>
             </div>
 
@@ -747,7 +747,7 @@
                                         </span>
                                         </h4>
                                     </div>
-                                    <div class="panel-body" style="padding: 12px; font-size: 13px; line-height: 1.6;">
+                                    <div class="panel-body" style="padding: 14px 16px; font-size: 15px; line-height: 1.65;">
                                         <p><strong>方位:</strong> <%= qimen.jiuGongAnalysis[i].direction || '' %> ｜ 
                                         <strong><%= t('analysis.jiuxing') %>:</strong> <%= qimen.jiuGongAnalysis[i].xing || '' %><% if (qimen.jiuGongAnalysis[i].xingAlias) { %>(<%= qimen.jiuGongAnalysis[i].xingAlias %>)<% } %></p>
                                         <% if (qimen.jiuGongAnalysis[i].men) { %>
@@ -911,7 +911,7 @@
                     </h3>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted" style="font-size: 13.5px; line-height: 1.5; margin-bottom: 16px;">
+                    <p class="text-muted" style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
                         將本次奇門排盤數據與全部問答對話完整發送到您的電子信箱存檔備份：
                     </p>
                     <div class="form-group">
@@ -919,7 +919,7 @@
                         <input type="email" class="form-control input-lg" id="conversationEmailInput" placeholder="name@example.com" required autocomplete="email">
                     </div>
                     <%- include('partials/turnstile-widget.html', { widgetId: 'email-turnstile', action: 'send_email', explicit: true }) %>
-                    <div id="emailModalAlert" class="alert" style="display: none; font-size: 13px; margin-top: 12px; margin-bottom: 0;"></div>
+                    <div id="emailModalAlert" class="alert" style="display: none; font-size: 14.5px; margin-top: 12px; margin-bottom: 0;"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
