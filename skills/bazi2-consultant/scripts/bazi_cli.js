@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { calculateBazi, lookupBaziDates, analyzeBaziTimeSensitivity } = require(path.join(__dirname, '../../../lib/bazi2.js'));
+const { calculateKoreanSaju } = require(path.join(__dirname, '../../../lib/korean-saju.js'));
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -103,6 +104,8 @@ function run() {
             result = lookupBaziDates(input);
         } else if (input.mode === 'sensitivity' || input.mode === 'time-sensitivity') {
             result = analyzeBaziTimeSensitivity(input);
+        } else if (input.mode === 'saju' || input.mode === 'korean_saju') {
+            result = calculateKoreanSaju(input);
         } else {
             result = calculateBazi(input);
         }

@@ -46,14 +46,15 @@ node skills/bazi2-consultant/scripts/ask_bazi2.js --date 1990-05-15 --time 12:00
 
 或使用底層純計算腳本 `bazi_cli.js` / `bazi2.js` 進行高級模式推演：
 - **標準四柱與稱骨、五運六氣**：`node skills/bazi2-consultant/scripts/bazi_cli.js --date 1990-05-15 --time 12:00 --sex 男`
+- **韓式現代四柱 (K-Saju · 18장 평생사주)**：`node skills/bazi2-consultant/scripts/bazi_cli.js --mode saju --date 1990-05-15 --time 12:00 --sex 男`
 - **四柱反查西曆生辰**：`node skills/bazi2-consultant/scripts/bazi_cli.js --mode inverse --pillars "庚午 辛巳 庚辰 壬午"`
 - **時辰敏感度校準分析**：`node skills/bazi2-consultant/scripts/bazi_cli.js --mode sensitivity --date 1990-05-15 --time-range morning`
 
-或透過 API 模式發送 `POST /api/bazi2-question` 獲取結構化排盤與命理解讀。
+或透過 API 模式發送 `POST /api/bazi2-question`（可指定 `mode: "saju"`）獲取結構化排盤與命理解讀。
 
 ### `ask_bazi2.js` 與 `bazi_cli.js` 參數
 
-支援 inline JSON、stdin JSON，以及下列命令列旗標：`--question`、`--date`（`YYYY-MM-DD`）、`--time`、`--shichen`、`--hour`、`--sex`、`--calendar`、`--leap`、`--mode`（`chart` / `inverse` / `sensitivity`）、`--pillars`（四柱反查字串）、`--time-range`（`all` / `morning` / `afternoon` / `evening` / `night`）、`--start-year`、`--end-year`、`--deceasedYear`、`--allowUnknownHour`、`--name`、`--formerName`、`--place`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
+支援 inline JSON、stdin JSON，以及下列命令列旗標：`--question`、`--date`（`YYYY-MM-DD`）、`--time`、`--shichen`、`--hour`、`--sex`、`--calendar`、`--leap`、`--mode`（`chart` / `saju` / `inverse` / `sensitivity`）、`--pillars`（四柱反查字串）、`--time-range`（`all` / `morning` / `afternoon` / `evening` / `night`）、`--start-year`、`--end-year`、`--deceasedYear`、`--allowUnknownHour`、`--name`、`--formerName`、`--place`、`--lang`、`--conversationHistory`。API base URL 可用 `QIMEN_API_BASE_URL` 覆寫。
 
 ---
 

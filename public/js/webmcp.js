@@ -1588,6 +1588,7 @@
 		bazi2_chart: createSuiteTool("bazi2_chart", "生辰八字2四柱、十神藏干、神煞、旺衰格局與命理解讀。", "/api/bazi2-question", {
 			type: "object",
 			properties: {
+				mode: { type: "string", enum: ["ziping", "saju"], description: "命理模式：ziping (子平正統) 或 saju (韓式現代四柱 K-Saju · 18장 평생사주)" },
 				question: { type: "string", description: "使用者的命理問題" },
 				date: { type: "string", description: "出生日期 YYYY-MM-DD" },
 				time: { type: "string", description: "出生時間 HH:mm" },
@@ -1604,6 +1605,23 @@
 				conversationHistory: { type: "array", description: "可選的續問對話歷史" }
 			},
 			required: ["question", "date"]
+		}),
+		korean_saju_chart: createSuiteTool("korean_saju_chart", "韓式現代四柱 (K-Saju · 18장 평생사주)：日干靈魂原型 (東方 MBTI)、身強身弱 0~100 能量天秤、缺行生活開運錦囊、四柱宮位四幕人生與 18 章平生深度指南。", "/api/bazi2-question", {
+			type: "object",
+			properties: {
+				question: { type: "string", description: "想請教的事項或人生困惑" },
+				date: { type: "string", description: "出生日期 YYYY-MM-DD" },
+				time: { type: "string", description: "出生時間 HH:mm" },
+				shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "傳統出生時辰地支" },
+				hour: { type: "integer", minimum: 0, maximum: 23, description: "出生小時 (0-23)" },
+				sex: { type: "string", enum: ["男", "女"], description: "命主性別" },
+				calendar: { type: "string", enum: ["solar", "lunar"], description: "曆法" },
+				name: { type: "string", description: "姓名（可選）" },
+				place: { type: "string", description: "出生地（可選，如首爾、台北、香港）" },
+				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+				mode: { type: "string", enum: ["saju"], description: "固定為 saju 模式" }
+			},
+			required: ["date"]
 		}),
 		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣籤（100籤）、生肖配對、紫微夫妻宮、桃花運勢、八字合婚與紅線測算指引。", "/api/yinyuan-question", {
 			type: "object",
@@ -1836,6 +1854,7 @@
 		} else if (pathname === "/bazi2") {
 			toolsToRegister = [
 				toolDefinitions.bazi2_chart,
+				toolDefinitions.korean_saju_chart,
 				toolDefinitions.bazi_inverse_lookup,
 				toolDefinitions.bazi_time_sensitivity,
 				toolDefinitions.switch_theme,

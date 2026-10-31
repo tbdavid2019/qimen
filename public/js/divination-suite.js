@@ -526,8 +526,126 @@
             </div>
         ` : '';
 
+        const boardTitle = chart.koreanSaju
+            ? `🇰🇷 韓式現代四柱命盤 (K-Saju · 18장 평생사주) · 西曆 ${escapeHtml(chart.profile?.solarDate || '')} · 農曆 ${escapeHtml(chart.profile?.lunar || '')}`
+            : `📜 四柱八字命盤（${escapeHtml(chart.profile?.solarDate || '')} · 農曆 ${escapeHtml(chart.profile?.lunar || '')}）`;
+
+        let sajuHeaderHtml = '';
+        if (chart.koreanSaju) {
+            const ks = chart.koreanSaju;
+            const arch = ks.archetype || {};
+            const em = ks.energyMeter || {};
+            const feb = ks.fiveElementsBalance || {};
+            const remedy = feb.primaryRemedy || {};
+            const palaces = ks.palaceBreakdown || [];
+            const chapters = ks.chapters || [];
+
+            sajuHeaderHtml = `
+                <div class="saju-dashboard">
+                    <!-- 1. 日干靈魂原型卡 (Ilgan Soul Archetype) -->
+                    <div class="saju-archetype-card">
+                        <div class="saju-archetype-header">
+                            <div class="saju-archetype-title">
+                                <span>🇰🇷 靈魂原型：${escapeHtml(arch.title || '')}</span>
+                                <small style="font-size: 15px; color: var(--suite-text-muted);">（${escapeHtml(arch.chineseTitle || '')}）</small>
+                            </div>
+                            <span class="saju-mbti-badge">東方 MBTI：${escapeHtml(arch.mbtiResonance || '')}</span>
+                        </div>
+                        <div class="saju-keywords-row">
+                            ${(arch.coreKeywords || []).map(k => `<span class="saju-keyword-tag"># ${escapeHtml(k)}</span>`).join('')}
+                        </div>
+                        <p style="font-size: 15.5px; line-height: 1.7; margin-bottom: 8px;">
+                            <strong>【核心性格】</strong>${escapeHtml(arch.strengths || '')}
+                        </p>
+                        <p style="font-size: 15px; color: var(--suite-text-muted); line-height: 1.6; margin-bottom: 0;">
+                            <strong>【隱藏盲點】</strong>${escapeHtml(arch.vulnerabilities || '')}
+                        </p>
+                    </div>
+
+                    <!-- 2. 身強身弱能量天秤 (Singang / Sinyak Energy Meter) -->
+                    <div class="saju-meter-box">
+                        <div class="saju-meter-header">
+                            <span class="saju-meter-title">⚖️ 身強身弱能量天秤 (신강·신약 밸런스)</span>
+                            <span class="saju-meter-score">${em.score || 50} 分 · ${escapeHtml(em.levelChinese || '')}</span>
+                        </div>
+                        <div class="saju-meter-track">
+                            <div class="saju-meter-fill" style="width: ${Math.min(100, Math.max(10, em.score || 50))}%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: var(--suite-text-muted); margin-bottom: 8px;">
+                            <span>極弱 (0~35)</span>
+                            <span>身弱 (36~46)</span>
+                            <span>中和 (47~52)</span>
+                            <span>身強 (53~64)</span>
+                            <span>極旺 (65~100)</span>
+                        </div>
+                        <div style="font-size: 15px; line-height: 1.6; color: var(--suite-text);">
+                            <strong>【能量解析】</strong>${escapeHtml(em.description || '')}
+                            <span style="font-size: 13.5px; color: var(--suite-text-muted); margin-left: 6px;">（得令 ${em.details?.deungryeong || 0}% + 得地 ${em.details?.deungji || 0}% + 得勢 ${em.details?.deungse || 0}%）</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. 缺失五行生活開運錦囊 (Lifestyle Remedies - 개운법) -->
+                    <div class="saju-remedy-card">
+                        <div class="saju-remedy-title">
+                            <i data-lucide="sparkles"></i> 缺失五行生活開運錦囊 (결핍 오행 개운법)
+                            ${feb.missingElements?.length ? `<span class="suite-tag" style="background:#ef4444; color:#fff; font-size:13px; margin-left:6px;">缺${feb.missingElements.join('、')}</span>` : '<span class="suite-tag" style="background:#10b981; color:#fff; font-size:13px; margin-left:6px;">五行流通俱全</span>'}
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px;">
+                            <div style="background: rgba(255,255,255,0.65); padding: 10px 12px; border-radius: 8px;">
+                                <strong style="font-size: 14px; color: #15803d;">🎨 補運穿著色彩：</strong>
+                                <div style="font-size: 14.5px; margin-top: 2px;">${escapeHtml((remedy.colors || []).join('、'))}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.65); padding: 10px 12px; border-radius: 8px;">
+                                <strong style="font-size: 14px; color: #15803d;">🧭 幸運吉方：</strong>
+                                <div style="font-size: 14.5px; margin-top: 2px;">${escapeHtml((remedy.luckyDirections || []).join('、'))}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.65); padding: 10px 12px; border-radius: 8px;">
+                                <strong style="font-size: 14px; color: #15803d;">🥗 飲食養生建議：</strong>
+                                <div style="font-size: 14.5px; margin-top: 2px;">${escapeHtml((remedy.dietWellness || []).slice(0, 2).join('、'))}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 14.5px; line-height: 1.6; color: #166534;">
+                            <strong>【日常開運微行動】</strong>${escapeHtml(remedy.actionAdvice || '')}
+                        </div>
+                    </div>
+
+                    <!-- 4. 四柱宮位四幕人生 (궁위론 4대 영역) -->
+                    <div style="margin: 6px 0;">
+                        <div style="font-size: 16px; font-weight: 750; margin-bottom: 8px;">🏛️ 四柱宮位四幕人生劇本 (궁위론)</div>
+                        <div class="saju-palaces-grid">
+                            ${palaces.map(p => `
+                                <div class="saju-palace-card">
+                                    <div class="saju-palace-title">${escapeHtml(p.hangul)}</div>
+                                    <div class="saju-palace-age">${escapeHtml(p.ageRange)}</div>
+                                    <div class="saju-palace-value">${escapeHtml(p.pillarValue)}</div>
+                                    <div style="font-size: 13.5px; color: var(--suite-primary); font-weight: 600;">${escapeHtml(p.tenGod)} · ${escapeHtml(p.changsheng)}</div>
+                                    <div style="font-size: 13px; color: var(--suite-text-muted); line-height: 1.4; margin-top: 2px;">${escapeHtml(p.role)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 5. 18章平生四柱解碼目錄 (18장 목차) -->
+                    <details class="suite-details" style="margin-top: 10px; background: rgba(0,0,0,0.02); border-radius: 10px; border: 1px dashed var(--suite-border);">
+                        <summary style="font-weight: 750; color: #be123c; cursor: pointer; padding: 10px 14px;">
+                            📋 點擊展開查看：韓式平生四柱 18 章解析目錄架構 (18장 평생사주 목차)
+                        </summary>
+                        <div style="padding: 10px 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px;">
+                            ${chapters.map(c => `
+                                <div style="font-size: 14px; padding: 6px 8px; border-bottom: 1px solid rgba(0,0,0,0.04);">
+                                    <strong>第 ${c.chapter} 章：${escapeHtml(c.title)}</strong>
+                                    <div style="font-size: 12.5px; color: var(--suite-text-muted);">${escapeHtml(c.desc)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </details>
+                </div>
+            `;
+        }
+
         visualBoard.innerHTML = `
-            <div class="suite-board-title">📜 四柱八字命盤（${escapeHtml(chart.profile?.solarDate || '')} · 農曆 ${escapeHtml(chart.profile?.lunar || '')}）</div>
+            <div class="suite-board-title">${boardTitle}</div>
+            ${sajuHeaderHtml}
             ${tableHtml}
             ${diagnosisHtml}
             ${elementsHtml}
@@ -535,6 +653,9 @@
             ${luckCyclesHtml}
         `;
         visualBoard.hidden = false;
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
 
         // 袁天罡稱骨算命卡
         const chengguBox = document.getElementById('chengguBox');
@@ -2634,6 +2755,37 @@
 
     // --- Helper Tools for Bazi2 (Inverse Lookup & Time Sensitivity) ---
     if (page === 'bazi2') {
+        // 0. 模式切換器 (子平正統 vs 韓式現代四柱 K-Saju)
+        const btnModeZiping = document.getElementById('btnModeZiping');
+        const btnModeSaju = document.getElementById('btnModeSaju');
+        const baziModeInput = document.getElementById('baziMode');
+        const zipingBanner = document.getElementById('zipingBanner');
+        const sajuBanner = document.getElementById('sajuBanner');
+        const submitBtn = document.getElementById('suiteSubmitBtn');
+        const baziQuestionInput = document.getElementById('baziQuestion');
+
+        function setBaziMode(mode) {
+            if (baziModeInput) baziModeInput.value = mode;
+            btnModeZiping?.classList.toggle('active', mode === 'ziping');
+            btnModeSaju?.classList.toggle('active', mode === 'saju');
+            if (zipingBanner) zipingBanner.style.display = mode === 'ziping' ? '' : 'none';
+            if (sajuBanner) sajuBanner.style.display = mode === 'saju' ? '' : 'none';
+
+            if (submitBtn) {
+                submitBtn.innerHTML = mode === 'saju'
+                    ? '<span>🇰🇷 排盤並解鎖 18 章平生四柱解碼 ➔</span>'
+                    : '<span>✨ 排盤並查看子平命理解讀</span>';
+            }
+            if (baziQuestionInput) {
+                baziQuestionInput.placeholder = mode === 'saju'
+                    ? '例如：想看職場適性、正緣何時出現、五行缺什麼如何補運？'
+                    : '例如：想了解未來的事業創業方向、財運重點或感情走向';
+            }
+        }
+
+        btnModeZiping?.addEventListener('click', () => setBaziMode('ziping'));
+        btnModeSaju?.addEventListener('click', () => setBaziMode('saju'));
+
         // 1. 四柱干支反查西曆生辰
         const btnInverse = document.getElementById('btnBaziInverseLookup');
         const inverseResults = document.getElementById('baziInverseResults');

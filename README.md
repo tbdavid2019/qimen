@@ -119,6 +119,14 @@
 - **爻辭與應期**：完整 64 卦與 384 爻動爻爻辭、體用五行生剋旺衰、四季得時與先天數應期推算。
 
 ### 5. 📜 八字命理 / 賽博算命 (`/bazi2` & `/api/bazi2-question`)
+- **雙模式自由切換 (Dual-Mode Divination)**：
+  - **子平正統八字 (`mode=ziping`)**：年月日時四柱天干地支、六十甲子納音五行、十二長生運、十神與藏干、旺衰與五行力量、格局與喜用神、吉凶神煞、十年大運與流年、袁天罡稱骨算命及五運六氣臟腑養生。
+  - **韓式現代四柱 K-Saju (`mode=saju` / `POST /api/saju/chart` & `POST /api/saju-question`)**：參考韓國頂尖開源 `be-realdeveloper/saju`（真實萬歲曆 18 章平生四柱）與 `imgompanda/drsaju-opensource`（AI 四柱分析），以真實萬歲曆與真太陽時均時差為骨架，融合東方靈魂心理學：
+    - **10 日干靈魂原型 (Ilgan Soul Archetypes)**：以日干為本質映射東方 MBTI 心理畫像（甲木高大松樹 ENFJ/ENTJ、乙木蔓藤花草 INFP/ENFP、丙木太陽烈火 ESFP/ENFJ、丁火溫暖燭光 INFJ/ISFJ、戊土廣袤大地 ISFJ/ESFJ、己土肥沃田園 ISFP/INFP、庚金剛毅利劍 ESTJ/ISTJ、辛金璀璨珠寶 INTJ/ISFP、壬水汪洋大海 ENTP/INTJ、癸水滋潤甘霖 INTP/INFJ）。
+    - **身強身弱能量天秤 (Singang / Sinyak Score 0~100)**：得令 (30%) + 得地 (30%) + 得勢 (40%) 嚴謹量化，輸出極身強、身強、中和平衡、身弱、極身弱五大能量段位與行動策略。
+    - **缺失五行生活開運法 (개운법 - Lifestyle Remedies)**：精準診斷命盤缺失之木/火/土/金/水，提供開運幸運色、吉利方位、補運食療、開運日常微習慣與行動指南。
+    - **四柱宮位人生四大舞台 (궁위론 - 4 Palaces)**：年柱 (0-19歲 祖蔭與童年)、月柱 (20-39歲 青年與職場舞台)、日柱 (40-59歲 壯年自我與婚姻)、時柱 (60歲+ 晚年與人生終局)。
+    - **18 章平生四柱解讀指南 (SAJU 18 Chapters Lifetime Roadmap)**：涵蓋靈魂本質、天賦才幹、職場事業、正財偏財、感情婚戀、十年大運、流年機遇等 18 大章節系統化解碼。
 - **四柱排盤**：年月日時四柱天干地支、六十甲子納音五行、十二長生運。
 - **十神與藏干**：十神六親、地支本氣/中氣/餘氣藏干。
 - **旺衰與五行力量**：日主得令、得地、得勢判定（身旺/身弱），五行百分比能量分佈。
@@ -220,7 +228,7 @@
 | **紫微斗數** | `question`, `date`, `time`, `shichen`, `sex`, `calendar`, `leap`, `name`, `conversationHistory`, `mode` (chart/spouse/male-size/match), `first`, `second`, `patterns` | `/ziwei`, `/ziwei/spouse`, `/ziwei/male-size`、雙人合盤 | `POST /api/ziwei-question`, `POST /api/ziwei/chart`, `POST /api/ziwei/spouse`, `POST /api/ziwei/male-size`, `POST /api/ziwei/match` | `skills/ziwei-consultant/scripts/ziwei_cli.js` & `ask_ziwei.js` | `ziwei_chart`, `ziwei_chart_only`, `calculate_ziwei_chart`, `match_ziwei_charts`, `ziwei_future_spouse`, `ziwei_male_size` |
 | **梅花易數** | `question`, `method` (time/number/text), `text`, `num1..3`, `purpose`, `conversationHistory` | `/meihua` | `POST /api/meihua-question` | `skills/meihua-consultant/scripts/ask_meihua.js` | `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_qigua_text`, `meihua_question`, `meihua_divination` |
 | **六爻神卦** | `question`, `category`, `method` (coins/dayan/datetime/manual), `lines`, `datetime`, `conversationHistory` | `/liuyao` | `POST /api/liuyao-question`, `POST /api/liuyao` | `skills/liuyao-consultant/scripts/ask_liuyao.js` | `liuyao_cast_divination` |
-| **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory`, `yearPillar`, `monthPillar`, `dayPillar`, `hourPillar` | `/bazi2` | `POST /api/bazi2-question`, `POST /api/bazi2/inverse-lookup`, `POST /api/bazi2/time-sensitivity` | `skills/bazi2-consultant/scripts/ask_bazi2.js` | `bazi2_chart`, `bazi_inverse_lookup`, `bazi_time_sensitivity` |
+| **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory`, `yearPillar`, `monthPillar`, `dayPillar`, `hourPillar`, `mode` (ziping/saju) | `/bazi2` | `POST /api/bazi2-question`, `POST /api/saju-question`, `POST /api/saju/chart`, `POST /api/bazi2/inverse-lookup`, `POST /api/bazi2/time-sensitivity` | `skills/bazi2-consultant/scripts/bazi_cli.js` & `ask_bazi2.js` | `bazi2_chart`, `korean_saju_chart`, `bazi_inverse_lookup`, `bazi_time_sensitivity` |
 | **月老姻緣** | `question`, `mode` (6大模式), `scene` (marriage/business/colleague), `name`, `sex`, `stickNum` (1-100), `calendar`, `date`, `time`, `status`, `stage`, `scope`, `seekingSex`, `first/secondZodiac`, `first/secondYear`, `first/second` (雙方四柱), `preference` | `/yinyuan` | `POST /api/yinyuan-question` | `skills/yinyuan-consultant/scripts/ask_yinyuan.js` | `yinyuan_reading` |
 | **易經風水** | `question`, `mode` (yangzhai/shaqi/zeri/evaluate-layout), `gateDir`, `masterDir`, `stoveDir`, `facing`, `heading`, `northReference`, `declination`, `headingSource`, `layoutObjects`, `entryPath`, `pathQuality`, `moveInYear`, `residentYear`, `sex`, `year`, `shaType`, `matter`, `zeriYear`, `zeriMonth` | `/fengshui` | `POST /api/fengshui-question`, `POST /api/fengshui/evaluate-layout`, `POST /api/fengshui/report` | `skills/fengshui-consultant/scripts/fengshui_cli.js` & `ask_fengshui.js` | `fengshui_report`, `fengshui_layout_evaluation`, `zeri_auspicious_search` |
 | **韋特塔羅** | `question`, `spread` (6大牌陣), `variant` (4種視角), `time_factor`, `seed`, `conversationHistory` | `/tarot` | `POST /api/tarot-question` | `skills/tarot-consultant/scripts/ask_tarot.js` | `tarot_reading` |

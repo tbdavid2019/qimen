@@ -23,6 +23,7 @@ const APITimeHandler = require('./lib/api-time-handler');
 const { parseCivilTime } = require('./lib/civil-time');
 const { drawCards, SPREADS: TAROT_SPREADS, calculateTarotNumerology, getAllTarotCards } = require('./lib/tarot');
 const { calculateBazi, lookupBaziDates, analyzeBaziTimeSensitivity } = require('./lib/bazi2');
+const { calculateKoreanSaju } = require('./lib/korean-saju');
 const {
     calculateFengShui,
     evaluateMenZhuZao,
@@ -635,13 +636,17 @@ app.post('/api/time/boundary', handleTimeBoundary);
 const handleBaziChart = async (req, res) => {
     try {
         const payload = { ...(req.query || {}), ...(req.body || {}) };
-        const chart = calculateBazi(payload);
-        const discord = await sendModuleRecord('生辰八字2', payload, chart);
+        const isSaju = payload.mode === 'saju' || payload.mode === 'korean_saju';
+        const chart = isSaju ? calculateKoreanSaju(payload) : calculateBazi(payload);
+        const moduleName = isSaju ? '韓式四柱命理' : '生辰八字2';
+        const discord = await sendModuleRecord(moduleName, payload, chart);
         res.json({ success: true, chart, discord });
     } catch (error) { res.status(400).json({ success: false, error: error.message }); }
 };
 app.post('/api/bazi2/chart', handleBaziChart);
 app.get('/api/bazi2/chart', handleBaziChart);
+app.post('/api/saju/chart', handleBaziChart);
+app.get('/api/saju/chart', handleBaziChart);
 
 const handleBaziInverseLookup = async (req, res) => {
     try {
@@ -1087,12 +1092,16 @@ const bazi2QuestionHandler = createServiceQuestionHandler({
     moduleName: '生辰八字2',
     resultKey: 'chart',
     validate: validateBaziQuestion,
-    calculate: calculateBazi,
+    calculate: (payload) => (payload.mode === 'saju' || payload.mode === 'korean_saju')
+        ? calculateKoreanSaju(payload)
+        : calculateBazi(payload),
     analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeBazi2(result, opts),
     discord: discordWebhook
 });
 app.post('/api/bazi2-question', bazi2QuestionHandler);
 app.get('/api/bazi2-question', bazi2QuestionHandler);
+app.post('/api/saju-question', bazi2QuestionHandler);
+app.get('/api/saju-question', bazi2QuestionHandler);
 
 const yinyuanQuestionHandler = createServiceQuestionHandler({
     moduleName: '姻緣',

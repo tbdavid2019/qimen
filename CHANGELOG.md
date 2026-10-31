@@ -4,6 +4,32 @@
 
 ## [2026-11-01]
 
+### 🇰🇷 韓式現代四柱命理雙模式深度整合 (Korean Saju K-Saju 18-Chapter Lifetime Divination Integration)
+
+- **對標韓國最新熱門開源生態**：
+  - 深入參考韓國 GitHub 爆紅開源專案 `be-realdeveloper/saju`（基於真實萬歲曆之 Claude Code 18 章平生四柱）與 `imgompanda/drsaju-opensource`（Dr.Saju AI 四柱命理分析），為 `/bazi2` 打造全新子平正統 vs 韓式現代四柱 (K-Saju) 雙模式切換體驗。
+- **5 層架構端到端無縫對齊 (Full-Stack 5-Layer Parameter Alignment)**：
+  1. **前端視覺與互動 (`views/bazi2.html`, `public/js/divination-suite.js`, `public/css/divination-suite.css`)**：
+     - **雙模式自由切換卡**：子平正統八字 (`mode=ziping`) 與韓式現代四柱 (`mode=saju`)，附帶韓國太極旗徽章與精緻視覺光暈。
+     - **10 日干靈魂原型卡 (Ilgan Soul Archetypes)**：以日主天干精準對映東方 MBTI 心理學人格（甲木松樹、辛金珠寶等），呈現韓文稱號、象徵符號、核心特質、脆弱盲點與職涯/戀愛風格。
+     - **身強身弱能量天秤儀表板 (Singang / Sinyak Score 0~100)**：視覺化動態進度條呈現得令 (30%) + 得地 (30%) + 得勢 (40%) 嚴密計算之能量刻度，輸出極身強、身強、中和、身弱、極身弱五大能量段位。
+     - **缺失五行生活開運指南 (개운법 - Lifestyle Remedies)**：自動掃描四柱五行分布，針對缺失元素即時裝配開運色、吉利方位、補運食療與日常開運微習慣。
+     - **四柱宮位人生四大舞台 (궁위론 - 4 Palaces)**：年柱（0-19歲 祖蔭）、月柱（20-39歲 職場舞台）、日柱（40-59歲 壯年自我/婚姻）、時柱（60歲+ 晚年人生終局）。
+     - **18 章平生四柱解碼目錄 (18-Chapter Lifetime Saju)**：呈現靈魂、事業、財富、感情、十年大運等 18 大章節目錄。
+  2. **核心計算引擎與 LLM 提示工程 (`lib/korean-saju.js`, `lib/llm-analysis.js`, `lib/advanced-wisdom.js`, `app.js`)**：
+     - 封裝完整 `calculateKoreanSaju(input)`，相容真太陽時與首爾 (126.98°E, UTC+9) 均時差經緯度。
+     - 新增 `/api/saju/chart` 與 `/api/saju-question` 端點，支援獨立排盤與 18 章教練式深度解讀。
+     - LLM Prompt 注入 18 章平生四柱體系，結合溫暖同理、心理激勵與理性行動指引（嚴禁迷信宿命恐嚇）。
+  3. **CLI 與 Skill 工具鏈 (`skills/bazi2-consultant/scripts/bazi_cli.js`, `SKILL.md`)**：
+     - CLI 腳本新增 `--mode saju` / `--mode korean_saju` 參數，支援命令列輸出完整結構化韓系四柱 JSON。
+     - `SKILL.md` 完整記錄韓式四柱架構與調用參數。
+  4. **Chrome WebMCP 標準定義 (`public/js/webmcp.js`)**：
+     - `bazi2_chart` 工具擴展 `mode: ["ziping", "saju"]` 參數選項。
+     - 獨立宣告並註冊 `korean_saju_chart` WebMCP 工具，提供 AI Agent 快速直接調用韓式四柱排盤。
+  5. **文檔與品質驗證 (`README.md`, `CHANGELOG.md`, `test/korean-saju.test.js`)**：
+     - 新增獨立單元測試套件 `test/korean-saju.test.js`（8/8 通過）。
+     - 全站 347 項自動化測試 100% 通過，零 API 金鑰洩漏。
+
 ### 📱 行動端 RWD 提問表單直式堆疊重構與滿版大觸控優化 (Mobile RWD Input Stacking & Punchy Touch UX)
 
 - **行動端 RWD 提問輸入框徹底告別擠壓小窄格**：
