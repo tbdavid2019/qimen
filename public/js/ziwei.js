@@ -32,18 +32,55 @@
 
     function renderMatchReport(report) {
         if (!report) return '';
+        const formatParagraphs = (text) => {
+            if (!text) return '';
+            return text.split('\n\n').filter(Boolean).map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br>')}</p>`).join('');
+        };
         const item = (title, data) => `
             <article class="ziwei-match-item">
                 <header class="ziwei-match-item-head">
                     <strong class="ziwei-match-item-title">${escapeHtml(title)}</strong>
                     <span class="ziwei-match-score"><span class="ziwei-match-num">${escapeHtml(data?.score ?? 0)}</span><span class="ziwei-match-denom"> / 100</span></span>
                 </header>
-                <p class="ziwei-match-item-desc">${escapeHtml(data?.desc || '')}</p>
+                <div class="ziwei-match-item-desc">${formatParagraphs(data?.desc || '')}</div>
             </article>`;
+
+        const fSpouse = report.firstSpouseAnalysis;
+        const sSpouse = report.secondSpouseAnalysis;
+        const fStars = fSpouse?.majorStars?.length ? fSpouse.majorStars.join('、') : (fSpouse?.isBorrowed ? '借對宮主星' : '無主星');
+        const sStars = sSpouse?.majorStars?.length ? sSpouse.majorStars.join('、') : (sSpouse?.isBorrowed ? '借對宮主星' : '無主星');
+
+        const spouseProfilesHtml = (fSpouse && sSpouse) ? `
+            <div class="ziwei-match-profiles-header">
+                <h4 class="ziwei-match-profiles-heading">💍 雙方夫妻宮本命理想正緣畫像對照</h4>
+                <p class="ziwei-match-profiles-sub">對照彼此夫妻宮潛意識投射之伴侶特質，了解雙方在心靈深處渴望被如何對待與理解。</p>
+            </div>
+            <div class="ziwei-match-profiles">
+                <article class="ziwei-match-profile-card">
+                    <h5 class="ziwei-match-profile-title">第一人夫妻宮畫像（所求${escapeHtml(fSpouse.targetGender || '伴侶')}）</h5>
+                    <div class="ziwei-match-profile-body">
+                        <p class="ziwei-match-profile-line"><strong>坐守星曜：</strong>【${escapeHtml(fStars)}】</p>
+                        <p class="ziwei-match-profile-line"><strong>理想樣貌：</strong>${escapeHtml(fSpouse.appearance || '以對宮照會星曜為準')}</p>
+                        <p class="ziwei-match-profile-line"><strong>性格氣質：</strong>${escapeHtml(fSpouse.personality || '以對宮照會星曜為準')}</p>
+                        <p class="ziwei-match-profile-line"><strong>相處契機：</strong>${escapeHtml(fSpouse.timing || '以對宮照會星曜為準')}</p>
+                    </div>
+                </article>
+                <article class="ziwei-match-profile-card">
+                    <h5 class="ziwei-match-profile-title">第二人夫妻宮畫像（所求${escapeHtml(sSpouse.targetGender || '伴侶')}）</h5>
+                    <div class="ziwei-match-profile-body">
+                        <p class="ziwei-match-profile-line"><strong>坐守星曜：</strong>【${escapeHtml(sStars)}】</p>
+                        <p class="ziwei-match-profile-line"><strong>理想樣貌：</strong>${escapeHtml(sSpouse.appearance || '以對宮照會星曜為準')}</p>
+                        <p class="ziwei-match-profile-line"><strong>性格氣質：</strong>${escapeHtml(sSpouse.personality || '以對宮照會星曜為準')}</p>
+                        <p class="ziwei-match-profile-line"><strong>相處契機：</strong>${escapeHtml(sSpouse.timing || '以對宮照會星曜為準')}</p>
+                    </div>
+                </article>
+            </div>
+        ` : '';
+
         return `
             <section class="ziwei-match-report">
                 <div class="ziwei-match-score-hero">
-                    <span class="ziwei-match-hero-label">合盤契合指數</span>
+                    <span class="ziwei-match-hero-label">雙人合盤契合指數</span>
                     <strong class="ziwei-match-hero-score">${escapeHtml(report.score)}<small class="ziwei-match-hero-denom"> / 100</small></strong>
                     <p class="ziwei-match-hero-desc">${escapeHtml(report.summary)}</p>
                 </div>
@@ -53,9 +90,10 @@
                     ${item('四化互照', report.synastryAnalysis?.sihuaInteraction)}
                     ${item('煞星對衝', report.synastryAnalysis?.shaClash)}
                 </div>
+                ${spouseProfilesHtml}
                 <div class="ziwei-match-advice">
-                    <strong class="ziwei-match-advice-title">理性相處指南</strong>
-                    <p class="ziwei-match-advice-desc">${escapeHtml(report.advice)}</p>
+                    <strong class="ziwei-match-advice-title">💡 理性相處與磨合指南</strong>
+                    <div class="ziwei-match-advice-desc">${formatParagraphs(report.advice)}</div>
                 </div>
             </section>`;
     }
