@@ -1297,14 +1297,14 @@
 						window.conversationHistory.push({ role: "user", content: userQuestion });
 						window.conversationHistory.push({ role: "assistant", content: answerText });
 					}
-					window.lastSuiteResult = data.result || data.reading || data.report || data.chart || null;
+					window.lastSuiteResult = data.result || data.reading || data.report || data.chart || data.match || null;
 				}
 
 				return JSON.stringify({
 					answer: data.answer || null,
 					analysis: data.analysis || null,
 					mode: data.mode || null,
-					result: data.result || data.reading || data.report || data.chart || null,
+					result: data.result || data.reading || data.report || data.chart || data.match || null,
 					metadata: data.metadata || null
 				}, null, 2);
 			},
@@ -1312,7 +1312,7 @@
 	}
 
 	Object.assign(toolDefinitions, {
-		ziwei_chart_only: createSuiteTool("ziwei_chart_only", "只計算並回傳紫微斗數命盤，不呼叫 LLM，也不送出 Discord 紀錄。", "/api/ziwei/chart", {
+		ziwei_chart_only: createSuiteTool("ziwei_chart_only", "只計算並回傳紫微斗數命盤；包含 34 種古籍格局（成格/加分/破格/出處）與每宮歲前、將前、博士十二神，不呼叫 LLM，也不送出 Discord 紀錄。", "/api/ziwei/chart", {
 			type: "object", properties: {
 				date: { type: "string", format: "date", description: "出生日期 YYYY-MM-DD" },
 				time: { type: "string", description: "出生時間 HH:mm" },
@@ -1323,6 +1323,20 @@
 				skipRecord: { type: "boolean", default: true, description: "略過 Discord 紀錄；純排盤工具預設開啟" }
 			}, required: ["date"]
 		}, { skipRecord: true }),
+		calculate_ziwei_chart: createSuiteTool("calculate_ziwei_chart", "計算完整紫微命盤，輸出十四主星善本廟旺、三組十二神煞、34 種格局條件與夫妻宮深度畫像。", "/api/ziwei/chart", {
+			type: "object", properties: {
+				date: { type: "string", format: "date", description: "出生日期 YYYY-MM-DD" },
+				time: { type: "string", description: "出生時間 HH:mm" },
+				shichen: { type: "string", enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] },
+				sex: { type: "string", enum: ["男", "女"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, leap: { type: "boolean" }
+			}, required: ["date"]
+		}, { skipRecord: true }),
+		match_ziwei_charts: createSuiteTool("match_ziwei_charts", "雙人紫微合盤：比較命宮主星 30%、夫妻宮投射 30%、四化互照 25%、煞星對衝 15%，回傳契合指數與理性相處指南。", "/api/ziwei/match", {
+			type: "object", properties: {
+				first: { type: "object", description: "第一人出生資料", properties: { date: { type: "string", format: "date" }, time: { type: "string" }, sex: { type: "string", enum: ["男", "女"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, leap: { type: "boolean" } }, required: ["date"] },
+				second: { type: "object", description: "第二人出生資料", properties: { date: { type: "string", format: "date" }, time: { type: "string" }, sex: { type: "string", enum: ["男", "女"] }, calendar: { type: "string", enum: ["solar", "lunar"] }, leap: { type: "boolean" } }, required: ["date"] }
+			}, required: ["first", "second"]
+		}),
 		name_analysis_verify: createSuiteTool("name_analysis_verify", "驗證 2 至 8 字中文姓名，回報字義、讀音、資料可得時的筆畫五格，並提示姓氏切分歧義。", "/api/name-analysis/verify", {
 			type: "object", properties: {
 				name: { type: "string", minLength: 2, maxLength: 8, description: "完整中文姓名，2 至 8 個漢字" },
@@ -1771,6 +1785,10 @@
 				toolDefinitions.switch_theme,
 				toolDefinitions.send_conversation_email,
 			];
+			// 完整紫微頁有雙人表單時，額外暴露合盤工具。
+			if (typeof document !== "undefined" && typeof document.getElementById === "function" && document.getElementById("ziweiMatchForm")) {
+				toolsToRegister.splice(1, 0, toolDefinitions.match_ziwei_charts);
+			}
 		} else if (pathname === "/cezi") {
 			toolsToRegister = [
 				toolDefinitions.cezi_divination,

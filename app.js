@@ -37,6 +37,7 @@ const {
 } = require('./lib/fengshui');
 const { searchAuspiciousTimes, evaluateDecisionCombo, analyzeCezi, calculateYunqiWellness } = require('./lib/advanced-wisdom');
 const { calculateZiweiChart, evaluateMaleSize, evaluateFutureSpouse } = require('./lib/ziwei');
+const { evaluateZiweiMatch } = require('./lib/ziwei-match');
 const { zodiacMatch, drawFortuneStick, ziweiMarriage, peachBlossomLuck, baziMatchFull, redThreadFull } = require('./lib/yinyuan');
 const { calculateTrueSolarTime, resolveCoordinates } = require('./lib/solar-time');
 const { createServiceQuestionHandler, validationError } = require('./lib/service-question');
@@ -264,6 +265,11 @@ function renderZiweiPage(req, res, activeMode = 'chart') {
             title: '3秒測男生真實尺寸 · 紫微斗數出廠規格與體質雙核速測',
             description: '拒絕單看子位虛標！紫微斗數「子位出廠氣象＋疾厄宮實體肉身」雙核合參，3秒解鎖男生真實尺寸區間與實戰體質。',
             canonicalUrl: 'https://qi.david888.com/ziwei/male-size'
+        },
+        match: {
+            title: '雙人紫微合盤 · 夫妻宮投射與四化互照契合指數',
+            description: '輸入雙方出生年月日時，以命宮主星、夫妻宮投射、四化互照與煞星衝破深度診斷兩人命理契合度與理性相處指南。',
+            canonicalUrl: 'https://qi.david888.com/ziwei/match'
         }
     };
     const currentMode = req.query.mode && modes[req.query.mode] ? req.query.mode : activeMode;
@@ -280,6 +286,7 @@ function renderZiweiPage(req, res, activeMode = 'chart') {
 app.get('/ziwei', (req, res) => renderZiweiPage(req, res, 'chart'));
 app.get('/ziwei/spouse', (req, res) => renderZiweiPage(req, res, 'spouse'));
 app.get('/ziwei/male-size', (req, res) => renderZiweiPage(req, res, 'male-size'));
+app.get('/ziwei/match', (req, res) => renderZiweiPage(req, res, 'match'));
 app.get('/tarot', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: req.query.mode || 'spread' }));
 app.get('/tarot/numerology', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: 'numerology' }));
 app.get('/tarot/gallery', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: 'gallery' }));
@@ -352,6 +359,26 @@ const handleZiweiSpouse = async (req, res) => {
 };
 app.post('/api/ziwei/spouse', handleZiweiSpouse);
 app.get('/api/ziwei/spouse', handleZiweiSpouse);
+
+const handleZiweiMatch = async (req, res) => {
+    try {
+        const payload = req.body || {};
+        if (!payload.first || !payload.second) {
+            return res.status(400).json({ success: false, error: '請同時提供 first 與 second 兩人的出生資料。', code: 'MISSING_MATCH_PARTY' });
+        }
+        const firstPayload = { ...payload.first };
+        delete firstPayload.palaces;
+        const secondPayload = { ...payload.second };
+        delete secondPayload.palaces;
+        const first = validateZiweiQuestion(firstPayload);
+        const second = validateZiweiQuestion(secondPayload);
+        const result = evaluateZiweiMatch({ first, second });
+        res.json({ success: true, ...result, match: result });
+    } catch (error) {
+        res.status(error.status || error.statusCode || 400).json({ success: false, error: error.message, code: error.code });
+    }
+};
+app.post('/api/ziwei/match', handleZiweiMatch);
 
 const handleTarotReading = async (req, res) => {
     try {
@@ -2333,7 +2360,7 @@ app.get('/api/docs', (req, res) => {
             ziweiChart: {
                 method: "GET / POST",
                 path: "/api/ziwei/chart",
-                description: "獲取正統三合派紫微斗數排盤數據（十二宮、14主星、6吉6煞、四化、格局）",
+                description: "獲取正統三合派紫微斗數排盤數據（十二宮、14主星善本廟旺、三組十二神煞、四化、34種格局條件、夫妻宮深度畫像）",
                 headers: { "Content-Type": "application/json" },
                 parameters: {
                     date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
@@ -2341,6 +2368,16 @@ app.get('/api/docs', (req, res) => {
                     shichen: { type: "string", required: false, description: "傳統時辰地支" },
                     sex: { type: "string", required: false, enum: ["男", "女"], description: "性別" },
                     skipRecord: { type: "boolean", required: false, description: "true 時只計算並回傳命盤，不送出 Discord 紀錄。" }
+                }
+            },
+            ziweiMatch: {
+                method: "POST",
+                path: "/api/ziwei/match",
+                description: "雙人紫微合盤：命宮主星、夫妻宮投射、四化互照與煞星對衝四項評估",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    first: { type: "object", required: true, description: "第一人出生資料（date/time/sex/calendar）" },
+                    second: { type: "object", required: true, description: "第二人出生資料（date/time/sex/calendar）" }
                 }
             },
             ziweiMaleSize: {

@@ -143,6 +143,13 @@
                         <span class="mode-card-desc">子位＋疾厄宮：真實規格與戰鬥力</span>
                     </div>
                 </button>
+                <button type="button" class="ziwei-mode-card mode-card-match" id="btnModeMatch">
+                    <span class="mode-card-icon">💞</span>
+                    <div class="mode-card-content">
+                        <div class="mode-card-header"><span class="mode-card-title">雙人紫微合盤</span><span class="mode-card-badge badge-match">🔥 契合指數</span></div>
+                        <span class="mode-card-desc">夫妻宮投射 · 四化互照 · 理性相處指南</span>
+                    </div>
+                </button>
             </div>
 
             <form id="suiteForm" class="suite-form" toolname="ziwei_chart" tooldescription="紫微斗數排盤與命理解讀" toolautosubmit data-webmcp-tool="analyze_ziwei">
@@ -239,6 +246,17 @@
             </form>
         </div>
 
+        <section id="ziweiMatchPanel" class="suite-card ziwei-match-panel" hidden>
+            <div class="suite-board-title">💞 雙人合盤 <span class="ziwei-inline-badge">雙盤互照</span></div>
+            <p class="ziwei-match-intro">輸入雙方出生資料，從命宮、夫妻宮、四化與煞星四個角度整理相處線索；分數是溝通參考，不是命定結論。</p>
+            <form id="ziweiMatchForm" class="ziwei-match-form">
+                <div class="ziwei-match-party"><h3>第一人</h3><input name="firstName" class="form-control suite-input" placeholder="姓名 / 稱謂（選填）"><select name="firstCalendar" class="form-control suite-input"><option value="solar">國曆（公曆）</option><option value="lunar">農曆（陰曆）</option></select><input name="firstDate" type="date" required class="form-control suite-input"><input name="firstTime" type="time" value="12:00" class="form-control suite-input"><select name="firstSex" class="form-control suite-input"><option value="男">男</option><option value="女">女</option></select></div>
+                <div class="ziwei-match-party"><h3>第二人</h3><input name="secondName" class="form-control suite-input" placeholder="姓名 / 稱謂（選填）"><select name="secondCalendar" class="form-control suite-input"><option value="solar">國曆（公曆）</option><option value="lunar">農曆（陰曆）</option></select><input name="secondDate" type="date" required class="form-control suite-input"><input name="secondTime" type="time" value="12:00" class="form-control suite-input"><select name="secondSex" class="form-control suite-input"><option value="女">女</option><option value="男">男</option></select></div>
+                <div class="suite-submit-container ziwei-match-submit"><button type="submit" class="btn suite-btn-primary">立即合盤揭秘 ➔</button></div>
+            </form>
+            <div id="ziweiMatchResult" hidden></div>
+        </section>
+
         <%- include('partials/ads-mobile.html') %>
 
         <!-- Spouse Fast-Pass Card Result -->
@@ -302,6 +320,7 @@
     <script src="/js/theme.js"></script>
     <script src="/js/lucide.min.js"></script>
     <script src="/js/markdown-renderer.js"></script>
+    <script src="/js/ziwei.js"></script>
     <script src="/js/divination-suite.js"></script>
     <script src="/js/webmcp.js"></script>
     <script src="/js/result-email.js"></script>

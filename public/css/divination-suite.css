@@ -4239,3 +4239,28 @@ table, .table, .suite-badge, .suite-pill, .suite-tag, .label, .badge, [class*="-
     margin-top: 4px;
     line-height: var(--leading-body);
 }
+
+/* 紫微進階：高對比格局、神煞與合盤元件 */
+.ziwei-mode-card.mode-card-match { background: linear-gradient(135deg, #fff0f3, #ffd1dc); border-color: #fda4af; box-shadow: 0 8px 22px rgba(244, 63, 94, .16); }
+.ziwei-mode-card.mode-card-match:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(244, 63, 94, .24); }
+.badge-match { background: #be123c; color: #fff; }
+.ziwei-inline-badge { display:inline-flex; padding:4px 10px; border-radius:999px; background:#fef3c7; color:#92400e; font-size:12px; font-weight:800; }
+.ziwei-pattern-card { margin: 9px 0; border: 1.5px solid #cbd5e1; border-radius: 12px; overflow:hidden; background:linear-gradient(135deg, rgba(255,255,255,.95), rgba(241,245,249,.9)); box-shadow:0 5px 16px rgba(15,23,42,.08); }
+.ziwei-pattern-card.level-excellent { border-color:#34d399; background:linear-gradient(135deg,#ecfdf5,#d1fae5); }
+.ziwei-pattern-card.level-good { border-color:#fcd34d; background:linear-gradient(135deg,#fffbeb,#fef3c7); }
+.ziwei-pattern-card.level-caution { border-color:#fb7185; background:linear-gradient(135deg,#fff1f2,#ffe4e6); }
+.ziwei-pattern-card summary { cursor:pointer; display:flex; align-items:center; gap:9px; padding:12px 14px; list-style:none; font-size:15px; }
+.ziwei-pattern-card summary::-webkit-details-marker { display:none; }
+.ziwei-pattern-badge, .ziwei-shensha-chip { display:inline-flex; align-items:center; border-radius:999px; padding:4px 9px; font-size:11px; font-weight:800; white-space:nowrap; }
+.ziwei-pattern-badge { background:#059669; color:white; }
+.level-good .ziwei-pattern-badge { background:#b45309; }.level-neutral .ziwei-pattern-badge { background:#0284c7; }.level-caution .ziwei-pattern-badge { background:#e11d48; }
+.ziwei-pattern-summary { color:var(--suite-text-muted); font-size:12px; font-weight:500; margin-left:auto; }
+.ziwei-pattern-body { padding:0 14px 13px; }.ziwei-pattern-condition { display:flex; gap:8px; padding:6px 0; font-size:12px; border-top:1px solid rgba(100,116,139,.18); }.ziwei-pattern-condition strong { min-width:68px; }.ziwei-pattern-condition.required strong { color:#047857; }.ziwei-pattern-condition.bonus strong { color:#a16207; }.ziwei-pattern-condition.breaking strong { color:#be123c; }.ziwei-pattern-source { margin-top:8px; color:var(--suite-text-muted); font-size:11px; font-weight:700; }
+.ziwei-shensha-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }.ziwei-shensha-chip { font-size:10px; padding:3px 7px; background:rgba(14,116,144,.1); color:#0e7490; }.ziwei-shensha-chip.jiang { background:rgba(124,58,237,.1); color:#6d28d9; }.ziwei-shensha-chip.boshi { background:rgba(180,83,9,.12); color:#92400e; }
+.ziwei-match-panel { border:2px solid #fda4af; background:linear-gradient(135deg,#fff0f3,#ffd1dc); box-shadow:0 12px 32px rgba(244,63,94,.16); }.ziwei-match-intro { font-size:13.5px; line-height:1.5; }.ziwei-match-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; }.ziwei-match-party { display:grid; gap:9px; padding:15px; border:1.5px solid rgba(244,63,94,.3); border-radius:12px; background:rgba(255,255,255,.6); }.ziwei-match-party h3 { margin:0; font-size:17px; font-weight:800; }.ziwei-match-submit { grid-column:1/-1; text-align:center; margin-top:8px; }.ziwei-match-score-hero { text-align:center; padding:18px; margin-top:18px; border-radius:14px; background:linear-gradient(135deg,#be123c,#fb7185); color:white; box-shadow:0 10px 26px rgba(190,18,60,.25); }.ziwei-match-score-hero span { font-size:13px; font-weight:700; }.ziwei-match-score-hero strong { display:block; font-size:48px; line-height:1.05; font-weight:900; }.ziwei-match-score-hero small { font-size:18px; }.ziwei-match-score-hero p { margin:8px auto 0; max-width:620px; }.ziwei-match-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-top:12px; }.ziwei-match-item { padding:12px; border-radius:11px; background:rgba(255,255,255,.72); border:1px solid rgba(190,18,60,.18); }.ziwei-match-item strong { font-size:14px; }.ziwei-match-score { float:right; color:#be123c; font-weight:800; }.ziwei-match-item p, .ziwei-match-advice p { margin:7px 0 0; font-size:12.5px; line-height:1.5; }.ziwei-match-advice { margin-top:12px; padding:13px; border-radius:11px; background:#fffbeb; border:1.5px solid #fcd34d; }.ziwei-match-error { margin-top:12px; padding:12px; color:#9f1239; background:#fff1f2; border:1px solid #fda4af; border-radius:10px; }
+@media (max-width:767px) { .ziwei-pattern-card summary { align-items:flex-start; flex-wrap:wrap; }.ziwei-pattern-summary { flex-basis:100%; margin-left:0; }.ziwei-match-form { grid-template-columns:1fr; }.ziwei-match-party { min-width:0; } }
+[data-theme="dark"] .ziwei-mode-card.mode-card-match, [data-theme="dark"] .ziwei-match-panel { background:linear-gradient(135deg,rgba(127,29,63,.28),rgba(190,18,60,.2)); color:var(--suite-text); }
+[data-theme="dark"] .ziwei-pattern-card, .dark-mode .ziwei-pattern-card { background:rgba(15,23,42,.5); color:var(--suite-text); }
+[data-theme="dark"] .ziwei-match-item { background:rgba(30,41,59,.7); border-color:rgba(244,63,94,.3); color:var(--suite-text); }
+[data-theme="dark"] .ziwei-match-party { background:rgba(15,23,42,.6); }
+[data-theme="dark"] .ziwei-match-advice { background:rgba(45,35,15,.6); border-color:#d97706; color:var(--suite-text); }

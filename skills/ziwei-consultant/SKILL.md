@@ -17,6 +17,17 @@ description: >
 - `references/sihua.md` — 十天干生年四化（祿權科忌）、四化入十二宮與運限四化效應
 - `references/patterns.md` — 30+ 種常見吉格、凶格與破格判定要點
 
+### 演算法來源與溯源依據 (Provenance)
+
+本技能採用之進階演算法模組（34 種古籍格局判定庫、三組十二神煞、善本星曜廟旺校對、雙人合盤評估算法），演算法架構與知識庫原型參考自開源專案：
+- **上游開源專案**：[Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu) (MIT License)
+- **對應模組路徑**：
+  - 34 種正統古籍格局庫：`lib/ziwei/patterns.ts` → 本專案 `lib/ziwei-patterns.js`
+  - 三組十二神煞排盤：`lib/ziwei/shier-shen.ts` → 本專案 `lib/ziwei-shensha.js`
+  - 夫妻宮星情與合盤權重：`lib/ziwei/heming-knowledge.ts` → 本專案 `lib/ziwei-match.js`
+  - 善本星曜廟旺校正：`lib/ziwei/algorithm.ts` → 本專案 `lib/ziwei.js`
+- **典籍出處**：《紫微斗數全書》、《紫微斗數全集》、《骨髓賦》善本。若日後上游專案有古籍考證更新，可依據上述對應關係進行持續對齊與追蹤。
+
 ---
 
 ## 核心工作流程
@@ -52,10 +63,30 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --time 10:00
 ```
 > **注意**：男生真實尺寸速測僅適用於男性命盤，`--sex` 僅支援 `男`（傳入 `女` 將拒絕計算）。
 
+#### 雙人紫微合盤（Dual Chart Match）
+
+`--match` 接受 JSON stdin、`--input` 檔案，或用 `--first` 與 `--second` 傳入兩個 JSON 物件。輸出包含 0–100 契合分數、雙方夫妻宮深度畫像、命宮/夫妻宮/四化/煞星四項互動分析與理性相處建議：
+
+```bash
+node skills/ziwei-consultant/scripts/ziwei_cli.js --match \
+  --first '{"date":"1990-05-15","time":"12:00","sex":"男"}' \
+  --second '{"date":"1992-08-20","time":"10:00","sex":"女"}'
+```
+
+#### 古籍格局檢視
+
+使用 `--patterns` 只輸出結構化格局；可再加逗號分隔的格局名稱篩選。每筆格局包含 `level`、向下相容的 `type`/`desc`、`required`、`bonus`、`breaking` 與 `source`。
+
+```bash
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --time 12:00 --sex 男 --patterns
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --patterns '日月同宮,化祿入財'
+```
+
 #### Canonical Routes 直達體系與 API
 - 完整排盤直達：`GET /ziwei` (Canonical: `https://qi.david888.com/ziwei`)
 - 純排盤 JSON：`POST /api/ziwei/chart`，傳入出生日期等排盤資料；設 `skipRecord: true` 可只取得確定性命盤，不呼叫 LLM 且不送出 Discord 紀錄。
 - 未來另一半直達：`GET /ziwei/spouse` (Canonical: `https://qi.david888.com/ziwei/spouse`)，支援 `POST /api/ziwei/spouse`
+- 雙人合盤：`POST /api/ziwei/match`，傳入 `{ first: {...}, second: {...} }`，回傳契合分數與四項互動分析。
 - 男生真實尺寸直達：`GET /ziwei/male-size` (Canonical: `https://qi.david888.com/ziwei/male-size`)，支援 `POST /api/ziwei/male-size`
 
 或透過 API 模式呼叫 `node skills/ziwei-consultant/scripts/ask_ziwei.js`。
@@ -74,6 +105,8 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --time 10:00
    - 財帛宮（求財模式與財務管理）
    - 官祿宮（事業發展與工作風格）
 3. **生年四化解析**：祿/權/科/忌分別落於何宮何星，對人生重要領域的增減損益。
-4. **格局判斷**：是否成特殊吉格（如機月同梁、紫府同宮、殺破狼等）或煞忌破格之處。
-5. **焦點問題剖析與大限流年提示**：針對用戶提出的問題給出推演依據。
-6. **行動指引與理性提醒**：指引行動方向，強調命盤為趨勢結構而非絕對命定。
+4. **格局判斷**：34 種古籍格局（如機月同梁、紫府同宮、殺破狼、陽梁昌祿、日月夾命、馬頭帶箭等），同時列出成格、加分、破格與古籍出處。
+5. **三組十二神煞**：每個宮位的將前、歲前、博士十二神，依生年支、祿存與陰陽男女起盤。
+6. **雙人合盤**：以命宮主星 30%、夫妻宮投射 30%、四化互照 25%、煞星對衝 15% 形成參考分數；分數用於整理對話方向，不作絕對預測。
+7. **焦點問題剖析與大限流年提示**：針對用戶提出的問題給出推演依據。
+8. **行動指引與理性提醒**：指引行動方向，強調命盤為趨勢結構而非絕對命定。

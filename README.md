@@ -64,10 +64,11 @@
   - 寅宮起生月順逆定命身宮、起寅首天干定十二宮天干、五行局（水二局、木三局、金四局、土五局、火六局）。
   - 安紫微星與天府星、紫微六星系（紫微、天機、太陽、武曲、天同、廉貞）與天府八星系（天府、太陰、貪狼、巨門、天相、天梁、七殺、破軍）。
   - 安六吉星（文昌、文曲、左輔、右弼、天魁、天鉞）、六煞星（擎羊、陀羅、火星、鈴星、地空、地劫）、祿存、天馬、紅鸞、天喜。
-  - 十四主星廟旺平陷亮度矩陣。
+  - 《紫微斗數全書》善本十四主星廟旺平陷亮度矩陣（含太陰午陷、酉旺、亥子丑廟，天機辰戌廟與天府辰戌旺等校正）。
   - 十天干生年四化（祿權科忌）增減損益。
   - 大限順逆排盤（陽男陰女順行、陰男陽女逆行，起運年齡=局數）與三方四正照會。
-  - 30+ 種吉凶格局自動檢測（紫府同宮、機月同梁、殺破狼、陽梁昌祿、火貪格等）。
+  - 34 種正統古籍格局自動檢測（紫府同宮、機月同梁、殺破狼、陽梁昌祿等），每格輸出成格條件、加分項、破格警示與古籍出處。
+  - 每個宮位附將前、歲前、博士三組十二神煞，供三方四正與流年判讀使用。
 - **💍 快速通關：看出你未來另一半深度解析 (`/ziwei/spouse` & `/api/ziwei/spouse`)**：
   - **破解單星年齡誤區**：雙主星兼看（如武貪、同梁、紫府），正統解析夫妻宮主星、生年四化與吉煞照會。
   - **多維度正緣畫像**：客觀年齡差距區間推定（同齡、大3-6歲、小2-5歲、極端差）、心智成熟度、外貌體態風格標籤、性格優缺點與相處地雷、相遇場合與契機，以及月老感情錦囊。
@@ -78,6 +79,10 @@
 - **三合一 Canonical 路由直達體系**：
   - `/ziwei` (完整排盤) · `/ziwei/spouse` (未來另一半) · `/ziwei/male-size` (男生尺寸) 具備獨立 SEO Canonical Tags 與 History API 無縫切換。
 - **標準 CLI 工具**：`skills/ziwei-consultant/scripts/ziwei_cli.js` 支援 `--spouse` 與 `--male-size` 旗標直接輸出對應的結構化 JSON。
+- **雙人紫微合盤 (`/api/ziwei/match` 與 `/ziwei` 雙人模式)**：輸入雙方姓名、出生年月日時與性別，依命宮主星、夫妻宮投射、四化互照、煞星對衝四項權重計算 0–100 契合指數，並提供理性相處指南。
+- **進階 CLI**：`--patterns` 可輸出或篩選格局；`--match --first '{...}' --second '{...}'` 可直接輸出雙盤合婚 JSON。
+- **📚 演算法來源與溯源追蹤 (Algorithm Provenance)**：
+  - 本模組之「34 種正統古籍格局庫」、「三組十二神煞」、「全書善本廟旺校訂」與「夫妻宮雙盤合婚評估」，算法原型參考並溯源自開源專案 [Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu)（MIT License，基於倪海廈《天紀》體系與《紫微斗數全書》善本校訂）。各核心檔案（`lib/ziwei-patterns.js`、`lib/ziwei-shensha.js`、`lib/ziwei-match.js`、`lib/ziwei.js`）皆已註記對應的上游源碼路徑，確保未來上游若有古籍考證更新時具備完整可追溯性。
 
 ### 3. 🪙 六爻神卦 · 納甲筮法 (`/liuyao` & `/api/liuyao-question`)
 - **正統京房納甲體系 (`lib/liuyao.js`)**：
@@ -208,7 +213,7 @@
 | 服務模組 | 核心參數集合 (Full Parameters) | Web UI 路由 | API 端點 | CLI Skill 腳本 | WebMCP 工具名稱 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **奇門遁甲** | `question`, `purpose` (8大專題), `mode` (adv/trad), `datetime`, `conversationHistory` | `/` & `/custom` | `POST /api/qimen-question` | `skills/qimen-consultant/scripts/qimen_cli.js` & `ask_qimen.js` | `qimen_divination`, `qimen_question`, `qimen_custom_paipan` |
-| **紫微斗數** | `question`, `date`, `time`, `shichen`, `sex`, `calendar`, `leap`, `name`, `conversationHistory`, `mode` (chart/spouse/male-size) | `/ziwei`, `/ziwei/spouse`, `/ziwei/male-size` | `POST /api/ziwei-question`, `POST /api/ziwei/spouse`, `POST /api/ziwei/male-size` | `skills/ziwei-consultant/scripts/ziwei_cli.js` & `ask_ziwei.js` | `ziwei_chart`, `ziwei_future_spouse`, `ziwei_male_size` |
+| **紫微斗數** | `question`, `date`, `time`, `shichen`, `sex`, `calendar`, `leap`, `name`, `conversationHistory`, `mode` (chart/spouse/male-size/match), `first`, `second`, `patterns` | `/ziwei`, `/ziwei/spouse`, `/ziwei/male-size`、雙人合盤 | `POST /api/ziwei-question`, `POST /api/ziwei/chart`, `POST /api/ziwei/spouse`, `POST /api/ziwei/male-size`, `POST /api/ziwei/match` | `skills/ziwei-consultant/scripts/ziwei_cli.js` & `ask_ziwei.js` | `ziwei_chart`, `ziwei_chart_only`, `calculate_ziwei_chart`, `match_ziwei_charts`, `ziwei_future_spouse`, `ziwei_male_size` |
 | **梅花易數** | `question`, `method` (time/number/text), `text`, `num1..3`, `purpose`, `conversationHistory` | `/meihua` | `POST /api/meihua-question` | `skills/meihua-consultant/scripts/ask_meihua.js` | `meihua_qigua_time`, `meihua_qigua_numbers`, `meihua_qigua_text`, `meihua_question`, `meihua_divination` |
 | **六爻神卦** | `question`, `category`, `method` (coins/dayan/datetime/manual), `lines`, `datetime`, `conversationHistory` | `/liuyao` | `POST /api/liuyao-question`, `POST /api/liuyao` | `skills/liuyao-consultant/scripts/ask_liuyao.js` | `liuyao_cast_divination` |
 | **生辰八字2** | `question`, `name`, `formerName`, `calendar`, `date`, `time`, `sex`, `place`, `conversationHistory`, `yearPillar`, `monthPillar`, `dayPillar`, `hourPillar` | `/bazi2` | `POST /api/bazi2-question`, `POST /api/bazi2/inverse-lookup`, `POST /api/bazi2/time-sensitivity` | `skills/bazi2-consultant/scripts/ask_bazi2.js` | `bazi2_chart`, `bazi_inverse_lookup`, `bazi_time_sensitivity` |
@@ -328,6 +333,14 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen �
 
 # 紫微斗數男生真實尺寸與戰鬥力快速測算（免等 LLM）
 node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen 巳 --sex male --male-size
+
+# 紫微斗數格局明細（可加 --patterns "君臣慶會,日月同宮" 篩選）
+node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1981-08-11 --shichen 巳 --sex male --patterns
+
+# 紫微斗數雙人合盤
+node skills/ziwei-consultant/scripts/ziwei_cli.js --match \
+  --first '{"date":"1981-08-11","shichen":"巳","sex":"male"}' \
+  --second '{"date":"1984-03-22","shichen":"午","sex":"female"}'
 
 # 六爻神卦占問（支援銅錢搖卦、大衍筮法、時間起卦與手動指定爻值）
 node skills/liuyao-consultant/scripts/ask_liuyao.js --question "今年下半年換工作發展如何？" --category "事業升遷" --method coins

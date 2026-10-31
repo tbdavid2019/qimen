@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { calculateZiweiChart, evaluateMaleSize, evaluateFutureSpouse } = require(path.join(__dirname, '../../../lib/ziwei.js'));
+const { evaluateZiweiMatch } = require(path.join(__dirname, '../../../lib/ziwei-match.js'));
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -18,6 +19,8 @@ function parseArgs() {
         sex: '男',
         calendar: 'solar'
     };
+    let firstInline = null;
+    let secondInline = null;
 
     let rawInline = null;
 
@@ -33,6 +36,15 @@ function parseArgs() {
             params.mode = 'male-size';
         } else if (arg === '--spouse' || arg === '--future-spouse') {
             params.mode = 'spouse';
+        } else if (arg === '--match') {
+            params.mode = 'match';
+        } else if (arg === '--patterns') {
+            params.mode = 'patterns';
+            if (args[i + 1] && !args[i + 1].startsWith('--')) params.patterns = args[++i];
+        } else if (arg === '--first' && args[i + 1]) {
+            firstInline = args[++i];
+        } else if (arg === '--second' && args[i + 1]) {
+            secondInline = args[++i];
         } else if ((arg === '--date' || arg === '--solar') && args[i + 1]) {
             params.date = args[++i];
             params.calendar = 'solar';
@@ -59,7 +71,7 @@ function parseArgs() {
         }
     }
 
-    return { inputFile, outputFile, rawInline, params };
+    return { inputFile, outputFile, rawInline, params, firstInline, secondInline };
 }
 
 function readInput(inputFile, rawInline, defaultParams) {
@@ -92,11 +104,32 @@ function readInput(inputFile, rawInline, defaultParams) {
 
 function run() {
     try {
-        const { inputFile, outputFile, rawInline, params } = parseArgs();
+        const { inputFile, outputFile, rawInline, params, firstInline, secondInline } = parseArgs();
         const inputData = readInput(inputFile, rawInline, params);
 
+        if (firstInline) {
+            try { inputData.first = JSON.parse(firstInline); } catch { throw new Error('--first 必須是 JSON 物件'); }
+        }
+        if (secondInline) {
+            try { inputData.second = JSON.parse(secondInline); } catch { throw new Error('--second 必須是 JSON 物件'); }
+        }
+
         let result;
-        if (inputData.mode === 'male-size') {
+        if (inputData.mode === 'match') {
+            if (!inputData.first || !inputData.second) throw new Error('--match 需要 first 與 second 雙方出生資料（可用 JSON stdin、--input、--first/--second）');
+            result = evaluateZiweiMatch({ first: inputData.first, second: inputData.second });
+        } else if (inputData.mode === 'patterns') {
+            const chart = calculateZiweiChart(inputData);
+            const filter = inputData.patterns && inputData.patterns !== true
+                ? String(inputData.patterns).split(',').map((name) => name.trim()).filter(Boolean)
+                : null;
+            result = {
+                patterns: filter ? chart.patterns.filter((pattern) => filter.includes(pattern.name)) : chart.patterns
+            };
+            if (inputData.full || inputData.chart) {
+                result.chart = chart;
+            }
+        } else if (inputData.mode === 'male-size') {
             const rawSex = inputData.sex;
             const normalizedSex = (rawSex === '男' || rawSex === 'male') ? '男' : (rawSex === '女' || rawSex === 'female') ? '女' : (rawSex === undefined ? '男' : null);
             if (!normalizedSex) {

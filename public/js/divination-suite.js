@@ -1231,6 +1231,7 @@
                         <span>大限 ${escapeHtml(p.dayun)}</span>
                         <span>對: ${escapeHtml(p.aspects?.opposite || '')}</span>
                     </div>
+                    ${window.ZiweiUI?.renderShensha ? window.ZiweiUI.renderShensha(p.shensha) : ''}
                 </div>
             `;
         }
@@ -1240,7 +1241,7 @@
         const row3 = `${renderPalaceCell('卯')}${renderPalaceCell('戌')}`;
         const row4 = ['寅', '丑', '子', '亥'].map(renderPalaceCell).join('');
 
-        const patternsHtml = (chart.patterns || []).map((pat) => `
+        const patternsHtml = window.ZiweiUI?.renderPatterns ? window.ZiweiUI.renderPatterns(chart.patterns || []) : (chart.patterns || []).map((pat) => `
             <div style="background:var(--suite-bg); border:1px solid var(--suite-border); border-radius:8px; padding:10px; margin-bottom:8px;">
                 <div style="font-weight:700; color:var(--suite-primary); font-size: var(--type-label); margin-bottom:4px;">✨ ${escapeHtml(pat.name)}（${escapeHtml(pat.type)}）</div>
                 <div style="font-size: var(--type-meta); color:var(--suite-text-muted);">${escapeHtml(pat.desc)}</div>

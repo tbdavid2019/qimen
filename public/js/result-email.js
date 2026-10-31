@@ -205,6 +205,7 @@
         return `牌陣：${root.spreadName || root.spread_name || '塔羅占卜'} ｜ ${dateStr}`;
       }
       if (s.includes('紫微') || s.includes('ziwei')) {
+        if (root.score !== undefined && root.synastryAnalysis) return `雙人紫微合盤 ｜ 契合度：${root.score} 分 ｜ ${dateStr}`;
         return `紫微命盤 ｜ 局數：${root.bureau || '木三局'} ｜ ${dateStr}`;
       }
       if (s.includes('梅花') || s.includes('meihua')) {
@@ -223,7 +224,10 @@
         if (root.lifeNumber || root.lifePathNumber) return `【333】您的塔羅生命靈數與靈魂象徵牌報告（${root.lifeNumber || root.lifePathNumber} 號人）`;
         return `【333】韋特塔羅 · ${root.spreadName || root.spread_name || '占卜'}結果詳解`;
       }
-      if (s.includes('紫微') || s.includes('ziwei')) return `【333】紫微斗數命盤解析與未來正緣畫像報告`;
+      if (s.includes('紫微') || s.includes('ziwei')) {
+        if (root.score !== undefined && root.synastryAnalysis) return `【333】雙人紫微合盤 · 契合指數與理性相處指南（${root.score} 分）`;
+        return `【333】紫微斗數命盤解析與未來正緣畫像報告`;
+      }
       if (s.includes('梅花') || s.includes('meihua')) return `【333】梅花易數 · ${root.bengua?.name || ''}卦象解析與行動指引`;
       return `【333 一句提醒·照見當下】您的${service || '命理'}諮詢結果`;
     }
@@ -276,7 +280,7 @@
   }
   window.publishSuiteEmailResult = publish;
 
-  const relevantPath = (path) => /\/api\/(name-analysis(?:\/(verify|generate)|-question)|name-analysis\/cezi|tarot(?:\/numerology|\/reading|-question|\/llm-analysis)|ziwei(?:\/chart|\/spouse|\/male-size|-question|\/llm-analysis)?|meihua(?:-question|\/qigua|\/llm-analysis)?|liuyao(?:-question|\/toss-coin|\/cast-dayan|\/cast-datetime|\/cast-manual|\/llm-analysis)?|suite-ai\/liuyao|(?:bazi2|fengshui|yinyuan)(?:-question|\/chart|\/report|\/reading|\/llm-analysis|\/evaluate-layout|\/luantou|\/yunqi-wellness)|wellness(?:-question|\/question)|answerbook(?:-question|\/llm-analysis)|[a-z0-9-]+\/llm-analysis|llm-analysis)/i.test(path);
+  const relevantPath = (path) => /\/api\/(name-analysis(?:\/(verify|generate)|-question)|name-analysis\/cezi|tarot(?:\/numerology|\/reading|-question|\/llm-analysis)|ziwei(?:\/chart|\/spouse|\/male-size|\/match|-question|\/llm-analysis)?|meihua(?:-question|\/qigua|\/llm-analysis)?|liuyao(?:-question|\/toss-coin|\/cast-dayan|\/cast-datetime|\/cast-manual|\/llm-analysis)?|suite-ai\/liuyao|(?:bazi2|fengshui|yinyuan)(?:-question|\/chart|\/report|\/reading|\/llm-analysis|\/evaluate-layout|\/luantou|\/yunqi-wellness)|wellness(?:-question|\/question)|answerbook(?:-question|\/llm-analysis)|[a-z0-9-]+\/llm-analysis|llm-analysis)/i.test(path);
   const originalFetch = window.fetch.bind(window);
   window.fetch = async (...args) => {
     const response = await originalFetch(...args);

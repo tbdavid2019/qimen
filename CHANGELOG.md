@@ -2,6 +2,17 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-10-31]
+
+### 🔮 紫微斗數進階算法與五層對齊
+
+- 依《紫微斗數全書》善本修正十四主星廟旺平陷，新增將前、歲前、博士三組十二神煞並掛載至各宮位。
+- 新增 34 種古籍格局判定庫，輸出 required、bonus、breaking、source 與吉格／平格／課題格層級。
+- 新增夫妻宮十四主星與四化深度畫像，以及雙人紫微合盤評分、四項契合分析與理性相處建議。
+- 完成 `/api/ziwei/chart`、`/api/ziwei/match`、CLI `--patterns`／`--match`、WebMCP 工具與紫微雙人合盤 UI 五層對齊。
+- 新增進階算法測試，完整測試套件維持 100% 通過。
+- **演算法來源溯源依據**：參考自開源專案 [Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu)（MIT License），涵蓋 34 種正統古籍格局 (`lib/ziwei/patterns.ts`)、三組十二神煞 (`lib/ziwei/shier-shen.ts`)、善本廟旺校訂 (`lib/ziwei/algorithm.ts`) 與雙盤合婚權重 (`lib/ziwei/heming-knowledge.ts`)，建立長期可追溯性。
+
 ## [2026-10-28]
 
 ### 🛡️ 修補主專案與 MCP Server 相依套件安全漏洞
