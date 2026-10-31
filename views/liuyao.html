@@ -342,10 +342,10 @@
                         <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
                     </div>
 
-                    <div class="input-group mt-2">
+                    <div class="input-group suite-question-input-group mt-2">
                         <input type="text" id="followupQuestionInput" class="form-control suite-input" placeholder="例如：若我想在三個月內推展，應如何配合？">
                         <span class="input-group-btn">
-                            <button type="button" id="btnAskFollowup" class="btn suite-btn-primary" style="height: 44px; padding: 0 20px;">
+                            <button type="button" id="btnAskFollowup" class="btn suite-btn-primary">
                                 <i data-lucide="send"></i> 送出追問 ➔
                             </button>
                         </span>

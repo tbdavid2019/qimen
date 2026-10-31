@@ -2351,3 +2351,220 @@ table, .table, .badge, .label, [class*="-badge"], [class*="-pill"], [class*="-ta
     border-color: #D97757;
 }
 
+/* 奇門專題用神問答與整體盤局總評 (Punchy & Prominent) */
+.qimen-purpose-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.qimen-purpose-row .suite-form-label {
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.qimen-purpose-select {
+    max-width: 320px;
+    flex: 1 1 260px;
+    height: 48px;
+    min-height: 48px;
+    font-size: 15.5px;
+    border-radius: 12px;
+}
+
+.qimen-purpose-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--claude-primary, #CC6B49);
+    background: rgba(204, 107, 73, 0.1);
+    border: 1px solid rgba(204, 107, 73, 0.28);
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* 全盤解讀快速通道 */
+.qimen-full-overview-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.qimen-full-overview-text {
+    flex: 1 1 300px;
+}
+
+.qimen-full-overview-title {
+    font-size: 16.5px;
+    color: var(--claude-text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.qimen-full-overview-desc {
+    font-size: 15px;
+    margin: 4px 0 0;
+    line-height: 1.6;
+}
+
+.qimen-full-overview-action {
+    flex-shrink: 0;
+}
+
+.qimen-full-overview-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 750;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+/* 提問輸入框群組 (Desktop 預設) */
+.suite-question-input-group {
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    width: 100%;
+}
+
+.suite-question-input-group > .form-control {
+    height: 48px;
+    min-height: 48px;
+    font-size: 16px;
+    border-radius: 12px 0 0 12px;
+    padding: 10px 16px;
+}
+
+.suite-question-input-group .input-group-btn > .btn {
+    height: 48px;
+    min-height: 48px;
+    font-size: 16px;
+    font-weight: 750;
+    padding: 0 24px;
+}
+
+.suite-question-input-group .input-group-btn > .btn:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+/* 行動端 RWD 直式堆疊與滿版高觸控性 (<= 767px) */
+@media (max-width: 767px) {
+    .qimen-purpose-pills {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+        margin-bottom: 14px !important;
+    }
+    .qimen-pill {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        text-align: center !important;
+        padding: 10px 8px !important;
+        font-size: 15px !important;
+        min-height: 44px !important;
+    }
+    .qimen-purpose-row {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        margin-bottom: 14px !important;
+    }
+    .qimen-purpose-row .suite-form-label {
+        font-size: 16px !important;
+    }
+    .qimen-purpose-select {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 48px !important;
+        min-height: 48px !important;
+        font-size: 16px !important;
+    }
+    .qimen-purpose-badge {
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: center !important;
+        padding: 8px 12px !important;
+        font-size: 14.5px !important;
+    }
+    /* 問題輸入框與按鈕在手機端由橫排轉為直式堆疊，達到 100% 寬度與易觸控性 */
+    .suite-question-input-group,
+    .input-group.suite-question-input-group {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 10px !important;
+    }
+    .suite-question-input-group > .form-control,
+    .input-group.suite-question-input-group > .form-control {
+        display: block !important;
+        width: 100% !important;
+        min-height: 48px !important;
+        height: 48px !important;
+        font-size: 16px !important; /* 確保 iOS Safari 聚焦時不觸發無預警放大 */
+        border-radius: 12px !important;
+        padding: 10px 16px !important;
+        box-sizing: border-box !important;
+        float: none !important;
+    }
+    .suite-question-input-group .input-group-btn,
+    .input-group.suite-question-input-group .input-group-btn {
+        display: flex !important;
+        width: 100% !important;
+        gap: 8px !important;
+        float: none !important;
+        white-space: normal !important;
+    }
+    .suite-question-input-group .input-group-btn > .btn,
+    .input-group.suite-question-input-group .input-group-btn > .btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        flex: 1 1 auto !important;
+        min-height: 48px !important;
+        height: 48px !important;
+        font-size: 16.5px !important;
+        font-weight: 750 !important;
+        border-radius: 12px !important;
+        margin: 0 !important;
+    }
+    .suite-question-input-group .input-group-btn > .btn-secondary,
+    .input-group.suite-question-input-group .input-group-btn > .btn-secondary {
+        width: 48px !important;
+        min-width: 48px !important;
+        flex: 0 0 48px !important;
+        padding: 0 !important;
+    }
+    .qimen-full-overview-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+    .qimen-full-overview-action {
+        width: 100% !important;
+    }
+    .qimen-full-overview-btn {
+        width: 100% !important;
+        min-height: 48px !important;
+        height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 16.5px !important;
+        font-weight: 750 !important;
+        border-radius: 12px !important;
+    }
+}
+

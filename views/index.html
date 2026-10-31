@@ -242,9 +242,9 @@
 
             <!-- 問答表單 (保留完整 WebMCP 宣告與 Turnstile 驗證) -->
             <form id="qimenQuestionForm" toolname="qimen_question" tooldescription="針對目前奇門盤面提出具體問題並取得解讀" toolautosubmit onsubmit="return false;">
-                <div class="form-group" style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <label class="suite-form-label" style="margin-bottom: 0;">用神類別：</label>
-                    <select class="form-control suite-input" id="qimenPurpose" name="purpose" toolparamdescription="占問事項類別，決定主用神方向" style="max-width: 280px; display: inline-block;">
+                <div class="form-group qimen-purpose-row">
+                    <label class="suite-form-label" for="qimenPurpose">用神類別：</label>
+                    <select class="form-control suite-input qimen-purpose-select" id="qimenPurpose" name="purpose" toolparamdescription="占問事項類別，決定主用神方向">
                         <option value="綜合" selected>🌐 綜合運勢（全盤統攬）</option>
                         <option value="求財">💰 求財投資（主用神：生門 / 戊）</option>
                         <option value="事業">💼 工作事業（主用神：開門 / 值符）</option>
@@ -254,25 +254,25 @@
                         <option value="出行">🚗 出行方位（主用神：目標方位宮）</option>
                         <option value="官司">⚖️ 官司合約（主用神：驚門 / 開門）</option>
                     </select>
-                    <span id="yongshenTip" class="label label-primary qimen-meta-badge" style="padding: 7px 12px; border-radius: 16px; font-size: 15px;">
+                    <span id="yongshenTip" class="label label-primary qimen-meta-badge qimen-purpose-badge">
                         🎯 主用神：值符 / 日干
                     </span>
                 </div>
 
                 <div class="form-group mb-3">
                     <label class="suite-form-label" for="userQuestion"><i data-lucide="help-circle"></i> 輸入您的具體狀況或想請教的問題：</label>
-                    <div class="input-group">
+                    <div class="input-group suite-question-input-group">
                         <input type="text" class="form-control suite-input" id="userQuestion" name="question"
                                toolparamdescription="您想詢問的具體問題或狀況（例如：今天適合投資嗎？感情運勢如何？）"
-                               placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？" style="height: 46px;">
+                               placeholder="例如：今天適合投資嗎？感情運勢如何？換工作的時機好嗎？">
                         <span class="input-group-btn">
-                            <button class="btn suite-btn-primary" type="submit" id="askLLMQuestion" style="height: 46px; padding: 0 22px;">
+                            <button class="btn suite-btn-primary" type="submit" id="askLLMQuestion">
                                 <i data-lucide="sparkles"></i> 立即詢問 ➔
                             </button>
-                            <button class="btn suite-btn-secondary" type="button" id="emailConversation" style="display: none; height: 46px;" title="寄送對話紀錄到 Email">
+                            <button class="btn suite-btn-secondary" type="button" id="emailConversation" style="display: none;" title="寄送對話紀錄到 Email">
                                 <i data-lucide="mail"></i>
                             </button>
-                            <button class="btn suite-btn-secondary" type="button" id="clearConversation" style="display: none; height: 46px;" title="清除對話，開始新問題">
+                            <button class="btn suite-btn-secondary" type="button" id="clearConversation" style="display: none;" title="清除對話，開始新問題">
                                 <i data-lucide="trash-2"></i>
                             </button>
                         </span>
@@ -294,14 +294,14 @@
 
             <!-- 全盤解讀快速通道 -->
             <hr style="margin: 20px 0 16px; border: 0; border-top: 1px dashed var(--claude-border, #E8E0D6);">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                <div>
-                    <strong style="font-size: 16px; color: var(--claude-text-main);"><i data-lucide="compass"></i> 想看當前時間點的整體盤局總評？</strong>
-                    <p class="text-muted" style="font-size: 15px; margin: 4px 0 0; line-height: 1.6;">綜合值符值使、九星八門與天干克應，生成全局運勢與行動決策指引</p>
+            <div class="qimen-full-overview-bar">
+                <div class="qimen-full-overview-text">
+                    <strong class="qimen-full-overview-title"><i data-lucide="compass"></i> 想看當前時間點的整體盤局總評？</strong>
+                    <p class="text-muted qimen-full-overview-desc">綜合值符值使、九星八門與天干克應，生成全局運勢與行動決策指引</p>
                 </div>
-                <div id="llmInitialPanel">
-                    <button id="startLLMAnalysis" class="btn suite-btn-secondary" style="font-weight: 700; border-color: var(--claude-primary);">
-                        <i data-lucide="sparkles" style="color: var(--claude-primary);"></i> 開始全盤解讀 ➔
+                <div id="llmInitialPanel" class="qimen-full-overview-action">
+                    <button id="startLLMAnalysis" class="btn suite-btn-primary qimen-full-overview-btn">
+                        <i data-lucide="sparkles"></i> 開始全盤解讀 ➔
                     </button>
                 </div>
             </div>

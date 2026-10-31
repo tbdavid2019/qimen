@@ -4,6 +4,21 @@
 
 ## [2026-11-01]
 
+### 📱 行動端 RWD 提問表單直式堆疊重構與滿版大觸控優化 (Mobile RWD Input Stacking & Punchy Touch UX)
+
+- **行動端 RWD 提問輸入框徹底告別擠壓小窄格**：
+  - **根本病因拔除**：Bootstrap 3 原生 `.input-group` 採用 `display: table` 水平排列，在手機窄螢幕（375px~430px）下，送出按鈕佔據 ~140px，導致文字輸入框被殘酷擠壓至僅剩 ~180px，提示字被截斷且無法快適閱覽輸入。
+  - **全站直式滿版堆疊架構 (`.suite-question-input-group`)**：
+    - 在手機端（`max-width: 767px`）全面轉為 Flexbox 直式堆疊（`flex-direction: column; width: 100% !important;`）。
+    - **文字輸入框**：滿版 100% 寬度、高 48px、字級強制 16px（徹底防止 iOS Safari 聚焦時無預警自動縮放）、內距 `10px 16px`、圓角 12px。
+    - **主行動按鈕 (`立即詢問 ➔`、`送出追問 ➔`、`開始全盤解讀 ➔`)**：滿版 100% 寬度、高 48px、字級 `16.5px`（字重 750），符合大拇指單手極速盲操標準。
+    - **次要功能按鈕**：信箱寄送與清除對話按鈕維持 `48px x 48px` 大觸控方形按鈕並排佈局。
+  - **奇門專題目標用神膠囊 (Purpose Pills) 雙欄自適應**：
+    - 8 大常用問事焦點（綜合、事業、求財、感情、考試、健康、出行、官司）在手機端自動切換為優雅對稱的雙欄網格（`repeat(2, 1fr)`），每顆膠囊高 44px、滿版自適應。
+    - 用神類別選單（`.qimen-purpose-row`）在手機端改為由上而下直式排布，選單與用神標籤 100% 滿版。
+  - **跨模組一致性落地**：
+    - 同步適配 `views/index.html`（奇門首頁問答）、`views/ziwei.html`（紫微追問）、`views/liuyao.html`（六爻追問）、`views/yinyuan.html`（月老追問）及全套件追問組件。
+
 ### 🔠 全站繁體中文排版基準徹底落實與 CDN 快取全面更新 (Whole-Site CJK Typography Standard & Cache-Buster Deployment)
 
 - **繁體中文排版最高準則落實（嚴格對齊 Apple iOS HIG 與東亞方塊字標準，徹底消滅全站 12px~14px 擠壓小字）**：

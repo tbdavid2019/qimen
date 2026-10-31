@@ -3904,17 +3904,63 @@ textarea::placeholder,
         padding: 7px 5px !important;
     }
     .suite-follow-up-form,
-    .suite-followup-form {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+    .suite-followup-form,
+    .suite-question-input-group,
+    .input-group.suite-question-input-group {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 10px !important;
     }
+    .suite-follow-up-input,
+    .suite-followup-input,
+    .suite-question-input-group > .form-control,
+    .input-group.suite-question-input-group > .form-control {
+        display: block !important;
+        width: 100% !important;
+        min-height: 48px !important;
+        height: 48px !important;
+        font-size: 16px !important;
+        border-radius: 12px !important;
+        padding: 10px 16px !important;
+        box-sizing: border-box !important;
+        float: none !important;
+    }
+    .suite-question-input-group .input-group-btn,
+    .input-group.suite-question-input-group .input-group-btn {
+        display: flex !important;
+        width: 100% !important;
+        gap: 8px !important;
+        float: none !important;
+        white-space: normal !important;
+    }
+    .suite-follow-up-btn,
+    .suite-followup-btn,
     .suite-follow-up-form button,
     .suite-followup-form button,
+    .suite-question-input-group .input-group-btn > .btn,
+    .input-group.suite-question-input-group .input-group-btn > .btn,
     .liuyao-action-bar button,
     .meihua-action-bar button,
     .name-question-actions button {
-        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        flex: 1 1 auto !important;
+        min-height: 48px !important;
+        height: 48px !important;
+        font-size: 16.5px !important;
+        font-weight: 750 !important;
+        border-radius: 12px !important;
+        margin: 0 !important;
+    }
+    .suite-question-input-group .input-group-btn > .btn-secondary,
+    .input-group.suite-question-input-group .input-group-btn > .btn-secondary {
+        width: 48px !important;
+        min-width: 48px !important;
+        flex: 0 0 48px !important;
+        padding: 0 !important;
     }
     .suite-btn-email-inline {
         width: 100% !important;
