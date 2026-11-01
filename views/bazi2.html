@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問</title>
+    <title><%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '韓式現代四柱 (K-Saju) · 18章平生指南' : '生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問' %> | 333 一句提醒·照見當下</title>
     <meta name="description" content="線上生辰八字與韓式四柱排盤系統，支援子平古籍十神大運、韓式現代四柱 (K-Saju) 10 日干靈魂原型、能量天秤與 18 章平生四柱指南。">
     <link rel="canonical" href="https://qi.david888.com/bazi2">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問">
+    <meta property="og:title" content="<%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '韓式現代四柱 (K-Saju) · 18章平生指南' : '生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問' %>">
     <meta property="og:description" content="線上生辰八字與韓式四柱排盤系統，支援子平古籍十神大運、韓式現代四柱 (K-Saju) 10 日干靈魂原型、能量天秤與 18 章平生四柱指南。">
     <meta property="og:url" content="https://qi.david888.com/bazi2">
     <meta property="og:site_name" content="333 一句提醒·照見當下">
@@ -41,11 +41,11 @@
     </script>
 
     <%- include('partials/ads-head.html') %>
-    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_cjk">
-    <link rel="stylesheet" href="/css/style-new.css?v=20261101_cjk">
-    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_cjk">
-    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_cjk">
-    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
 
@@ -100,16 +100,18 @@
 
     <div class="suite-container">
         <div class="suite-hero suite-hero-compact">
-            <h1 class="suite-hero-heading">
-                八字命理排盤與現代諮詢顧問
-                <span class="suite-hero-badge" id="baziHeroBadge">📜 子平正統 · 🇰🇷 韓式四柱</span>
+            <h1 class="suite-hero-heading" id="baziPageTitle">
+                <%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '韓式現代四柱推命 · 18章平生指南' : '八字命理排盤與現代諮詢顧問' %>
+                <span class="suite-hero-badge" id="baziHeroBadge" style="<%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? 'background: #e11d48; color: #ffffff;' : '' %>">
+                    <%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '🇰🇷 韓式現代四柱 (K-Saju)' : '📜 子平正統 · 🇰🇷 韓式四柱' %>
+                </span>
             </h1>
         </div>
 
         <div class="suite-card">
             <!-- Mode Switcher Grid (Punchy & Prominent UI) -->
             <div class="ziwei-mode-grid bazi-mode-grid mb-4">
-                <button type="button" class="ziwei-mode-card bazi-mode-card mode-card-ziping bazi-mode-btn active" data-mode="ziping" id="btnModeZiping">
+                <button type="button" class="ziwei-mode-card bazi-mode-card mode-card-ziping bazi-mode-btn <%= (typeof defaultMode === 'undefined' || defaultMode !== 'saju') ? 'active' : '' %>" data-mode="ziping" id="btnModeZiping" aria-pressed="<%= (typeof defaultMode === 'undefined' || defaultMode !== 'saju') ? 'true' : 'false' %>">
                     <span class="mode-card-icon">📜</span>
                     <div class="mode-card-content">
                         <div class="mode-card-header">
@@ -120,7 +122,7 @@
                     </div>
                 </button>
 
-                <button type="button" class="ziwei-mode-card bazi-mode-card mode-card-saju bazi-mode-btn" data-mode="saju" id="btnModeSaju">
+                <button type="button" class="ziwei-mode-card bazi-mode-card mode-card-saju bazi-mode-btn <%= (typeof defaultMode !== 'undefined' && defaultMode === 'saju') ? 'active' : '' %>" data-mode="saju" id="btnModeSaju" aria-pressed="<%= (typeof defaultMode !== 'undefined' && defaultMode === 'saju') ? 'true' : 'false' %>">
                     <span class="mode-card-icon">🇰🇷</span>
                     <div class="mode-card-content">
                         <div class="mode-card-header">
@@ -133,16 +135,16 @@
             </div>
 
             <form id="suiteForm" toolname="bazi2_chart" tooldescription="四柱八字排盤與命理解讀" toolautosubmit data-webmcp-tool="bazi2_chart">
-                <input type="hidden" name="mode" id="baziMode" value="ziping">
+                <input type="hidden" name="mode" id="baziMode" value="<%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? 'saju' : 'ziping' %>">
 
-                <div id="zipingBanner" class="spouse-banner ziping-banner">
+                <div id="zipingBanner" class="spouse-banner ziping-banner" style="<%= (typeof defaultMode !== 'undefined' && defaultMode === 'saju') ? 'display: none;' : '' %>">
                     <div class="banner-title">📜 專屬模式：正統子平命理九大古籍深度論斷與喜用神大運透析</div>
                     <div class="banner-desc">
                         熟讀《窮通寶鑑》《三命通會》《滴天髓》《淵海子平》，深究月令司令透干、格局用神成敗與十神宮位交互，推演十年大運流年轉折契機。
                     </div>
                 </div>
 
-                <div id="sajuBanner" class="spouse-banner saju-banner" style="display: none;">
+                <div id="sajuBanner" class="spouse-banner saju-banner" style="<%= (typeof defaultMode === 'undefined' || defaultMode !== 'saju') ? 'display: none;' : '' %>">
                     <div class="banner-title">🇰🇷 專屬模式：韓式現代四柱 (K-Saju · 18장 평생사주) 與東方 MBTI 靈魂原型</div>
                     <div class="banner-desc">
                         融合《be-realdeveloper/saju》與《닥터사주》萬歲曆與真太陽時時差校正，解鎖 10 大日干靈魂原型、身強身弱 0~100 能量天平、缺失五行生活開運法、四柱宮位四幕人生與 18 章平生深度指南！
@@ -199,7 +201,7 @@
                 </div>
 
                 <button type="submit" id="suiteSubmitBtn" class="suite-btn-submit">
-                    <span>✨ 排盤並查看命理解讀</span>
+                    <span><%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '🇰🇷 排盤並解鎖 18 章平生四柱解碼 ➔' : '✨ 排盤並查看子平命理解讀' %></span>
                 </button>
             </form>
 
@@ -279,7 +281,7 @@
             <!-- 解讀與追問區域 -->
             <div id="suiteAiSection" class="suite-ai-section" hidden>
                 <div class="suite-ai-header">
-                    <h3 class="suite-ai-title">📜 子平命理解讀</h3>
+                    <h3 class="suite-ai-title" id="suiteAiTitle"><%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '🇰🇷 韓式現代四柱 (K-Saju) · 18 章平生指南' : '📜 正統子平命理解讀' %></h3>
                     <button type="button" class="suite-copy-btn js-open-result-email" title="將完整排盤與問答寄至信箱">
                         ✉️ 寄送至信箱
                     </button>
@@ -287,17 +289,21 @@
 
                 <div id="suiteAiLoading" class="suite-loading-state">
                     <div class="suite-spinner"></div>
-                    <div>正在細推八字格局、五行衰旺與大運流年…</div>
+                    <div id="suiteAiLoadingText"><%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '正在以韓式萬歲曆推演 18 章平生四柱、日干靈魂原型與能量天秤…' : '正在細推八字格局、五行衰旺與大運流年…' %></div>
                 </div>
 
                 <div id="suiteConversation" class="suite-conversation-stream"></div>
 
-                <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
+                <form id="suiteFollowUpForm" class="suite-followup-form mt-4" hidden>
                     <div id="suiteFollowUpTurnstileWrapper" style="margin-bottom: 12px;">
                         <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
                     </div>
-                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="進一步追問（例如：我適合創業還是上班？五行該補什麼？）">
-                    <button type="submit" class="suite-follow-up-btn">追問</button>
+                    <div class="input-group suite-question-input-group">
+                        <input type="text" id="suiteFollowUpInput" class="form-control suite-input" placeholder="<%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '向韓式四柱人生顧問進一步追問（例如：我適合創業還是就業？今年轉職時機好嗎？）' : '向子平命理顧問進一步追問（例如：喜用神在流年如何發揮？適合往哪方向發展？）' %>">
+                        <span class="input-group-btn">
+                            <button class="btn suite-btn-primary" type="submit">發送追問 ➔</button>
+                        </span>
+                    </div>
                     <div class="suite-followup-actions-bar">
                         <button type="button" class="suite-btn-email-inline js-open-result-email">
                             ✉️ 將完整命盤、解讀與以上問答寄到我的信箱 ➔
@@ -313,13 +319,13 @@
 
     <%- include('partials/site-footer.html') %>
 
-    <script src="/js/jquery.min.js?v=20261101_cjk"></script>
-    <script src="/js/bootstrap.min.js?v=20261101_cjk"></script>
-    <script src="/js/theme.js?v=20261101_cjk"></script>
-    <script src="/js/lucide.min.js?v=20261101_cjk"></script>
-    <script src="/js/markdown-renderer.js?v=20261101_cjk"></script>
-    <script src="/js/webmcp.js?v=20261101_cjk"></script>
-    <script src="/js/divination-suite.js?v=20261101_cjk"></script>
+    <script src="/js/jquery.min.js?v=20261101_saju_rev2"></script>
+    <script src="/js/bootstrap.min.js?v=20261101_saju_rev2"></script>
+    <script src="/js/theme.js?v=20261101_saju_rev2"></script>
+    <script src="/js/lucide.min.js?v=20261101_saju_rev2"></script>
+    <script src="/js/markdown-renderer.js?v=20261101_saju_rev2"></script>
+    <script src="/js/webmcp.js?v=20261101_saju_rev2"></script>
+    <script src="/js/divination-suite.js?v=20261101_saju_rev2"></script>
     <script src="/js/result-email.js"></script>
 </body>
 </html>

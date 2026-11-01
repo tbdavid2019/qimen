@@ -293,7 +293,8 @@ app.get('/tarot', (req, res) => res.render('tarot', { enableLLM: !!process.env.L
 app.get('/tarot/numerology', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: 'numerology' }));
 app.get('/tarot/gallery', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: 'gallery' }));
 app.get('/fengshui', (req, res) => res.render('fengshui', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'fengshui' }));
-app.get('/bazi2', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2' }));
+app.get('/saju', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2', defaultMode: 'saju' }));
+app.get('/bazi2', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2', defaultMode: req.query.mode || 'ziping' }));
 app.get('/yinyuan', (req, res) => res.render('yinyuan', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'yinyuan' }));
 app.get('/meihua', (req, res) => {
     res.render('meihua', {
@@ -1166,17 +1167,22 @@ app.post('/api/wellness-question', wellnessQuestionHandler);
 app.get('/api/wellness-question', wellnessQuestionHandler);
 app.post('/api/wellness/question', turnstileMiddleware({ action: ['llm_analysis', 'wellness_question', 'divination_analysis'] }), wellnessQuestionHandler);
 
-const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', yinyuan: '姻緣', answerbook: '解答之書', liuyao: '六爻神卦', wellness: '五運六氣養生' };
+const suiteModules = { ziwei: '紫微斗數', tarot: '塔羅', fengshui: '風水', bazi2: '生辰八字2', saju: '韓式四柱命理', yinyuan: '姻緣', answerbook: '解答之書', liuyao: '六爻神卦', wellness: '五運六氣養生' };
 
 const handleSuiteModuleLlmAnalysis = async (req, res) => {
-    const moduleKey = req.params.module || (req.path && req.path.includes('/tarot/') ? 'tarot' : null);
+    let moduleKey = req.params.module || (req.path && req.path.includes('/tarot/') ? 'tarot' : null);
     if (!moduleKey || !Object.prototype.hasOwnProperty.call(suiteModules, moduleKey)) {
         return res.status(404).json({ success: false, error: '不支援的服務模組' });
     }
-    const moduleName = suiteModules[moduleKey];
     try {
         const { result, question = '', conversationHistory = [] } = req.body || {};
         if (!result) return res.status(400).json({ success: false, error: '缺少計算結果' });
+
+        const isSaju = moduleKey === 'saju' || result.mode === 'saju' || Boolean(result.koreanSaju && moduleKey === 'bazi2');
+        if (isSaju) {
+            moduleKey = 'saju';
+        }
+        const moduleName = suiteModules[moduleKey] || '生辰八字2';
 
         const activeLlm = resolveLlmService(req, llmService);
         const aiResult = await activeLlm.analyzeService(moduleKey, result, {
@@ -1199,8 +1205,9 @@ const handleSuiteModuleLlmAnalysis = async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, error: error.message }); }
 };
 
-// 明確註冊 /api/tarot/llm-analysis 及通用參數路由 /api/:module/llm-analysis
+// 明確註冊 /api/tarot/llm-analysis, /api/saju/llm-analysis 及通用參數路由 /api/:module/llm-analysis
 app.post('/api/tarot/llm-analysis', (req, res, next) => { req.params.module = 'tarot'; next(); }, turnstileMiddleware({ action: ['llm_analysis', 'divination_analysis'] }), handleSuiteModuleLlmAnalysis);
+app.post('/api/saju/llm-analysis', (req, res, next) => { req.params.module = 'saju'; next(); }, turnstileMiddleware({ action: ['llm_analysis', 'divination_analysis'] }), handleSuiteModuleLlmAnalysis);
 app.post('/api/:module/llm-analysis', (req, res, next) => {
     if (!Object.prototype.hasOwnProperty.call(suiteModules, req.params.module)) {
         return next('route');

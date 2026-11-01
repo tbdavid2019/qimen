@@ -41,11 +41,11 @@
     </script>
 
     <%- include('partials/ads-head.html') %>
-    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_cjk">
-    <link rel="stylesheet" href="/css/style-new.css?v=20261101_cjk">
-    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_cjk">
-    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_cjk">
-    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_cjk">
+    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
 
@@ -561,12 +561,16 @@
 
                 <div id="suiteConversation" class="suite-conversation-stream"></div>
 
-                <form id="suiteFollowUpForm" class="suite-follow-up-form" hidden>
+                <form id="suiteFollowUpForm" class="suite-followup-form mt-4" hidden>
                     <div id="suiteFollowUpTurnstileWrapper" style="margin-bottom: 12px;">
                         <%- include('partials/turnstile-widget.html', { widgetId: 'suite-followup-turnstile', action: 'llm_analysis', explicit: true }) %>
                     </div>
-                    <input type="text" id="suiteFollowUpInput" class="suite-follow-up-input" placeholder="向月老追問（例如：具體該如何突破目前僵局？）">
-                    <button type="submit" class="suite-follow-up-btn">追問</button>
+                    <div class="input-group suite-question-input-group">
+                        <input type="text" id="suiteFollowUpInput" class="form-control suite-input" placeholder="向月老追問（例如：具體該如何突破目前僵局？）">
+                        <span class="input-group-btn">
+                            <button class="btn suite-btn-primary" type="submit">發送追問 ➔</button>
+                        </span>
+                    </div>
                     <div class="suite-followup-actions-bar">
                         <button type="button" class="suite-btn-email-inline js-open-result-email">
                             ✉️ 將完整命盤、解讀與以上問答寄到我的信箱 ➔
@@ -582,13 +586,13 @@
 
     <%- include('partials/site-footer.html') %>
 
-    <script src="/js/jquery.min.js?v=20261101_cjk"></script>
-    <script src="/js/bootstrap.min.js?v=20261101_cjk"></script>
-    <script src="/js/theme.js?v=20261101_cjk"></script>
-    <script src="/js/lucide.min.js?v=20261101_cjk"></script>
-    <script src="/js/markdown-renderer.js?v=20261101_cjk"></script>
-    <script src="/js/webmcp.js?v=20261101_cjk"></script>
-    <script src="/js/divination-suite.js?v=20261101_cjk"></script>
+    <script src="/js/jquery.min.js?v=20261101_saju_rev2"></script>
+    <script src="/js/bootstrap.min.js?v=20261101_saju_rev2"></script>
+    <script src="/js/theme.js?v=20261101_saju_rev2"></script>
+    <script src="/js/lucide.min.js?v=20261101_saju_rev2"></script>
+    <script src="/js/markdown-renderer.js?v=20261101_saju_rev2"></script>
+    <script src="/js/webmcp.js?v=20261101_saju_rev2"></script>
+    <script src="/js/divination-suite.js?v=20261101_saju_rev2"></script>
     <script src="/js/result-email.js"></script>
 </body>
 </html>

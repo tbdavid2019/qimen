@@ -303,3 +303,29 @@ test('紫微 Canonical Routes 直達頁面回傳正確的 Canonical URL 與 SEO 
     assert.match(htmlMale, /⚡ 男生尺寸速測專用/);
 });
 
+test('韓式四柱命理 /saju 直達路由與模式切換渲染驗證', async () => {
+    // 1. /saju 路由直接渲染
+    const resSaju = await fetch(`${baseUrl}/saju`);
+    assert.equal(resSaju.status, 200);
+    const htmlSaju = await resSaju.text();
+    assert.match(htmlSaju, /韓式現代四柱/);
+    assert.match(htmlSaju, /18章平生指南/);
+    assert.match(htmlSaju, /id="baziMode" value="saju"/);
+    assert.match(htmlSaju, /mode-card-saju[^"]*active/);
+
+    // 2. /bazi2?mode=saju 路由渲染
+    const resBaziSaju = await fetch(`${baseUrl}/bazi2?mode=saju`);
+    assert.equal(resBaziSaju.status, 200);
+    const htmlBaziSaju = await resBaziSaju.text();
+    assert.match(htmlBaziSaju, /韓式現代四柱/);
+    assert.match(htmlBaziSaju, /id="baziMode" value="saju"/);
+
+    // 3. /bazi2 預設路由渲染子平正統
+    const resZiping = await fetch(`${baseUrl}/bazi2`);
+    assert.equal(resZiping.status, 200);
+    const htmlZiping = await resZiping.text();
+    assert.match(htmlZiping, /子平正統/);
+    assert.match(htmlZiping, /id="baziMode" value="ziping"/);
+    assert.match(htmlZiping, /mode-card-ziping[^"]*active/);
+});
+

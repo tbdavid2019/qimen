@@ -2428,36 +2428,74 @@ table, .table, .badge, .label, [class*="-badge"], [class*="-pill"], [class*="-ta
     white-space: nowrap;
 }
 
-/* 提問輸入框群組 (Desktop 預設) */
-.suite-question-input-group {
-    position: relative;
-    display: table;
-    border-collapse: separate;
-    width: 100%;
+/* 提問輸入框群組 (Desktop 預設：現代彈性排版，永不擠壓) */
+.suite-question-input-group,
+.input-group.suite-question-input-group {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    border-collapse: separate !important;
 }
 
-.suite-question-input-group > .form-control {
-    height: 48px;
-    min-height: 48px;
-    font-size: 16px;
-    border-radius: 12px 0 0 12px;
-    padding: 10px 16px;
+.suite-question-input-group > .form-control,
+.input-group.suite-question-input-group > .form-control,
+.suite-question-input-group > input,
+.input-group.suite-question-input-group > input {
+    flex: 1 1 0% !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    font-size: 16px !important;
+    border-radius: 12px 0 0 12px !important;
+    padding: 10px 18px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    float: none !important;
 }
 
-.suite-question-input-group .input-group-btn > .btn {
-    height: 48px;
-    min-height: 48px;
-    font-size: 16px;
-    font-weight: 750;
-    padding: 0 24px;
+.suite-question-input-group .input-group-btn,
+.input-group.suite-question-input-group .input-group-btn {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    float: none !important;
+    white-space: nowrap !important;
+}
+
+.suite-question-input-group .input-group-btn > .btn,
+.input-group.suite-question-input-group .input-group-btn > .btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    font-size: 16px !important;
+    font-weight: 750 !important;
+    padding: 0 24px !important;
+    border-radius: 0 !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.suite-question-input-group .input-group-btn > .btn:first-child {
+    border-radius: 0 !important;
 }
 
 .suite-question-input-group .input-group-btn > .btn:last-child {
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 12px 12px 0 !important;
 }
 
-/* 行動端 RWD 直式堆疊與滿版高觸控性 (<= 767px) */
-@media (max-width: 767px) {
+.suite-question-input-group .input-group-btn > .btn:only-child {
+    border-radius: 0 12px 12px 0 !important;
+}
+
+/* 行動端 RWD 直式堆疊與滿版高觸控性 (<= 768px) */
+@media (max-width: 768px) {
     .qimen-purpose-pills {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
@@ -2507,9 +2545,12 @@ table, .table, .badge, .label, [class*="-badge"], [class*="-pill"], [class*="-ta
         gap: 10px !important;
     }
     .suite-question-input-group > .form-control,
-    .input-group.suite-question-input-group > .form-control {
+    .input-group.suite-question-input-group > .form-control,
+    .suite-question-input-group > input,
+    .input-group.suite-question-input-group > input {
         display: block !important;
         width: 100% !important;
+        flex: 1 1 auto !important;
         min-height: 48px !important;
         height: 48px !important;
         font-size: 16px !important; /* 確保 iOS Safari 聚焦時不觸發無預警放大 */

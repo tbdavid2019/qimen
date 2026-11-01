@@ -1656,11 +1656,79 @@ textarea::placeholder,
     border-color: #3E3833;
 }
 
-/* Follow-up Question Form */
-.suite-follow-up-form {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
+/* Follow-up Question Form & Unified Question Input Groups */
+.suite-follow-up-form,
+.suite-followup-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-top: 20px !important;
+    width: 100% !important;
+}
+
+.suite-question-input-group,
+.input-group.suite-question-input-group {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    border-collapse: separate !important;
+}
+
+.suite-question-input-group > .form-control,
+.input-group.suite-question-input-group > .form-control,
+.suite-question-input-group > input,
+.input-group.suite-question-input-group > input {
+    flex: 1 1 0% !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    font-size: 16px !important;
+    border-radius: 12px 0 0 12px !important;
+    padding: 10px 18px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    float: none !important;
+}
+
+.suite-question-input-group .input-group-btn,
+.input-group.suite-question-input-group .input-group-btn {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    float: none !important;
+    white-space: nowrap !important;
+}
+
+.suite-question-input-group .input-group-btn > .btn,
+.input-group.suite-question-input-group .input-group-btn > .btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    font-size: 16px !important;
+    font-weight: 750 !important;
+    padding: 0 24px !important;
+    border-radius: 0 !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.suite-question-input-group .input-group-btn > .btn:first-child {
+    border-radius: 0 !important;
+}
+
+.suite-question-input-group .input-group-btn > .btn:last-child {
+    border-radius: 0 12px 12px 0 !important;
+}
+
+.suite-question-input-group .input-group-btn > .btn:only-child {
+    border-radius: 0 12px 12px 0 !important;
 }
 
 .suite-follow-up-input {
@@ -4009,8 +4077,8 @@ textarea::placeholder,
     }
 }
 
-/* 易經風水九宮格與全站追問按鈕手機版優化 */
-@media (max-width: 576px) {
+/* 易經風水九宮格與全站追問按鈕手機版優化 (<= 768px) */
+@media (max-width: 768px) {
     .fs-cat-pill,
     .fs-cat-btn,
     .fs-item-pill {

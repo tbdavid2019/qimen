@@ -2295,7 +2295,8 @@
 
         try {
             // Step 1: Run Calculation
-            const calcRes = await fetch(endpointMap[page], {
+            const calcUrl = (page === 'bazi2' && payload.mode === 'saju') ? '/api/saju/chart' : endpointMap[page];
+            const calcRes = await fetch(calcUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -2307,8 +2308,10 @@
             renderVisual(lastResult, payload);
 
             // Step 2: 自動取得解讀 (帶上 Turnstile 安全憑證)
-            const userQuestion = payload.question || '請為我進行全盤解讀與具體指引。';
-            const aiRes = await fetch(`/api/${page}/llm-analysis`, {
+            const isSajuMode = (page === 'bazi2') && (payload.mode === 'saju' || lastResult?.mode === 'saju');
+            const userQuestion = payload.question || (isSajuMode ? '請為我進行 18 章平生四柱深度解讀、天賦性格定位與人生行動指南' : '請為我進行全盤解讀與具體指引。');
+            const aiEndpoint = isSajuMode ? '/api/saju/llm-analysis' : `/api/${page}/llm-analysis`;
+            const aiRes = await fetch(aiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -2374,7 +2377,11 @@
         conversationStream.appendChild(typingBubble);
 
         try {
-            const aiRes = await fetch(`/api/${page}/llm-analysis`, {
+            const currentMode = (page === 'bazi2') ? (document.getElementById('baziMode')?.value || lastResult?.mode) : null;
+            const aiEndpoint = (page === 'bazi2' && currentMode === 'saju')
+                ? '/api/saju/llm-analysis'
+                : `/api/${page}/llm-analysis`;
+            const aiRes = await fetch(aiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -2775,19 +2782,40 @@
             if (sajuBanner) sajuBanner.style.display = mode === 'saju' ? '' : 'none';
 
             const heroBadge = document.getElementById('baziHeroBadge');
+            const aiTitle = document.getElementById('suiteAiTitle');
+            const aiLoadingText = document.getElementById('suiteAiLoadingText');
+            const baziPageTitle = document.getElementById('baziPageTitle');
+            const followUpInput = document.getElementById('suiteFollowUpInput');
+
             if (mode === 'saju') {
                 document.title = '韓式現代四柱 (K-Saju) · 18章平生指南 | 333 一句提醒·照見當下';
+                if (baziPageTitle && baziPageTitle.childNodes.length > 0) {
+                    baziPageTitle.childNodes[0].textContent = '\n                韓式現代四柱推命 · 18章平生指南\n                ';
+                }
                 if (heroBadge) {
                     heroBadge.innerHTML = '🇰🇷 韓式現代四柱 (K-Saju)';
                     heroBadge.style.background = '#e11d48';
                     heroBadge.style.color = '#ffffff';
                 }
+                if (aiTitle) aiTitle.innerHTML = '🇰🇷 韓式現代四柱 (K-Saju) · 18 章平生指南';
+                if (aiLoadingText) aiLoadingText.innerHTML = '正在以韓式萬歲曆推演 18 章平生四柱、日干靈魂原型與能量天秤…';
+                if (followUpInput) {
+                    followUpInput.placeholder = '向韓式四柱人生顧問進一步追問（例如：我適合創業還是就業？今年轉職時機好嗎？）';
+                }
             } else {
                 document.title = '生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問 | 333 一句提醒·照見當下';
+                if (baziPageTitle && baziPageTitle.childNodes.length > 0) {
+                    baziPageTitle.childNodes[0].textContent = '\n                八字命理排盤與現代諮詢顧問\n                ';
+                }
                 if (heroBadge) {
                     heroBadge.innerHTML = '📜 子平正統 · 🇰🇷 韓式四柱';
                     heroBadge.style.background = '';
                     heroBadge.style.color = '';
+                }
+                if (aiTitle) aiTitle.innerHTML = '📜 子平正統命理解讀';
+                if (aiLoadingText) aiLoadingText.innerHTML = '正在細推八字格局、五行衰旺與大運流年…';
+                if (followUpInput) {
+                    followUpInput.placeholder = '向子平命理顧問進一步追問（例如：喜用神在流年如何發揮？適合往哪方向發展？）';
                 }
             }
 
@@ -2805,6 +2833,10 @@
 
         btnModeZiping?.addEventListener('click', () => setBaziMode('ziping'));
         btnModeSaju?.addEventListener('click', () => setBaziMode('saju'));
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialMode = urlParams.get('mode') || (baziModeInput?.value) || (window.location.pathname.includes('/saju') ? 'saju' : 'ziping');
+        setBaziMode(initialMode);
 
         // 1. 四柱干支反查西曆生辰
         const btnInverse = document.getElementById('btnBaziInverseLookup');

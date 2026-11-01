@@ -4,6 +4,30 @@
 
 ## [2026-11-01]
 
+### 🎯 全站提問輸入窗統整重構、韓式四柱標題完全動態化與 18 章 ForceTeller 解讀對標
+
+- **全站問題輸入框與追問機制標準化 (Universal Question & Follow-Up Input Architecture)**：
+  - **根治橫向擠壓排版破版**：針對使用者反應提問輸入框在手機或窄視窗下被擠壓成極小寬度、排版混亂之痛點，徹底將 `.suite-question-input-group` 擺脫 legacy `display: table`，重構為現代高彈性 Flexbox 架構。
+  - **桌面端流暢自適應**：輸入框設定 `flex: 1 1 0% !important; min-width: 0 !important; width: 0 !important;`，永遠自動吃滿剩餘空間，右側按鈕維持最佳尺寸，不再擠壓或破版。
+  - **行動端 RWD 垂直堆疊 (`@media (max-width: 768px)`)**：在 `<= 768px` 之所有手機與平板螢幕，自動切換為優雅的 100% 滿版垂直堆疊，輸入框與按鈕皆為 48px 標準觸控高度，字體鎖定 16px 防 iOS Safari 聚焦放大。
+  - **全站追問表單架構一致化 (`#suiteFollowUpForm`)**：統一全站（八字、紫微、奇門、六爻、梅花、風水、塔羅、姻緣、測字、五運養生）追問介面，追問輸入與按鈕在上、信箱報告匯出按鈕（`suite-btn-email-inline js-open-result-email`）在下獨立成行，告別橫向擠成一團之不良體驗。
+- **韓式四柱命理標題與狀態全方位動態適配 (Dynamic Header & Titles Sync)**：
+  - 新增 `/saju` 獨立直達路由，`/bazi2?mode=saju` 自動鎖定韓式模式。
+  - 點選「韓式現代四柱」時，全介面即時動態連動：
+    - 頂部大標題 `#baziPageTitle` 即時切換為「韓式現代四柱推命 · 18章平生指南」
+    - Hero Badge 即時變更為「🇰🇷 韓式現代四柱 (K-Saju)」玫瑰紅高對比徽章
+    - 瀏覽器分頁標題變更為「韓式現代四柱 (K-Saju) · 18章平生指南 | 333 一句提醒·照見當下」
+    - 解讀區標題 `#suiteAiTitle` 即時切換為「🇰🇷 韓式現代四柱 (K-Saju) · 18 章平生指南」
+    - 載入狀態文字 `#suiteAiLoadingText` 切換為「正在以韓式萬歲曆推演 18 章平生四柱、日干靈魂原型與能量天秤…」
+    - 排盤按鈕文字動態切換為「🇰🇷 排盤並解鎖 18 章平生四柱解碼 ➔」
+    - 追問框 Placeholder 切換為「向韓式四柱人生顧問進一步追問…」
+- **完全杜絕古籍幻覺，嚴格對標 `be-realdeveloper/saju` 與 `drsaju-opensource`**：
+  - 徹底解決韓式模式呼叫到子平 prompt 的問題：前端判斷 `isSajuMode` 自動向專屬端點 `/api/saju/llm-analysis` 與 `/api/saju/chart` 發送請求。
+  - `formatKoreanSajuPrompt` 嚴厲禁止引用《窮通寶鑑》《子平真詮》《滴天髓》古籍原文與八股生硬表格，嚴禁小數點，全面採用韓國最新熱門付費 App（ForceTeller 포스텔러 / 점신）人生教練諮詢體。
+  - 完整實作 18 章平生四柱目錄（第 1 章總評至第 18 章總結微行動），結合 10 日干靈魂原型與東方 MBTI 心理學。
+- **全站靜態資源版本刷新 (Cache Busters Sync)**：
+  - 全站 11 大頁面之 CSS 與 JS 引入版本號統一升級至 `?v=20261101_saju_rev2`，確保使用者免手動清除快取即可即時體驗全新無瑕排版。
+
 ### 🛡️ Dual Code Review (OpenAI Codex CLI + OpenCode CLI) 深度審查與全方位修復
 
 - **雙 AI 獨立審查機制落實 (Codex & OpenCode Autonomous Review)**：
