@@ -155,4 +155,43 @@ describe('韓式現代四柱命理 (K-Saju · 18장 평생사주) 核心引擎�
             await new Promise((resolve) => server.close(resolve));
         }
     });
+
+    test('身強身弱能量天秤 5 大區間分級與 calculateSingangScore 真實引擎驗證', () => {
+        // 1. 預設空盤 fallback 為 50 分中和
+        const emptyMeter = calculateSingangScore(null);
+        assert.equal(emptyMeter.score, 50);
+        assert.equal(emptyMeter.level, '중화 (中和平衡)');
+
+        // 2. 極端身弱 (四柱皆剋洩，不得令不得地不得勢) -> score 10 極身弱 (0~35)
+        const sinyakBazi = {
+            dayMaster: { stem: '庚', element: '金' },
+            fourPillars: [
+                { stem: '丙', branch: '午' }, // year: 火
+                { stem: '丙', branch: '午' }, // month: 火
+                { stem: '庚', branch: '子' }, // day: 水
+                { stem: '丁', branch: '巳' }  // hour: 火
+            ]
+        };
+        const weakMeter = calculateSingangScore(sinyakBazi);
+        assert.ok(weakMeter.score < 36, `極弱盤得分應 < 36, 實際為 ${weakMeter.score}`);
+        assert.equal(weakMeter.level, '극신약 (極身弱)');
+
+        // 3. 極端身強 (四柱皆同氣金，得令得地得勢) -> score 100 極身強 (65~100)
+        const singangBazi = {
+            dayMaster: { stem: '庚', element: '金' },
+            fourPillars: [
+                { stem: '辛', branch: '酉' }, // year: 金
+                { stem: '庚', branch: '申' }, // month: 金
+                { stem: '庚', branch: '申' }, // day: 金
+                { stem: '辛', branch: '酉' }  // hour: 金
+            ]
+        };
+        const strongMeter = calculateSingangScore(singangBazi);
+        assert.ok(strongMeter.score >= 65, `極強盤得分應 >= 65, 實際為 ${strongMeter.score}`);
+        assert.equal(strongMeter.level, '극신강 (極身強)');
+        assert.equal(strongMeter.levelChinese, '極身強 (能量極旺盛)');
+
+        // 4. 驗證 74 分確屬極身強 (極旺) 區間 (65~100)
+        assert.ok(74 >= 65 && 74 <= 100, '74 分屬於極身強 (65~100) 區間');
+    });
 });

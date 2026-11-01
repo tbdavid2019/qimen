@@ -4,6 +4,31 @@
 
 ## [2026-11-01]
 
+### ⚖️ 韓式四柱能量天秤五分段精準映射、首頁導航清理與 Dual Code Review 雙審查
+
+- **身強身弱能量天秤分段映射與圖例對齊 (Piecewise 5-Zone Energy Meter & Legend Alignment)**：
+  - **徹底根治 74 分視覺偏差**：針對使用者反映「74 分在能量天秤上停在身強 (53~64)，而非極旺 (65~100)」的視覺痛點。核心原因在於 5 個能量級距數值非等寬（0~35 佔 35 點、36~46 佔 10 點、47~52 佔 5 點、53~64 佔 11 點、65~100 佔 35 點），若直接以百分比填滿（74%），進度條端點剛好對齊舊版 `space-between` 的第 4 個標籤「身強」，產生嚴重視覺誤導。
+  - **分段視覺映射 (Piecewise Mapping)**：將 5 個不等寬級距精準線性映射至 5 等分（每區 20%）：
+    - 0~35 分 (極弱) -> 0%~20%
+    - 36~46 分 (身弱) -> 20%~40%
+    - 47~52 分 (中和) -> 40%~60%
+    - 53~64 分 (身強) -> 60%~80%
+    - 65~100 分 (極旺) -> 80%~100%（74 分計算後為 85.14%，明確座落於第 5 區間「極旺」之正中位置）。
+  - **軌道刻度線與動態分數指針 (Track Ticks & Dynamic Score Pin Pointer)**：
+    - 在 20%、40%、60%、80% 處增設刻度分割線，明確劃分 5 大能量區。
+    - 新增 `.saju-meter-pin` 分數指針（帶指向箭頭），隨分數動態滑動到對應百分比，並依據命盤等級動態變換色彩（藍、綠、黃、橘、紅）。
+  - **5 等分自適應圖例與當前級別高亮徽章 (Active Tier Pill Highlight)**：
+    - 圖例改採 `grid-template-columns: repeat(5, 1fr)` 嚴格與軌道 5 區塊一對一垂直對齊。
+    - 當前命盤所屬級別自動賦予 `.active.active-tier-[1-5]` 醒目膠囊背景與微光暈邊框，使用戶一眼即知當前處於何種狀態。
+- **導航欄殘留語系切換選單徹底移除 (Navbar Legacy Language Switcher Cleanup)**：
+  - 徹底移除 `views/index.html` 導航列殘留之 `語言 v` 下拉選單，全站 11 大頁面導覽結構一致（`BYOK` | `暗黑` | `888人生K線`）。
+- **🛡️ Dual Code Review (OpenAI Codex CLI + OpenCode CLI) 雙 AI 審查與修復落實**：
+  - 由 OpenAI Codex CLI 與 OpenCode CLI 執行非交談式代碼審查，351/351 項單元測試全數通過（100% 通過率），零資安漏洞、零金鑰洩漏。
+  - **修復 `score = 0` Falsy 邊界缺陷**：修復 `public/js/divination-suite.js` 中 `Number(em.score) || 50` 會將合法的 0 分誤轉為 50 分（中和）的問題，改以 `Number.isFinite()` 嚴格防禦。
+  - **指針防溢出保護**：指針橫向位置加入 `Math.min(95, Math.max(5, visualPercent))` 邊界鉗位，避免在極端分數（0 或 100）時徽章超出容器。
+  - **刻度線對比度調校**：淺色模式下刻度線採用 `rgba(0, 0, 0, 0.22)`，暗黑模式採用 `rgba(255, 255, 255, 0.5)`，在漸層與空軌道上均清晰可辨。
+  - **單元測試品質升級**：在 `test/korean-saju.test.js` 加入真實 `calculateSingangScore` 引擎邊界調用與 74 分所屬極身強 (65~100) 斷言。
+
 ### 🎯 全站提問輸入窗統整重構、韓式四柱標題完全動態化與 18 章 ForceTeller 解讀對標
 
 - **全站問題輸入框與追問機制標準化 (Universal Question & Follow-Up Input Architecture)**：

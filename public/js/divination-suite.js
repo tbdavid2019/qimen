@@ -540,6 +540,30 @@
             const palaces = ks.palaceBreakdown || [];
             const chapters = ks.chapters || [];
 
+            const sajuScore = (typeof em.score === 'number' && Number.isFinite(em.score))
+                ? em.score
+                : (Number.isFinite(Number(em.score)) ? Number(em.score) : 50);
+            let visualPercent = 50;
+            let activeTier = 3;
+            if (sajuScore < 36) {
+                activeTier = 1;
+                visualPercent = Math.max(5, (sajuScore / 35) * 20);
+            } else if (sajuScore <= 46) {
+                activeTier = 2;
+                visualPercent = 20 + ((sajuScore - 36) / 10) * 20;
+            } else if (sajuScore <= 52) {
+                activeTier = 3;
+                visualPercent = 40 + ((sajuScore - 47) / 5) * 20;
+            } else if (sajuScore <= 64) {
+                activeTier = 4;
+                visualPercent = 60 + ((sajuScore - 53) / 11) * 20;
+            } else {
+                activeTier = 5;
+                visualPercent = 80 + (Math.min(35, sajuScore - 65) / 35) * 20;
+            }
+            visualPercent = Math.min(100, Math.max(4, Math.round(visualPercent * 10) / 10));
+            const pinPercent = Math.min(95, Math.max(5, visualPercent));
+
             sajuHeaderHtml = `
                 <div class="saju-dashboard">
                     <!-- 1. 日干靈魂原型卡 (Ilgan Soul Archetype) -->
@@ -566,21 +590,48 @@
                     <div class="saju-meter-box">
                         <div class="saju-meter-header">
                             <span class="saju-meter-title">⚖️ 身強身弱能量天秤 (신강·신약 밸런스)</span>
-                            <span class="saju-meter-score">${em.score || 50} 分 · ${escapeHtml(em.levelChinese || '')}</span>
+                            <span class="saju-meter-score">${sajuScore} 分 · ${escapeHtml(em.levelChinese || '')}</span>
                         </div>
-                        <div class="saju-meter-track">
-                            <div class="saju-meter-fill" style="width: ${Math.min(100, Math.max(10, em.score || 50))}%;"></div>
+                        <div class="saju-meter-track-container">
+                            <div class="saju-meter-pin tier-${activeTier}" style="left: ${pinPercent}%;">
+                                <span class="saju-meter-pin-badge">${sajuScore}分</span>
+                                <div class="saju-meter-pin-caret"></div>
+                            </div>
+                            <div class="saju-meter-track">
+                                <div class="saju-meter-fill" style="width: ${visualPercent}%;"></div>
+                                <div class="saju-meter-ticks">
+                                    <span style="left: 20%;"></span>
+                                    <span style="left: 40%;"></span>
+                                    <span style="left: 60%;"></span>
+                                    <span style="left: 80%;"></span>
+                                </div>
+                            </div>
                         </div>
                         <div class="saju-meter-legend">
-                            <span>極弱 (0~35)</span>
-                            <span>身弱 (36~46)</span>
-                            <span>中和 (47~52)</span>
-                            <span>身強 (53~64)</span>
-                            <span>極旺 (65~100)</span>
+                            <div class="saju-legend-item ${activeTier === 1 ? 'active active-tier-1' : ''}">
+                                <div class="saju-legend-label">極弱</div>
+                                <div class="saju-legend-range">0~35</div>
+                            </div>
+                            <div class="saju-legend-item ${activeTier === 2 ? 'active active-tier-2' : ''}">
+                                <div class="saju-legend-label">身弱</div>
+                                <div class="saju-legend-range">36~46</div>
+                            </div>
+                            <div class="saju-legend-item ${activeTier === 3 ? 'active active-tier-3' : ''}">
+                                <div class="saju-legend-label">中和</div>
+                                <div class="saju-legend-range">47~52</div>
+                            </div>
+                            <div class="saju-legend-item ${activeTier === 4 ? 'active active-tier-4' : ''}">
+                                <div class="saju-legend-label">身強</div>
+                                <div class="saju-legend-range">53~64</div>
+                            </div>
+                            <div class="saju-legend-item ${activeTier === 5 ? 'active active-tier-5' : ''}">
+                                <div class="saju-legend-label">極旺</div>
+                                <div class="saju-legend-range">65~100</div>
+                            </div>
                         </div>
-                        <div style="font-size: 15px; line-height: 1.6; color: var(--suite-text);">
+                        <div class="saju-meter-desc">
                             <strong>【能量解析】</strong>${escapeHtml(em.description || '')}
-                            <span style="font-size: 13.5px; color: var(--suite-text-muted); margin-left: 6px;">（得令 ${Number(em.details?.deungryeong || 0)}% + 得地 ${Number(em.details?.deungji || 0)}% + 得勢 ${Number(em.details?.deungse || 0)}%）</span>
+                            <span class="saju-meter-subdesc">（得令 ${Number(em.details?.deungryeong || 0)}% + 得地 ${Number(em.details?.deungji || 0)}% + 得勢 ${Number(em.details?.deungse || 0)}%）</span>
                         </div>
                     </div>
 
