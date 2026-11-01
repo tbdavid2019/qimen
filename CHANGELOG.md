@@ -4,6 +4,36 @@
 
 ## [2026-11-01]
 
+### 🚀 韓式四柱獨立直達路由 (`/saju`)、SPA 網址無縫同步與首頁 8 大特色高轉化輪播區 (Feature Spotlight Carousel)
+
+- **韓式現代四柱獨立直達路由與前端 SPA 雙向同步 (Standalone Direct Routing & Bidirectional SPA URL Sync)**：
+  - **直達端點全面覆蓋**：新增 `GET /saju` 與 `GET /bazi2/saju` 直達路由，伺服端渲染即預設為韓式四柱模式 (`defaultMode: 'saju'`)，並設定 `<link rel="canonical" href="https://qi.david888.com/saju">` 與對應 OpenGraph 標籤。
+  - **向下相容與 SEO 規範**：新增 `/bazi/saju` 301 重定向至 `/saju`，以及 `/bazi` 301 重定向至 `/bazi2`。
+  - **模式切換卡片超連結化與 SPA 雙向同步**：卡片改採 `<a href="/bazi2">` 與 `<a href="/saju">` 語意標籤，支援右鍵另開新分頁與複製網址。使用者點擊時以 `history.pushState` 無縫同步瀏覽器網址列為 `/saju` 或 `/bazi2`，無需整頁重載。
+  - **查詢字串清除與深度清理**：當由 `/bazi2?mode=saju` 切換回子平模式時，強制執行 `pushState` 清除 query string，避免重新整理或加入書籤時模式被反向覆蓋。
+  - **動態 Metadata 與瀏覽器歷史紀錄導覽 (`popstate`)**：前端切換模式時動態更新 `<link rel="canonical">` 與 `<meta property="og:url">`；完整監聽 `window.popstate` 事件，使用者按瀏覽器「上一頁/下一頁」時精準回溯選取之命理模式。
+  - **WebMCP 工具宣告範疇補齊**：修復 `public/js/webmcp.js`，將 `/saju` 與 `/bazi2/*` 納入工具註冊白名單，確保直達路由下正確掛載 `bazi2_chart`、`korean_saju_chart` 等 AI 工具。
+- **首頁精選特色功能高轉化輪播區 (Feature Spotlight Carousel)**：
+  - **首頁升級 8 大精選特色輪播**：將 `views/index.html` 原有靜態雙卡片升級為全寬流暢之特色功能輪播，匯聚全站最高轉化特色模組：
+    1. 🇰🇷 **韓式現代四柱** (`/saju`)：日干靈魂原型 · 能量天秤 · 缺行開運錦囊 · 東方 MBTI
+    2. 💍 **看出你未來另一半** (`/ziwei/spouse`)：夫妻宮正緣畫像 · 大你幾歲 · 長相性格相遇時機
+    3. ⚡ **男生真實尺寸速測** (`/ziwei/male-size`)：子位＋疾厄宮雙核合參 · 3秒秒測器質與耐力
+    4. ✍️ **測字占事** (`/cezi`)：梅花象數拆字 · 單字問吉凶 · 81 數理靈動直斷
+    5. 🌿 **五運六氣養生** (`/wellness`)：順應天時食養 · 先天體質稟賦 · 24 節氣客氣時鐘
+    6. 🔮 **塔羅靈魂象徵牌** (`/tarot/numerology`)：西曆生日大阿爾克那 · 人生主題與靈魂原型
+    7. 💖 **月老姻緣** (`/yinyuan`)：生肖三合六合契合度 · 天賜良緣紅線靈籤
+    8. 📖 **解答之書** (`/answerbook`)：靈感默念指引 · 內心糾結直覺解惑
+  - **極致視覺與微互動體驗**：嚴格依循「Punchy & Prominent」設計標準，包含飽和雙色漸層、立體微光暈陰影、暗黑模式半透明玻璃擬物質感。
+  - **全方位輪播控制與行動端觸控適配**：
+    - 配備左/右導航控制鈕與底部 8 點動態指示器（Dots），指示器同步當前卡片高亮。
+    - 支援滑鼠拖曳與手機觸控滑動（Touch Swipe），並採用 CSS `scroll-snap-type: x mandatory` 平滑貼齊。
+    - 針對行動端（`<= 768px`）設定卡片寬度為 `84vw`，右側露出下一張卡片局部，提供極佳的滑動探索心理暗示。
+    - 內建 4.5 秒自動輪播機制，滑鼠懸停或手指觸碰時自動暫停，離開後自動恢復。
+- **🛡️ Dual Code Review (OpenAI Codex CLI + OpenCode CLI) 雙 AI 審查與修復落實**：
+  - 由 OpenAI Codex CLI (`gpt-5.6-luna`) 與 OpenCode CLI 雙重審查未提交變更。
+  - 審查回饋所提之 WebMCP 路由註冊擴充、SPA 模式切換網址查詢參數清理、動態 Canonical 標籤同步皆已完整落地。
+  - 351/351 項測試全數通過（100% 通過率），全站無任何硬編碼 API 金鑰。
+
 ### ⚖️ 韓式四柱能量天秤五分段精準映射、首頁導航清理與 Dual Code Review 雙審查
 
 - **身強身弱能量天秤分段映射與圖例對齊 (Piecewise 5-Zone Energy Meter & Legend Alignment)**：

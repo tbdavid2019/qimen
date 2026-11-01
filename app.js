@@ -294,6 +294,9 @@ app.get('/tarot/numerology', (req, res) => res.render('tarot', { enableLLM: !!pr
 app.get('/tarot/gallery', (req, res) => res.render('tarot', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'tarot', activeMode: 'gallery' }));
 app.get('/fengshui', (req, res) => res.render('fengshui', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'fengshui' }));
 app.get('/saju', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2', defaultMode: 'saju' }));
+app.get('/bazi2/saju', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2', defaultMode: 'saju' }));
+app.get('/bazi/saju', (req, res) => res.redirect(301, '/saju'));
+app.get('/bazi', (req, res) => res.redirect(301, req.query.mode === 'saju' ? '/saju' : '/bazi2'));
 app.get('/bazi2', (req, res) => res.render('bazi2', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'bazi2', defaultMode: req.query.mode || 'ziping' }));
 app.get('/yinyuan', (req, res) => res.render('yinyuan', { enableLLM: !!process.env.LLM_API_KEY, activePage: 'yinyuan' }));
 app.get('/meihua', (req, res) => {

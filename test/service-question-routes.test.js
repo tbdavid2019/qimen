@@ -304,7 +304,7 @@ test('紫微 Canonical Routes 直達頁面回傳正確的 Canonical URL 與 SEO 
 });
 
 test('韓式四柱命理 /saju 直達路由與模式切換渲染驗證', async () => {
-    // 1. /saju 路由直接渲染
+    // 1. /saju 路由直接渲染且 Canonical 指向 /saju
     const resSaju = await fetch(`${baseUrl}/saju`);
     assert.equal(resSaju.status, 200);
     const htmlSaju = await resSaju.text();
@@ -312,20 +312,52 @@ test('韓式四柱命理 /saju 直達路由與模式切換渲染驗證', async (
     assert.match(htmlSaju, /18章平生指南/);
     assert.match(htmlSaju, /id="baziMode" value="saju"/);
     assert.match(htmlSaju, /mode-card-saju[^"]*active/);
+    assert.match(htmlSaju, /<link rel="canonical" href="https:\/\/qi\.david888\.com\/saju">/);
+    assert.match(htmlSaju, /<a href="\/saju"[^>]*id="btnModeSaju"/);
+    assert.match(htmlSaju, /<a href="\/bazi2"[^>]*id="btnModeZiping"/);
 
-    // 2. /bazi2?mode=saju 路由渲染
+    // 2. /bazi2/saju 路由別名直達
+    const resBazi2Saju = await fetch(`${baseUrl}/bazi2/saju`);
+    assert.equal(resBazi2Saju.status, 200);
+    const htmlBazi2Saju = await resBazi2Saju.text();
+    assert.match(htmlBazi2Saju, /韓式現代四柱/);
+    assert.match(htmlBazi2Saju, /id="baziMode" value="saju"/);
+
+    // 3. /bazi2?mode=saju 路由渲染
     const resBaziSaju = await fetch(`${baseUrl}/bazi2?mode=saju`);
     assert.equal(resBaziSaju.status, 200);
     const htmlBaziSaju = await resBaziSaju.text();
     assert.match(htmlBaziSaju, /韓式現代四柱/);
     assert.match(htmlBaziSaju, /id="baziMode" value="saju"/);
 
-    // 3. /bazi2 預設路由渲染子平正統
+    // 4. /bazi2 預設路由渲染子平正統
     const resZiping = await fetch(`${baseUrl}/bazi2`);
     assert.equal(resZiping.status, 200);
     const htmlZiping = await resZiping.text();
     assert.match(htmlZiping, /子平正統/);
     assert.match(htmlZiping, /id="baziMode" value="ziping"/);
     assert.match(htmlZiping, /mode-card-ziping[^"]*active/);
+    assert.match(htmlZiping, /<link rel="canonical" href="https:\/\/qi\.david888\.com\/bazi2">/);
+
+    // 5. /bazi 與 /bazi/saju 301 重定向測試（保留 ?mode=saju 參數直達）
+    const resRedirectBazi = await fetch(`${baseUrl}/bazi`, { redirect: 'manual' });
+    assert.equal(resRedirectBazi.status, 301);
+    assert.equal(resRedirectBazi.headers.get('location'), '/bazi2');
+
+    const resRedirectBaziWithSaju = await fetch(`${baseUrl}/bazi?mode=saju`, { redirect: 'manual' });
+    assert.equal(resRedirectBaziWithSaju.status, 301);
+    assert.equal(resRedirectBaziWithSaju.headers.get('location'), '/saju');
+
+    const resRedirectSaju = await fetch(`${baseUrl}/bazi/saju`, { redirect: 'manual' });
+    assert.equal(resRedirectSaju.status, 301);
+    assert.equal(resRedirectSaju.headers.get('location'), '/saju');
+
+    // 6. 首頁精選特色輪播包含韓式四柱直達卡片
+    const resHome = await fetch(`${baseUrl}/`);
+    assert.equal(resHome.status, 200);
+    const htmlHome = await resHome.text();
+    assert.match(htmlHome, /class="home-carousel-wrapper"/);
+    assert.match(htmlHome, /class="home-carousel-card card-saju"/);
+    assert.match(htmlHome, /href="\/saju"/);
 });
 

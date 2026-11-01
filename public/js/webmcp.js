@@ -1851,7 +1851,7 @@
 				toolDefinitions.switch_theme,
 				toolDefinitions.send_conversation_email
 			];
-		} else if (pathname === "/bazi2") {
+		} else if (pathname === "/bazi2" || pathname.startsWith("/bazi2/") || pathname === "/saju") {
 			toolsToRegister = [
 				toolDefinitions.bazi2_chart,
 				toolDefinitions.korean_saju_chart,

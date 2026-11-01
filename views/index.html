@@ -78,12 +78,12 @@
 
     <%- include('partials/ads-head.html') %>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/pwa-update.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/pwa-update.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev3">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
 
@@ -160,39 +160,151 @@
 
         <%- include('partials/ads-mobile.html') %>
 
-        <!-- 特色獨立功能快捷探索區 -->
-        <div class="ziwei-mode-grid" style="margin-bottom: 22px;">
-            <a href="/cezi" class="ziwei-mode-card mode-card-cezi" style="text-decoration: none;">
-                <span class="mode-card-icon">
-                    <i data-lucide="feather" style="width: 22px; height: 22px; color: #d97706;"></i>
-                </span>
-                <div class="mode-card-content">
-                    <div class="mode-card-header">
-                        <span class="mode-card-title">測字占事</span>
-                        <span class="mode-card-badge badge-cezi"><i data-lucide="sparkles" style="width: 11px; height: 11px; vertical-align: -1px;"></i> 梅花象數</span>
-                    </div>
-                    <span class="mode-card-desc">單字問吉凶 · 拆字機鋒與 81 數理直斷</span>
+        <!-- 首頁精選特色功能高轉化輪播區 (Feature Spotlight Carousel) -->
+        <div class="home-carousel-wrapper">
+            <div class="home-carousel-header">
+                <div class="home-carousel-title-group">
+                    <span class="home-carousel-heading">🔥 熱門精選 · 現代占算推薦</span>
+                    <span class="home-carousel-subheading">左右滑動探索更多特色功能</span>
                 </div>
-                <span class="btn suite-btn-primary" style="padding: 8px 16px; font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 8px;">
-                    立即測算 ➔
-                </span>
-            </a>
+                <div class="home-carousel-controls">
+                    <button type="button" class="home-carousel-btn" id="homeCarouselPrev" aria-label="上一個推薦">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                    <div class="home-carousel-dots" id="homeCarouselDots"></div>
+                    <button type="button" class="home-carousel-btn" id="homeCarouselNext" aria-label="下一個推薦">
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                </div>
+            </div>
 
-            <a href="/wellness" class="ziwei-mode-card mode-card-wellness" style="text-decoration: none;">
-                <span class="mode-card-icon">
-                    <i data-lucide="activity" style="width: 22px; height: 22px; color: #059669;"></i>
-                </span>
-                <div class="mode-card-content">
-                    <div class="mode-card-header">
-                        <span class="mode-card-title">五運六氣養生</span>
-                        <span class="mode-card-badge badge-wellness"><i data-lucide="heart-pulse" style="width: 11px; height: 11px; vertical-align: -1px;"></i> 順應天時</span>
-                    </div>
-                    <span class="mode-card-desc">先天體質稟賦 · 24 節氣食養與經絡鐘</span>
+            <div class="home-carousel-track-wrapper" id="homeCarouselTrackWrapper">
+                <div class="home-carousel-track" id="homeCarouselTrack">
+                    <!-- Slide 1: 韓式現代四柱 (K-Saju) -->
+                    <a href="/saju" class="home-carousel-card card-saju">
+                        <div class="home-carousel-card-icon">🇰🇷</div>
+                        <div class="home-carousel-card-body">
+                            <div class="home-carousel-card-header">
+                                <span class="home-carousel-card-title">韓式現代四柱 · 18章平生指南</span>
+                                <span class="home-carousel-badge badge-saju">🔥 爆紅新上線</span>
+                            </div>
+                            <span class="home-carousel-card-desc">日干靈魂原型 · 能量天秤 · 缺行開運錦囊 · 東方 MBTI</span>
+                        </div>
+                        <span class="btn suite-btn-primary home-carousel-card-cta">
+                            立即解鎖 ➔
+                        </span>
+                    </a>
+
+                    <!-- Slide 2: 看出你未來另一半 (紫微夫妻宮) -->
+                    <a href="/ziwei/spouse" class="home-carousel-card card-spouse">
+                        <div class="home-carousel-card-icon">💍</div>
+                        <div class="home-carousel-card-body">
+                            <div class="home-carousel-card-header">
+                                <span class="home-carousel-card-title">看出你未來另一半正緣畫像</span>
+                                <span class="home-carousel-badge badge-spouse">🔥 夫妻宮直斷</span>
+                            </div>
+                            <span class="home-carousel-card-desc">大你幾歲？長相、性格與相遇時機全揭秘</span>
+                        </div>
+                        <span class="btn suite-btn-primary home-carousel-card-cta">
+                            立即揭秘 ➔
+                        </span>
+                    </a>
+
+                    <!-- Slide 3: 3秒測男生真實尺寸 (紫微疾厄+子位) -->
+                    <a href="/ziwei/male-size" class="home-carousel-card card-malesize">
+                        <div class="home-carousel-card-icon">⚡</div>
+                        <div class="home-carousel-card-body">
+                            <div class="home-carousel-card-header">
+                                <span class="home-carousel-card-title">3秒測男生真實尺寸</span>
+                                <span class="home-carousel-badge badge-malesize">🔥 隱私雙核</span>
+                            </div>
+                            <span class="home-carousel-card-desc">子位＋疾厄宮合參：真實規格與戰鬥力直測</span>
+                        </div>
+                        <span class="btn suite-btn-primary home-carousel-card-cta">
+                            立即速測 ➔
+                        </span>
+                    </a>
+
+                    <!-- Slide 4: 測字占事 (梅花象數) -->
+                    <a href="/cezi" class="home-carousel-card card-cezi">
+                        <div class="home-carousel-card-icon">
+                            <i data-lucide="feather" style="width: 26px; height: 26px; color: #ca8a04;"></i>
+                        </div>
+                        <div class="home-carousel-card-body">
+                            <div class="home-carousel-card-header">
+                                <span class="home-carousel-card-title">測字占事 · 機鋒拆字</span>
+                                <span class="home-carousel-badge badge-cezi">✨ 梅花象數</span>
+                            </div>
+                            <span class="home-carousel-card-desc">單字問吉凶 · 拆字機鋒與 81 數理直斷</span>
+                        </div>
+                        <span class="btn suite-btn-primary home-carousel-card-cta">
+                            立即測算 ➔
+                        </span>
+                    </a>
+
+                    <!-- Slide 5: 五運六氣養生 (順應天時) -->
+                    <a href="/wellness" class="home-carousel-card card-wellness">
+                        <div class="home-carousel-card-icon">
+                            <i data-lucide="activity" style="width: 26px; height: 26px; color: #059669;"></i>
+                        </div>
+                        <div class="home-carousel-card-body">
+                            <div class="home-carousel-card-header">
+                                <span class="home-carousel-card-title">五運六氣養生指南</span>
+                                <span class="home-carousel-badge badge-wellness">💚 順應天時</span>
+                            </div>
+                            <span class="home-carousel-card-desc">先天體質稟賦 · 24 節氣食養與經絡鐘</span>
+                        </div>
+                        <span class="btn suite-btn-primary home-carousel-card-cta">
+                            立即排算 ➔
+                        </span>
+                    </a>
+
+                    <!-- Slide 6: 塔羅靈魂象徵牌 -->
+                    <a href="/tarot/numerology" class="home-carousel-card card-tarot">
+                        <div class="home-carousel-card-icon">🔮</div>
+                        <div class="home-carousel-card-body">
+                            <div class="home-carousel-card-header">
+                                <span class="home-carousel-card-title">塔羅靈魂象徵牌</span>
+                                <span class="home-carousel-badge badge-tarot">🔥 靈魂原型</span>
+                            </div>
+                            <span class="home-carousel-card-desc">從生日揭秘你的一生命定性格與 78 張牌庫</span>
+                        </div>
+                        <span class="btn suite-btn-primary home-carousel-card-cta">
+                            立即揭秘 ➔
+                        </span>
+                    </a>
+
+                    <!-- Slide 7: 月老姻緣配對 -->
+                    <a href="/yinyuan" class="home-carousel-card card-yinyuan">
+                        <div class="home-carousel-card-icon">💖</div>
+                        <div class="home-carousel-card-body">
+                            <div class="home-carousel-card-header">
+                                <span class="home-carousel-card-title">月老姻緣 · 生肖合婚籤</span>
+                                <span class="home-carousel-badge badge-yinyuan">💍 紅線牽引</span>
+                            </div>
+                            <span class="home-carousel-card-desc">天作之合？前世今生生肖默契與月老靈籤</span>
+                        </div>
+                        <span class="btn suite-btn-primary home-carousel-card-cta">
+                            立即求籤 ➔
+                        </span>
+                    </a>
+
+                    <!-- Slide 8: 解答之書 -->
+                    <a href="/answerbook" class="home-carousel-card card-answerbook">
+                        <div class="home-carousel-card-icon">📖</div>
+                        <div class="home-carousel-card-body">
+                            <div class="home-carousel-card-header">
+                                <span class="home-carousel-card-title">解答之書 · 照見當下</span>
+                                <span class="home-carousel-badge badge-answerbook">💫 宇宙指引</span>
+                            </div>
+                            <span class="home-carousel-card-desc">默念心中糾結與難題，翻開屬於你的當下指引</span>
+                        </div>
+                        <span class="btn suite-btn-primary home-carousel-card-cta">
+                            翻開答案 ➔
+                        </span>
+                    </a>
                 </div>
-                <span class="btn suite-btn-primary" style="padding: 8px 16px; font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 8px;">
-                    立即排算 ➔
-                </span>
-            </a>
+            </div>
         </div>
 
         <!-- 核心 AI 輔助中心（專題問答與全盤透析，置頂零摩擦入口） -->
@@ -932,12 +1044,12 @@
         window.enableLLM = <%= enableLLM ? 'true' : 'false' %>;
     </script>
     
-    <script src="js/theme.js?v=20261101_saju_rev2"></script>
-    <script src="js/lucide.min.js?v=20261101_saju_rev2"></script>
-    <script src="js/markdown-renderer.js?v=20261101_saju_rev2"></script>
-    <script src="js/app.js?v=20261101_saju_rev2"></script>
-    <script src="js/webmcp.js?v=20261101_saju_rev2"></script>
-    <script src="js/pwa-update.js?v=20261101_saju_rev2"></script>
+    <script src="js/theme.js?v=20261101_saju_rev3"></script>
+    <script src="js/lucide.min.js?v=20261101_saju_rev3"></script>
+    <script src="js/markdown-renderer.js?v=20261101_saju_rev3"></script>
+    <script src="js/app.js?v=20261101_saju_rev3"></script>
+    <script src="js/webmcp.js?v=20261101_saju_rev3"></script>
+    <script src="js/pwa-update.js?v=20261101_saju_rev3"></script>
 </body>
 
 </html>

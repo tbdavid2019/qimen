@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '韓式現代四柱 (K-Saju) · 18章平生指南' : '生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問' %> | 333 一句提醒·照見當下</title>
     <meta name="description" content="線上生辰八字與韓式四柱排盤系統，支援子平古籍十神大運、韓式現代四柱 (K-Saju) 10 日干靈魂原型、能量天秤與 18 章平生四柱指南。">
-    <link rel="canonical" href="https://qi.david888.com/bazi2">
+    <link rel="canonical" href="https://qi.david888.com/<%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? 'saju' : 'bazi2' %>">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="<%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? '韓式現代四柱 (K-Saju) · 18章平生指南' : '生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問' %>">
     <meta property="og:description" content="線上生辰八字與韓式四柱排盤系統，支援子平古籍十神大運、韓式現代四柱 (K-Saju) 10 日干靈魂原型、能量天秤與 18 章平生四柱指南。">
-    <meta property="og:url" content="https://qi.david888.com/bazi2">
+    <meta property="og:url" content="https://qi.david888.com/<%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? 'saju' : 'bazi2' %>">
     <meta property="og:site_name" content="333 一句提醒·照見當下">
     <meta property="og:image" content="https://qi.david888.com/og-image.png">
     <meta property="og:image:secure_url" content="https://qi.david888.com/og-image.png">
@@ -41,11 +41,11 @@
     </script>
 
     <%- include('partials/ads-head.html') %>
-    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
-    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev3">
+    <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev3">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
 
@@ -110,8 +110,8 @@
 
         <div class="suite-card">
             <!-- Mode Switcher Grid (Punchy & Prominent UI) -->
-            <div class="ziwei-mode-grid bazi-mode-grid mb-4">
-                <button type="button" class="ziwei-mode-card bazi-mode-card mode-card-ziping bazi-mode-btn <%= (typeof defaultMode === 'undefined' || defaultMode !== 'saju') ? 'active' : '' %>" data-mode="ziping" id="btnModeZiping" aria-pressed="<%= (typeof defaultMode === 'undefined' || defaultMode !== 'saju') ? 'true' : 'false' %>">
+            <nav class="ziwei-mode-grid bazi-mode-grid mb-4" aria-label="八字命理分析模式">
+                <a href="/bazi2" class="ziwei-mode-card bazi-mode-card mode-card-ziping bazi-mode-btn <%= (typeof defaultMode === 'undefined' || defaultMode !== 'saju') ? 'active' : '' %>" data-mode="ziping" id="btnModeZiping" <%= (typeof defaultMode === 'undefined' || defaultMode !== 'saju') ? 'aria-current="page"' : '' %>>
                     <span class="mode-card-icon">📜</span>
                     <div class="mode-card-content">
                         <div class="mode-card-header">
@@ -120,9 +120,9 @@
                         </div>
                         <span class="mode-card-desc">格局成敗 · 喜用忌神 · 十神透藏 · 十載大運</span>
                     </div>
-                </button>
+                </a>
 
-                <button type="button" class="ziwei-mode-card bazi-mode-card mode-card-saju bazi-mode-btn <%= (typeof defaultMode !== 'undefined' && defaultMode === 'saju') ? 'active' : '' %>" data-mode="saju" id="btnModeSaju" aria-pressed="<%= (typeof defaultMode !== 'undefined' && defaultMode === 'saju') ? 'true' : 'false' %>">
+                <a href="/saju" class="ziwei-mode-card bazi-mode-card mode-card-saju bazi-mode-btn <%= (typeof defaultMode !== 'undefined' && defaultMode === 'saju') ? 'active' : '' %>" data-mode="saju" id="btnModeSaju" <%= (typeof defaultMode !== 'undefined' && defaultMode === 'saju') ? 'aria-current="page"' : '' %>>
                     <span class="mode-card-icon">🇰🇷</span>
                     <div class="mode-card-content">
                         <div class="mode-card-header">
@@ -131,8 +131,8 @@
                         </div>
                         <span class="mode-card-desc">日干靈魂原型 · 能量天平 · 缺行開運錦囊 · 東方 MBTI</span>
                     </div>
-                </button>
-            </div>
+                </a>
+            </nav>
 
             <form id="suiteForm" toolname="bazi2_chart" tooldescription="四柱八字排盤與命理解讀" toolautosubmit data-webmcp-tool="bazi2_chart">
                 <input type="hidden" name="mode" id="baziMode" value="<%= typeof defaultMode !== 'undefined' && defaultMode === 'saju' ? 'saju' : 'ziping' %>">
@@ -319,13 +319,13 @@
 
     <%- include('partials/site-footer.html') %>
 
-    <script src="/js/jquery.min.js?v=20261101_saju_rev2"></script>
-    <script src="/js/bootstrap.min.js?v=20261101_saju_rev2"></script>
-    <script src="/js/theme.js?v=20261101_saju_rev2"></script>
-    <script src="/js/lucide.min.js?v=20261101_saju_rev2"></script>
-    <script src="/js/markdown-renderer.js?v=20261101_saju_rev2"></script>
-    <script src="/js/webmcp.js?v=20261101_saju_rev2"></script>
-    <script src="/js/divination-suite.js?v=20261101_saju_rev2"></script>
+    <script src="/js/jquery.min.js?v=20261101_saju_rev3"></script>
+    <script src="/js/bootstrap.min.js?v=20261101_saju_rev3"></script>
+    <script src="/js/theme.js?v=20261101_saju_rev3"></script>
+    <script src="/js/lucide.min.js?v=20261101_saju_rev3"></script>
+    <script src="/js/markdown-renderer.js?v=20261101_saju_rev3"></script>
+    <script src="/js/webmcp.js?v=20261101_saju_rev3"></script>
+    <script src="/js/divination-suite.js?v=20261101_saju_rev3"></script>
     <script src="/js/result-email.js"></script>
 </body>
 </html>

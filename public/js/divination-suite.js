@@ -2823,12 +2823,17 @@
         const submitBtn = document.getElementById('suiteSubmitBtn');
         const baziQuestionInput = document.getElementById('baziQuestion');
 
-        function setBaziMode(mode) {
+        function setBaziMode(mode, updateUrl = false) {
             if (baziModeInput) baziModeInput.value = mode;
             btnModeZiping?.classList.toggle('active', mode === 'ziping');
             btnModeSaju?.classList.toggle('active', mode === 'saju');
-            btnModeZiping?.setAttribute('aria-pressed', mode === 'ziping');
-            btnModeSaju?.setAttribute('aria-pressed', mode === 'saju');
+            if (mode === 'ziping') {
+                btnModeZiping?.setAttribute('aria-current', 'page');
+                btnModeSaju?.removeAttribute('aria-current');
+            } else {
+                btnModeSaju?.setAttribute('aria-current', 'page');
+                btnModeZiping?.removeAttribute('aria-current');
+            }
             if (zipingBanner) zipingBanner.style.display = mode === 'ziping' ? '' : 'none';
             if (sajuBanner) sajuBanner.style.display = mode === 'saju' ? '' : 'none';
 
@@ -2853,6 +2858,9 @@
                 if (followUpInput) {
                     followUpInput.placeholder = '向韓式四柱人生顧問進一步追問（例如：我適合創業還是就業？今年轉職時機好嗎？）';
                 }
+                if (updateUrl && window.history?.pushState && (window.location.pathname !== '/saju' || window.location.search)) {
+                    window.history.pushState({ mode: 'saju' }, '', '/saju');
+                }
             } else {
                 document.title = '生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問 | 333 一句提醒·照見當下';
                 if (baziPageTitle && baziPageTitle.childNodes.length > 0) {
@@ -2868,7 +2876,16 @@
                 if (followUpInput) {
                     followUpInput.placeholder = '向子平命理顧問進一步追問（例如：喜用神在流年如何發揮？適合往哪方向發展？）';
                 }
+                if (updateUrl && window.history?.pushState && (window.location.pathname !== '/bazi2' || window.location.search)) {
+                    window.history.pushState({ mode: 'ziping' }, '', '/bazi2');
+                }
             }
+
+            const canonicalEl = document.querySelector('link[rel="canonical"]');
+            const ogUrlEl = document.querySelector('meta[property="og:url"]');
+            const targetUrl = mode === 'saju' ? 'https://qi.david888.com/saju' : 'https://qi.david888.com/bazi2';
+            if (canonicalEl) canonicalEl.setAttribute('href', targetUrl);
+            if (ogUrlEl) ogUrlEl.setAttribute('content', targetUrl);
 
             if (submitBtn) {
                 submitBtn.innerHTML = mode === 'saju'
@@ -2882,12 +2899,35 @@
             }
         }
 
-        btnModeZiping?.addEventListener('click', () => setBaziMode('ziping'));
-        btnModeSaju?.addEventListener('click', () => setBaziMode('saju'));
+        btnModeZiping?.addEventListener('click', (e) => {
+            if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
+                e.preventDefault();
+                setBaziMode('ziping', true);
+            }
+        });
+        btnModeSaju?.addEventListener('click', (e) => {
+            if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
+                e.preventDefault();
+                setBaziMode('saju', true);
+            }
+        });
+
+        window.addEventListener('popstate', (e) => {
+            const path = window.location.pathname;
+            const urlParams = new URLSearchParams(window.location.search);
+            if (path === '/saju' || path === '/bazi2/saju' || urlParams.get('mode') === 'saju' || e.state?.mode === 'saju') {
+                setBaziMode('saju', false);
+            } else {
+                setBaziMode('ziping', false);
+            }
+        });
 
         const urlParams = new URLSearchParams(window.location.search);
         const initialMode = urlParams.get('mode') || (baziModeInput?.value) || (window.location.pathname.includes('/saju') ? 'saju' : 'ziping');
-        setBaziMode(initialMode);
+        setBaziMode(initialMode, false);
+        if (urlParams.get('mode') === 'saju' && window.location.pathname === '/bazi2' && window.history?.replaceState) {
+            window.history.replaceState({ mode: 'saju' }, '', '/saju');
+        }
 
         // 1. 四柱干支反查西曆生辰
         const btnInverse = document.getElementById('btnBaziInverseLookup');
