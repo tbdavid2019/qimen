@@ -103,6 +103,19 @@ describe('韓式現代四柱命理 (K-Saju · 18장 평생사주) 核心引擎�
         assert.equal(res.profile.mode, 'saju');
     });
 
+    test('支援未知時辰 (allowUnknownHour) 與四柱宮位安全降級', () => {
+        const res = calculateKoreanSaju({
+            date: '1995-06-15',
+            sex: '男',
+            allowUnknownHour: true
+        });
+
+        assert.ok(res.koreanSaju);
+        const hourPalace = res.koreanSaju.palaceBreakdown[3];
+        assert.equal(hourPalace.stem, '—');
+        assert.equal(hourPalace.pillarValue, '未知');
+    });
+
     test('CLI 腳本支援 --mode saju 獨立運行輸出 JSON', () => {
         const cliPath = path.join(__dirname, '../skills/bazi2-consultant/scripts/bazi_cli.js');
         const cmd = `node "${cliPath}" --mode saju --date 1995-06-15 --time 12:00 --sex 男`;
@@ -113,5 +126,33 @@ describe('韓式現代四柱命理 (K-Saju · 18장 평생사주) 核心引擎�
         assert.equal(json.koreanSaju.archetype.stem, '丁');
         assert.ok(json.koreanSaju.energyMeter.score > 0);
         assert.equal(json.koreanSaju.chapters.length, 18);
+    });
+
+    test('API 端點 /api/saju/chart 即使未傳入 mode 亦預設以 saju 模式排盤', async () => {
+        const http = require('node:http');
+        const app = require('../app');
+        const server = http.createServer(app);
+
+        await new Promise((resolve) => server.listen(0, resolve));
+        const port = server.address().port;
+
+        try {
+            const resp = await fetch(`http://127.0.0.1:${port}/api/saju/chart`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    date: '1995-06-15',
+                    time: '12:00',
+                    sex: '男'
+                })
+            });
+            const data = await resp.json();
+            assert.equal(resp.status, 200);
+            assert.equal(data.success, true);
+            assert.ok(data.chart.koreanSaju, '未傳 mode 時 /api/saju/chart 必須自動附帶 koreanSaju');
+            assert.equal(data.chart.mode, 'saju');
+        } finally {
+            await new Promise((resolve) => server.close(resolve));
+        }
     });
 });

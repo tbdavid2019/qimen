@@ -571,7 +571,7 @@
                         <div class="saju-meter-track">
                             <div class="saju-meter-fill" style="width: ${Math.min(100, Math.max(10, em.score || 50))}%;"></div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: var(--suite-text-muted); margin-bottom: 8px;">
+                        <div class="saju-meter-legend">
                             <span>極弱 (0~35)</span>
                             <span>身弱 (36~46)</span>
                             <span>中和 (47~52)</span>
@@ -580,7 +580,7 @@
                         </div>
                         <div style="font-size: 15px; line-height: 1.6; color: var(--suite-text);">
                             <strong>【能量解析】</strong>${escapeHtml(em.description || '')}
-                            <span style="font-size: 13.5px; color: var(--suite-text-muted); margin-left: 6px;">（得令 ${em.details?.deungryeong || 0}% + 得地 ${em.details?.deungji || 0}% + 得勢 ${em.details?.deungse || 0}%）</span>
+                            <span style="font-size: 13.5px; color: var(--suite-text-muted); margin-left: 6px;">（得令 ${Number(em.details?.deungryeong || 0)}% + 得地 ${Number(em.details?.deungji || 0)}% + 得勢 ${Number(em.details?.deungse || 0)}%）</span>
                         </div>
                     </div>
 
@@ -588,23 +588,23 @@
                     <div class="saju-remedy-card">
                         <div class="saju-remedy-title">
                             <i data-lucide="sparkles"></i> 缺失五行生活開運錦囊 (결핍 오행 개운법)
-                            ${feb.missingElements?.length ? `<span class="suite-tag" style="background:#ef4444; color:#fff; font-size:13px; margin-left:6px;">缺${feb.missingElements.join('、')}</span>` : '<span class="suite-tag" style="background:#10b981; color:#fff; font-size:13px; margin-left:6px;">五行流通俱全</span>'}
+                            ${feb.missingElements?.length ? `<span class="suite-tag" style="background:#ef4444; color:#fff; font-size:13px; margin-left:6px;">缺${escapeHtml(feb.missingElements.join('、'))}</span>` : '<span class="suite-tag" style="background:#10b981; color:#fff; font-size:13px; margin-left:6px;">五行流通俱全</span>'}
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px;">
-                            <div style="background: rgba(255,255,255,0.65); padding: 10px 12px; border-radius: 8px;">
-                                <strong style="font-size: 14px; color: #15803d;">🎨 補運穿著色彩：</strong>
+                            <div class="saju-remedy-subcard">
+                                <strong>🎨 補運穿著色彩：</strong>
                                 <div style="font-size: 14.5px; margin-top: 2px;">${escapeHtml((remedy.colors || []).join('、'))}</div>
                             </div>
-                            <div style="background: rgba(255,255,255,0.65); padding: 10px 12px; border-radius: 8px;">
-                                <strong style="font-size: 14px; color: #15803d;">🧭 幸運吉方：</strong>
+                            <div class="saju-remedy-subcard">
+                                <strong>🧭 幸運吉方：</strong>
                                 <div style="font-size: 14.5px; margin-top: 2px;">${escapeHtml((remedy.luckyDirections || []).join('、'))}</div>
                             </div>
-                            <div style="background: rgba(255,255,255,0.65); padding: 10px 12px; border-radius: 8px;">
-                                <strong style="font-size: 14px; color: #15803d;">🥗 飲食養生建議：</strong>
+                            <div class="saju-remedy-subcard">
+                                <strong>🥗 飲食養生建議：</strong>
                                 <div style="font-size: 14.5px; margin-top: 2px;">${escapeHtml((remedy.dietWellness || []).slice(0, 2).join('、'))}</div>
                             </div>
                         </div>
-                        <div style="margin-top: 8px; font-size: 14.5px; line-height: 1.6; color: #166534;">
+                        <div class="saju-remedy-action">
                             <strong>【日常開運微行動】</strong>${escapeHtml(remedy.actionAdvice || '')}
                         </div>
                     </div>
@@ -1771,6 +1771,7 @@
         }
         if (page === 'bazi2') {
             return {
+                mode: document.getElementById('baziMode')?.value || val('mode') || 'ziping',
                 name: val('name'),
                 formerName: val('formerName'),
                 calendar: val('calendar') || 'solar',
@@ -2768,8 +2769,27 @@
             if (baziModeInput) baziModeInput.value = mode;
             btnModeZiping?.classList.toggle('active', mode === 'ziping');
             btnModeSaju?.classList.toggle('active', mode === 'saju');
+            btnModeZiping?.setAttribute('aria-pressed', mode === 'ziping');
+            btnModeSaju?.setAttribute('aria-pressed', mode === 'saju');
             if (zipingBanner) zipingBanner.style.display = mode === 'ziping' ? '' : 'none';
             if (sajuBanner) sajuBanner.style.display = mode === 'saju' ? '' : 'none';
+
+            const heroBadge = document.getElementById('baziHeroBadge');
+            if (mode === 'saju') {
+                document.title = '韓式現代四柱 (K-Saju) · 18章平生指南 | 333 一句提醒·照見當下';
+                if (heroBadge) {
+                    heroBadge.innerHTML = '🇰🇷 韓式現代四柱 (K-Saju)';
+                    heroBadge.style.background = '#e11d48';
+                    heroBadge.style.color = '#ffffff';
+                }
+            } else {
+                document.title = '生辰八字排盤 · 子平正統與韓式四柱 (K-Saju) 顧問 | 333 一句提醒·照見當下';
+                if (heroBadge) {
+                    heroBadge.innerHTML = '📜 子平正統 · 🇰🇷 韓式四柱';
+                    heroBadge.style.background = '';
+                    heroBadge.style.color = '';
+                }
+            }
 
             if (submitBtn) {
                 submitBtn.innerHTML = mode === 'saju'

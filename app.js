@@ -636,6 +636,9 @@ app.post('/api/time/boundary', handleTimeBoundary);
 const handleBaziChart = async (req, res) => {
     try {
         const payload = { ...(req.query || {}), ...(req.body || {}) };
+        if (req.path && req.path.startsWith('/api/saju')) {
+            payload.mode = payload.mode || 'saju';
+        }
         const isSaju = payload.mode === 'saju' || payload.mode === 'korean_saju';
         const chart = isSaju ? calculateKoreanSaju(payload) : calculateBazi(payload);
         const moduleName = isSaju ? '韓式四柱命理' : '生辰八字2';
@@ -1095,13 +1098,26 @@ const bazi2QuestionHandler = createServiceQuestionHandler({
     calculate: (payload) => (payload.mode === 'saju' || payload.mode === 'korean_saju')
         ? calculateKoreanSaju(payload)
         : calculateBazi(payload),
-    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeBazi2(result, opts),
+    analyze: (result, opts, req) => {
+        const isSaju = result?.mode === 'saju' || opts?.mode === 'saju';
+        const svc = resolveLlmService(req, llmService);
+        return isSaju ? svc.analyzeKoreanSaju(result, opts) : svc.analyzeBazi2(result, opts);
+    },
     discord: discordWebhook
 });
 app.post('/api/bazi2-question', bazi2QuestionHandler);
 app.get('/api/bazi2-question', bazi2QuestionHandler);
-app.post('/api/saju-question', bazi2QuestionHandler);
-app.get('/api/saju-question', bazi2QuestionHandler);
+
+const sajuQuestionHandler = createServiceQuestionHandler({
+    moduleName: '韓式四柱命理',
+    resultKey: 'chart',
+    validate: validateBaziQuestion,
+    calculate: (payload) => calculateKoreanSaju({ ...(payload || {}), mode: 'saju' }),
+    analyze: (result, opts, req) => resolveLlmService(req, llmService).analyzeKoreanSaju(result, { ...(opts || {}), mode: 'saju' }),
+    discord: discordWebhook
+});
+app.post('/api/saju-question', sajuQuestionHandler);
+app.get('/api/saju-question', sajuQuestionHandler);
 
 const yinyuanQuestionHandler = createServiceQuestionHandler({
     moduleName: '姻緣',

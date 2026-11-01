@@ -122,7 +122,7 @@
 - **雙模式自由切換 (Dual-Mode Divination)**：
   - **子平正統八字 (`mode=ziping`)**：年月日時四柱天干地支、六十甲子納音五行、十二長生運、十神與藏干、旺衰與五行力量、格局與喜用神、吉凶神煞、十年大運與流年、袁天罡稱骨算命及五運六氣臟腑養生。
   - **韓式現代四柱 K-Saju (`mode=saju` / `POST /api/saju/chart` & `POST /api/saju-question`)**：參考韓國頂尖開源 `be-realdeveloper/saju`（真實萬歲曆 18 章平生四柱）與 `imgompanda/drsaju-opensource`（AI 四柱分析），以真實萬歲曆與真太陽時均時差為骨架，融合東方靈魂心理學：
-    - **10 日干靈魂原型 (Ilgan Soul Archetypes)**：以日干為本質映射東方 MBTI 心理畫像（甲木高大松樹 ENFJ/ENTJ、乙木蔓藤花草 INFP/ENFP、丙木太陽烈火 ESFP/ENFJ、丁火溫暖燭光 INFJ/ISFJ、戊土廣袤大地 ISFJ/ESFJ、己土肥沃田園 ISFP/INFP、庚金剛毅利劍 ESTJ/ISTJ、辛金璀璨珠寶 INTJ/ISFP、壬水汪洋大海 ENTP/INTJ、癸水滋潤甘霖 INTP/INFJ）。
+    - **10 日干靈魂原型 (Ilgan Soul Archetypes)**：以日干為本質映射東方 MBTI 心理畫像（甲木高大松樹 ENFJ/ENTJ、乙木蔓藤花草 ENFP/INFP、丙火熾熱烈日 ESFP/ENTP、丁火溫暖燭光 INFJ/ISFJ、戊土崇山峻嶺 ISTJ/ESTJ、己土肥沃良田 ISFP/ESFJ、庚金剛毅重劍 ESTP/ENTJ、辛金璀璨美玉 INTJ/ISFP、壬水浩瀚汪洋 ENTP/INTP、癸水清柔雨露 INFP/INFJ）。
     - **身強身弱能量天秤 (Singang / Sinyak Score 0~100)**：得令 (30%) + 得地 (30%) + 得勢 (40%) 嚴謹量化，輸出極身強、身強、中和平衡、身弱、極身弱五大能量段位與行動策略。
     - **缺失五行生活開運法 (개운법 - Lifestyle Remedies)**：精準診斷命盤缺失之木/火/土/金/水，提供開運幸運色、吉利方位、補運食療、開運日常微習慣與行動指南。
     - **四柱宮位人生四大舞台 (궁위론 - 4 Palaces)**：年柱 (0-19歲 祖蔭與童年)、月柱 (20-39歲 青年與職場舞台)、日柱 (40-59歲 壯年自我與婚姻)、時柱 (60歲+ 晚年與人生終局)。

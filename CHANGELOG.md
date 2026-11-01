@@ -4,8 +4,23 @@
 
 ## [2026-11-01]
 
+### 🛡️ Dual Code Review (OpenAI Codex CLI + OpenCode CLI) 深度審查與全方位修復
+
+- **雙 AI 獨立審查機制落實 (Codex & OpenCode Autonomous Review)**：
+  - 由 OpenAI Codex CLI (`gpt-5.6-luna`) 與 OpenCode CLI (`Claude 3.5 Sonnet`) 對韓式四柱命理代碼進行獨立交叉審查，發現並修復 3 項 P1 關鍵缺陷與 5 項 P2/P3 體驗優化：
+  - **P1 表單載荷遺漏 Mode 傳遞**：修復 `divination-suite.js` 中 `buildPayload()` 未讀取 `#baziMode` 隱藏欄位之問題，確保前端點選「韓式現代四柱」時，`mode: 'saju'` 忠實送達後端進行排盤。
+  - **P1/P2 專屬 API 端點自動注入 Saju 模式**：`/api/saju/chart` 與 `/api/saju-question` 自動為缺少 `mode` 的請求注入 `mode: 'saju'`，並掛載專屬 `sajuQuestionHandler` 確保 Discord 記錄標註為「韓式四柱命理」且呼叫 `analyzeKoreanSaju`。
+  - **P2 WebMCP 工具與端點契約對齊**：`korean_saju_chart` WebMCP 工具對齊專屬 `/api/saju-question` 端點，補齊 `required: ["question", "date"]` 與預設 `mode: "saju"`。
+  - **P2 暗黑模式 (Dark Mode) 深度適配**：拔除 `#zipingBanner` 與 `#sajuBanner` 之行內淺色樣式，改以 `.ziping-banner` 與 `.saju-banner` CSS 類別結合 `[data-theme="dark"]` 半透明發光邊框；生活開運卡子區塊改以 `.saju-remedy-subcard` 精準適配暗黑對比度。
+  - **P2 行動端 RWD 破版防護**：修正 `.bazi-mode-grid` 在小螢幕（`< 640px`）維持單欄堆疊，能量天秤說明文字 (`.saju-meter-legend`) 增加自動換行以防溢出。
+  - **P2 地支藏干與真缺判定健全化**：五行缺失判定整合地支藏干掃描，精確區分「全盤真缺」與「表面缺有根」，避免誤診斷。
+  - **P3 測試與健全性強化**：測試套件擴充至 349 項，新增 `POST /api/saju/chart` 端點免 mode 測試與未知時辰（`allowUnknownHour`）安全降級測試。
+
 ### 🇰🇷 韓式現代四柱命理雙模式深度整合 (Korean Saju K-Saju 18-Chapter Lifetime Divination Integration)
 
+- **標題與導航全方位動態適配 (Dynamic Header & Title Sync)**：
+  - 修復頁面靜態 `<title>`、`<meta property="og:title">` 與頂部 Hero Badge 殘留「子平命理」字樣問題，升級為 `八字命理排盤 · 子平正統與韓式四柱 (K-Saju) 顧問`。
+  - 實作前端動態連動：當使用者切換至「韓式現代四柱」時，瀏覽器標籤頁動態變更為 `韓式現代四柱 (K-Saju) · 18章平生指南`，Hero Badge 即時點亮為 `🇰🇷 韓式現代四柱 (K-Saju)`。
 - **對標韓國最新熱門開源生態**：
   - 深入參考韓國 GitHub 爆紅開源專案 `be-realdeveloper/saju`（基於真實萬歲曆之 Claude Code 18 章平生四柱）與 `imgompanda/drsaju-opensource`（Dr.Saju AI 四柱命理分析），為 `/bazi2` 打造全新子平正統 vs 韓式現代四柱 (K-Saju) 雙模式切換體驗。
 - **5 層架構端到端無縫對齊 (Full-Stack 5-Layer Parameter Alignment)**：

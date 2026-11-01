@@ -1606,7 +1606,7 @@
 			},
 			required: ["question", "date"]
 		}),
-		korean_saju_chart: createSuiteTool("korean_saju_chart", "韓式現代四柱 (K-Saju · 18장 평생사주)：日干靈魂原型 (東方 MBTI)、身強身弱 0~100 能量天秤、缺行生活開運錦囊、四柱宮位四幕人生與 18 章平生深度指南。", "/api/bazi2-question", {
+		korean_saju_chart: createSuiteTool("korean_saju_chart", "韓式現代四柱 (K-Saju · 18장 평생사주)：日干靈魂原型 (東方 MBTI)、身強身弱 0~100 能量天秤、缺行生活開運錦囊、四柱宮位四幕人生與 18 章平生深度指南。", "/api/saju-question", {
 			type: "object",
 			properties: {
 				question: { type: "string", description: "想請教的事項或人生困惑" },
@@ -1621,7 +1621,7 @@
 				lang: { type: "string", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
 				mode: { type: "string", enum: ["saju"], description: "固定為 saju 模式" }
 			},
-			required: ["date"]
+			required: ["question", "date"]
 		}),
 		yinyuan_reading: createSuiteTool("yinyuan_reading", "月老姻緣籤（100籤）、生肖配對、紫微夫妻宮、桃花運勢、八字合婚與紅線測算指引。", "/api/yinyuan-question", {
 			type: "object",
