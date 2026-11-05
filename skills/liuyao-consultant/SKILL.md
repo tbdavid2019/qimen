@@ -18,8 +18,15 @@ Trigger this skill whenever a user:
 ## Workflow
 
 1. **Calculate the Hexagram**:
-   Use `scripts/ask_liuyao.js` to compute or query the Liu Yao engine:
+   Use the pure local calculation script `scripts/liuyao_cli.js` (offline, zero-dependency) or `scripts/ask_liuyao.js` (calling the API):
    ```bash
+   # 本機離線排盤 (Pure Local Node.js)
+   node skills/liuyao-consultant/scripts/liuyao_cli.js --question "今年投資運勢" --category "求財投資" --method coins
+   
+   # 指定六爻數值手動起卦
+   node skills/liuyao-consultant/scripts/liuyao_cli.js --question "轉換工作跑道" --lines 789687
+   
+   # API 與 LLM 問答模式
    node skills/liuyao-consultant/scripts/ask_liuyao.js '{"question":"今年投資運勢","category":"求財投資","method":"coins"}'
    ```
 2. **Lock in the Yong Shen (用神)**:
@@ -37,12 +44,16 @@ Trigger this skill whenever a user:
 4. **Synthesize Empowering Guidance**:
    Adhere to the motto: "傳統智慧，理性解讀；照見當下，指引行動". Offer clear conclusions, likely timelines (應期), and three concrete next steps.
 
-## Script Arguments (`ask_liuyao.js`)
+## API 調用
 
-Supports inline JSON, stdin JSON, and command-line flags:
-- `--question`: Specific question/inquiry (required).
-- `--method`: `coins` | `dayan` | `datetime` | `manual` | `combo` (runs Qimen × Liuyao × Meihua 3-system Hecan decision synthesis via `evaluateDecisionCombo`).
-- `--lines`: 6-character string with digits 6, 7, 8, 9 (e.g. `789687`).
+若透過 HTTP API 呼叫，可發送 `POST /api/liuyao-question` 進行一站式問答解讀，或使用 `POST /api/liuyao` 取得純排盤結構。
+
+## Script Arguments (`liuyao_cli.js` & `ask_liuyao.js`)
+
+Both scripts support inline JSON, stdin JSON, and command-line flags:
+- `--question`: Specific question/inquiry.
+- `--method`: `coins` | `dayan` | `datetime` | `manual` | `combo` (runs Qimen × Liuyao × Meihua 3-system Hecan decision synthesis).
+- `--lines`: 6-character string with digits 6, 7, 8, 9 (e.g. `789687` or `7,8,9,6,8,7`).
 - `--category`: Query category (`求財投資`, `事業升遷`, `考試學業`, `戀愛婚姻`, `身體健康`, `出行尋物`, `綜合運勢`).
-- `--gender`: `男` | `女`.
+- `--gender` / `--sex`: `男` | `女`.
 - `--datetime`: ISO datetime string.

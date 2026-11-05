@@ -2165,9 +2165,9 @@ app.get('/api/llm-test', async (req, res) => {
 // API 文檔端點
 app.get('/api/docs', (req, res) => {
     const apiDocs = {
-        title: "奇門遁甲術數問答 API 文檔",
-        version: "1.0",
-        description: "提供奇門、梅花、塔羅、風水、生辰八字2、姻緣與解答之書服務的 RESTful API",
+        title: "333 一句提醒·照見當下 術數套件全方位 API 文檔",
+        version: "2.0",
+        description: "提供奇門遁甲、紫微斗數、六爻神卦、梅花易數、生辰八字（含韓式現代四柱 K-Saju）、易經風水、韋特塔羅、月老姻緣、解答之書、姓名分析、測字占事與中醫五運六氣養生服務之全方位 RESTful API",
         baseUrl: `${req.protocol}://${req.get('host')}`,
         endpoints: {
             nameAnalysisVerify: {
@@ -2602,6 +2602,249 @@ app.get('/api/docs', (req, res) => {
                         days: 9,
                         midnightBoundaryResolved: true
                     }
+                }
+            },
+            ziweiChart: {
+                method: "GET / POST",
+                path: "/api/ziwei/chart",
+                description: "紫微斗數純排盤：十四主星善本廟旺、34種古籍格局成格/加分/破格判定、三組十二神煞與夫妻宮畫像，支援 skipRecord: true 跳過記錄",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], default: "男", description: "性別" },
+                    calendar: { type: "string", required: false, enum: ["solar", "lunar"], default: "solar", description: "曆法" },
+                    skipRecord: { type: "boolean", required: false, description: "設為 true 跳過 Discord 記錄" }
+                }
+            },
+            ziweiMatch: {
+                method: "POST",
+                path: "/api/ziwei/match",
+                description: "雙人紫微合盤：以命宮主星 30%、夫妻宮投射 30%、四化互照 25%、煞星對衝 15% 形成 0–100 契合指數與理性相處指南",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    first: { type: "object", required: true, description: "第一方出生資料（date, time/shichen, sex, calendar）" },
+                    second: { type: "object", required: true, description: "第二方出生資料（date, time/shichen, sex, calendar）" }
+                }
+            },
+            bazi2Chart: {
+                method: "GET / POST",
+                path: "/api/bazi2/chart",
+                description: "生辰八字純排盤：四柱干支、地支藏干、十神、納音、十二長生、吉凶神煞、大運流年與袁天罡稱骨",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, default: "12:00", description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], default: "男", description: "性別" },
+                    calendar: { type: "string", required: false, enum: ["solar", "lunar"], default: "solar", description: "曆法" },
+                    allowUnknownHour: { type: "boolean", required: false, description: "時辰未知時保留未知時柱" },
+                    deceasedYear: { type: "integer", required: false, description: "已故年份上限過濾" }
+                }
+            },
+            bazi2InverseLookup: {
+                method: "GET / POST",
+                path: "/api/bazi2/inverse-lookup",
+                description: "已知四柱干支反查西曆生辰日期與時辰範圍",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    pillars: { type: "string", required: true, description: "四柱干支字串，例如 '庚午 辛巳 庚辰 壬午'" },
+                    startYear: { type: "integer", required: false, description: "檢索起始年份" },
+                    endYear: { type: "integer", required: false, description: "檢索結束年份" }
+                }
+            },
+            bazi2TimeSensitivity: {
+                method: "GET / POST",
+                path: "/api/bazi2/time-sensitivity",
+                description: "出生時辰不確定敏感度分析與定時校準，橫向比對全天或特定時段各時辰對日主強弱、喜用神與格局之實質差異",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    timeRange: { type: "string", required: false, enum: ["all", "morning", "afternoon", "evening", "night"], default: "all", description: "比對時段範圍" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], default: "男", description: "性別" }
+                }
+            },
+            sajuChart: {
+                method: "GET / POST",
+                path: "/api/saju/chart",
+                description: "韓式現代四柱 (K-Saju · 18장 평생사주)：日干 10 大靈魂原型 (東方 MBTI)、身強身弱 0~100% 能量天秤、缺行生活開運錦囊、四柱宮位四幕人生",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], default: "男", description: "性別" },
+                    calendar: { type: "string", required: false, enum: ["solar", "lunar"], default: "solar", description: "曆法" }
+                }
+            },
+            sajuQuestion: {
+                method: "GET / POST",
+                path: "/api/saju-question",
+                description: "韓式現代四柱排盤並調用 LLM 產出 18 章平生四柱藍圖指南問答解讀",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "要詢問的問題" },
+                    date: { type: "string", required: true, description: "出生日期（YYYY-MM-DD）" },
+                    time: { type: "string", required: false, description: "出生時間（HH:mm）" },
+                    shichen: { type: "string", required: false, enum: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"], description: "出生時辰地支" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], default: "男", description: "性別" },
+                    calendar: { type: "string", required: false, enum: ["solar", "lunar"], default: "solar", description: "曆法" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
+                }
+            },
+            nameAnalysisCezi: {
+                method: "POST",
+                path: "/api/name-analysis/cezi",
+                description: "漢字測字占事純計算：六書拆字形意、康熙筆畫、81數理、梅花字卦與八字喜忌合參",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    character: { type: "string", required: true, description: "欲測之單個漢字（例如：明、泰、轉、安）" },
+                    question: { type: "string", required: false, description: "占問具體事項" },
+                    birthDate: { type: "string", required: false, description: "問測人出生公曆日期（用於八字喜忌合參）" },
+                    sex: { type: "string", required: false, enum: ["男", "女"], default: "男", description: "性別" }
+                }
+            },
+            wellnessReport: {
+                method: "GET / POST",
+                path: "/api/bazi2/yunqi-wellness",
+                description: "中醫五運六氣、二十四節氣與十二時辰子午流注養生報告純計算",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    targetYear: { type: "integer", required: false, description: "分析流年份（預設當前年）" },
+                    targetHour: { type: "integer", required: false, description: "查詢時辰小時（0–23，預設當前時辰）" },
+                    birthDate: { type: "string", required: false, description: "出生公曆日期（用於推算本命體質偏盛）" }
+                }
+            },
+            wellnessQuestion: {
+                method: "GET / POST",
+                path: "/api/wellness-question",
+                description: "五運六氣養生一站式問答：結合本命體質、流年大運、當令節氣與經絡時辰由 LLM 產出深度調養錦囊",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "要諮詢的養生或體質問題" },
+                    targetYear: { type: "integer", required: false, description: "分析流年份" },
+                    targetHour: { type: "integer", required: false, description: "查詢時辰小時" },
+                    birthDate: { type: "string", required: false, description: "出生公曆日期" },
+                    lang: { type: "string", required: false, default: "zh-tw", enum: ["zh-tw", "zh-cn"], description: "回答語言" },
+                    conversationHistory: { type: "array", required: false, description: "多輪對話歷史" }
+                }
+            },
+            tarotReading: {
+                method: "GET / POST",
+                path: "/api/tarot/reading",
+                description: "韋特塔羅純抽牌：78張完整牌庫、6大經典牌陣、時間因子、可重現 seed、四維透鏡與牌間生剋關係",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    spread: { type: "string", required: false, default: "three", enum: Object.keys(TAROT_SPREADS), description: "牌陣代碼" },
+                    variant: { type: "string", required: false, enum: ["timeline", "situation", "relationship", "decision"], description: "三牌陣視角" },
+                    time_factor: { type: "string", required: false, enum: ["morning", "afternoon", "night"], description: "時間能量因子" },
+                    seed: { type: "string", required: false, description: "可重現隨機種子" }
+                }
+            },
+            tarotNumerology: {
+                method: "GET / POST",
+                path: "/api/tarot/numerology",
+                description: "生命靈數純計算：九宮數網格、十二條連線性格象徵、缺數轉念心法與對應大阿卡納象徵牌",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    date: { type: "string", required: true, description: "西曆出生日期（YYYY-MM-DD）" }
+                }
+            },
+            yinyuanReading: {
+                method: "GET / POST",
+                path: "/api/yinyuan/reading",
+                description: "月老靈籤 100 首完整籤詩與籤解純計算，支援自選籤號或種子隨機抽籤",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    stickNum: { type: "integer", required: false, minimum: 1, maximum: 100, description: "自選籤號（1–100）" },
+                    seed: { type: "string", required: false, description: "抽籤亂數種子" },
+                    name: { type: "string", required: false, description: "問測人姓名" }
+                }
+            },
+            yinyuanMatch: {
+                method: "GET / POST",
+                path: "/api/yinyuan/match",
+                description: "生肖合婚與八字配對純計算：三合六合六沖六害與天干地支相生相剋評分",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    first: { type: "object", required: false, description: "第一方資料（year / zodiac / date / sex）" },
+                    second: { type: "object", required: false, description: "第二方資料（year / zodiac / date / sex）" },
+                    firstYear: { type: "integer", required: false, description: "第一方出生年份" },
+                    secondYear: { type: "integer", required: false, description: "第二方出生年份" }
+                }
+            },
+            meihuaQigua: {
+                method: "POST",
+                path: "/api/meihua/qigua",
+                description: "梅花易數純起卦：時間、數字、文字起卦，輸出本卦、互卦、變卦、錯卦、綜卦與體用五行生剋",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    method: { type: "string", required: false, default: "time", enum: ["time", "number", "text", "character"], description: "起卦方式" },
+                    datetime: { type: "string", required: false, description: "指定時間（ISO 格式）" },
+                    num1: { type: "number", required: false, description: "上卦數" },
+                    num2: { type: "number", required: false, description: "下卦數" },
+                    num3: { type: "number", required: false, description: "動爻數" },
+                    text: { type: "string", required: false, description: "起卦漢字或詞語" }
+                }
+            },
+            zeriSearch: {
+                method: "GET / POST",
+                path: "/api/zeri/search",
+                description: "傳統協紀辨方與奇門吉時獵手綜合擇日吉時搜尋，精選 Top 5 黃金時辰",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    year: { type: "integer", required: false, description: "擇日目標年份" },
+                    month: { type: "integer", required: false, minimum: 1, maximum: 12, description: "擇日目標月份" },
+                    matter: { type: "string", required: false, enum: ["入宅/喬遷", "開業/開市", "動土/裝修", "婚嫁/嫁娶"], default: "入宅/喬遷", description: "擇日事項" }
+                }
+            },
+            comboDecision: {
+                method: "POST",
+                path: "/api/combo/decision",
+                description: "重大決策「奇門 × 六爻 × 梅花」三卜合參引擎，跨體系共識度、三術比對與明確行動錦囊",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    question: { type: "string", required: true, description: "重大決策事項" },
+                    category: { type: "string", required: false, default: "綜合運勢", description: "決策領域" },
+                    datetime: { type: "string", required: false, description: "起局時間" }
+                }
+            },
+            conversationSendEmail: {
+                method: "POST",
+                path: "/api/conversation/send-email",
+                description: "全模組占卜結果與問答歷史匯出寄送至使用者 Email",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    email: { type: "string", required: true, description: "收件人電子郵件地址" },
+                    history: { type: "array", required: true, description: "對話或問答紀錄陣列" },
+                    service: { type: "string", required: false, description: "服務模組識別碼" },
+                    subject: { type: "string", required: false, description: "郵件主旨自訂前綴" },
+                    chartSummary: { type: "string", required: false, description: "排盤或卦象純文字摘要" }
+                }
+            },
+            byokModels: {
+                method: "POST",
+                path: "/api/byok/models",
+                description: "自備金鑰中心 (BYOK Hub)：獲取支援供應商 (OpenAI, Groq, Gemini) 之可用模型清單",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    provider: { type: "string", required: true, enum: ["openai", "groq", "gemini"], description: "LLM 供應商代碼" },
+                    apiKey: { type: "string", required: true, description: "用戶自備 API Key（端對端無痕不落地儲存）" },
+                    customBaseUrl: { type: "string", required: false, description: "自訂 Base URL（選填）" }
+                }
+            },
+            byokTest: {
+                method: "POST",
+                path: "/api/byok/test",
+                description: "自備金鑰中心 (BYOK Hub)：測試自備金鑰連線與延遲驗證",
+                headers: { "Content-Type": "application/json" },
+                parameters: {
+                    provider: { type: "string", required: true, enum: ["openai", "groq", "gemini"], description: "LLM 供應商代碼" },
+                    apiKey: { type: "string", required: true, description: "用戶自備 API Key" },
+                    model: { type: "string", required: false, description: "欲測試的模型名稱" },
+                    customBaseUrl: { type: "string", required: false, description: "自訂 Base URL" }
                 }
             }
         },

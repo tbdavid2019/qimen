@@ -39,7 +39,7 @@
 
 ---
 
-## 🌟 正統術數與心靈模組 (8 大核心服務)
+## 🌟 正統術數與心靈模組 (12 大核心服務與專業工具)
 
 本系統拒絕任何敷衍與閹割版本，全量實作古典正統算法與全息數據庫：
 
@@ -359,8 +359,18 @@ node skills/ziwei-consultant/scripts/ziwei_cli.js --match \
 node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --shichen 午 --sex 男 --domain career
 node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --shichen 午 --sex 男 --all-domains
 
-# 六爻神卦占問（支援銅錢搖卦、大衍筮法、時間起卦與手動指定爻值）
+# 六爻神卦本機純排盤（純 Node.js 離線，支援銅錢搖卦、大衍筮法、指定爻值）
+node skills/liuyao-consultant/scripts/liuyao_cli.js --question "今年投資運勢" --category "求財投資" --method coins
+node skills/liuyao-consultant/scripts/liuyao_cli.js --question "今年下半年換工作發展如何？" --lines 789687
+
+# 六爻神卦一站式問答解讀
 node skills/liuyao-consultant/scripts/ask_liuyao.js --question "今年下半年換工作發展如何？" --category "事業升遷" --method coins
+
+# 五運六氣與子午流注養生報告（本機離線純計算）
+node skills/bazi2-consultant/scripts/bazi_cli.js --mode wellness --date 1990-05-15
+
+# 漢字測字占事（本機離線純計算）
+node skills/name-analysis-consultant/scripts/name_analysis_cli.js --cezi --char 安 --question "近期轉職是否順利？" --birth-date 1990-05-15
 ```
 
 ---

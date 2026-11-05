@@ -11,7 +11,24 @@ test('llms.txt follows the required Markdown structure and indexes all service g
   assert.match(file, /^## APIs and Agent Tools$/m);
   assert.match(file, /^## Optional$/m);
   assert.match(file, /llmstxt\.org/);
-  for (const name of ['Qimen Dunjia', 'Ziwei Doushu', 'Meihua Yishu', 'Bazi', 'Yinyuan', 'Fengshui', 'Waite Tarot', 'Answerbook', 'Chinese name analysis', 'Time range']) {
+  for (const name of [
+    'Qimen Dunjia',
+    'Ziwei Doushu',
+    'Liuyao Divination',
+    'Meihua Yishu',
+    'Bazi',
+    'Korean Saju',
+    'Yinyuan',
+    'Fengshui',
+    'Waite Tarot',
+    'Answerbook',
+    'Chinese name analysis',
+    'Cezi Divination',
+    'Traditional Chinese Medicine Wellness',
+    'Time range',
+    'liuyao-consultant',
+    'BYOK Hub'
+  ]) {
     assert.ok(file.includes(name), `llms.txt should list ${name}`);
   }
 

@@ -2,6 +2,35 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-11-05]
+
+### 📚 全端 5 層架構對齊：llms.txt、/api/docs 與 CLI Skills 全面補齊 (Full-Stack 5-Layer Parameter Alignment)
+
+- **`llms.txt` AI 檢索索引全面翻新與規格對齊**：
+  - **補齊四大近期新增獨立模組**：正式收錄六爻神卦 (`/liuyao`)、測字占事 (`/cezi`)、中醫五運六氣養生 (`/wellness`) 與韓式現代四柱 (`/saju`)，包含演算法架構、端點路徑與對應 Consultant Skills。
+  - **補齊紫微斗數進階演算法**：收錄雙人合盤 (`/ziwei/match`)、十三大主題深度論斷 (`/api/ziwei/domain`)、34 種古籍正統格局庫與三組十二神煞。
+  - **更正全模組信箱匯出描述**：將陳舊的「八大非奇門模組」精準修正為「全部 11 個非奇門模組」（紫微、六爻、梅花、八字/韓式四柱、風水、塔羅、月老姻緣、解答之書、姓名分析、測字占事、五運養生）。
+  - **同步擴充 WebMCP 工具清單與 Standalone CLI Skills**：全面列入 `liuyao_cast_divination`、`cezi_divination`、`wellness_consultation`、`korean_saju_chart`、`liuyao-consultant` 及 Zero-Persistence BYOK Hub (`/api/byok/models`, `/api/byok/test`)。
+- **`/api/docs` 核心 API 文件端點大擴充 (22 ➔ 44 個端點)**：
+  - 在 `app.js` 的 `app.get('/api/docs')` 中補登所有已在生產環境運作但未記載的端點：
+    1. 紫微斗數：`POST /api/ziwei/match`（雙人合盤）、`GET/POST /api/ziwei/chart`（純排盤確定性輸出）。
+    2. 生辰八字：`GET/POST /api/bazi2/chart`（八字純排盤）、`GET/POST /api/bazi2/inverse-lookup`（四柱反查西曆）、`GET/POST /api/bazi2/time-sensitivity`（時辰敏感度分析）。
+    3. 韓式四柱：`GET/POST /api/saju/chart`（K-Saju 10 日干靈魂原型與能量天秤純排盤）、`GET/POST /api/saju-question`（18 章平生指南 LLM 問答）。
+    4. 測字占事：`POST /api/name-analysis/cezi`（漢字測字占事純計算）。
+    5. 五運養生：`GET/POST /api/bazi2/yunqi-wellness`（五運六氣與子午流注純計算）、`GET/POST /api/wellness-question`（五運養生一站式問答）。
+    6. 塔羅與靈數：`GET/POST /api/tarot/reading`（純抽牌）、`GET/POST /api/tarot/numerology`（生命靈數九宮數網格純計算）。
+    7. 姻緣測算：`GET/POST /api/yinyuan/reading`（月老靈籤 100 首）、`GET/POST /api/yinyuan/match`（生肖/八字配對純計算）。
+    8. 梅花易數：`POST /api/meihua/qigua`（梅花純起卦）。
+    9. 綜合合參與擇日：`GET/POST /api/zeri/search`（吉時獵手反向擇日）、`POST /api/combo/decision`（奇門 × 六爻 × 梅花三卜重大決策合參）。
+    10. 實用工具：`POST /api/conversation/send-email`（全模組對話寄送）、`POST /api/byok/models` 與 `POST /api/byok/test`（自備金鑰中心）。
+- **Skills 離線執行與工具鏈加固**：
+  - **新增 `skills/liuyao-consultant/scripts/liuyao_cli.js`**：以純 Node.js 零依賴實作六爻神卦本機離線排盤，支援銅錢搖卦、大衍筮法、指定 6 爻數值（支援字串 `"789687"` 或陣列），同步更新 `SKILL.md`。
+  - **強化 `skills/bazi2-consultant/scripts/bazi_cli.js`**：新增 `--mode wellness` / `--mode yunqi` 分支，支援本機離線直接調用 `calculateYunqiWellness` 產出五運六氣與子午流注報告。
+  - **補齊 `skills/name-analysis-consultant/scripts/ask_name_analysis.js`**：提供一站式 HTTP API 調用腳本，並為 `SKILL.md` 補齊標準 YAML frontmatter 與 REST API 端點說明。
+- **單元與整合測試 100% 通過 (354/354 tests pass)**：
+  - 更新 `test/llms-txt.test.js`，斷言所有 12 個模組與新收錄服務均存在於 `llms.txt` 中。
+  - 擴充 `test/skills.test.js`，覆蓋所有 10 個 Consultant Skills 的 `SKILL.md` 與腳本完整性，並實測 `liuyao_cli.js`、`bazi_cli.js --mode wellness` 與 `name_analysis_cli.js --cezi`。
+
 ## [2026-11-01]
 
 ### 🚀 韓式四柱獨立直達路由 (`/saju`)、SPA 網址無縫同步與首頁 8 大特色高轉化輪播區 (Feature Spotlight Carousel)

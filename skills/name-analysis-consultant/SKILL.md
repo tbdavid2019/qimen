@@ -1,3 +1,10 @@
+---
+name: name-analysis-consultant
+description: >
+  中文姓名分析與測字占事顧問。提供 2-8 字中文姓名驗證、五格剖象數理、生辰八字喜忌合參、
+  命名候選生成（結合 CCNC 365 萬筆真實語料）與漢字測字占事（六書拆字、梅花字卦、81 數理）。
+---
+
 # 中文姓名分析顧問
 
 以 Node.js 本地姓名引擎進行中文姓名驗證與命名候選整理。輸出只供文化參考，不做命運保證或恐懼式解讀。
@@ -44,6 +51,14 @@ node skills/name-analysis-consultant/scripts/name_analysis_cli.js --cezi --char 
 - 必填 `--char`（或 `--text` / `--character`）：單一正體或簡體漢字。
 - 可選 `--question`（或 `--matter`）：欲占問之事項。
 - 可選 `--birth-date` 與 `--birth-sex`：與八字命盤喜用神進行五行互補合參。
+
+### API 端點
+
+本服務亦提供完整 RESTful API：
+- `POST /api/name-analysis/verify`：姓名結構與五格筆畫驗證
+- `POST /api/name-analysis/generate`：依姓氏與偏好條件產生命名候選
+- `POST /api/name-analysis-question`：姓名分析與 LLM 深度問答（支援 `mode: "cezi"` 測字問答）
+- `POST /api/name-analysis/cezi`：漢字測字占事象數義理直斷（純排盤計算）
 
 ## 輸出方法與限制
 

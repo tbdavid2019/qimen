@@ -13,7 +13,9 @@ const skills = [
     ['bazi2-consultant', 'ask_bazi2.js'],
     ['ziwei-consultant', 'ask_ziwei.js'],
     ['yinyuan-consultant', 'ask_yinyuan.js'],
-    ['answerbook-consultant', 'ask_answerbook.js']
+    ['answerbook-consultant', 'ask_answerbook.js'],
+    ['liuyao-consultant', 'ask_liuyao.js'],
+    ['name-analysis-consultant', 'ask_name_analysis.js']
 ];
 
 test('新增服務都有 JavaScript Skill 與獨立腳本', () => {
@@ -82,6 +84,21 @@ test('所有獨立 CLI 腳本（bazi, qimen, ziwei, fengshui, yinyuan, tarot）�
     const trStdout = execSync('node skills/tarot-consultant/scripts/tarot_cli.js --spread three --seed 999', { encoding: 'utf-8' });
     const trRes = JSON.parse(trStdout);
     assert.equal(trRes.cards.length, 3);
+
+    const lyLocalStdout = execSync('node skills/liuyao-consultant/scripts/liuyao_cli.js --lines 789687 --question 測試', { encoding: 'utf-8' });
+    const lyLocalRes = JSON.parse(lyLocalStdout);
+    assert.equal(lyLocalRes.benGua.name, '山火賁');
+    assert.equal(lyLocalRes.zhuxiRule.movingCount, 2);
+
+    const bzWellnessStdout = execSync('node skills/bazi2-consultant/scripts/bazi_cli.js --mode wellness --date 1990-05-15', { encoding: 'utf-8' });
+    const bzWellnessRes = JSON.parse(bzWellnessStdout);
+    assert.ok(bzWellnessRes.annualYunqi);
+    assert.ok(bzWellnessRes.meridianClock);
+
+    const ceziStdout = execSync('node skills/name-analysis-consultant/scripts/name_analysis_cli.js --cezi --char 安 --question 轉職', { encoding: 'utf-8' });
+    const ceziRes = JSON.parse(ceziStdout);
+    assert.equal(ceziRes.success, true);
+    assert.equal(ceziRes.result.char, '安');
 
     const lyStdout = execSync('node skills/liuyao-consultant/scripts/ask_liuyao.js --lines 789687 --question 測試', { encoding: 'utf-8' });
     const lyRes = JSON.parse(lyStdout);
