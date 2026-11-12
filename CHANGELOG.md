@@ -2,6 +2,13 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-11-12]
+
+### ⚡️ 容器運行環境升級 Node.js 26 (v26.13.1) 與最新 CVE 安全防護加固 (Node.js 26 Runtime & Security Hardening)
+- `Dockerfile` 基礎映像檔升級為 `node:26.13.1-alpine`。
+- 完整防護 Node.js 官方 2026-11-11 安全公告修復之多項 High severity 安全性漏洞。
+
+
 ## [2026-11-05]
 
 ### 📚 全端 5 層架構對齊：llms.txt、/api/docs 與 CLI Skills 全面補齊 (Full-Stack 5-Layer Parameter Alignment)
