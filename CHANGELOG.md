@@ -2,6 +2,15 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-11-17]
+
+### 📦 上游相容套件升級與安全性修補 (Dependency Upgrades & Security Patch)
+- `lunar-javascript` 升級至 `^1.7.8`（納入閏月干支修正、$\Delta T$ 參數優化、八字轉公曆修正與 2026–2027 年法定假日）。
+- `axios` 升級至 `^1.21.1`（包含 `follow-redirects` 最低版本安全修補）。
+- `lucide` 升級至 `^1.73.0`，並同步更新前端靜態圖示庫 `public/js/lucide.min.js`。
+- `dotenv` 升級至 `^17.4.2`（維持 17.x 相容線），`@biomejs/biome` 升級至 `^2.6.8`。
+
+
 ## [2026-11-12]
 
 ### ⚡️ 容器運行環境升級 Node.js 26 (v26.13.1) 與最新 CVE 安全防護加固 (Node.js 26 Runtime & Security Hardening)
