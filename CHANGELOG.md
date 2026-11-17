@@ -9,6 +9,8 @@
 - `axios` 升級至 `^1.21.1`（包含 `follow-redirects` 最低版本安全修補）。
 - `lucide` 升級至 `^1.73.0`，並同步更新前端靜態圖示庫 `public/js/lucide.min.js`。
 - `dotenv` 升級至 `^17.4.2`（維持 17.x 相容線），`@biomejs/biome` 升級至 `^2.6.8`。
+- 透過 `overrides` 將 `minimatch` 鎖定升級至 `^11.0.9`（修復 `GHSA-g3hv-75wg-m249` ReDoS 漏洞，同時保留 `nodemon@3.1.14`）。
+- 同步修補 `mcp/package-lock.json` 中間接依賴 `hono`（`4.13.19`）與 `@hono/node-server`（`2.1.8`）之多項安全弱點，根目錄與 `mcp/` `npm audit` 均歸零。
 
 
 ## [2026-11-12]
