@@ -4,10 +4,11 @@
 
 ## [2026-11-18]
 
-- **新增 `888qi-fortune` npm CLI 安裝套件與 Skill 自動更新機制 ([packages/888qi-fortune](packages/888qi-fortune/README.md)、[skills/_shared/runtime.js](skills/_shared/runtime.js)、`skills/*/SKILL.md`)**：
-  - 推出類似 `npx impeccable install` 的 CLI 工具：`npx -y 888qi-fortune install`、`update`（支援 `--if-stale` 24 小時快取節流與無網路降級）、`status` 與 `uninstall`。
+- **新增 `888qi-fortune` npm CLI 安裝套件與 Skill 自動更新機制 (`v1.0.1`, [packages/888qi-fortune](packages/888qi-fortune/README.md)、[skills/_shared/runtime.js](skills/_shared/runtime.js)、`skills/*/SKILL.md`)**：
+  - 推出類似 `npx impeccable install` / `888wiki-skill` 的完整 CLI 工具：`npx --yes 888qi-fortune install --global -y`（亦支援 `-p/--project`、`--agent`、`--only`、`--dir`、`--json` 與 `add`/`upgrade`/`ls`/`remove` 別名）、`update`（支援 `--if-stale` 24 小時快取節流與無網路降級）、`status` 與 `uninstall`。
+  - 原生自動偵測並支援 **Antigravity (`~/.gemini/config/skills` 與 `.agent/skills`)**、**Claude Code**、**Gemini CLI**、**OpenAI Codex**、**Cursor**、**OpenCode** 及通用 `.agents/skills` 目錄。
   - 採用「共用計算引擎 (`~/.888qi-fortune/engine`) + 乾淨 Agent 技能目錄 (`*-consultant/`)」雙路徑載入設計；所有離線排盤與 API 腳本同時相容 repo 內部開發與全域外部安裝執行。
-  - 於全部 10 份顧問技能 `skills/*/SKILL.md` 加入 `npx -y 888qi-fortune@latest update --if-stale` 使用前更新檢查指引與離線容錯規範，並於 [test/skills.test.js](test/skills.test.js) 補齊獨立環境安裝、離線執行與更新測試。
+  - 於全部 10 份顧問技能 `skills/*/SKILL.md` 加入 `npx -y 888qi-fortune@latest update --if-stale` 使用前更新檢查指引與離線容錯規範，並於 [test/skills.test.js](test/skills.test.js) 補齊獨立環境安裝、離線執行、`--json` 狀態與更新測試。
 - **梅花易數介面時間對照與四季旺衰字樣修正 (`lib/meihua.js`、`public/js/meihua.js`)**：
   - 時間起卦結果同時標示「國曆」與「農曆」（例如 `國曆 2026/11/18 16時 · 農曆 2026年10月10日 · 申時`）並於取數公式前註明「農曆取數：」，避免使用者誤判國農曆轉換日期有誤。
   - 將四季五行旺衰狀態由原本英文拼音鍵名（`wang` / `xiang` / `xiu` / `qiu` / `si`）修正為繁體中文「旺 / 相 / 休 / 囚 / 死」。

@@ -1,9 +1,9 @@
 {
   "name": "888qi-fortune",
-  "version": "1.0.0",
-  "description": "CLI installer and calculation runtime for 333 一句提醒·照見當下 (qi.david888.com) traditional Chinese divination AI agent skills.",
+  "version": "1.0.1",
+  "description": "CLI installer and offline calculation runtime for 333 一句提醒·照見當下 (qi.david888.com) traditional Chinese divination AI agent skills.",
   "bin": {
-    "888qi-fortune": "./bin/888qi-fortune.js"
+    "888qi-fortune": "bin/888qi-fortune.js"
   },
   "files": [
     "bin/",

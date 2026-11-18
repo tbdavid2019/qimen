@@ -194,7 +194,19 @@ test('888qi-fortune CLI 支援同步打包、安裝至外部目錄並以共享�
         const statusOut = execSync(`node "${cliBin}" status`, { encoding: 'utf-8', env, cwd: os.tmpdir() });
         assert.match(statusOut, /曆法核心 \(lunar-javascript\): OK/);
 
-        execSync(`node "${cliBin}" uninstall`, { encoding: 'utf-8', env, cwd: os.tmpdir() });
+        const statusJson = JSON.parse(execSync(`node "${cliBin}" ls --json`, { encoding: 'utf-8', env, cwd: os.tmpdir() }));
+        assert.equal(statusJson.engineReady, true);
+        assert.equal(statusJson.lunarReady, true);
+        assert.equal(statusJson.targets.length, 1);
+        assert.equal(statusJson.targets[0].skillCount, 10);
+
+        const helpOut = execSync(`node "${cliBin}" --help`, { encoding: 'utf-8', env, cwd: os.tmpdir() });
+        assert.match(helpOut, /antigravity/);
+        assert.match(helpOut, /cursor/);
+        assert.match(helpOut, /--json/);
+
+        const removeJson = JSON.parse(execSync(`node "${cliBin}" remove --json`, { encoding: 'utf-8', env, cwd: os.tmpdir() }));
+        assert.equal(removeJson.ok, true);
         assert.equal(fs.existsSync(path.join(agentSkillsDir, 'qimen-consultant')), false);
         assert.equal(fs.existsSync(fortuneHome), false);
     } finally {

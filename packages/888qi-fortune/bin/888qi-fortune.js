@@ -25,10 +25,17 @@ const AGENT_DEFS = {
     },
     gemini: {
         id: 'gemini',
-        label: 'Antigravity / Gemini (.gemini/skills)',
+        label: 'Gemini CLI (.gemini/skills)',
         globalDir: () => path.join(os.homedir(), '.gemini', 'skills'),
         projectDir: (cwd) => path.join(cwd, '.gemini', 'skills'),
         detectGlobal: () => path.join(os.homedir(), '.gemini')
+    },
+    antigravity: {
+        id: 'antigravity',
+        label: 'Antigravity (.gemini/config/skills / .agent/skills)',
+        globalDir: () => path.join(os.homedir(), '.gemini', 'config', 'skills'),
+        projectDir: (cwd) => path.join(cwd, '.agent', 'skills'),
+        detectGlobal: () => path.join(os.homedir(), '.gemini', 'config')
     },
     codex: {
         id: 'codex',
@@ -36,6 +43,13 @@ const AGENT_DEFS = {
         globalDir: () => path.join(os.homedir(), '.codex', 'skills'),
         projectDir: (cwd) => path.join(cwd, '.codex', 'skills'),
         detectGlobal: () => path.join(os.homedir(), '.codex')
+    },
+    cursor: {
+        id: 'cursor',
+        label: 'Cursor (.cursor/skills)',
+        globalDir: () => path.join(os.homedir(), '.cursor', 'skills'),
+        projectDir: (cwd) => path.join(cwd, '.cursor', 'skills'),
+        detectGlobal: () => path.join(os.homedir(), '.cursor')
     },
     opencode: {
         id: 'opencode',
@@ -117,12 +131,21 @@ function getSkillNames(sourceRoot, onlyList) {
     return allSkills.filter((name) => wanted.has(name));
 }
 
+function normalizeCommand(raw) {
+    const cmd = String(raw || '').toLowerCase();
+    if (cmd === 'add' || cmd === 'i') return 'install';
+    if (cmd === 'upgrade' || cmd === 'u' || cmd === 'sync') return 'update';
+    if (cmd === 'remove' || cmd === 'rm' || cmd === 'del' || cmd === 'delete') return 'uninstall';
+    if (cmd === 'ls' || cmd === 'list' || cmd === 'check') return 'status';
+    return cmd;
+}
+
 function parseCliArgs(argv) {
     const args = [...argv];
     let command = 'install';
     const knownCommands = new Set(['install', 'update', 'status', 'doctor', 'uninstall', 'help']);
     if (args[0] && !args[0].startsWith('-')) {
-        command = args.shift().toLowerCase();
+        command = normalizeCommand(args.shift());
     }
     if (!knownCommands.has(command)) {
         throw new Error(`Unknown command "${command}". Run "888qi-fortune --help" for usage.`);
@@ -139,6 +162,7 @@ function parseCliArgs(argv) {
         ifStale: false,
         force: false,
         quiet: false,
+        json: false,
         ttlHours: 24
     };
 
@@ -148,8 +172,9 @@ function parseCliArgs(argv) {
         else if (arg === '-v' || arg === '--version') opts.command = 'version';
         else if (arg === '-y' || arg === '--yes') opts.yes = true;
         else if (arg === '-q' || arg === '--quiet') opts.quiet = true;
-        else if (arg === '--project') { opts.project = true; opts.global = false; }
-        else if (arg === '--global') { opts.global = true; opts.project = false; }
+        else if (arg === '--json') opts.json = true;
+        else if (arg === '-p' || arg === '--project') { opts.project = true; opts.global = false; }
+        else if (arg === '-g' || arg === '--global') { opts.global = true; opts.project = false; }
         else if (arg === '--if-stale') opts.ifStale = true;
         else if (arg === '--force') opts.force = true;
         else if (arg === '--agent' && args[i + 1]) {
@@ -346,6 +371,18 @@ async function runInstall(opts) {
     syncSkillsIntoTargets(sourceRoot, targetDirs, skillNames);
     writeStateFiles(stateHome, engineDir, mergedTargets, skillNames);
 
+    if (opts.json) {
+        process.stdout.write(`${JSON.stringify({
+            ok: true,
+            command: 'install',
+            version: PKG_JSON.version,
+            engineDir,
+            skills: skillNames,
+            targets: targetDirs
+        }, null, 2)}\n`);
+        return;
+    }
+
     if (!opts.quiet) {
         process.stdout.write(`\n✓ 888qi-fortune v${PKG_JSON.version} 安裝完成！\n`);
         process.stdout.write(`  • 共享計算引擎: ${engineDir}\n`);
@@ -370,7 +407,9 @@ async function runUpdate(opts) {
     if (opts.ifStale && !opts.force) {
         if (!manifest && opts.dirs.length === 0 && opts.agents.length === 0) {
             // Agent may be running inside repo directly; never fail pre-flight check.
-            if (!opts.quiet) {
+            if (opts.json) {
+                process.stdout.write(`${JSON.stringify({ ok: true, command: 'update', skipped: true, reason: 'no_global_install' }, null, 2)}\n`);
+            } else if (!opts.quiet) {
                 process.stdout.write('888qi-fortune: 未偵測到全域安裝紀錄，跳過背景更新。\n');
             }
             return;
@@ -378,7 +417,9 @@ async function runUpdate(opts) {
         const checkedMs = lastCheck?.checkedAt ? Date.parse(lastCheck.checkedAt) : 0;
         const ttlMs = opts.ttlHours * 3600 * 1000;
         if (installedVersion === PKG_JSON.version && Number.isFinite(checkedMs) && (Date.now() - checkedMs) < ttlMs) {
-            if (!opts.quiet) {
+            if (opts.json) {
+                process.stdout.write(`${JSON.stringify({ ok: true, command: 'update', skipped: true, reason: 'fresh', version: installedVersion }, null, 2)}\n`);
+            } else if (!opts.quiet) {
                 process.stdout.write(`888qi-fortune v${installedVersion} 已為最新狀態（快取檢查未逾 ${opts.ttlHours} 小時）。\n`);
             }
             return;
@@ -396,7 +437,12 @@ async function runUpdate(opts) {
     targetDirs = [...new Set(targetDirs)];
 
     if (targetDirs.length === 0) {
-        if (opts.ifStale) return;
+        if (opts.ifStale) {
+            if (opts.json) {
+                process.stdout.write(`${JSON.stringify({ ok: true, command: 'update', skipped: true, reason: 'no_targets' }, null, 2)}\n`);
+            }
+            return;
+        }
         targetDirs = await resolveTargetDirs({ ...opts, yes: true });
     }
 
@@ -405,30 +451,64 @@ async function runUpdate(opts) {
     syncSkillsIntoTargets(sourceRoot, targetDirs, skillNames);
     writeStateFiles(stateHome, engineDir, targetDirs, skillNames);
 
+    if (opts.json) {
+        process.stdout.write(`${JSON.stringify({
+            ok: true,
+            command: 'update',
+            skipped: false,
+            previousVersion: installedVersion,
+            version: PKG_JSON.version,
+            engineDir,
+            skills: skillNames,
+            targets: targetDirs
+        }, null, 2)}\n`);
+        return;
+    }
+
     if (!opts.quiet) {
         process.stdout.write(`✓ 888qi-fortune 已更新：${installedVersion ? `v${installedVersion} -> ` : ''}v${PKG_JSON.version}（同步 ${targetDirs.length} 個目標目錄，共 ${skillNames.length} 個技能）\n`);
     }
 }
 
-function runStatus() {
+function runStatus(opts = {}) {
     const stateHome = getStateHome();
     const engineDir = getEngineDir(stateHome);
     const manifest = readJsonSafe(getManifestPath(stateHome));
     const versionFile = path.join(engineDir, 'VERSION');
     const engineOk = fs.existsSync(path.join(engineDir, 'lib', 'qimen.js'));
     const lunarOk = fs.existsSync(path.join(engineDir, 'node_modules', 'lunar-javascript', 'package.json'));
+    const engineVersion = fs.existsSync(versionFile) ? fs.readFileSync(versionFile, 'utf8').trim() : null;
+    const targets = (manifest?.targets || []).map((dir) => ({
+        dir,
+        exists: fs.existsSync(dir),
+        skillCount: fs.existsSync(dir)
+            ? fs.readdirSync(dir).filter((d) => d.endsWith('-consultant')).length
+            : 0
+    }));
+
+    if (opts.json) {
+        process.stdout.write(`${JSON.stringify({
+            name: PKG_JSON.name,
+            cliVersion: PKG_JSON.version,
+            stateHome,
+            engineDir,
+            engineReady: engineOk,
+            engineVersion,
+            lunarReady: lunarOk,
+            skills: manifest?.skills || [],
+            targets
+        }, null, 2)}\n`);
+        return;
+    }
 
     process.stdout.write(`888qi-fortune CLI: v${PKG_JSON.version}\n`);
     process.stdout.write(`狀態目錄: ${stateHome}\n`);
-    process.stdout.write(`計算引擎: ${engineDir} (${engineOk ? `ready v${fs.existsSync(versionFile) ? fs.readFileSync(versionFile, 'utf8').trim() : 'unknown'}` : '未安裝'})\n`);
+    process.stdout.write(`計算引擎: ${engineDir} (${engineOk ? `ready v${engineVersion || 'unknown'}` : '未安裝'})\n`);
     process.stdout.write(`曆法核心 (lunar-javascript): ${lunarOk ? 'OK' : '缺少'}\n`);
-    if (manifest?.targets?.length) {
+    if (targets.length) {
         process.stdout.write(`已註冊技能目標:\n`);
-        for (const t of manifest.targets) {
-            const count = fs.existsSync(t)
-                ? fs.readdirSync(t).filter((d) => d.endsWith('-consultant')).length
-                : 0;
-            process.stdout.write(`  - ${t} (${fs.existsSync(t) ? `${count} skills` : '目錄不存在'})\n`);
+        for (const t of targets) {
+            process.stdout.write(`  - ${t.dir} (${t.exists ? `${t.skillCount} skills` : '目錄不存在'})\n`);
         }
     } else {
         process.stdout.write(`已註冊技能目標: 無（請執行 npx 888qi-fortune install）\n`);
@@ -451,31 +531,46 @@ function runUninstall(opts) {
         }
     }
     fs.rmSync(stateHome, { recursive: true, force: true });
-    process.stdout.write(`✓ 已移除 888qi-fortune 計算引擎與 ${targetDirs.length} 個目標目錄下的占算技能。\n`);
+    if (opts.json) {
+        process.stdout.write(`${JSON.stringify({
+            ok: true,
+            command: 'uninstall',
+            removedTargets: targetDirs,
+            skills
+        }, null, 2)}\n`);
+        return;
+    }
+    if (!opts.quiet) {
+        process.stdout.write(`✓ 已移除 888qi-fortune 計算引擎與 ${targetDirs.length} 個目標目錄下的占算技能。\n`);
+    }
 }
 
 function printHelp() {
     process.stdout.write(`888qi-fortune v${PKG_JSON.version} — 333 一句提醒·照見當下 Agent Skills CLI
 
 Usage:
-  888qi-fortune install [options]    安裝技能與共用離線計算核心
-  888qi-fortune update [options]     更新共用計算核心與所有已安裝技能目錄
-  888qi-fortune status               檢視本機安裝版本與目標路徑健康度
-  888qi-fortune uninstall [options]  移除已安裝之技能與計算核心
+  npx -y 888qi-fortune <command> [options]
+
+Commands:
+  install, add, i          安裝技能與共用離線計算核心（預設）
+  update, upgrade, u       更新共用計算核心與所有已安裝技能目錄
+  status, doctor, ls       檢視本機安裝版本與目標路徑健康度
+  uninstall, remove, rm    移除已安裝之技能與計算核心
 
 Options:
-  --agent <list|all>   指定目標 Agent (agents, claude, gemini, codex, opencode, all)
-  --project            安裝至目前專案目錄 (.agents/skills 等)
-  --global             安裝至全域家目錄（預設）
-  --dir <path>         指定自訂安裝目錄
+  --agent <list|all>   指定目標 Agent (agents, antigravity, claude, gemini, codex, cursor, opencode, all)
+  -g, --global         安裝至全域家目錄（預設）
+  -p, --project        安裝至目前專案目錄 (.agent/skills, .agents/skills 等)
+  --dir <path>         指定自訂安裝目錄（可重複指定）
   --only <skills>      只安裝指定技能（逗號分隔）
-  --yes, -y            非互動自動安裝至已偵測之目錄
+  -y, --yes            非互動自動安裝至已偵測之目錄
   --if-stale           僅在超過快取間隔或版本不同時更新（供 Skill 呼叫）
   --ttl-hours <N>      搭配 --if-stale 之快取小時數（預設 24）
   --force              忽略快取強制覆蓋更新
-  --quiet, -q          精簡輸出
-  --version, -v        顯示版本
-  --help, -h           顯示說明
+  --json               輸出結構化 JSON
+  -q, --quiet          精簡輸出
+  -v, --version        顯示版本
+  -h, --help           顯示說明
 `);
 }
 
@@ -483,7 +578,7 @@ async function main() {
     const opts = parseCliArgs(process.argv.slice(2));
     if (opts.command === 'help') { printHelp(); return; }
     if (opts.command === 'version') { process.stdout.write(`${PKG_JSON.version}\n`); return; }
-    if (opts.command === 'status' || opts.command === 'doctor') { runStatus(); return; }
+    if (opts.command === 'status' || opts.command === 'doctor') { runStatus(opts); return; }
     if (opts.command === 'uninstall') { runUninstall(opts); return; }
     if (opts.command === 'update') { await runUpdate(opts); return; }
     await runInstall(opts);
