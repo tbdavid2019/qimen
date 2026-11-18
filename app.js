@@ -60,8 +60,8 @@ const llmService = new LLMAnalysisService({
     models: process.env.LLM_MODELS || [process.env.LLM_MODEL, process.env.LLM_FALLBACK_MODELS]
         .filter(Boolean)
         .join(','),
-    model: process.env.LLM_MODEL || 'gpt-4.1-mini',
-    baseURL: process.env.LLM_BASE_URL,
+    model: process.env.LLM_MODEL || 'group/talk',
+    baseURL: process.env.LLM_BASE_URL || 'https://llm.aiurl.tw/v1',
     maxTokens: parseInt(process.env.LLM_MAX_TOKENS) || 9999,
     temperature: parseFloat(process.env.LLM_TEMPERATURE) || 0.7
 });

@@ -4,6 +4,10 @@
 
 ## [2026-11-18]
 
+- **梅花易數介面時間對照與四季旺衰字樣修正 (`lib/meihua.js`、`public/js/meihua.js`)**：
+  - 時間起卦結果同時標示「國曆」與「農曆」（例如 `國曆 2026/11/18 16時 · 農曆 2026年10月10日 · 申時`）並於取數公式前註明「農曆取數：」，避免使用者誤判國農曆轉換日期有誤。
+  - 將四季五行旺衰狀態由原本英文拼音鍵名（`wang` / `xiang` / `xiu` / `qiu` / `si`）修正為繁體中文「旺 / 相 / 休 / 囚 / 死」。
+
 ### 🎨 前端 UX、無障礙體驗與現代 Web 標準全面升級 (`frontend-ux-a11y-modernization`)
 - **Atelier 對比度與主題系統校正 (`theme-atelier.css`、`style-new.css`、`divination-suite.css`、`byok.css`、`meihua.css`、`liuyao.css`、`theme.js`、`webmcp.js`)**：
   - 分離填充色 (`--saffron` + `--deep-blue`) 與淺底文字強調色 (`--clay: #a9471d`)，全面修復淺色與深色模式下按鈕、宮位標籤、五行色、飛星標示、placeholder 與 `<summary>` 對比度至 WCAG AA/AAA 水準（>= 4.5:1 / >= 3:1 大字）。

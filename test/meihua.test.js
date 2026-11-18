@@ -84,3 +84,19 @@ test('梅花漢字起卦正確生成五卦全息與動爻爻辭', () => {
     assert.ok(result.dongYaoInfo && result.dongYaoInfo.text);
     assert.ok(result.timing && result.timing.timingDesc);
 });
+
+test('梅花時間起卦輸出國曆與農曆資訊，且四季旺衰狀態使用中文名稱', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const result = meihua.qiguaByGregorianComponents(2026, 11, 18, 16);
+    assert.deepEqual(result.solar, { year: 2026, month: 11, day: 18, hour: 16 });
+    assert.deepEqual(result.lunar, { year: 2026, month: 10, day: 10, isLeap: false });
+    assert.equal(result.shichen.name, '申');
+    assert.match(result.wuxing.tiStatus, /【[旺相休囚死平]】/);
+    assert.match(result.wuxing.yongStatus, /【[旺相休囚死平]】/);
+    assert.doesNotMatch(result.wuxing.tiStatus + result.wuxing.yongStatus, /\b(wang|xiang|xiu|qiu|si)\b/);
+
+    const frontendJs = fs.readFileSync(path.join(__dirname, '..', 'public/js/meihua.js'), 'utf8');
+    assert.match(frontendJs, /國曆 \$\{data\.solar\.year\}/);
+    assert.match(frontendJs, /農曆 \$\{data\.lunar\.year\}年/);
+});

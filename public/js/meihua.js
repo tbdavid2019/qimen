@@ -164,8 +164,15 @@ function updateResult(data) {
             methodDisplayEl.textContent = `三數起卦（${data.numbers?.num1}, ${data.numbers?.num2}, ${data.numbers?.num3}）`;
             if (extraDetailEl) extraDetailEl.textContent = `上卦 ${data.calculations?.upperGua} / 下卦 ${data.calculations?.lowerGua} / 動爻 ${data.calculations?.dongYao}`;
         } else {
-            methodDisplayEl.textContent = `時間起卦（${data.lunar ? `${data.lunar.year}年${data.lunar.month}月${data.lunar.day}日 ${data.shichen?.name || ''}時` : '當前時間'}）`;
-            if (extraDetailEl) extraDetailEl.textContent = `年數${data.calculations?.yearSum}+月${data.calculations?.month}+日${data.calculations?.day}+時${data.calculations?.shichenNum}`;
+            var solarPart = data.solar
+                ? `國曆 ${data.solar.year}/${String(data.solar.month).padStart(2, '0')}/${String(data.solar.day).padStart(2, '0')} ${String(data.solar.hour).padStart(2, '0')}時`
+                : '';
+            var lunarPart = data.lunar
+                ? `農曆 ${data.lunar.year}年${data.lunar.isLeap ? '閏' : ''}${data.lunar.month}月${data.lunar.day}日`
+                : '當前時間';
+            var calendarLabel = [solarPart, lunarPart].filter(Boolean).join(' · ');
+            methodDisplayEl.textContent = `時間起卦（${calendarLabel}${data.shichen?.name ? ` · ${data.shichen.name}時` : ''}）`;
+            if (extraDetailEl) extraDetailEl.textContent = `農曆取數：年數${data.calculations?.yearSum}+月${data.calculations?.month}+日${data.calculations?.day}+時${data.calculations?.shichenNum}`;
         }
     }
 
