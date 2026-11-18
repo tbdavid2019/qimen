@@ -67,6 +67,7 @@ typings/
 *.sync-conflict-*
 
 .impeccable/
+packages/888qi-fortune/bundle/
 
 # AI Agent & IDE config
 .codex/

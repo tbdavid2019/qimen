@@ -5,6 +5,18 @@ description: Quick Meihua Yishu (梅花易數) consultant. Use this skill when t
 
 # Meihua Consultant Skill
 
+## 使用前版本更新檢查 (Update Before Running)
+
+每次調用本技能前，請先檢查並同步 `888qi-fortune` 最新版本（內建 24 小時快取節流，未逾期會於毫秒內跳過）：
+
+```bash
+npx -y 888qi-fortune@latest update --if-stale
+```
+
+- 若需立即強制比對最新遠端版本，可改執行 `npx -y 888qi-fortune@latest update`。
+- **離線與受限環境容錯**：若當前環境無網路、npm 受限或更新失敗，請直接忽略更新錯誤並繼續使用本機已安裝腳本完成占算，切勿中斷使用者流程。
+
+
 This skill provides guidance on how to act as a Meihua Yishu (梅花易數) consultant for rapid decision-making and insight.
 
 ## When to use

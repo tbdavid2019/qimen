@@ -1,0 +1,43 @@
+{
+  "name": "888qi-fortune",
+  "version": "1.0.0",
+  "description": "CLI installer and calculation runtime for 333 一句提醒·照見當下 (qi.david888.com) traditional Chinese divination AI agent skills.",
+  "bin": {
+    "888qi-fortune": "./bin/888qi-fortune.js"
+  },
+  "files": [
+    "bin/",
+    "bundle/",
+    "README.md"
+  ],
+  "scripts": {
+    "prepack": "node ../../scripts/sync-fortune-package.js",
+    "test": "node --test ../../test/skills.test.js"
+  },
+  "keywords": [
+    "qimen",
+    "ziwei",
+    "bazi",
+    "liuyao",
+    "meihua",
+    "fengshui",
+    "tarot",
+    "divination",
+    "ai-skills",
+    "agent-skills"
+  ],
+  "author": "david888",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbdavid2019/qimen.git",
+    "directory": "packages/888qi-fortune"
+  },
+  "homepage": "https://qi.david888.com",
+  "dependencies": {
+    "lunar-javascript": "^1.7.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

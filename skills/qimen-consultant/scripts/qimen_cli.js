@@ -4,10 +4,11 @@
  * 輸出完整 mainline-cn-v1 JSON 格式，全面對齊 FANzR-arch/Numerologist_skills
  */
 
+const _rt = (() => { const _fs = require('node:fs'), _path = require('node:path'), _os = require('node:os'); const _eh = process.env.QIMEN_FORTUNE_HOME || process.env.FORTUNE_HOME; const _c = [_path.join(__dirname, '../../_shared/runtime.js'), ...(_eh ? [_path.join(_eh, 'engine', 'skills/_shared/runtime.js'), _path.join(_eh, 'skills/_shared/runtime.js')] : []), _path.join(_os.homedir(), '.888qi-fortune', 'engine', 'skills/_shared/runtime.js')].find((p) => _fs.existsSync(p)); if (!_c) throw new Error('888qi-fortune runtime not found. Run: npx -y 888qi-fortune@latest install'); return require(_c); })();
 const fs = require('fs');
 const path = require('path');
-const { Lunar, Solar } = require('lunar-javascript');
-const qimen = require(path.join(__dirname, '../../../lib/qimen.js'));
+const { Lunar, Solar } = _rt.requireLunar();
+const qimen = _rt.requireLib('qimen.js');
 
 const GENERATE = { 木: '火', 火: '土', 土: '金', 金: '水', 水: '木' };
 const CONTROL = { 木: '土', 土: '水', 水: '火', 火: '金', 金: '木' };

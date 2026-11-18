@@ -4,9 +4,10 @@
  * 支援 --question, --category, --method (coins, dayan, datetime, manual), --lines, --datetime, --gender
  */
 
+const _rt = (() => { const _fs = require('node:fs'), _path = require('node:path'), _os = require('node:os'); const _eh = process.env.QIMEN_FORTUNE_HOME || process.env.FORTUNE_HOME; const _c = [_path.join(__dirname, '../../_shared/runtime.js'), ...(_eh ? [_path.join(_eh, 'engine', 'skills/_shared/runtime.js'), _path.join(_eh, 'skills/_shared/runtime.js')] : []), _path.join(_os.homedir(), '.888qi-fortune', 'engine', 'skills/_shared/runtime.js')].find((p) => _fs.existsSync(p)); if (!_c) throw new Error('888qi-fortune runtime not found. Run: npx -y 888qi-fortune@latest install'); return require(_c); })();
 const fs = require('fs');
 const path = require('path');
-const { calculateLiuyao } = require(path.join(__dirname, '../../../lib/liuyao.js'));
+const { calculateLiuyao } = _rt.requireLib('liuyao.js');
 
 function parseArgs() {
     const args = process.argv.slice(2);

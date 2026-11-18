@@ -4,10 +4,11 @@
  * 支援 24山三元玄空排盤、八宅明鏡、巒頭形煞診斷與協紀辨方擇日
  */
 
+const _rt = (() => { const _fs = require('node:fs'), _path = require('node:path'), _os = require('node:os'); const _eh = process.env.QIMEN_FORTUNE_HOME || process.env.FORTUNE_HOME; const _c = [_path.join(__dirname, '../../_shared/runtime.js'), ...(_eh ? [_path.join(_eh, 'engine', 'skills/_shared/runtime.js'), _path.join(_eh, 'skills/_shared/runtime.js')] : []), _path.join(_os.homedir(), '.888qi-fortune', 'engine', 'skills/_shared/runtime.js')].find((p) => _fs.existsSync(p)); if (!_c) throw new Error('888qi-fortune runtime not found. Run: npx -y 888qi-fortune@latest install'); return require(_c); })();
 const fs = require('fs');
 const path = require('path');
-const { calculateFengShui, diagnoseShaqi, diagnoseLuantou, getAllShaQiLibrary, chooseZeri, evaluateMenZhuZao } = require(path.join(__dirname, '../../../lib/fengshui.js'));
-const { searchAuspiciousTimes } = require(path.join(__dirname, '../../../lib/advanced-wisdom.js'));
+const { calculateFengShui, diagnoseShaqi, diagnoseLuantou, getAllShaQiLibrary, chooseZeri, evaluateMenZhuZao } = _rt.requireLib('fengshui.js');
+const { searchAuspiciousTimes } = _rt.requireLib('advanced-wisdom.js');
 
 function parseArgs() {
     const args = process.argv.slice(2);

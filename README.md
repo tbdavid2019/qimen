@@ -8,7 +8,7 @@
 > - **🌐 WebMCP (In-Browser Tools)**: Full support for Chrome WebMCP Imperative & Declarative API (`document.modelContext`). AI browser agents can directly discover and execute tools across all 8 divination services.
 > - **⚡ Zero-Dependency MCP Bridge**: Use `mcp-bridge.js` to access all 8 services via JSON-RPC 2.0 stdio.
 > - **🚀 Production APIs**: Send POST requests to `https://qi.david888.com/api/` endpoints.
-> - **🧠 Consultant Skills**: Behavioral guidance and CLI tools available in `skills/*-consultant/SKILL.md`.
+> - **🧠 Consultant Skills (`npx 888qi-fortune install`)**: One-command installer & shared runtime for all 10 divination consultant skills (`npx -y 888qi-fortune@latest update --if-stale` built into each `SKILL.md`), source in [packages/888qi-fortune](packages/888qi-fortune/README.md) and `skills/*-consultant/SKILL.md`.
 
 👉 [查看更新日誌 (Changelog)](CHANGELOG.md)
 
