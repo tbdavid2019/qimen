@@ -153,13 +153,21 @@
         const sex = sexInput?.value || '男';
 
         if (!char) {
-            alert('請輸入欲測之單個漢字！');
-            charInput?.focus();
+            if (typeof window.showSuiteFieldError === 'function') {
+                window.showSuiteFieldError(charInput, '請輸入欲測之單個漢字！');
+            } else {
+                window.showToast?.('請輸入欲測之單個漢字！', 'warning');
+                charInput?.focus();
+            }
             return;
         }
         if (!question) {
-            alert('請填寫欲占問之具體事項！');
-            questionInput?.focus();
+            if (typeof window.showSuiteFieldError === 'function') {
+                window.showSuiteFieldError(questionInput, '請填寫欲占問之具體事項！');
+            } else {
+                window.showToast?.('請填寫欲占問之具體事項！', 'warning');
+                questionInput?.focus();
+            }
             return;
         }
 
@@ -170,7 +178,7 @@
         }
         const suiteTurnstileElem = document.getElementById('suite-turnstile');
         if (!sToken && suiteTurnstileElem && typeof suiteTurnstileElem.getAttribute === 'function' && suiteTurnstileElem.getAttribute('data-sitekey')) {
-            alert('請先勾選並完成人機驗證（Cloudflare Turnstile）');
+            window.showToast?.('請先勾選並完成人機驗證（Cloudflare Turnstile）', 'warning');
             return;
         }
 
@@ -213,7 +221,7 @@
             // 開啟追問區
             if (followUpSection) {
                 followUpSection.style.display = 'block';
-                followUpHistory.innerHTML = '';
+                followUpHistory.replaceChildren();
                 window.conversationHistory = [
                     { role: 'user', content: `測字問事：字「${currentCeziData.char}」，所問事項：【${question}】` },
                     { role: 'assistant', content: currentCeziData.summary || `測得象數調和為【${currentCeziData.judgment}】。` }
@@ -381,7 +389,7 @@
         }
         const fuElem = document.getElementById('suite-followup-turnstile');
         if (!fuToken && fuElem && typeof fuElem.getAttribute === 'function' && fuElem.getAttribute('data-sitekey')) {
-            alert('請先勾選並完成追問人機驗證（Cloudflare Turnstile）');
+            window.showToast?.('請先勾選並完成追問人機驗證（Cloudflare Turnstile）', 'warning');
             return;
         }
 
@@ -426,10 +434,10 @@
                 window.conversationHistory.push({ role: 'user', content: q });
                 window.conversationHistory.push({ role: 'assistant', content: data.analysis });
             } else {
-                alert('追問未能完成：' + (data.error || '請稍後再試'));
+                window.showToast?.('追問未能完成：' + (data.error || '請稍後再試'), 'error');
             }
         } catch (e) {
-            alert('追問出錯：' + e.message);
+            window.showToast?.('追問出錯：' + e.message, 'error');
         } finally {
             askFollowupBtn.disabled = false;
             askFollowupBtn.innerHTML = '<i data-lucide="send"></i> 送出追問 ➔';

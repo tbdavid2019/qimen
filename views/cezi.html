@@ -25,13 +25,18 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#111a20">
+    <meta name="color-scheme" content="light dark">
     <script>
         (function() {
-            try {
-                var theme = localStorage.getItem('theme');
-                if (!theme) theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', theme);
-            } catch (error) {}
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (_e) {}
+            var valid = stored === 'dark' || stored === 'light';
+            var prefersDark = false;
+            try { prefersDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); } catch (_e) {}
+            var theme = valid ? stored : (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            var meta = document.querySelector('meta[name="color-scheme"]');
+            if (meta) meta.setAttribute('content', valid ? theme : 'light dark');
         })();
     </script>
     <%- include('partials/ads-head.html') %>
@@ -39,6 +44,7 @@
     <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/byok.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
     <style>
@@ -56,11 +62,10 @@
             box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
             margin: 0 auto;
             display: block;
-            transition: all 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
         }
         .cezi-single-char-input:focus {
             border-color: #d97706;
-            outline: none;
             box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
             transform: scale(1.04);
         }
@@ -79,7 +84,7 @@
             background: var(--suite-bg-card, rgba(255,255,255,0.04));
             color: var(--suite-text);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
         }
         .cezi-purpose-pill:hover, .cezi-purpose-pill.active {
             background: #fef3c7;
@@ -207,10 +212,10 @@
 
             <!-- AI 追問對話區 -->
             <section id="ceziFollowUpSection" class="suite-card" style="display: none; margin-top: 20px; border-top: 2px solid var(--suite-primary);">
-                <h3 class="suite-section-title" style="margin-top: 0; display: flex; align-items: center; gap: 8px;">
+                <h2 class="suite-section-title" style="margin-top: 0; display: flex; align-items: center; gap: 8px;">
                     <i data-lucide="message-square"></i>
                     <span>向宗師深度追問</span>
-                </h3>
+                </h2>
                 <div id="ceziFollowUpHistory" class="suite-conversation-list" style="margin-bottom: 14px;"></div>
                 <form id="ceziFollowUpForm" onsubmit="return false;">
                     <div class="form-group" style="margin-bottom: 10px;">

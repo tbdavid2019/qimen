@@ -42,26 +42,26 @@
 }
 
 .name-tab:hover { transform: translateY(-2px); box-shadow: 0 7px 18px rgba(5, 150, 105, .15); }
-.name-tab.active { color: #fff; border-color: #059669; background: linear-gradient(120deg, #059669, #047857); box-shadow: 0 7px 20px rgba(5, 150, 105, .24); }
+.name-tab.active { color: #fff; border-color: #065f46; background: linear-gradient(120deg, #047857, #065f46); box-shadow: 0 7px 20px rgba(5, 150, 105, .24); }
 
 .name-form-section { padding: 22px 0; border-top: 1px solid rgba(5, 150, 105, .18); }
 .name-section-heading { display: flex; align-items: center; gap: 13px; margin-bottom: 18px; }
 .name-step { display: grid; flex: 0 0 38px; width: 38px; height: 38px; place-items: center; border-radius: 12px; color: #047857; background: #d1fae5; font-size: 15px; font-weight: 900; }
 .name-section-heading h2, .name-question-heading h2 { margin: 0; color: #183b31; font-size: 19px; font-weight: 850; }
-.name-section-heading p, .name-question-heading p { margin: 4px 0 0; color: #58756c; font-size: 15.5px; line-height: 1.6; }
+.name-section-heading p, .name-question-heading p { margin: 4px 0 0; color: #476359; font-size: 15.5px; line-height: 1.6; }
 .name-optional-tag { display: inline-flex; align-items: center; margin-left: 7px; padding: 3px 9px; border-radius: 20px; color: #047857; background: #ccfbeb; font-size: 13.5px; vertical-align: middle; }
 
 .name-input-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .name-field { min-width: 0; }
 .name-field-full { grid-column: 1 / -1; }
-.name-field label { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 7px; color: #344b44; font-size: 15.5px; font-weight: 750; }
-.name-field label span { color: #718b82; font-size: 15px; font-weight: 600; }
+.name-field label { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 7px; color: #243b34; font-size: 15.5px; font-weight: 750; }
+.name-field label span { color: #476359; font-size: 15px; font-weight: 600; }
 .name-field .form-control { min-height: 47px; border: 1.5px solid #d8e8e1; border-radius: 10px; background: #fff; box-shadow: none; color: #20372f; font-size: 16px; }
 .name-field .form-control:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, .14); }
-.name-field-help { display: block; margin-top: 5px; color: #718b82; font-size: 15px; }
-.name-inline-check { display: flex; align-items: center; gap: 8px; margin: 15px 0 0; color: #415c52; font-size: 15px; }
+.name-field-help { display: block; margin-top: 5px; color: #476359; font-size: 15px; }
+.name-inline-check { display: flex; align-items: center; gap: 8px; margin: 15px 0 0; color: #2c4a40; font-size: 15px; }
 .name-inline-check input { width: 17px; height: 17px; margin: 0; accent-color: #059669; }
-.name-privacy-note { margin: 14px 0 0; padding: 11px 13px; border-left: 3px solid #34d399; border-radius: 0 8px 8px 0; background: rgba(255, 255, 255, .55); color: #526e64; font-size: 15px; line-height: 1.65; }
+.name-privacy-note { margin: 14px 0 0; padding: 10px 2px 0; border: none; border-top: 1px dashed rgba(5, 150, 105, 0.35); border-radius: 0; background: transparent; color: #345247; font-size: 15px; line-height: 1.65; }
 
 .name-submit { margin: 22px 0 4px; }
 .name-submit-btn, .name-question-btn { min-height: 52px; padding: 12px 24px; border: 0; border-radius: 25px; background: linear-gradient(115deg, #059669, #087f8c); box-shadow: 0 7px 20px rgba(5, 150, 105, .22); color: #fff; font-size: 15px; font-weight: 850; }
@@ -150,7 +150,10 @@
 .name-question-btn { margin-top: 8px; background: linear-gradient(115deg, #e45870, #c24158); box-shadow: 0 7px 18px rgba(194, 65, 88, .18); }
 .name-question-answer { margin-top: 14px; padding: 14px; border-radius: 10px; background: rgba(255, 255, 255, .82); color: #344d42; line-height: 1.7; font-size: 15.5px; }
 .name-question-answer:empty { display: none; }
-.name-source-note { margin: 22px 0 0; color: #60796e; font-size: 15px; line-height: 1.6; text-align: center; }
+.name-source-note { margin: 22px 0 0; color: #476359; font-size: 15px; line-height: 1.6; text-align: center; }
+.name-source-note a { color: #0f5a73; font-weight: 700; text-decoration: underline; }
+[data-theme="dark"] .name-source-note a { color: #7dd3fc; }
+[data-theme="dark"] .name-privacy-note { color: #c1d4ca; border-top-color: rgba(110, 231, 183, 0.3); }
 
 [data-theme="dark"] .name-card { border-color: #148e66; background: linear-gradient(145deg, rgba(6, 78, 59, .44), rgba(8, 47, 73, .48)); }
 [data-theme="dark"] .name-tab, [data-theme="dark"] .name-field .form-control { background: #111c22; color: #e5f2ec; }

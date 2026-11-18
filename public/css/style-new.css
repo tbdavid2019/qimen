@@ -141,7 +141,7 @@ body {
     border-radius: 9999px;
     line-height: 1;
     white-space: nowrap;
-    transition: all 0.18s ease-in-out;
+    transition: transform 0.18s ease-in-out, opacity 0.18s ease-in-out, border-color 0.18s ease-in-out, box-shadow 0.18s ease-in-out, background-color 0.18s ease-in-out, color 0.18s ease-in-out;
     cursor: pointer;
     position: relative;
     z-index: 1032;
@@ -179,7 +179,7 @@ body {
     font-weight: 700 !important; /* 加粗 */
     line-height: 1;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
     cursor: pointer;
     position: relative;
     z-index: 1032;
@@ -420,13 +420,13 @@ body {
 }
 
 /* Claude 面板與卡片 */
-.panel, .basic-info, .qimen-pan, .time-mode-selector {
+.panel, .basic-info, .qimen-pan {
     background-color: var(--claude-card);
     border: 1px solid var(--claude-border);
     border-radius: 16px;
     box-shadow: var(--claude-shadow-sm);
     margin-bottom: 20px;
-    transition: all 0.2s ease;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .panel:hover {
@@ -470,7 +470,7 @@ body {
     font-weight: 600 !important;
     padding: 9px 20px !important;
     box-shadow: 0 2px 8px rgba(204, 107, 73, 0.25) !important;
-    transition: all 0.2s ease !important;
+    transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease !important;
 }
 
 .btn-primary:hover, #askBtn:hover, #calculateBtn:hover, #startLLMAnalysis:hover, .btn-submit-qimen:hover {
@@ -486,7 +486,7 @@ body {
     border-radius: 10px !important;
     font-weight: 500 !important;
     padding: 8px 18px !important;
-    transition: all 0.2s ease !important;
+    transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease !important;
 }
 
 .btn-default:hover, .btn-outline:hover {
@@ -507,7 +507,7 @@ body {
     line-height: 1.5 !important;
     font-size: 16px;
     box-shadow: none;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
     box-sizing: border-box;
 }
 
@@ -543,7 +543,11 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
 .form-control:focus {
     border-color: var(--claude-border-focus);
     box-shadow: 0 0 0 3px rgba(204, 107, 73, 0.15);
-    outline: none;
+}
+
+.form-control:focus-visible {
+    outline: 3px solid var(--claude-primary);
+    outline-offset: 2px;
 }
 
 /* 標籤 Badge 與 Pill */
@@ -620,8 +624,12 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
 
 /* 時間精度模式選擇器 */
 .time-mode-selector {
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 8px 0 14px;
+    margin-bottom: 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--claude-border);
+    box-shadow: none;
 }
 
 .time-mode-selector .btn-group label {
@@ -629,7 +637,7 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
     padding: 12px 15px;
     margin: 0 5px;
     border-radius: 10px;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     border: 1.5px solid var(--claude-border);
     background: var(--claude-bg-subtle);
     color: var(--claude-text-body);
@@ -719,7 +727,7 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     background-color: #fff;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     padding: 0;
     overflow: hidden;
     aspect-ratio: 1/1;
@@ -931,7 +939,7 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
     grid-area: gong-dizhi;
     text-align: left;
     font-size: 16px;
-    color: #aaa;
+    color: #4b5563;
 }
 
 /* 地支2 - 左中上灰色 */
@@ -959,7 +967,7 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
     grid-area: gong-tianganfang;
     text-align: right;
     font-size: 16px;
-    color: #aaa;
+    color: #4b5563;
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
@@ -984,7 +992,7 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
     margin-top: 0;
     border-radius: 4px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .gong-bamen:empty {
@@ -1008,7 +1016,7 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
     align-items: center;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     letter-spacing: 1px;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .gong:hover .gong-jiuxing {
@@ -1056,7 +1064,7 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
     display: inline-block;
     justify-self: end;
     position: relative;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .gong:hover .gong-tiangan {
@@ -1306,12 +1314,12 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
 
 /* 標簽樣式 */
 .label-da_ji, .da_ji {
-    background-color: #4CAF50;
+    background-color: #15803d;
     color: white !important;
 }
 
 .label-xiao_ji, .xiao_ji {
-    background-color: #8BC34A;
+    background-color: #3f6212;
     color: white !important;
 }
 
@@ -1321,12 +1329,12 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
 }
 
 .label-xiao_xiong, .xiao_xiong {
-    background-color: #FF9800;
+    background-color: #b45309;
     color: white !important;
 }
 
 .label-da_xiong, .da_xiong {
-    background-color: #F44336;
+    background-color: #b91c1c;
     color: white !important;
 }
 
@@ -1337,39 +1345,39 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
     transform: scale(1.02);
 }
 
-/* 五行屬性顏色 */
+/* 五行屬性顏色 (WCAG AA >= 4.5:1 on light palace cells) */
 .wuxing-mu {
-    color: #4CAF50 !important; /* 木-綠色 */
+    color: #166534 !important; /* 木-深翠綠 */
     position: relative;
     cursor: help;
 }
 
 .wuxing-huo {
-    color: #F44336 !important; /* 火-紅色 */
+    color: #991b1b !important; /* 火-深朱紅 */
     position: relative;
     cursor: help;
 }
 
 .wuxing-tu {
-    color: #FF9800 !important; /* 土-橙色 */
+    color: #78350f !important; /* 土-深赭棕 */
     position: relative;
     cursor: help;
 }
 
 .wuxing-jin {
-    color: #9E9E9E !important; /* 金-灰色 */
+    color: #374151 !important; /* 金-玄鐵灰 */
     position: relative;
     cursor: help;
 }
 
 .wuxing-shui {
-    color: #2196F3 !important; /* 水-藍色 */
+    color: #1e40af !important; /* 水-群青藍 */
     position: relative;
     cursor: help;
 }
 
 .wuxing-purple {
-    color: #9C27B0 !important; /* 特殊-紫色 */
+    color: #6b21a8 !important; /* 特殊-深紫 */
     position: relative;
     cursor: help;
 }
@@ -1455,7 +1463,7 @@ select.form-control, select.form-control.input-sm, .form-control.input-sm {
 }
 
 .di-zhi {
-    color: #666; /* 地支顏色-灰色 */
+    color: #374151; /* 地支顏色-高對比深灰 */
 }
 
 .separator-line {
@@ -1707,7 +1715,7 @@ body {
     padding: 12px 30px;
     font-size: 16px;
     border-radius: 25px;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
@@ -1868,7 +1876,7 @@ body {
 
 /* LLM 面板過渡效果 */
 #llmInitialPanel, #llmLoadingPanel, #llmResultPanel, #llmErrorPanel {
-    transition: all 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 /* LLM 回應樣式 */
@@ -1899,7 +1907,7 @@ body {
 
 /* 按鈕組樣式 */
 #reAnalyzeButton, #retryLLMAnalysis {
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 #reAnalyzeButton:hover, #retryLLMAnalysis:hover {
@@ -2300,7 +2308,7 @@ table, .table, .badge, .label, [class*="-badge"], [class*="-pill"], [class*="-ta
     color: var(--claude-text-body, #4A3F39);
     font-size: 15px;
     font-weight: 600;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .qimen-pill:hover {

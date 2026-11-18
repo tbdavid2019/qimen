@@ -69,12 +69,26 @@
         }
         const toast = document.createElement('div');
         toast.className = 'suite-toast suite-toast-' + type;
+        toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
         let iconName = 'alert-circle';
         if (type === 'success') iconName = 'check-circle';
         else if (type === 'error') iconName = 'alert-triangle';
         else if (type === 'info') iconName = 'info';
 
-        toast.innerHTML = `<span class="toast-icon"><i data-lucide="${iconName}"></i></span><span class="toast-text">${message}</span>`;
+        const iconWrap = document.createElement('span');
+        iconWrap.className = 'toast-icon';
+        const iconEl = document.createElement('i');
+        iconEl.setAttribute('data-lucide', iconName);
+        iconEl.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconEl);
+
+        const textEl = document.createElement('span');
+        textEl.className = 'toast-text';
+        textEl.textContent = message == null ? '' : String(message);
+
+        toast.appendChild(iconWrap);
+        toast.appendChild(textEl);
         container.appendChild(toast);
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
             window.lucide.createIcons();
@@ -2122,7 +2136,13 @@
     chartOnlyBtn?.addEventListener('click', async () => {
         const payload = buildPayload();
         if (!payload.date) {
-            alert('請選擇出生日期');
+            const dateInput = form?.querySelector('input[name="date"]');
+            if (typeof window.showSuiteFieldError === 'function') {
+                window.showSuiteFieldError(dateInput, '請選擇出生日期');
+            } else {
+                showSuiteToast('請選擇出生日期', 'warning');
+                dateInput?.focus();
+            }
             return;
         }
 
@@ -2154,7 +2174,7 @@
             if (spouseCard) spouseCard.hidden = true;
             if (maleSizeCard) maleSizeCard.hidden = true;
         } catch (error) {
-            alert(`錯誤：${error.message}`);
+            showSuiteToast(`錯誤：${error.message}`, 'error');
         } finally {
             chartOnlyBtn.disabled = false;
             chartOnlyBtn.textContent = originalLabel;
@@ -2169,14 +2189,26 @@
 
         // Basic date validation for bazi2 and ziwei
         if ((page === 'bazi2' || page === 'ziwei') && !payload.date) {
-            alert('請選擇出生日期');
+            const dateInput = form?.querySelector('input[name="date"]');
+            if (typeof window.showSuiteFieldError === 'function') {
+                window.showSuiteFieldError(dateInput, '請選擇出生日期');
+            } else {
+                showSuiteToast('請選擇出生日期', 'warning');
+                dateInput?.focus();
+            }
             return;
         }
 
         // Fast-Pass for Tarot Numerology (0.1s Deterministic)
         if (page === 'tarot' && payload.mode === 'numerology') {
             if (!payload.birthDate) {
-                alert('請選擇出生日期');
+                const birthInput = form?.querySelector('input[name="birthDate"]');
+                if (typeof window.showSuiteFieldError === 'function') {
+                    window.showSuiteFieldError(birthInput, '請選擇出生日期');
+                } else {
+                    showSuiteToast('請選擇出生日期', 'warning');
+                    birthInput?.focus();
+                }
                 return;
             }
             if (submitBtn) submitBtn.disabled = true;
@@ -2204,13 +2236,13 @@
                     }
                     const suiteTurnstileElem = document.getElementById('suite-turnstile');
                     if (!sToken && suiteTurnstileElem && typeof suiteTurnstileElem.getAttribute === 'function' && suiteTurnstileElem.getAttribute('data-sitekey')) {
-                        alert('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊查看靈魂特質解讀！');
+                        showSuiteToast('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊查看靈魂特質解讀！', 'warning');
                         return;
                     }
 
                     if (aiSection) aiSection.hidden = false;
                     if (aiLoading) aiLoading.hidden = false;
-                    conversationStream.innerHTML = '';
+                    conversationStream.replaceChildren();
                     conversationHistory = [];
                     window.conversationHistory = conversationHistory;
 
@@ -2247,7 +2279,7 @@
                 }
             } catch (err) {
                 if (aiLoading) aiLoading.hidden = true;
-                alert(`錯誤：${err.message}`);
+                showSuiteToast(`錯誤：${err.message}`, 'error');
             } finally {
                 resetSuiteTurnstile();
                 if (submitBtn) submitBtn.disabled = false;
@@ -2289,7 +2321,7 @@
                 const maleSizeCard = document.getElementById('maleSizeResultCard');
                 if (maleSizeCard) maleSizeCard.hidden = true;
             } catch (err) {
-                alert(`錯誤：${err.message}`);
+                showSuiteToast(`錯誤：${err.message}`, 'error');
             } finally {
                 if (submitBtn) submitBtn.disabled = false;
             }
@@ -2319,7 +2351,7 @@
                 const spouseCard = document.getElementById('spouseResultCard');
                 if (spouseCard) spouseCard.hidden = true;
             } catch (err) {
-                alert(`錯誤：${err.message}`);
+                showSuiteToast(`錯誤：${err.message}`, 'error');
             } finally {
                 if (submitBtn) submitBtn.disabled = false;
             }
@@ -2333,14 +2365,14 @@
         }
         const suiteTurnstileElem = document.getElementById('suite-turnstile');
         if (!sToken && suiteTurnstileElem && typeof suiteTurnstileElem.getAttribute === 'function' && suiteTurnstileElem.getAttribute('data-sitekey')) {
-            alert('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊查看命理解讀！');
+            showSuiteToast('請先勾選並完成下方的人機安全驗證 (Cloudflare Turnstile) 後再點擊查看命理解讀！', 'warning');
             return;
         }
 
         if (submitBtn) submitBtn.disabled = true;
         aiSection.hidden = false;
         aiLoading.hidden = false;
-        conversationStream.innerHTML = '';
+        conversationStream.replaceChildren();
         conversationHistory = [];
         window.conversationHistory = conversationHistory;
 
@@ -2391,7 +2423,7 @@
             }
         } catch (err) {
             aiLoading.hidden = true;
-            alert(`錯誤：${err.message}`);
+            showSuiteToast(`錯誤：${err.message}`, 'error');
         } finally {
             resetSuiteTurnstile();
             if (submitBtn) submitBtn.disabled = false;
@@ -2415,7 +2447,7 @@
             try { fuToken = window.turnstile.getResponse(suiteTurnstileWidgetId); } catch (e) {}
         }
         if (!fuToken && followUpTurnstileElem && typeof followUpTurnstileElem.getAttribute === 'function' && followUpTurnstileElem.getAttribute('data-sitekey')) {
-            alert('請先完成人機安全驗證 (Cloudflare Turnstile) 後再發送追問！');
+            showSuiteToast('請先完成人機安全驗證 (Cloudflare Turnstile) 後再發送追問！', 'warning');
             return;
         }
 
@@ -2938,8 +2970,13 @@
             const endYear = document.getElementById('baziInverseEndYear')?.value;
 
             if (!pillars) {
-                alert('請輸入四柱干支（例如：甲子 丙寅 丁卯 戊申）');
-                document.getElementById('baziInversePillars')?.focus();
+                const pillarsInput = document.getElementById('baziInversePillars');
+                if (typeof window.showSuiteFieldError === 'function') {
+                    window.showSuiteFieldError(pillarsInput, '請輸入四柱干支（例如：甲子 丙寅 丁卯 戊申）');
+                } else {
+                    showSuiteToast('請輸入四柱干支（例如：甲子 丙寅 丁卯 戊申）', 'warning');
+                    pillarsInput?.focus();
+                }
                 return;
             }
 
@@ -3031,8 +3068,13 @@
         btnSensitivity?.addEventListener('click', async () => {
             const date = document.getElementById('baziDate')?.value;
             if (!date) {
-                alert('請先在上方選擇出生日期！');
-                document.getElementById('baziDate')?.focus();
+                const baziDateEl = document.getElementById('baziDate');
+                if (typeof window.showSuiteFieldError === 'function') {
+                    window.showSuiteFieldError(baziDateEl, '請先在上方選擇出生日期！');
+                } else {
+                    showSuiteToast('請先在上方選擇出生日期！', 'warning');
+                    baziDateEl?.focus();
+                }
                 return;
             }
             const calendar = document.getElementById('baziCalendar')?.value || 'solar';

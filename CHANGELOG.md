@@ -2,6 +2,23 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-11-18]
+
+### 🎨 前端 UX、無障礙體驗與現代 Web 標準全面升級 (`frontend-ux-a11y-modernization`)
+- **Atelier 對比度與主題系統校正 (`theme-atelier.css`、`style-new.css`、`divination-suite.css`、`byok.css`、`meihua.css`、`liuyao.css`、`theme.js`、`webmcp.js`)**：
+  - 分離填充色 (`--saffron` + `--deep-blue`) 與淺底文字強調色 (`--clay: #a9471d`)，全面修復淺色與深色模式下按鈕、宮位標籤、五行色、飛星標示、placeholder 與 `<summary>` 對比度至 WCAG AA/AAA 水準（>= 4.5:1 / >= 3:1 大字）。
+  - 為全部 12 個頁面模板於 `<head>` 補齊 `<meta name="color-scheme" content="light dark">`、pre-paint 主題防閃爍腳本並將 `byok.css` 移入 `<head>`（移除 `site-footer.html` 尾端樣式載入）。
+  - 統一 `window.applySuiteTheme` 與 WebMCP `switch_theme`，同步更新 `<meta name="color-scheme">`、分頁 `storage` 事件、OS 偏好監聽與切換鈕 `aria-pressed` 狀態。
+- **語意化無障礙、XSS 防護與 DOM/JS 衛生**：
+  - 修正全站 8 個主要頁面與共用 Modal (`byok-modal.html`、`result-email.html`) 的標題階層，消除 `h1 -> h3/h4` 跳階，並移除奇門 `<h1>` 內 `<i>` 的無障礙問題。
+  - 全面移除非預期的 `outline: none` 覆寫並強化 `:focus-visible` 及 `forced-colors: active` 焦點外框；將 `prefers-reduced-motion: reduce` 改為精準控制過場與動畫而非強制 `0.01ms !important`；為 `.fs-palace-cell` 補強鍵盤操作守衛與焦點外框。
+  - 於 `public/js/liuyao.js` 加入 `isComposing || keyCode === 229` IME 組字防誤送檢查，並為 `.toReversed()` 提供低版本相容 fallback。
+  - 全站統一使用 `theme.js` 基於 `textContent` 的 XSS-safe `window.showToast` 與表單焦點錯誤引導 `window.showSuiteFieldError`，消除 33 處阻塞式原生 `alert()` 並將 8 處 `.innerHTML = ''` 改為 `.replaceChildren()`。
+- **首頁精選輪播、AdSense 防護與介面視覺清潔**：
+  - 升級首頁輪播 (`views/index.html`、`public/js/app.js`、`divination-suite.css`)：加入 `aria-roledescription="carousel"` / `slide`、暫停/播放切換按鈕 `#homeCarouselPause`、`role="status"` 即時播報、`overscroll-behavior-x: contain` 與左右邊緣留白，並動態偵測系統減少動態效果偏好。
+  - 為 4 個 AdSense 版位 (`ads-mobile.html` 與 `ads-bottom.html`) 實作共用冪等可見性守門員 `window.__initSuiteAds` 與 `ResizeObserver`，消除隱藏版位 `availableWidth=0` 的 `TagError`。
+  - 展平非促銷性質之工具嵌套卡片與多餘左側粗邊線，並保留 `AGENTS.md` 規範之高轉換率跨模組促銷卡片與橫幅；全面清理專案 CSS `transition: all`（改為明確屬性列表），並為風水 32 朝向與 24 煞氣加入單一同步 (`syncFengshuiSelectorFilters`) 的漸進式快速篩選膠囊。
+
 ## [2026-11-17]
 
 ### 📦 上游相容套件升級與安全性修補 (Dependency Upgrades & Security Patch)

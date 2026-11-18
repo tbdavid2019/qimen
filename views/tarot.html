@@ -27,16 +27,19 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#111a20">
+    <meta name="color-scheme" content="light dark">
 
     <script>
         (function() {
-            try {
-                var theme = localStorage.getItem('theme');
-                if (!theme) {
-                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-                }
-                document.documentElement.setAttribute('data-theme', theme);
-            } catch (error) {}
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (_e) {}
+            var valid = stored === 'dark' || stored === 'light';
+            var prefersDark = false;
+            try { prefersDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); } catch (_e) {}
+            var theme = valid ? stored : (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            var meta = document.querySelector('meta[name="color-scheme"]');
+            if (meta) meta.setAttribute('content', valid ? theme : 'light dark');
         })();
     </script>
 
@@ -45,6 +48,7 @@
     <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/byok.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
@@ -248,7 +252,7 @@
             <!-- 解讀與追問區域 -->
             <div id="suiteAiSection" class="suite-ai-section" hidden>
                 <div class="suite-ai-header">
-                    <h3 class="suite-ai-title">🔮 塔羅牌解讀</h3>
+                    <h2 class="suite-ai-title">🔮 塔羅牌解讀</h2>
                     <button type="button" class="suite-copy-btn js-open-result-email" title="將完整排盤與問答寄至信箱">
                         ✉️ 寄送至信箱
                     </button>

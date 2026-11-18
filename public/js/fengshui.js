@@ -199,6 +199,60 @@
     }
 
     // 更新 DOM 與隱藏欄位
+    const selectorFilters = {
+        fengshuiFacing: 'all',
+        shaType: 'all'
+    };
+
+    function syncFengshuiSelectorFilters(targetId, options) {
+        if (typeof document === 'undefined' || typeof document.getElementById !== 'function' || typeof document.querySelector !== 'function') {
+            return;
+        }
+        const opts = options || {};
+        const syncGroupFromValue = opts.syncGroupFromValue !== false;
+        const targets = targetId ? [targetId] : ['fengshuiFacing', 'shaType'];
+        targets.forEach(id => {
+            const selectEl = document.getElementById(id);
+            const filterTrigger = document.querySelector(`[data-fs-target="${id}"]`);
+            const filterBar = filterTrigger && typeof filterTrigger.closest === 'function'
+                ? filterTrigger.closest('.fs-selector-filter-bar')
+                : null;
+            if (!selectEl || !filterBar || typeof selectEl.querySelectorAll !== 'function') return;
+
+            const selectedOpt = selectEl.options ? selectEl.options[selectEl.selectedIndex] : null;
+            const selectedOptGroup = selectedOpt && selectedOpt.parentElement && selectedOpt.parentElement.tagName === 'OPTGROUP'
+                ? selectedOpt.parentElement.getAttribute('label')
+                : null;
+
+            if (syncGroupFromValue && selectorFilters[id] && selectorFilters[id] !== 'all' && selectedOptGroup && selectorFilters[id] !== selectedOptGroup) {
+                selectorFilters[id] = selectedOptGroup;
+            }
+
+            const activeGroup = selectorFilters[id] || 'all';
+
+            if (typeof filterBar.querySelectorAll === 'function') {
+                filterBar.querySelectorAll('.fs-selector-filter-btn').forEach(btn => {
+                    const isActive = (btn.getAttribute('data-fs-group') || 'all') === activeGroup;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-pressed', String(isActive));
+                });
+            }
+
+            Array.from(selectEl.querySelectorAll('optgroup')).forEach(group => {
+                const label = group.getAttribute('label') || '';
+                const groupMatches = activeGroup === 'all' || label === activeGroup;
+                const containsSelected = selectedOptGroup === label;
+                group.hidden = !groupMatches && !containsSelected;
+                if (typeof group.querySelectorAll === 'function') {
+                    Array.from(group.querySelectorAll('option')).forEach(opt => {
+                        opt.hidden = !groupMatches && !opt.selected;
+                    });
+                }
+            });
+        });
+    }
+    window.syncFengshuiSelectorFilters = syncFengshuiSelectorFilters;
+
     function syncHiddenInputs() {
         const hHeading = document.getElementById('fsHeading');
         const hNorth = document.getElementById('fsNorthReference');
@@ -238,6 +292,7 @@
                         }
                     }
                 }
+                syncFengshuiSelectorFilters('fengshuiFacing');
             }
         }
     }
@@ -369,7 +424,7 @@
         state.compass.isStable = false;
 
         if (window.isSecureContext === false) {
-            alert('電子羅盤需要 HTTPS 安全連線，已保留手動度數輸入與滑桿調整。');
+            window.showToast?.('電子羅盤需要 HTTPS 安全連線，已保留手動度數輸入與滑桿調整。', 'warning');
             return;
         }
 
@@ -380,17 +435,17 @@
                 if (permission === 'granted') {
                     markSensorListening(btn);
                 } else {
-                    alert('未獲取指南針感測權限，已保留下方手動度數輸入與滑桿調整。');
+                    window.showToast?.('未獲取指南針感測權限，已保留下方手動度數輸入與滑桿調整。', 'warning');
                 }
             } catch (e) {
-                alert('感測器請求受限：' + (e.message || e));
+                window.showToast?.('感測器請求受限：' + (e.message || e), 'warning');
             }
         }
         // Android 與支援 deviceorientationabsolute 之瀏覽器
         else if ('ondeviceorientationabsolute' in window || 'ondeviceorientation' in window) {
             markSensorListening(btn);
         } else {
-            alert('此裝置或環境不支援方向感測器，已啟用手動度數輸入與滑桿調整。');
+            window.showToast?.('此裝置或環境不支援方向感測器，已啟用手動度數輸入與滑桿調整。', 'info');
         }
     }
 
@@ -410,15 +465,15 @@
     // 鎖定與解鎖坐向
     function lockHeading() {
         if (state.compass.heading === null || !Number.isFinite(state.compass.heading)) {
-            alert('尚未取得有效向首度數，請先使用感測器或手動輸入角度。');
+            window.showToast?.('尚未取得有效向首度數，請先使用感測器或手動輸入角度。', 'warning');
             return;
         }
         if (state.compass.isTilted) {
-            alert('手機當前傾角較大，請平放握持後再點擊鎖定。');
+            window.showToast?.('手機當前傾角較大，請平放握持後再點擊鎖定。', 'warning');
             return;
         }
         if (state.compass.isListening && (!state.compass.isStable || state.compass.recentHeadings.length < 3)) {
-            alert('感測資料仍在穩定中，請稍候再鎖定。');
+            window.showToast?.('感測資料仍在穩定中，請稍候再鎖定。', 'warning');
             return;
         }
         state.compass.isLocked = true;
@@ -536,7 +591,7 @@
     function handlePalaceClick(palaceKey) {
         if (!state.activeItemId) {
             // 如果未選取物件，可提示
-            alert(`請先在上方點擊一個要擺放的物件（例如「大門」或「主臥室」），再點選【${palaceKey}】宮。`);
+            window.showToast?.(`請先在上方點擊一個要擺放的物件（例如「大門」或「主臥室」），再點選【${palaceKey}】宮。`, 'warning');
             return;
         }
 
@@ -777,11 +832,13 @@
 
         // 綁定宮位點擊與鍵盤事件
         container.querySelectorAll('.fs-palace-cell').forEach(cell => {
-            cell.addEventListener('click', () => {
+            cell.addEventListener('click', (event) => {
+                if (event.target && event.target.closest && event.target.closest('.fs-tag-remove')) return;
                 const palace = cell.getAttribute('data-palace');
                 handlePalaceClick(palace);
             });
             cell.addEventListener('keydown', (event) => {
+                if (event.target && event.target.closest && event.target.closest('.fs-tag-remove')) return;
                 if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
                     handlePalaceClick(cell.getAttribute('data-palace'));
@@ -916,7 +973,7 @@
                     const palace = btn.getAttribute('data-palace');
                     const doorPalace = Object.entries(state.layout).find(([, items]) => items.includes('door.main'))?.[0];
                     if (state.entryPath.length === 0 && doorPalace && palace !== doorPalace) {
-                        alert(`大門已標註於【${doorPalace}】宮，進門動線第一步必須為大門所在宮位。已自動為您由【${doorPalace}】開始！`);
+                        window.showToast?.(`大門已標註於【${doorPalace}】宮，進門動線第一步必須為大門所在宮位。已自動為您由【${doorPalace}】開始！`, 'info');
                         state.entryPath.push(doorPalace);
                         announceAria(`已自動將大門所在【${doorPalace}】宮作為入路第一步`);
                         if (state.entryPath.length < 9) {
@@ -934,11 +991,32 @@
             });
         }
 
+        // 快速分類篩選膠囊 (房屋朝向與煞氣形態)
+        if (typeof document.querySelectorAll === 'function') {
+            document.querySelectorAll('.fs-selector-filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-fs-target');
+                    const group = btn.getAttribute('data-fs-group') || 'all';
+                    if (!targetId) return;
+                    selectorFilters[targetId] = group;
+                    syncFengshuiSelectorFilters(targetId, { syncGroupFromValue: false });
+                });
+            });
+        }
+
         // 房屋朝向與入住年份變更時即時重排九宮星曜
         const facingSelect = document.getElementById('fengshuiFacing');
         if (facingSelect) {
             facingSelect.addEventListener('change', () => {
+                syncFengshuiSelectorFilters('fengshuiFacing');
                 renderNineGrid();
+            });
+        }
+
+        const shaTypeSelect = document.getElementById('shaType');
+        if (shaTypeSelect) {
+            shaTypeSelect.addEventListener('change', () => {
+                syncFengshuiSelectorFilters('shaType');
             });
         }
 
@@ -952,7 +1030,8 @@
             });
         }
 
-        // 初始度數渲染
+        // 初始度數渲染與篩選狀態同步
+        syncFengshuiSelectorFilters();
         renderCompassUI(state.compass.heading, null);
     }
 

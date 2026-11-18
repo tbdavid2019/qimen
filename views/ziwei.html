@@ -27,16 +27,19 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#111a20">
+    <meta name="color-scheme" content="light dark">
 
     <script>
         (function() {
-            try {
-                var theme = localStorage.getItem('theme');
-                if (!theme) {
-                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-                }
-                document.documentElement.setAttribute('data-theme', theme);
-            } catch (error) {}
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (_e) {}
+            var valid = stored === 'dark' || stored === 'light';
+            var prefersDark = false;
+            try { prefersDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); } catch (_e) {}
+            var theme = valid ? stored : (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            var meta = document.querySelector('meta[name="color-scheme"]');
+            if (meta) meta.setAttribute('content', valid ? theme : 'light dark');
         })();
     </script>
 
@@ -45,6 +48,7 @@
     <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/byok.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
@@ -247,7 +251,7 @@
         </div>
 
         <section id="ziweiMatchPanel" class="suite-card ziwei-match-panel" hidden>
-            <div class="suite-board-title">💞 雙人合盤 <span class="ziwei-inline-badge">雙盤互照</span></div>
+            <h2 class="suite-board-title" style="margin-top: 0;">💞 雙人合盤 <span class="ziwei-inline-badge">雙盤互照</span></h2>
             <p class="ziwei-match-intro">輸入雙方出生資料，從命宮、夫妻宮、四化與煞星四個角度整理相處線索；分數是溝通參考，不是命定結論。</p>
             <form id="ziweiMatchForm" class="ziwei-match-form">
                 <div class="ziwei-match-party"><h3>第一人</h3><input name="firstName" class="form-control suite-input" placeholder="姓名 / 稱謂（選填）"><select name="firstCalendar" class="form-control suite-input"><option value="solar">國曆（公曆）</option><option value="lunar">農曆（陰曆）</option></select><input name="firstDate" type="date" required class="form-control suite-input"><input name="firstTime" type="time" value="12:00" class="form-control suite-input"><select name="firstSex" class="form-control suite-input"><option value="男">男</option><option value="女">女</option></select></div>

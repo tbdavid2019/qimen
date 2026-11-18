@@ -24,13 +24,15 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#111a20">
+  <meta name="color-scheme" content="light dark">
+  <script>(function(){var s=null;try{s=localStorage.getItem('theme');}catch(e){}var v=s==='dark'||s==='light';var d=false;try{d=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);}catch(e){}var t=v?s:(d?'dark':'light');document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name="color-scheme"]');if(m)m.setAttribute('content',v?t:'light dark');})();</script>
   <link rel="stylesheet" href="/css/bootstrap.min.css?v=20261101_saju_rev2">
   <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
   <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
   <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
   <link rel="stylesheet" href="/css/name-analysis.css?v=20261101_saju_rev2">
+  <link rel="stylesheet" href="/css/byok.css?v=20261101_saju_rev2">
   <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
-  <script>(function(){try{var t=localStorage.getItem('theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <%- include('partials/ads-head.html') %>
   <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>

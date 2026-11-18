@@ -1,14 +1,76 @@
 <div class="row ad-mobile-container">
     <div class="col-md-12">
         <div class="ad-mobile">
-            <ins class="adsbygoogle"
-                 style="display:block"
+            <div class="suite-ad-slot"
+                 data-ad-style="display:block"
                  data-ad-client="ca-pub-5210017545918559"
                  data-ad-slot="7969966570"
                  data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
+                 data-full-width-responsive="true"></div>
             <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
+            (function () {
+                if (typeof window.__initSuiteAds !== 'function') {
+                    var watched = new Set();
+                    var ro = null;
+                    var resizeAttached = false;
+                    function mountAndPush(slot) {
+                        if (!slot || slot.dataset.adsInitialized === '1') return true;
+                        var rect = typeof slot.getBoundingClientRect === 'function' ? slot.getBoundingClientRect() : null;
+                        if (slot.offsetWidth <= 0 || (rect && rect.width < 100)) return false;
+                        var ins = document.createElement('ins');
+                        ins.className = 'adsbygoogle';
+                        ins.setAttribute('style', slot.getAttribute('data-ad-style') || 'display:block');
+                        ins.setAttribute('data-ad-client', slot.getAttribute('data-ad-client') || '');
+                        ins.setAttribute('data-ad-slot', slot.getAttribute('data-ad-slot') || '');
+                        ins.setAttribute('data-ad-format', slot.getAttribute('data-ad-format') || 'auto');
+                        ins.setAttribute('data-full-width-responsive', slot.getAttribute('data-full-width-responsive') || 'true');
+                        slot.appendChild(ins);
+                        try {
+                            (window.adsbygoogle = window.adsbygoogle || []).push({});
+                            slot.dataset.adsInitialized = '1';
+                            return true;
+                        } catch (_) {
+                            if (ins.parentNode === slot) slot.removeChild(ins);
+                            delete slot.dataset.adsInitialized;
+                            return false;
+                        }
+                    }
+                    function scanAds() {
+                        var pending = 0;
+                        var slots = document.querySelectorAll('.suite-ad-slot');
+                        for (var i = 0; i < slots.length; i++) {
+                            var slot = slots[i];
+                            if (!mountAndPush(slot)) {
+                                pending++;
+                                if (!ro && typeof ResizeObserver === 'function') {
+                                    ro = new ResizeObserver(scanAds);
+                                }
+                                if (ro && !watched.has(slot)) {
+                                    watched.add(slot);
+                                    ro.observe(slot.parentElement || slot);
+                                }
+                            } else if (ro && watched.has(slot)) {
+                                ro.unobserve(slot.parentElement || slot);
+                                watched.delete(slot);
+                            }
+                        }
+                        if (pending > 0 && !resizeAttached) {
+                            window.addEventListener('resize', scanAds, { passive: true });
+                            resizeAttached = true;
+                        } else if (pending === 0 && resizeAttached) {
+                            window.removeEventListener('resize', scanAds);
+                            resizeAttached = false;
+                            if (ro) {
+                                ro.disconnect();
+                                watched.clear();
+                                ro = null;
+                            }
+                        }
+                    }
+                    window.__initSuiteAds = scanAds;
+                }
+                window.__initSuiteAds();
+            })();
             </script>
         </div>
     </div>

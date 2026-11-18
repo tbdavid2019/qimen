@@ -802,3 +802,50 @@ test("WebMCP send_conversation_email 支援解答之書 Answerbook DOM 輸出 fa
 		else global.document = origDoc;
 	}
 });
+
+test("switch_theme 會同步 color-scheme meta 與切換鈕狀態且維持風水 24 種煞氣對齊", async () => {
+	const origWindow = global.window;
+	const origDoc = global.document;
+	const origLS = global.localStorage;
+	const rootAttrs = new Map();
+	const metaEl = { attrs: new Map([["content", "light dark"]]), setAttribute(k, v) { this.attrs.set(k, v); } };
+	const btnEl = {
+		attrs: new Map(),
+		setAttribute(k, v) { this.attrs.set(k, v); },
+		getAttribute(k) { return this.attrs.get(k) ?? null; },
+		querySelector: () => null
+	};
+	const saved = [];
+
+	global.localStorage = { setItem: (k, v) => saved.push([k, v]) };
+	global.window = { localStorage: global.localStorage };
+	global.document = {
+		readyState: "complete",
+		documentElement: { setAttribute: (k, v) => rootAttrs.set(k, v) },
+		querySelector: (sel) => sel === 'meta[name="color-scheme"]' ? metaEl : null,
+		getElementById: (id) => id === "darkModeToggle" ? btnEl : null,
+		querySelectorAll: () => [],
+		addEventListener: () => {}
+	};
+
+	try {
+		const WebMCP = require("../public/js/webmcp");
+		const msg = await WebMCP.tools.switch_theme.execute({ theme: "dark" });
+		assert.match(msg, /主題已切換為 dark/);
+		assert.equal(rootAttrs.get("data-theme"), "dark");
+		assert.equal(metaEl.attrs.get("content"), "dark");
+		assert.equal(btnEl.attrs.get("aria-pressed"), "true");
+		assert.deepEqual(saved, [["theme", "dark"]]);
+
+		const fsView = fs.readFileSync(path.join(__dirname, "..", "views/fengshui.html"), "utf8");
+		const shaOpts = Array.from((fsView.match(/<select[^>]*id="shaType"[\s\S]*?<\/select>/)?.[0] || "").matchAll(/<option\s+value="([^"]+)"/g)).map(m => m[1]);
+		assert.equal(shaOpts.length, 24);
+	} finally {
+		if (origLS === undefined) delete global.localStorage;
+		else global.localStorage = origLS;
+		if (origWindow === undefined) delete global.window;
+		else global.window = origWindow;
+		if (origDoc === undefined) delete global.document;
+		else global.document = origDoc;
+	}
+});

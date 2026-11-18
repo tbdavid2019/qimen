@@ -1,5 +1,9 @@
-// 浮動 Toast 通知工具 (取代阻斷式原生 alert)
+// 浮動 Toast 通知工具 (優先委派 theme.js 全域 XSS-safe window.showToast)
 function showToast(message, type) {
+    if (typeof window.showToast === 'function' && window.showToast !== showToast) {
+        window.showToast(message, type);
+        return;
+    }
     type = type || 'warning';
     var container = document.getElementById('suiteToastContainer');
     if (!container) {
@@ -10,13 +14,27 @@ function showToast(message, type) {
     }
     var toast = document.createElement('div');
     toast.className = 'suite-toast suite-toast-' + type;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
 
     var iconName = 'info';
     if (type === 'success') iconName = 'check-circle';
     else if (type === 'error') iconName = 'alert-triangle';
     else if (type === 'warning') iconName = 'alert-circle';
 
-    toast.innerHTML = '<span class="toast-icon"><i data-lucide="' + iconName + '"></i></span><span class="toast-text">' + message + '</span>';
+    var iconWrap = document.createElement('span');
+    iconWrap.className = 'toast-icon';
+    var iconEl = document.createElement('i');
+    iconEl.setAttribute('data-lucide', iconName);
+    iconEl.setAttribute('aria-hidden', 'true');
+    iconWrap.appendChild(iconEl);
+
+    var textEl = document.createElement('span');
+    textEl.className = 'toast-text';
+    textEl.textContent = message == null ? '' : String(message);
+
+    toast.appendChild(iconWrap);
+    toast.appendChild(textEl);
     container.appendChild(toast);
 
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -34,7 +52,9 @@ function showToast(message, type) {
     toast.addEventListener('click', removeToast);
     setTimeout(removeToast, 4000);
 }
-window.showToast = showToast;
+if (typeof window.showToast !== 'function') {
+    window.showToast = showToast;
+}
 
 $(document).ready(function() {
     window.qimenData = loadQimenDataFromDom();
@@ -460,9 +480,15 @@ $(document).ready(function() {
 
     // LLM 問答功能（支援續問）
     $('#askLLMQuestion').click(function() {
-        var question = $('#userQuestion').val().trim();
+        var $qInput = $('#userQuestion');
+        var question = ($qInput.val() || '').trim();
         if (!question) {
-            showToast('請輸入您的問題', 'warning');
+            if (typeof window.showSuiteFieldError === 'function') {
+                window.showSuiteFieldError($qInput[0], '請輸入您的問題');
+            } else {
+                showToast('請輸入您的問題', 'warning');
+                $qInput.focus();
+            }
             return;
         }
 
@@ -949,9 +975,14 @@ $(document).ready(function() {
         });
     });
 
-    // 回車鍵提交問題
-    $('#userQuestion').keypress(function(e) {
-        if (e.which == 13) {
+    // 回車鍵提交問題（含 IME 中文組字防誤送檢查）
+    $('#userQuestion').on('keydown', function(e) {
+        var oe = e.originalEvent || e;
+        if (oe.isComposing || e.isComposing || oe.keyCode === 229 || e.keyCode === 229) {
+            return;
+        }
+        if (e.key === 'Enter' || e.which === 13) {
+            e.preventDefault();
             $('#askLLMQuestion').click();
         }
     });
@@ -1095,10 +1126,10 @@ function displayTimezoneDebugInfo() {
         const hasTimezone = urlParams.has('timestamp') && urlParams.has('timezoneOffset');
         
         if (hasTimezone) {
-            localTimeElement.style.color = '#5cb85c'; // 綠色表示正常
+            localTimeElement.style.color = '#15803d'; // 高對比深綠表示正常
             localTimeElement.title = '時區參數正常';
         } else {
-            localTimeElement.style.color = '#d9534f'; // 紅色表示異常
+            localTimeElement.style.color = '#b91c1c'; // 高對比深紅表示異常
             localTimeElement.title = '缺少時區參數，可能影響準確性';
         }
     }
@@ -1211,47 +1242,116 @@ function checkTimezoneStatus() {
 // ============================================================================
 function initHomeFeatureCarousel() {
     try {
+        const carouselRegion = document.querySelector('.home-carousel-wrapper');
         const trackWrapper = document.getElementById('homeCarouselTrackWrapper');
         const track = document.getElementById('homeCarouselTrack');
         const btnPrev = document.getElementById('homeCarouselPrev');
         const btnNext = document.getElementById('homeCarouselNext');
+        const btnPause = document.getElementById('homeCarouselPause');
         const dotsContainer = document.getElementById('homeCarouselDots');
+        const statusEl = document.getElementById('homeCarouselStatus');
         if (!trackWrapper || !track) return;
 
         const cards = Array.from(track.querySelectorAll('.home-carousel-card'));
+        const slides = Array.from(track.querySelectorAll('.home-carousel-slide'));
+        const slideTargets = slides.length === cards.length ? slides : cards;
         if (!cards.length) return;
+
+        const reducedMotionMq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+        let prefersReducedMotion = Boolean(reducedMotionMq && reducedMotionMq.matches);
+        let userPaused = false;
+        let isHovering = false;
+        let isTouching = false;
+        let hasFocus = false;
+        let activeIdx = 0;
+        let pinnedEndIdx = null;
+        let isAutoScrolling = false;
+        let autoScrollResetTimer = null;
+        let suppressScrollAnnounceUntil = 0;
+
+        function getScrollBehavior() {
+            return prefersReducedMotion ? 'auto' : 'smooth';
+        }
+
+        function announceSlide(idx) {
+            if (!statusEl || !cards[idx]) return;
+            const titleEl = cards[idx].querySelector('.home-carousel-card-title');
+            const title = titleEl ? titleEl.textContent.trim() : '';
+            statusEl.textContent = `精選推薦第 ${idx + 1} / ${cards.length} 項：${title}`;
+        }
+
+        function updatePauseButton() {
+            if (!btnPause) return;
+            const isPaused = prefersReducedMotion || userPaused;
+            btnPause.setAttribute('aria-pressed', String(isPaused));
+            btnPause.setAttribute('aria-label', isPaused ? '繼續自動輪播' : '暫停自動輪播');
+            btnPause.setAttribute('title', isPaused ? '繼續自動輪播' : '暫停自動輪播');
+            btnPause.replaceChildren();
+            const iconEl = document.createElement('i');
+            iconEl.setAttribute('data-lucide', isPaused ? 'play' : 'pause');
+            iconEl.setAttribute('aria-hidden', 'true');
+            btnPause.appendChild(iconEl);
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
+        }
 
         // 建立無障礙導航按鈕 (Accessible Buttons)
         if (dotsContainer) {
-            dotsContainer.innerHTML = '';
+            dotsContainer.replaceChildren();
             cards.forEach((_, idx) => {
                 const dot = document.createElement('button');
                 dot.type = 'button';
                 dot.className = `home-carousel-dot ${idx === 0 ? 'active' : ''}`;
                 dot.setAttribute('aria-label', `切換至第 ${idx + 1} 個精選特色`);
                 dot.setAttribute('aria-current', idx === 0 ? 'true' : 'false');
-                dot.addEventListener('click', () => scrollToCard(idx));
+                dot.addEventListener('click', () => scrollToCard(idx, true));
                 dotsContainer.appendChild(dot);
             });
         }
 
         function getCardStep() {
-            const firstCard = cards[0];
-            if (!firstCard) return 300;
+            const firstItem = slideTargets[0];
+            if (!firstItem) return 300;
             const style = window.getComputedStyle(track);
             const gap = parseFloat(style.gap) || 14;
-            return firstCard.offsetWidth + gap;
+            return firstItem.offsetWidth + gap;
         }
 
-        function scrollToCard(index) {
-            const step = getCardStep();
+        function getClosestIndex(scrollLeft) {
             const maxScroll = trackWrapper.scrollWidth - trackWrapper.clientWidth;
-            const targetScroll = Math.min(maxScroll, Math.max(0, index * step));
-            trackWrapper.scrollTo({ left: targetScroll, behavior: 'smooth' });
-            updateDots(index);
+            if (maxScroll <= 0) return 0;
+            const trackOrigin = track.offsetLeft || 0;
+            let closestIdx = 0;
+            let bestDist = Infinity;
+            slideTargets.forEach((item, i) => {
+                const dist = Math.abs((item.offsetLeft - trackOrigin) - scrollLeft);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    closestIdx = i;
+                }
+            });
+            return closestIdx;
         }
 
-        function updateDots(activeIdx) {
+        function scrollToCard(index, userInitiated) {
+            const clamped = Math.min(cards.length - 1, Math.max(0, index));
+            const maxScroll = Math.max(0, trackWrapper.scrollWidth - trackWrapper.clientWidth);
+            const trackOrigin = track.offsetLeft || 0;
+            const cardOffset = Math.max(0, slideTargets[clamped].offsetLeft - trackOrigin);
+            const targetScroll = Math.min(maxScroll, cardOffset);
+            pinnedEndIdx = cardOffset >= maxScroll - 2 ? clamped : null;
+            if (userInitiated) {
+                isAutoScrolling = false;
+                suppressScrollAnnounceUntil = Date.now() + 700;
+                announceSlide(clamped);
+            }
+            trackWrapper.scrollTo({ left: targetScroll, behavior: getScrollBehavior() });
+            updateDots(clamped);
+        }
+
+        function updateDots(nextIdx) {
+            activeIdx = Math.min(cards.length - 1, Math.max(0, nextIdx));
             if (!dotsContainer) return;
             const dots = dotsContainer.querySelectorAll('.home-carousel-dot');
             dots.forEach((d, i) => {
@@ -1262,56 +1362,72 @@ function initHomeFeatureCarousel() {
         }
 
         btnNext?.addEventListener('click', () => {
-            const step = getCardStep();
-            const nextLeft = trackWrapper.scrollLeft + step;
-            if (nextLeft >= trackWrapper.scrollWidth - trackWrapper.clientWidth - 10) {
-                trackWrapper.scrollTo({ left: 0, behavior: 'smooth' });
+            const maxScroll = Math.max(0, trackWrapper.scrollWidth - trackWrapper.clientWidth);
+            if (trackWrapper.scrollLeft >= maxScroll - 10) {
+                scrollToCard(0, true);
             } else {
-                trackWrapper.scrollBy({ left: step, behavior: 'smooth' });
+                const step = getCardStep();
+                const nextIdx = Math.min(cards.length - 1, Math.max(activeIdx + 1, getClosestIndex(trackWrapper.scrollLeft + step)));
+                scrollToCard(nextIdx, true);
             }
         });
 
         btnPrev?.addEventListener('click', () => {
-            const step = getCardStep();
             if (trackWrapper.scrollLeft <= 10) {
-                trackWrapper.scrollTo({ left: trackWrapper.scrollWidth, behavior: 'smooth' });
+                scrollToCard(cards.length - 1, true);
             } else {
-                trackWrapper.scrollBy({ left: -step, behavior: 'smooth' });
+                const step = getCardStep();
+                const prevIdx = Math.max(0, Math.min(activeIdx - 1, getClosestIndex(Math.max(0, trackWrapper.scrollLeft - step))));
+                scrollToCard(prevIdx, true);
             }
         });
 
-        // 滾動時自動計算當前 active dot
+        // 滾動時計算目前 active dot，並在手動滑動結束後更新讀屏播報（自動輪播不播報）
         let scrollTimeout;
         trackWrapper.addEventListener('scroll', () => {
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
-                const step = getCardStep();
                 const maxScroll = trackWrapper.scrollWidth - trackWrapper.clientWidth;
                 if (maxScroll <= 0) return;
-                let currentIdx;
-                if (trackWrapper.scrollLeft >= maxScroll - 15) {
-                    currentIdx = cards.length - 1;
-                } else {
-                    currentIdx = Math.round(trackWrapper.scrollLeft / step);
+                const nextIdx = (pinnedEndIdx !== null && trackWrapper.scrollLeft >= maxScroll - 12)
+                    ? pinnedEndIdx
+                    : getClosestIndex(trackWrapper.scrollLeft);
+                if (pinnedEndIdx !== null && trackWrapper.scrollLeft < maxScroll - 12) {
+                    pinnedEndIdx = null;
                 }
-                updateDots(Math.min(cards.length - 1, Math.max(0, currentIdx)));
-            }, 50);
+                const prevIdx = activeIdx;
+                updateDots(nextIdx);
+                if (!isAutoScrolling && Date.now() > suppressScrollAnnounceUntil && nextIdx !== prevIdx) {
+                    announceSlide(nextIdx);
+                }
+            }, 90);
         }, { passive: true });
 
-        // 自動輪播計時器 (Auto-play every 4.5s，支援 prefers-reduced-motion 與無障礙暫停)
+        // 自動輪播計時器 (Auto-play every 4.5s，支援 prefers-reduced-motion 與整個輪播控制區聚焦/懸停暫停)
         let autoPlayTimer = null;
-        const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function shouldAutoPlay() {
+            return !(prefersReducedMotion || userPaused || document.hidden || isHovering || isTouching || hasFocus);
+        }
 
         function startAutoPlay() {
-            if (prefersReducedMotion || document.hidden) return;
+            if (!shouldAutoPlay()) return;
             if (autoPlayTimer) clearInterval(autoPlayTimer);
             autoPlayTimer = setInterval(() => {
+                if (!shouldAutoPlay()) {
+                    stopAutoPlay();
+                    return;
+                }
                 const step = getCardStep();
                 const maxScroll = trackWrapper.scrollWidth - trackWrapper.clientWidth;
+                pinnedEndIdx = null;
+                isAutoScrolling = true;
+                clearTimeout(autoScrollResetTimer);
+                autoScrollResetTimer = setTimeout(() => { isAutoScrolling = false; }, 750);
                 if (trackWrapper.scrollLeft >= maxScroll - 15) {
-                    trackWrapper.scrollTo({ left: 0, behavior: 'smooth' });
+                    trackWrapper.scrollTo({ left: 0, behavior: getScrollBehavior() });
                 } else {
-                    trackWrapper.scrollBy({ left: step, behavior: 'smooth' });
+                    trackWrapper.scrollBy({ left: step, behavior: getScrollBehavior() });
                 }
             }, 4500);
         }
@@ -1323,20 +1439,63 @@ function initHomeFeatureCarousel() {
             }
         }
 
-        // 滑鼠懸停、觸控與鍵盤焦點聚焦時自動暫停，離開時恢復
-        trackWrapper.addEventListener('mouseenter', stopAutoPlay);
-        trackWrapper.addEventListener('mouseleave', startAutoPlay);
-        trackWrapper.addEventListener('touchstart', stopAutoPlay, { passive: true });
-        trackWrapper.addEventListener('touchend', startAutoPlay, { passive: true });
-        trackWrapper.addEventListener('focusin', stopAutoPlay);
-        trackWrapper.addEventListener('focusout', startAutoPlay);
+        function syncAutoPlayState() {
+            if (shouldAutoPlay()) startAutoPlay();
+            else stopAutoPlay();
+        }
 
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) stopAutoPlay();
-            else startAutoPlay();
+        btnPause?.addEventListener('click', () => {
+            if (prefersReducedMotion) {
+                userPaused = false;
+                if (statusEl) statusEl.textContent = '系統設定為減少動態效果，已停用自動輪播';
+                updatePauseButton();
+                syncAutoPlayState();
+                return;
+            }
+            userPaused = !userPaused;
+            if (userPaused) {
+                stopAutoPlay();
+                if (statusEl) statusEl.textContent = '已暫停精選推薦自動輪播';
+            } else {
+                syncAutoPlayState();
+                if (statusEl) statusEl.textContent = '已恢復精選推薦自動輪播';
+            }
+            updatePauseButton();
         });
 
-        startAutoPlay();
+        if (reducedMotionMq && typeof reducedMotionMq.addEventListener === 'function') {
+            reducedMotionMq.addEventListener('change', (e) => {
+                prefersReducedMotion = e.matches;
+                syncAutoPlayState();
+                updatePauseButton();
+            });
+        }
+
+        // 整個輪播區塊（含上下頁、圓點、暫停按鈕與卡片）滑鼠懸停、觸控與鍵盤焦點聚焦時暫停，離開後才恢復
+        const interactionTarget = carouselRegion || trackWrapper;
+        interactionTarget.addEventListener('mouseenter', () => { isHovering = true; stopAutoPlay(); });
+        interactionTarget.addEventListener('mouseleave', () => { isHovering = false; syncAutoPlayState(); });
+        interactionTarget.addEventListener('touchstart', () => { isTouching = true; stopAutoPlay(); }, { passive: true });
+        interactionTarget.addEventListener('touchend', () => { isTouching = false; syncAutoPlayState(); }, { passive: true });
+        interactionTarget.addEventListener('focusin', () => { hasFocus = true; stopAutoPlay(); });
+        interactionTarget.addEventListener('focusout', (e) => {
+            if (e.relatedTarget && interactionTarget.contains(e.relatedTarget)) {
+                return;
+            }
+            setTimeout(() => {
+                if (!interactionTarget.contains(document.activeElement)) {
+                    hasFocus = false;
+                    syncAutoPlayState();
+                }
+            }, 0);
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            syncAutoPlayState();
+        });
+
+        updatePauseButton();
+        syncAutoPlayState();
     } catch (err) {
         console.warn('initHomeFeatureCarousel error:', err);
     }

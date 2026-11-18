@@ -282,8 +282,12 @@
         }
     }
 
-    // 浮動輕量級 Toast 通知系統 (取代阻斷式原生 alert)
+    // 浮動輕量級 Toast 通知系統 (委派全域 showToast 並保留 XSS-safe textContent fallback)
     function showToast(message, type = 'info') {
+        if (typeof window.showToast === 'function') {
+            window.showToast(message, type);
+            return;
+        }
         let container = document.getElementById('liuyaoToastContainer');
         if (!container) {
             container = document.createElement('div');
@@ -294,6 +298,8 @@
 
         const toast = document.createElement('div');
         toast.className = `liuyao-toast liuyao-toast-${type}`;
+        toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
 
         const iconMap = {
             success: 'check-circle-2',
@@ -303,10 +309,14 @@
         };
         const iconName = iconMap[type] || 'info';
 
-        toast.innerHTML = `
-            <i data-lucide="${iconName}" class="toast-icon"></i>
-            <span>${escapeHtml(message)}</span>
-        `;
+        const iconEl = document.createElement('i');
+        iconEl.setAttribute('data-lucide', iconName);
+        iconEl.className = 'toast-icon';
+        iconEl.setAttribute('aria-hidden', 'true');
+        const textEl = document.createElement('span');
+        textEl.textContent = message == null ? '' : String(message);
+        toast.appendChild(iconEl);
+        toast.appendChild(textEl);
 
         const closeToast = () => {
             if (toast.classList.contains('closing')) return;
@@ -444,6 +454,7 @@
                     undoLastToss();
                 }
             } else if (e.key === 'Enter') {
+                if (e.isComposing || e.keyCode === 229) return;
                 if (currentMode === 'manual' && document.activeElement && document.activeElement.id === 'manualLinesInput') {
                     e.preventDefault();
                     document.getElementById('btnManualCast')?.click();
@@ -811,7 +822,10 @@
         `;
 
         // 本卦表格行
-        const benRows = (ben.lines || []).slice().reverse().map(l => {
+        const benLines = Array.isArray(ben.lines)
+            ? (typeof ben.lines.toReversed === 'function' ? ben.lines.toReversed() : ben.lines.slice().reverse())
+            : [];
+        const benRows = benLines.map(l => {
             const isShi = l.position === ben.shi ? '<span class="badge-shi">世</span>' : '';
             const isYing = l.position === ben.ying ? '<span class="badge-ying">應</span>' : '';
             const fu = fushen[l.position]
@@ -836,7 +850,10 @@
         }).join('');
 
         // 之卦表格行
-        const zhiRows = (zhi.lines || []).slice().reverse().map(l => {
+        const zhiLines = Array.isArray(zhi.lines)
+            ? (typeof zhi.lines.toReversed === 'function' ? zhi.lines.toReversed() : zhi.lines.slice().reverse())
+            : [];
+        const zhiRows = zhiLines.map(l => {
             const isShi = l.position === zhi.shi ? '<span class="badge-shi">世</span>' : '';
             const isYing = l.position === zhi.ying ? '<span class="badge-ying">應</span>' : '';
             const lineClass = l.isYang ? 'yao-bar-yang' : 'yao-bar-yin';

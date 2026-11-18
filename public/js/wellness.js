@@ -157,8 +157,12 @@
         const birthDate = birthDateInput?.value ? birthDateInput.value.trim() : undefined;
 
         if (isNaN(targetYear) || targetYear < 1900 || targetYear > 2100) {
-            alert('請輸入有效西元年份（1900 ~ 2100）');
-            targetYearInput?.focus();
+            if (typeof window.showSuiteFieldError === 'function') {
+                window.showSuiteFieldError(targetYearInput, '請輸入有效西元年份（1900 ~ 2100）');
+            } else {
+                window.showToast?.('請輸入有效西元年份（1900 ~ 2100）', 'warning');
+                targetYearInput?.focus();
+            }
             return;
         }
 
@@ -169,7 +173,7 @@
         }
         const suiteTurnstileElem = document.getElementById('suite-turnstile');
         if (!sToken && suiteTurnstileElem && typeof suiteTurnstileElem.getAttribute === 'function' && suiteTurnstileElem.getAttribute('data-sitekey')) {
-            alert('請先勾選並完成人機驗證（Cloudflare Turnstile）');
+            window.showToast?.('請先勾選並完成人機驗證（Cloudflare Turnstile）', 'warning');
             return;
         }
 
@@ -210,7 +214,7 @@
             // 開啟追問區
             if (followUpSection) {
                 followUpSection.style.display = 'block';
-                followUpHistory.innerHTML = '';
+                followUpHistory.replaceChildren();
                 window.conversationHistory = [
                     { role: 'user', content: `查詢年份：${targetYear}，查詢時辰：${currentHour}時，出生日期：${birthDate || '未填寫'}` },
                     { role: 'assistant', content: data.summary || `完成推演：${targetYear}年歲運為【${data.suiYun}】，司天【${data.siTian}】，在泉【${data.zaiQuan}】。` }
@@ -433,7 +437,7 @@
         }
         const fuElem = document.getElementById('suite-followup-turnstile');
         if (!fuToken && fuElem && typeof fuElem.getAttribute === 'function' && fuElem.getAttribute('data-sitekey')) {
-            alert('請先勾選並完成追問人機驗證（Cloudflare Turnstile）');
+            window.showToast?.('請先勾選並完成追問人機驗證（Cloudflare Turnstile）', 'warning');
             return;
         }
 
@@ -482,10 +486,10 @@
                     window.publishSuiteEmailResult('五運六氣養生', currentWellnessData, { supplement: data.analysis });
                 }
             } else {
-                alert('追問未能完成：' + (data.error || '請稍後再試'));
+                window.showToast?.('追問未能完成：' + (data.error || '請稍後再試'), 'error');
             }
         } catch (e) {
-            alert('追問出錯：' + e.message);
+            window.showToast?.('追問出錯：' + e.message, 'error');
         } finally {
             askFollowupBtn.disabled = false;
             askFollowupBtn.innerHTML = '<i data-lucide="send"></i> 送出提問 ➔';

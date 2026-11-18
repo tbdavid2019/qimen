@@ -27,16 +27,19 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#111a20">
+    <meta name="color-scheme" content="light dark">
 
     <script>
         (function() {
-            try {
-                var theme = localStorage.getItem('theme');
-                if (!theme) {
-                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-                }
-                document.documentElement.setAttribute('data-theme', theme);
-            } catch (error) {}
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (_e) {}
+            var valid = stored === 'dark' || stored === 'light';
+            var prefersDark = false;
+            try { prefersDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); } catch (_e) {}
+            var theme = valid ? stored : (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            var meta = document.querySelector('meta[name="color-scheme"]');
+            if (meta) meta.setAttribute('content', valid ? theme : 'light dark');
         })();
     </script>
 
@@ -45,6 +48,7 @@
     <link rel="stylesheet" href="/css/style-new.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/dark-mode.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/divination-suite.css?v=20261101_saju_rev2">
+    <link rel="stylesheet" href="/css/byok.css?v=20261101_saju_rev2">
     <link rel="stylesheet" href="/css/theme-atelier.css?v=20261101_saju_rev2">
     <script defer src="https://flow.aiurl.tw/script.js?siteId=33f0292a-7f97-47fb-8763-514b8263065e"></script>
 </head>
@@ -124,7 +128,7 @@
                         <div class="fs-compass-header">
                             <div class="fs-compass-title-box">
                                 <span class="fs-badge-feature">🧭 PWA 實時電子羅盤</span>
-                                <h4 class="fs-compass-title">手持羅盤定坐向（支援 iOS / Android / 平板）</h4>
+                                <h2 class="fs-compass-title">手持羅盤定坐向（支援 iOS / Android / 平板）</h2>
                                 <p class="fs-compass-desc">平放裝置朝向房屋大門或主要採光陽台，即時感測向首度數、換算 24 山與判定正向（下卦）／兼向（替卦）／出卦空亡線。</p>
                             </div>
                             <button type="button" id="btnStartCompass" class="btn btn-primary fs-start-compass-btn">
@@ -206,6 +210,11 @@
                     <div class="suite-form-row">
                         <div class="suite-form-group">
                             <label for="fengshuiFacing">房屋朝向（24山或8大方位）</label>
+                            <div class="fs-selector-filter-bar" id="fsFacingFilterBar" role="group" aria-label="篩選房屋朝向類別">
+                                <button type="button" class="fs-selector-filter-btn active" data-fs-target="fengshuiFacing" data-fs-group="all" aria-pressed="true">全部 (32)</button>
+                                <button type="button" class="fs-selector-filter-btn" data-fs-target="fengshuiFacing" data-fs-group="常用 8 大朝向" aria-pressed="false">常用 8 大方位</button>
+                                <button type="button" class="fs-selector-filter-btn" data-fs-target="fengshuiFacing" data-fs-group="精確 24 山坐向" aria-pressed="false">精確 24 山坐向</button>
+                            </div>
                             <select class="form-control input-lg" id="fengshuiFacing" name="facing" toolparamdescription="房屋大門或陽台的朝向方位">
                                 <optgroup label="常用 8 大朝向">
                                     <option value="南" selected>朝南（坎宅 · 坐北朝南）</option>
@@ -275,7 +284,7 @@
                     </details>
 
                     <!-- 《陽宅三要》門・主・灶快速配星 -->
-                    <div class="fs-menzhuzao-inputs" style="background: var(--suite-bg-card, rgba(255,255,255,0.03)); border: 1px solid var(--suite-border); border-radius: 10px; padding: 14px 16px; margin-top: 14px;">
+                    <div class="fs-menzhuzao-inputs" style="border-top: 1px dashed var(--suite-border); padding: 14px 4px 4px; margin-top: 14px;">
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                             <span class="suite-tag" style="background: #ecfdf5; color: #065f46; font-weight: 800; font-size: 13.5px;">📖 《陽宅三要》</span>
                             <strong style="font-size: 17px; color: var(--suite-primary);">大門・主臥・廚灶快速配星（選填）</strong>
@@ -331,7 +340,7 @@
                     <div id="fsNineGridSection" class="fs-step2-card">
                         <div class="fs-step2-header">
                             <div class="fs-step2-badge">STEP 2 · 快速九宮模式</div>
-                            <h3 class="fs-step2-title">把住宅物件放進九宮</h3>
+                            <h2 class="fs-step2-title">把住宅物件放進九宮</h2>
                             <p class="fs-step2-subtext">先選物件，再點它所在的宮位；同一宮可放多項，也可再次點擊移除。盤面採「南在上、北在下」。</p>
                             <div class="fs-step2-actions-top">
                                 <button type="button" id="btnClearNineGrid" class="btn btn-default btn-xs fs-btn-clear">清空格局標註</button>
@@ -397,6 +406,11 @@
                 <div id="fsGroupShaqi" class="fs-mode-group" style="display:none;">
                     <div class="suite-form-group">
                         <label for="shaType">選擇疑似面臨的煞氣形態（外局形煞 / 內局空間六事）</label>
+                        <div class="fs-selector-filter-bar" id="fsShaqiFilterBar" role="group" aria-label="篩選煞氣形態類別">
+                            <button type="button" class="fs-selector-filter-btn active" data-fs-target="shaType" data-fs-group="all" aria-pressed="true">全部 (24)</button>
+                            <button type="button" class="fs-selector-filter-btn" data-fs-target="shaType" data-fs-group="🏛️ 外局形煞 (建築與道路環境 · 14種)" aria-pressed="false">外局形煞 (14)</button>
+                            <button type="button" class="fs-selector-filter-btn" data-fs-target="shaType" data-fs-group="🚪 內局空間六事 (格局與動線 · 10種)" aria-pressed="false">內局空間六事 (10)</button>
+                        </div>
                         <select class="form-control input-lg" id="shaType" name="shaType" toolparamdescription="形煞類型，使用中文 canonical 名稱">
                             <optgroup label="🏛️ 外局形煞 (建築與道路環境 · 14種)">
                                 <option value="天斬煞" selected>天斬煞（兩棟高樓窄縫如刀劈正對窗戶）</option>
@@ -481,7 +495,7 @@
             <!-- 解讀與追問區域 -->
             <div id="suiteAiSection" class="suite-ai-section" hidden>
                 <div class="suite-ai-header">
-                    <h3 class="suite-ai-title">🏡 堪輿顧問解讀</h3>
+                    <h2 class="suite-ai-title">🏡 堪輿顧問解讀</h2>
                     <button type="button" class="suite-copy-btn js-open-result-email" title="將完整排盤與問答寄至信箱">
                         ✉️ 寄送至信箱
                     </button>

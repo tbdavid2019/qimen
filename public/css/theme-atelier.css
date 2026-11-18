@@ -39,14 +39,16 @@ body.meihua-page {
     --card-border-subtle: #ebd9b0;
     --text-muted: #6b5e47;
 
-    /* Divination Suite Variables Alignment */
+    /* Divination Suite Variables Alignment (Text accent uses clay; saffron fills pair with deep-blue ink) */
     --suite-bg: var(--canvas);
     --suite-card-bg: var(--warm-cream);
     --suite-border: var(--card-border);
     --suite-text: var(--ink);
     --suite-text-muted: var(--text-muted);
-    --suite-primary: var(--saffron);
-    --suite-primary-hover: var(--saffron-hover);
+    --suite-primary: var(--clay);
+    --suite-primary-hover: var(--clay-hover);
+    --suite-accent-fill: var(--saffron);
+    --suite-accent-ink: var(--deep-blue);
     --suite-shadow: 0 8px 24px rgba(43, 37, 26, 0.08), 0 2px 6px rgba(43, 37, 26, 0.04);
 
     /* Claude & Legacy Variables Alignment */
@@ -54,8 +56,8 @@ body.meihua-page {
     --claude-bg-subtle: var(--canvas-subtle);
     --claude-card: var(--warm-cream-card);
     --claude-card-subtle: #fffef8;
-    --claude-primary: var(--saffron);
-    --claude-primary-hover: var(--saffron-hover);
+    --claude-primary: var(--clay);
+    --claude-primary-hover: var(--clay-hover);
     --claude-primary-gradient: linear-gradient(135deg, #ffb010 0%, #f59e0b 100%);
     --claude-primary-border: var(--card-border);
     --claude-text-main: var(--ink);
@@ -125,7 +127,7 @@ body.meihua-page .navbar-inverse .navbar-nav > .active > a:focus {
     color: var(--deep-blue) !important;
     font-weight: 800 !important;
     border-radius: 20px !important;
-    box-shadow: 0 2px 10px rgba(255, 176, 16, 0.4) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28) !important;
 }
 
 /* Navigation Utilities (BYOK Hub & Dark Mode Toggle) */
@@ -139,7 +141,7 @@ body.meihua-page .byok-nav-btn {
     margin-top: 8px !important;
     margin-bottom: 8px !important;
     padding: 6px 12px !important;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 body.suite-page .byok-nav-btn:hover,
@@ -160,7 +162,7 @@ body.meihua-page .dark-mode-toggle {
     margin-top: 8px !important;
     margin-bottom: 8px !important;
     padding: 6px 12px !important;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 body.suite-page .dark-mode-toggle:hover,
@@ -211,7 +213,6 @@ body.suite-page .panel-default,
 body.suite-page .suite-card,
 body.suite-page .meihua-card,
 body.suite-page .liuyao-card,
-body.suite-page .fs-compass-card,
 body.suite-page .name-card,
 body.suite-page .tarot-card,
 body.suite-page .byok-modal-card,
@@ -223,6 +224,15 @@ body.meihua-page .meihua-card {
     border: 1.5px solid var(--card-border) !important;
     border-radius: 14px !important;
     box-shadow: 0 4px 18px rgba(43, 37, 26, 0.06) !important;
+}
+
+body.suite-page .suite-card .panel,
+body.suite-page .suite-card .panel-default,
+body.qimen-page .suite-card .panel,
+body.qimen-page .suite-card .panel-default {
+    box-shadow: none !important;
+    border-width: 1px !important;
+    background: rgba(43, 37, 26, 0.02) !important;
 }
 
 body.suite-page .panel-heading,
@@ -290,6 +300,11 @@ body.qimen-page .form-control {
     border: 1.5px solid var(--card-border) !important;
     color: var(--ink) !important;
     border-radius: 8px !important;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+.img-thumbnail {
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
 }
 
 body.suite-page .form-control:focus,
@@ -310,14 +325,19 @@ body.suite-page .name-submit-btn,
 body.suite-page .byok-btn-save,
 body.suite-page .fs-btn-action,
 body.qimen-page .btn-primary,
-body.qimen-page .suite-btn-primary {
+body.qimen-page .suite-btn-primary,
+body.qimen-page #startLLMAnalysis,
+body.qimen-page #askBtn,
+body.qimen-page #calculateBtn,
+body.qimen-page .btn-submit-qimen,
+body.suite-page .fs-cat-btn.active {
     background: linear-gradient(135deg, var(--saffron) 0%, #f59e0b 100%) !important;
     color: var(--deep-blue) !important;
     border: 1.5px solid #6b5b38 !important;
     font-weight: 800 !important;
     box-shadow: 0 4px 14px rgba(255, 176, 16, 0.35) !important;
     border-radius: 20px !important;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 body.suite-page .btn-primary:hover,
@@ -327,11 +347,80 @@ body.suite-page .name-submit-btn:hover,
 body.suite-page .byok-btn-save:hover,
 body.suite-page .fs-btn-action:hover,
 body.qimen-page .btn-primary:hover,
-body.qimen-page .suite-btn-primary:hover {
+body.qimen-page .suite-btn-primary:hover,
+body.qimen-page #startLLMAnalysis:hover,
+body.qimen-page #askBtn:hover,
+body.qimen-page #calculateBtn:hover,
+body.qimen-page .btn-submit-qimen:hover,
+body.suite-page .fs-cat-btn.active:hover {
     background: var(--saffron-hover) !important;
     transform: translateY(-1px) !important;
     box-shadow: 0 6px 18px rgba(255, 176, 16, 0.45) !important;
     color: var(--deep-blue) !important;
+}
+
+body.suite-page .fs-cat-btn .badge {
+    background-color: #4b5563 !important;
+    color: #ffffff !important;
+}
+
+body.suite-page .fs-cat-btn.active .badge {
+    background-color: var(--deep-blue) !important;
+    color: #ffffff !important;
+}
+
+/* Ensure keyboard hint badges inside saffron primary buttons maintain >= 4.5:1 contrast */
+body.suite-page .btn-primary .liuyao-kbd,
+body.suite-page .suite-btn-primary .liuyao-kbd {
+    color: var(--deep-blue) !important;
+    background: rgba(255, 255, 255, 0.65) !important;
+    border-color: rgba(23, 50, 77, 0.35) !important;
+}
+
+/* Muted text, placeholders, collapsible summaries & compass readouts */
+body.suite-page .text-muted,
+body.qimen-page .text-muted,
+body.meihua-page .text-muted {
+    color: var(--text-muted) !important;
+}
+
+body.suite-page .form-control::placeholder,
+body.suite-page input::placeholder,
+body.suite-page textarea::placeholder,
+body.qimen-page .form-control::placeholder,
+body.qimen-page input::placeholder,
+body.qimen-page textarea::placeholder {
+    color: #5c5140 !important;
+    opacity: 1 !important;
+}
+
+body.suite-page summary,
+body.suite-page .suite-details summary,
+body.suite-page .fs-badge-feature,
+body.suite-page #compassDegreeDisplay {
+    color: var(--clay) !important;
+}
+
+body.suite-page #compassChartTypeBadge.badge-pure {
+    color: #065f46 !important;
+}
+
+body.qimen-page .label-danger,
+body.suite-page .label-danger {
+    background-color: #b91c1c !important;
+    color: #ffffff !important;
+}
+
+body.qimen-page .label-success,
+body.suite-page .label-success {
+    background-color: #15803d !important;
+    color: #ffffff !important;
+}
+
+body.qimen-page .label-warning,
+body.suite-page .label-warning {
+    background-color: #92400e !important;
+    color: #ffffff !important;
 }
 
 /* 7. Secondary / Default Buttons */
@@ -347,7 +436,7 @@ body.qimen-page .suite-btn-secondary {
     color: var(--deep-blue) !important;
     font-weight: 700 !important;
     border-radius: 20px !important;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 body.suite-page .btn-default:hover,
@@ -404,7 +493,7 @@ body.meihua-page .meihua-pill {
     color: var(--deep-blue) !important;
     font-weight: 700 !important;
     border-radius: 20px !important;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 body.suite-page .qimen-pill.active,
@@ -483,9 +572,9 @@ body.suite-page .answerbook-mode-btn.active span {
 }
 
 body.suite-page .tarot-mode-btn.active .tarot-mode-badge {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: var(--saffron) !important;
-    border: 1px solid rgba(255, 176, 16, 0.4) !important;
+    background: rgba(15, 29, 44, 0.55) !important;
+    color: #ffd15c !important;
+    border: 1px solid rgba(255, 209, 92, 0.55) !important;
 }
 
 /* Bazi Ten Gods High-Contrast Text */
@@ -505,7 +594,8 @@ body.qimen-page .qimen-pan {
     border-radius: 12px !important;
     box-shadow: 0 8px 26px rgba(43, 37, 26, 0.08) !important;
     background-color: var(--warm-cream) !important;
-    overflow: hidden;
+    overflow-x: clip;
+    overflow-y: hidden;
 }
 
 body.qimen-page .gong:not(.da_ji):not(.xiao_ji):not(.xiao_xiong):not(.da_xiong) {
@@ -581,7 +671,9 @@ html[data-theme="dark"] {
     --suite-card-bg: #142336 !important;
     --suite-border: #7a6642 !important;
     --suite-text: #fcf6ea !important;
-    --suite-text-muted: #b8a892 !important;
+    --suite-text-muted: #c7b8a3 !important;
+    --suite-primary: #fbbf24 !important;
+    --suite-primary-hover: #fcd34d !important;
     --claude-bg: #0e1824 !important;
     --claude-bg-subtle: #132233 !important;
     --claude-card: #142336 !important;
@@ -589,7 +681,7 @@ html[data-theme="dark"] {
     --claude-border: #7a6642 !important;
     --claude-text-main: #fcf6ea !important;
     --claude-text-body: #d6cbba !important;
-    --claude-text-muted: #b8a892 !important;
+    --claude-text-muted: #c7b8a3 !important;
 
     --canvas: #0e1824;
     --canvas-subtle: #132233;
@@ -602,10 +694,52 @@ html[data-theme="dark"] {
     --ink-subtle: #d6cbba;
     --card-border: #7a6642;
     --card-border-subtle: #594a30;
-    --text-muted: #b8a892;
+    --text-muted: #c7b8a3;
 
     background-color: #0e1824 !important;
     color: #fcf6ea !important;
+}
+
+[data-theme="dark"] body.suite-page .btn-primary,
+[data-theme="dark"] body.suite-page .suite-btn-primary,
+[data-theme="dark"] body.suite-page .suite-btn-submit,
+[data-theme="dark"] body.suite-page .name-submit-btn,
+[data-theme="dark"] body.suite-page .byok-btn-save,
+[data-theme="dark"] body.suite-page .fs-btn-action,
+[data-theme="dark"] body.qimen-page .btn-primary,
+[data-theme="dark"] body.qimen-page .suite-btn-primary,
+[data-theme="dark"] body.qimen-page #startLLMAnalysis,
+[data-theme="dark"] body.qimen-page #askBtn,
+[data-theme="dark"] body.qimen-page #calculateBtn,
+[data-theme="dark"] body.qimen-page .btn-submit-qimen,
+[data-theme="dark"] body.suite-page .fs-cat-btn.active {
+    color: #0e1824 !important;
+}
+
+[data-theme="dark"] body.suite-page .text-muted,
+[data-theme="dark"] body.qimen-page .text-muted,
+[data-theme="dark"] body.meihua-page .text-muted {
+    color: #c7b8a3 !important;
+}
+
+[data-theme="dark"] body.suite-page .form-control::placeholder,
+[data-theme="dark"] body.suite-page input::placeholder,
+[data-theme="dark"] body.suite-page textarea::placeholder,
+[data-theme="dark"] body.qimen-page .form-control::placeholder,
+[data-theme="dark"] body.qimen-page input::placeholder,
+[data-theme="dark"] body.qimen-page textarea::placeholder {
+    color: #b8a892 !important;
+}
+
+[data-theme="dark"] body.suite-page summary,
+[data-theme="dark"] body.suite-page .suite-details summary,
+[data-theme="dark"] body.suite-page .fs-badge-feature,
+[data-theme="dark"] body.suite-page #compassDegreeDisplay {
+    color: var(--saffron) !important;
+}
+
+[data-theme="dark"] body.suite-page #compassChartTypeBadge.badge-pure {
+    color: #6ee7b7 !important;
 }
 
 [data-theme="dark"] body.suite-page .navbar.navbar-inverse.navbar-fixed-top,
@@ -627,7 +761,6 @@ html[data-theme="dark"] {
 [data-theme="dark"] body.suite-page .suite-card,
 [data-theme="dark"] body.suite-page .meihua-card,
 [data-theme="dark"] body.suite-page .liuyao-card,
-[data-theme="dark"] body.suite-page .fs-compass-card,
 [data-theme="dark"] body.suite-page .name-card,
 [data-theme="dark"] body.suite-page .tarot-card,
 [data-theme="dark"] body.suite-page .byok-modal-card,
@@ -645,6 +778,17 @@ html[data-theme="dark"] {
     border-color: var(--card-border) !important;
     color: #fcf6ea !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="dark"] body.suite-page .suite-card .panel,
+[data-theme="dark"] body.suite-page .suite-card .panel-default,
+[data-theme="dark"] body.suite-page .fs-compass-card,
+[data-theme="dark"] body.qimen-page .suite-card .panel,
+[data-theme="dark"] body.qimen-page .suite-card .panel-default {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-color: var(--card-border) !important;
+    color: #fcf6ea !important;
+    box-shadow: none !important;
 }
 
 [data-theme="dark"] body.suite-page .panel-heading,
@@ -867,33 +1011,199 @@ html[data-theme="dark"] {
     color: var(--cream-text) !important;
 }
 
-/* 12. Accessibility: Focus-Visible & Reduced Motion Support */
+/* 12. Accessibility: Focus-Visible Outlines, Reduced Motion & Unified Toast */
+html,
+body.suite-page,
+body.qimen-page,
+body.meihua-page {
+    overflow-x: clip;
+}
+
+body.suite-page h1,
+body.suite-page h2,
+body.qimen-page h1,
+body.qimen-page h2,
+body.meihua-page h1,
+body.meihua-page h2,
+body.suite-page .suite-hero-heading,
+body.suite-page .fs-compass-title {
+    text-wrap: balance;
+}
+
+body.suite-page .suite-hero-compact h1,
+body.suite-page .suite-hero-compact .suite-hero-heading,
+body.qimen-page .suite-hero-compact h1,
+body.meihua-page .suite-hero-compact h1 {
+    font-size: clamp(25px, 2.8vw, 30px) !important;
+    line-height: 1.25 !important;
+}
+
+body.suite-page h2,
+body.qimen-page h2,
+body.meihua-page h2,
+body.suite-page .suite-ai-title,
+body.suite-page .qimen-stage-title,
+body.suite-page .liuyao-stage-title,
+body.suite-page .meihua-stage-title {
+    font-size: 20px !important;
+    line-height: 1.35 !important;
+}
+
 body.suite-page a:focus-visible,
 body.suite-page button:focus-visible,
 body.suite-page input:focus-visible,
 body.suite-page select:focus-visible,
-body.suite-page textarea:focus-visible {
-    outline: none !important;
-    box-shadow: 0 0 0 3px rgba(255, 176, 16, 0.5) !important;
+body.suite-page textarea:focus-visible,
+body.suite-page summary:focus-visible,
+body.suite-page [tabindex]:focus-visible,
+body.qimen-page a:focus-visible,
+body.qimen-page button:focus-visible,
+body.qimen-page input:focus-visible,
+body.qimen-page select:focus-visible,
+body.qimen-page textarea:focus-visible,
+body.qimen-page summary:focus-visible,
+body.qimen-page [tabindex]:focus-visible,
+body.meihua-page a:focus-visible,
+body.meihua-page button:focus-visible,
+body.meihua-page input:focus-visible,
+body.meihua-page select:focus-visible,
+body.meihua-page textarea:focus-visible,
+body.meihua-page summary:focus-visible,
+body.meihua-page [tabindex]:focus-visible {
+    outline: 3px solid var(--deep-blue) !important;
+    outline-offset: 2px !important;
+}
+
+[data-theme="dark"] body.suite-page a:focus-visible,
+[data-theme="dark"] body.suite-page button:focus-visible,
+[data-theme="dark"] body.suite-page input:focus-visible,
+[data-theme="dark"] body.suite-page select:focus-visible,
+[data-theme="dark"] body.suite-page textarea:focus-visible,
+[data-theme="dark"] body.suite-page summary:focus-visible,
+[data-theme="dark"] body.suite-page [tabindex]:focus-visible,
+[data-theme="dark"] body.qimen-page a:focus-visible,
+[data-theme="dark"] body.qimen-page button:focus-visible,
+[data-theme="dark"] body.qimen-page input:focus-visible,
+[data-theme="dark"] body.qimen-page select:focus-visible,
+[data-theme="dark"] body.qimen-page textarea:focus-visible,
+[data-theme="dark"] body.qimen-page summary:focus-visible,
+[data-theme="dark"] body.qimen-page [tabindex]:focus-visible,
+[data-theme="dark"] body.meihua-page a:focus-visible,
+[data-theme="dark"] body.meihua-page button:focus-visible,
+[data-theme="dark"] body.meihua-page input:focus-visible,
+[data-theme="dark"] body.meihua-page select:focus-visible,
+[data-theme="dark"] body.meihua-page textarea:focus-visible,
+[data-theme="dark"] body.meihua-page summary:focus-visible,
+[data-theme="dark"] body.meihua-page [tabindex]:focus-visible {
+    outline: 3px solid var(--saffron) !important;
+    outline-offset: 2px !important;
 }
 
 @media (forced-colors: active) {
-    body.suite-page a:focus-visible,
-    body.suite-page button:focus-visible,
-    body.suite-page input:focus-visible,
-    body.suite-page select:focus-visible,
-    body.suite-page textarea:focus-visible {
+    body.suite-page :focus-visible,
+    body.qimen-page :focus-visible,
+    body.meihua-page :focus-visible {
         outline: 2px solid Highlight !important;
+        outline-offset: 2px !important;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    body.suite-page .home-carousel-track-wrapper,
+    body.qimen-page .home-carousel-track-wrapper {
+        scroll-behavior: auto !important;
+    }
+    body.suite-page .btn-primary:hover,
+    body.suite-page .suite-btn-primary:hover,
+    body.suite-page .home-carousel-card:hover,
+    body.qimen-page .btn-primary:hover,
+    body.qimen-page .suite-btn-primary:hover,
+    body.qimen-page .home-carousel-card:hover {
+        transform: none !important;
+    }
+    body.suite-page .byok-active-indicator,
+    body.qimen-page .byok-active-indicator,
+    body.meihua-page .byok-active-indicator {
+        animation: none !important;
+    }
     body.suite-page *,
     body.qimen-page *,
     body.meihua-page * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
+        transition-property: color, background-color, border-color, opacity !important;
+        transition-duration: 0.12s !important;
     }
+}
+
+/* Inline field error feedback */
+.suite-field-error {
+    color: #b91c1c;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 6px;
+}
+
+[data-theme="dark"] .suite-field-error {
+    color: #fca5a5;
+}
+
+.suite-input-invalid {
+    border-color: #b91c1c !important;
+}
+
+[data-theme="dark"] .suite-input-invalid {
+    border-color: #fca5a5 !important;
+}
+
+/* Shared Accessible Toast Container (theme.js) */
+.suite-toast-container {
+    position: fixed;
+    right: 18px;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    z-index: 2050;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: min(400px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.suite-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    background: #17324d;
+    color: #fff9e8;
+    border: 1.5px solid #ddc58b;
+    box-shadow: 0 12px 28px rgba(14, 24, 36, 0.28);
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.suite-toast-success {
+    background: #14532d;
+    border-color: #86efac;
+    color: #f0fdf4;
+}
+
+.suite-toast-error {
+    background: #7f1d1d;
+    border-color: #fca5a5;
+    color: #fef2f2;
+}
+
+.suite-toast-warning {
+    background: #78350f;
+    border-color: #fcd34d;
+    color: #fffbeb;
+}
+
+.suite-toast.closing {
+    opacity: 0;
+    transform: translateY(6px);
 }

@@ -876,22 +876,36 @@
 				untrustedContentHint: false,
 			},
 			execute: async (args) => {
-				const theme = args?.theme ? args.theme : "dark";
+				const theme = args?.theme === "light" ? "light" : "dark";
 				showAgentFeedback(`切換主題至: ${theme}`);
-				document.documentElement.setAttribute("data-theme", theme);
-				try {
-					localStorage.setItem("theme", theme);
-				} catch (_e) {}
+				if (typeof window.applySuiteTheme === "function") {
+					window.applySuiteTheme(theme, { persist: true, forcePin: true });
+				} else {
+					document.documentElement.setAttribute("data-theme", theme);
+					const meta = document.querySelector('meta[name="color-scheme"]');
+					if (meta) {
+						meta.setAttribute("content", theme);
+					}
+					try {
+						localStorage.setItem("theme", theme);
+					} catch (_e) {}
 
-				const toggle = document.getElementById("darkModeToggle");
-				if (toggle) {
-					const isDark = theme === "dark";
-					toggle.setAttribute("aria-pressed", isDark ? "true" : "false");
-					const label = toggle.querySelector(".dark-mode-label");
-					if (label) {
-						label.textContent = isDark
-							? toggle.getAttribute("data-label-dark") || "明亮"
-							: toggle.getAttribute("data-label-light") || "暗黑";
+					const toggle = document.getElementById("darkModeToggle");
+					if (toggle) {
+						const isDark = theme === "dark";
+						toggle.setAttribute("aria-pressed", isDark ? "true" : "false");
+						toggle.setAttribute(
+							"title",
+							isDark
+								? toggle.getAttribute("data-title-dark") || "切換為明亮模式"
+								: toggle.getAttribute("data-title-light") || "切換為暗黑模式",
+						);
+						const label = toggle.querySelector(".dark-mode-label");
+						if (label) {
+							label.textContent = isDark
+								? toggle.getAttribute("data-label-dark") || "明亮"
+								: toggle.getAttribute("data-label-light") || "暗黑";
+						}
 					}
 				}
 				return `主題已切換為 ${theme}`;

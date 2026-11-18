@@ -1,41 +1,58 @@
 // public/js/meihua.js - 梅花易數前端互動邏輯 (Punchy & Prominent Ritual Flow)
 
-// 浮動 Toast 通知工具 (取代阻斷式原生 alert)
-function showToast(message, type) {
-    type = type || 'warning';
-    var container = document.getElementById('meihuaToastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'meihuaToastContainer';
-        container.className = 'meihua-toast-container';
-        document.body.appendChild(container);
-    }
-    var toast = document.createElement('div');
-    toast.className = 'meihua-toast meihua-toast-' + type;
-
-    var iconName = 'info';
-    if (type === 'success') iconName = 'check-circle';
-    else if (type === 'error') iconName = 'alert-triangle';
-    else if (type === 'warning') iconName = 'alert-circle';
-
-    toast.innerHTML = '<span class="toast-icon"><i data-lucide="' + iconName + '"></i></span><span class="toast-text">' + message + '</span>';
-    container.appendChild(toast);
-
-    if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        window.lucide.createIcons();
-    }
-
-    function removeToast() {
-        if (!toast.classList.contains('closing')) {
-            toast.classList.add('closing');
-            setTimeout(function() {
-                if (toast.parentNode) toast.parentNode.removeChild(toast);
-            }, 250);
+// 浮動 Toast 通知工具 (優先使用全域 window.showToast，並提供 XSS-safe textContent fallback)
+(function () {
+    if (typeof window.showToast === 'function') return;
+    window.showToast = function showToastFallback(message, type) {
+        type = type || 'warning';
+        var container = document.getElementById('meihuaToastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'meihuaToastContainer';
+            container.className = 'meihua-toast-container';
+            document.body.appendChild(container);
         }
-    }
-    toast.addEventListener('click', removeToast);
-    setTimeout(removeToast, 4000);
-}
+        var toast = document.createElement('div');
+        toast.className = 'meihua-toast meihua-toast-' + type;
+        toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+
+        var iconName = 'info';
+        if (type === 'success') iconName = 'check-circle';
+        else if (type === 'error') iconName = 'alert-triangle';
+        else if (type === 'warning') iconName = 'alert-circle';
+
+        var iconWrap = document.createElement('span');
+        iconWrap.className = 'toast-icon';
+        var iconEl = document.createElement('i');
+        iconEl.setAttribute('data-lucide', iconName);
+        iconEl.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconEl);
+
+        var textSpan = document.createElement('span');
+        textSpan.className = 'toast-text';
+        textSpan.textContent = message == null ? '' : String(message);
+
+        toast.appendChild(iconWrap);
+        toast.appendChild(textSpan);
+        container.appendChild(toast);
+
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+
+        function removeToast() {
+            if (!toast.classList.contains('closing')) {
+                toast.classList.add('closing');
+                setTimeout(function() {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 250);
+            }
+        }
+        toast.addEventListener('click', removeToast);
+        setTimeout(removeToast, 4000);
+    };
+})();
 
 function updateCurrentTime() {
     var now = new Date();
@@ -83,7 +100,7 @@ function renderHexagramLines(containerId, binary, dongYao) {
     if (!container || !binary) {
         return;
     }
-    container.innerHTML = '';
+    container.replaceChildren();
 
     for (var i = 5; i >= 0; i -= 1) {
         var line = document.createElement('div');
@@ -179,7 +196,7 @@ function updateResult(data) {
 
         var tbody = document.getElementById('yaoCiTable');
         if (tbody && benguaText.yaoci) {
-            tbody.innerHTML = '';
+            tbody.replaceChildren();
             benguaText.yaoci.forEach(function(item) {
                 var row = document.createElement('tr');
                 if (item.index === data.bengua.dongYao) {
@@ -617,7 +634,12 @@ function bindMeihuaEvents() {
             var questionInput = document.getElementById('meihuaQuestion');
             var question = questionInput.value.trim();
             if (!question) {
-                showToast('請輸入您的問題', 'warning');
+                if (typeof window.showSuiteFieldError === 'function') {
+                    window.showSuiteFieldError(questionInput, '請輸入您的問題');
+                } else {
+                    showToast('請輸入您的問題', 'warning');
+                    questionInput?.focus();
+                }
                 return;
             }
 
@@ -771,7 +793,7 @@ function renderMeihuaConversation() {
     var messages = window.meihuaConversationHistory || [];
     if (messages.length === 0) {
         history.style.display = 'none';
-        history.innerHTML = '';
+        history.replaceChildren();
         return;
     }
 
