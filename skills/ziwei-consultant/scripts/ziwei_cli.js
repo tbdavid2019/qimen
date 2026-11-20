@@ -64,7 +64,7 @@ function parseArgs() {
         } else if (arg === '--shichen' && args[i + 1]) {
             params.shichen = args[++i];
             delete params.time;
-        } else if (arg === '--sex' && args[i + 1]) {
+        } else if ((arg === '--sex' || arg === '--gender') && args[i + 1]) {
             params.sex = args[++i];
         } else if (arg === '--place' && args[i + 1]) {
             params.place = args[++i];

@@ -205,9 +205,26 @@
     }
 
     function render(markdown) {
-        var preprocessed = String(markdown || '')
-            .replace(/\|\s*\|/g, '|\n|');
-        return renderBlocks(preprocessed.split(/\r?\n/));
+        var rawLines = String(markdown || '').split(/\r?\n/);
+        var normalizedLines = [];
+        var inCodeFence = false;
+        for (var i = 0; i < rawLines.length; i++) {
+            var line = rawLines[i];
+            if (/^\s*```/.test(line)) {
+                inCodeFence = !inCodeFence;
+                normalizedLines.push(line);
+                continue;
+            }
+            if (!inCodeFence && /\|/.test(line)) {
+                var parts = line.replace(/\|\s*\|/g, '|\n|').split('\n');
+                for (var j = 0; j < parts.length; j++) {
+                    normalizedLines.push(parts[j]);
+                }
+            } else {
+                normalizedLines.push(line);
+            }
+        }
+        return renderBlocks(normalizedLines);
     }
 
     return {

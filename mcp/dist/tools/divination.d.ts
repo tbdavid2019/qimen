@@ -4,14 +4,46 @@ export declare const QimenInputSchema: z.ZodObject<{
     question: z.ZodString;
     datetime: z.ZodOptional<z.ZodString>;
     purpose: z.ZodDefault<z.ZodOptional<z.ZodString>>;
+    mode: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
+        advanced: "advanced";
+        traditional: "traditional";
+    }>>>;
+    lang: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
+        "zh-tw": "zh-tw";
+        "zh-cn": "zh-cn";
+    }>>>;
+    conversationHistory: z.ZodDefault<z.ZodOptional<z.ZodArray<z.ZodObject<{
+        role: z.ZodEnum<{
+            user: "user";
+            assistant: "assistant";
+        }>;
+        content: z.ZodString;
+    }, z.core.$strip>>>>;
 }, z.core.$strict>;
 export declare const MeihuaInputSchema: z.ZodObject<{
     question: z.ZodString;
     method: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
         number: "number";
         time: "time";
+        text: "text";
     }>>>;
+    text: z.ZodOptional<z.ZodString>;
+    num1: z.ZodOptional<z.ZodNumber>;
+    num2: z.ZodOptional<z.ZodNumber>;
+    num3: z.ZodOptional<z.ZodNumber>;
+    datetime: z.ZodOptional<z.ZodString>;
     purpose: z.ZodDefault<z.ZodOptional<z.ZodString>>;
+    lang: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
+        "zh-tw": "zh-tw";
+        "zh-cn": "zh-cn";
+    }>>>;
+    conversationHistory: z.ZodDefault<z.ZodOptional<z.ZodArray<z.ZodObject<{
+        role: z.ZodEnum<{
+            user: "user";
+            assistant: "assistant";
+        }>;
+        content: z.ZodString;
+    }, z.core.$strip>>>>;
 }, z.core.$strict>;
 export declare const TarotInputSchema: z.ZodObject<{
     question: z.ZodString;

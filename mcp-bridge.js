@@ -124,6 +124,7 @@ const tools = [
         datetime: { type: "string", description: "選擇性的日期時間（ISO 格式，如 2026-03-19T10:00:00），預設為當前時間" },
         purpose: { type: "string", description: "分析目的，如：綜合、求財、事業、感情、考試、健康、出行、官司", default: "綜合" },
         mode: { type: "string", enum: ["advanced", "traditional"], default: "advanced", description: "時間精度模式" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
         conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
       required: ["question"]
@@ -136,12 +137,14 @@ const tools = [
       type: "object",
       properties: {
         question: { type: "string", description: "您的具體問題" },
-        method: { type: "string", enum: ["time", "numbers", "text"], default: "time", description: "起卦方式" },
+        method: { type: "string", enum: ["time", "number", "text"], default: "time", description: "起卦方式" },
         text: { type: "string", description: "漢字起卦字串" },
         num1: { type: "integer", description: "第一個數字 (1-100)" },
         num2: { type: "integer", description: "第二個數字 (1-100)" },
         num3: { type: "integer", description: "第三個數字 (1-100)" },
+        datetime: { type: "string", description: "時間起卦使用的日期時間（ISO 格式，可選）" },
         purpose: { type: "string", description: "分析目的，預設為 '綜合'" },
+        lang: { type: "string", enum: ["zh-tw", "zh-cn"], default: "zh-tw" },
         conversationHistory: { type: "array", description: "可選的續問對話歷史" }
       },
       required: ["question"]
@@ -237,7 +240,7 @@ const tools = [
       type: "object",
       properties: {
         question: { type: "string", description: "您的感情問題" },
-        mode: { type: "string", enum: ["fortune", "zodiac", "red-thread", "bazi-match", "marriage-palace", "ziwei", "ziwei-marriage", "taohua", "peach-blossom"], default: "fortune" },
+        mode: { type: "string", enum: ["fortune", "zodiac", "ziwei-marriage", "peach-blossom", "bazi-match", "red-thread", "marriage-palace", "taohua-luck"], default: "fortune" },
         firstYear: { type: "integer", minimum: 1, maximum: 9999 },
         secondYear: { type: "integer", minimum: 1, maximum: 9999 },
         firstZodiac: { type: "string" },
@@ -351,8 +354,12 @@ rl.on('line', async (line) => {
           question: args.question,
           datetime: args.datetime || null,
           purpose: args.purpose || '綜合',
-          mode: 'advanced'
+          mode: args.mode || 'advanced',
+          lang: args.lang || 'zh-tw'
         };
+        if (Array.isArray(args.conversationHistory)) {
+          payload.conversationHistory = args.conversationHistory;
+        }
         try {
           const result = await makeApiRequest('qimen-question', payload);
           const responseText = result.success ? result.answer : `Error: ${result.message || result.error || 'Unknown error'}`;
@@ -363,11 +370,21 @@ rl.on('line', async (line) => {
       }
 
       if (toolName === 'meihua_divination') {
+        const normalizedMethod = args.method === 'numbers' ? 'number' : (args.method || 'time');
         const payload = {
           question: args.question,
-          method: 'time',
-          purpose: args.purpose || '綜合'
+          method: normalizedMethod,
+          purpose: args.purpose || '綜合',
+          lang: args.lang || 'zh-tw'
         };
+        if (args.text !== undefined) payload.text = args.text;
+        if (args.num1 !== undefined) payload.num1 = args.num1;
+        if (args.num2 !== undefined) payload.num2 = args.num2;
+        if (args.num3 !== undefined) payload.num3 = args.num3;
+        if (args.datetime !== undefined) payload.datetime = args.datetime;
+        if (Array.isArray(args.conversationHistory)) {
+          payload.conversationHistory = args.conversationHistory;
+        }
         try {
           const result = await makeApiRequest('meihua-question', payload);
           const responseText = result.success ? result.answer : `Error: ${result.message || result.error || 'Unknown error'}`;

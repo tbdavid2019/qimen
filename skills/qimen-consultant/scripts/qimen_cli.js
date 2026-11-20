@@ -61,48 +61,80 @@ function getElementRelation(elA, elB) {
     return '相生';
 }
 
+function requireFlagValue(args, index, flagName) {
+    const next = args[index + 1];
+    if (!next || next.startsWith('--')) {
+        throw new Error(`參數 ${flagName} 缺少有效的值`);
+    }
+    return next;
+}
+
 function parseArgs() {
     const args = process.argv.slice(2);
     let inputFile = null;
     let outputFile = null;
     let rawInline = null;
+    const cliOverrides = {};
 
     for (let i = 0; i < args.length; i++) {
-        if (args[i] === '--input' && args[i + 1]) {
-            inputFile = args[++i];
-        } else if (args[i] === '--output' && args[i + 1]) {
-            outputFile = args[++i];
-        } else if (!args[i].startsWith('--')) {
-            rawInline = args[i];
+        const arg = args[i];
+        if (arg === '--input') {
+            inputFile = requireFlagValue(args, i, arg);
+            i++;
+        } else if (arg === '--output') {
+            outputFile = requireFlagValue(args, i, arg);
+            i++;
+        } else if (arg === '--time-input' || arg === '--datetime' || arg === '--date') {
+            cliOverrides.time_input = requireFlagValue(args, i, arg);
+            i++;
+        } else if (arg === '--calendar') {
+            cliOverrides.calendar_type = requireFlagValue(args, i, arg);
+            i++;
+        } else if (arg === '--purpose') {
+            cliOverrides.question_type = requireFlagValue(args, i, arg);
+            i++;
+        } else if (arg === '--question') {
+            cliOverrides.question = requireFlagValue(args, i, arg);
+            i++;
+        } else if (arg === '--mode') {
+            cliOverrides.mode = requireFlagValue(args, i, arg);
+            i++;
+        } else if (arg === '--method') {
+            cliOverrides.method = requireFlagValue(args, i, arg);
+            i++;
+        } else if (!arg.startsWith('--')) {
+            rawInline = arg;
         }
     }
 
-    return { inputFile, outputFile, rawInline };
+    return { inputFile, outputFile, rawInline, cliOverrides };
 }
 
-function readInput(inputFile, rawInline) {
+function readInput(inputFile, rawInline, cliOverrides = {}) {
     const defaultData = {
         question: '綜合運勢分析',
         question_type: '綜合',
         time_input: null,
         calendar_type: 'solar',
+        mode: 'traditional',
+        method: '時家',
         ruleset: 'mainline-cn-v1'
     };
 
     if (inputFile) {
         if (fs.existsSync(inputFile)) {
             try {
-                return Object.assign(defaultData, JSON.parse(fs.readFileSync(inputFile, 'utf-8')));
+                return Object.assign(defaultData, JSON.parse(fs.readFileSync(inputFile, 'utf-8')), cliOverrides);
             } catch {}
         }
         try {
-            return Object.assign(defaultData, JSON.parse(inputFile));
+            return Object.assign(defaultData, JSON.parse(inputFile), cliOverrides);
         } catch {}
     }
 
     if (rawInline) {
         try {
-            return Object.assign(defaultData, JSON.parse(rawInline));
+            return Object.assign(defaultData, JSON.parse(rawInline), cliOverrides);
         } catch {}
     }
 
@@ -110,11 +142,11 @@ function readInput(inputFile, rawInline) {
     try {
         const stdinBuf = fs.readFileSync(0, 'utf-8');
         if (stdinBuf && stdinBuf.trim().startsWith('{')) {
-            return Object.assign(defaultData, JSON.parse(stdinBuf.trim()));
+            return Object.assign(defaultData, JSON.parse(stdinBuf.trim()), cliOverrides);
         }
     } catch {}
 
-    return defaultData;
+    return Object.assign(defaultData, cliOverrides);
 }
 
 function parseTargetDate(inputData) {
@@ -144,14 +176,17 @@ function parseTargetDate(inputData) {
 
 function run() {
     try {
-        const { inputFile, outputFile, rawInline } = parseArgs();
-        const inputData = readInput(inputFile, rawInline);
+        const { inputFile, outputFile, rawInline, cliOverrides } = parseArgs();
+        const inputData = readInput(inputFile, rawInline, cliOverrides);
         const targetDate = parseTargetDate(inputData);
 
         // 呼叫本地完整奇門排盤核心
+        const resolvedMode = inputData.mode === undefined || inputData.mode === null || inputData.mode === ''
+            ? 'traditional'
+            : String(inputData.mode).trim();
         const panResult = qimen.calculate(targetDate, {
-            method: '時家',
-            timePrecisionMode: 'traditional',
+            method: inputData.method || '時家',
+            timePrecisionMode: resolvedMode,
             purpose: inputData.question_type || '綜合'
         });
 

@@ -396,3 +396,36 @@ test('風水漸進式篩選切換不會清空既有選項且支援選單/羅盤�
   assert.equal(btns[2].classList.contains('active'), true);
   assert.equal(btns[1].classList.contains('active'), false);
 });
+
+test('全站共用 footer 包含右下角功能錯誤通報按鈕導向 david888.com 且與寄送結果浮動鈕避讓', () => {
+  const footer = read('views/partials/site-footer.html');
+  const bugPartial = read('views/partials/bug-report.html');
+  const atelierCss = read('public/css/theme-atelier.css');
+
+  assert.match(footer, /include\('bug-report\.html'\)/);
+  assert.match(bugPartial, /id="suiteBugReportBtn"/);
+  assert.match(bugPartial, /href="https:\/\/david888\.com"/);
+  assert.match(bugPartial, /target="_blank"/);
+  assert.match(bugPartial, /rel="noopener noreferrer"/);
+  assert.match(bugPartial, /功能錯誤通報/);
+
+  for (const file of ALL_VIEWS) {
+    assert.match(read(file), /partials\/site-footer\.html/, `${file} 應載入 site-footer.html`);
+  }
+
+  assert.match(atelierCss, /\.suite-bug-report-btn\s*\{[^}]*position:\s*fixed/s);
+  assert.match(atelierCss, /body\.has-suite-email-result\s+\.suite-bug-report-btn\s*\{[^}]*bottom:\s*calc\(74px/s);
+});
+
+test('result-email FallbackFormatter 產出可被伺服器 isRawJsonPayload 辨識並美化的純 JSON 字串', () => {
+  const { isRawJsonPayload, formatHumanReadableReport } = require('../lib/email-formatter');
+  const resultEmailJs = read('public/js/result-email.js');
+  const fnMatch = resultEmailJs.match(/formatHumanReadableReport\(_service,\s*data,\s*opts\s*=\s*\{\}\)\s*\{[\s\S]*?\n\s*\},/);
+  assert.ok(fnMatch, '應存在 FallbackFormatter.formatHumanReadableReport');
+
+  const payload = { date: '2026-11-20', time: '14:00', summary: '測試結果' };
+  const fallbackFn = new Function('service', 'data', 'opts = {}', fnMatch[0].replace(/^formatHumanReadableReport\([^)]*\)\s*\{/, '').replace(/\},$/, ''));
+  const output = fallbackFn('奇門遁甲', payload, {});
+  assert.equal(isRawJsonPayload(output), true);
+  assert.match(formatHumanReadableReport('奇門遁甲', output), /測試結果/);
+});

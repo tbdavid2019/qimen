@@ -1,0 +1,21 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.8/schema.json",
+  "formatter": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "style": {
+        "useConst": "warn",
+        "noParameterAssign": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      }
+    }
+  },
+  "files": {
+    "includes": ["**/*.js", "!**/node_modules/**", "!**/dist/**", "!**/bundle/**", "!public/js/bootstrap.min.js", "!public/js/jquery.min.js", "!public/js/lucide.min.js"]
+  }
+}

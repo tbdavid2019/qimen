@@ -1038,74 +1038,6 @@ function getClientTimeParams() {
     };
 }
 
-// 檢查並調整時區
-function checkAndAdjustTimezone() {
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    // 獲取用戶本地時間和時區
-    const now = new Date();
-    const timestamp = now.getTime();
-    const timezoneOffset = now.getTimezoneOffset(); // 分鐘為單位，UTC偏移
-    
-    // 建立本地時間字串（ISO 格式但不含時區信息）
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    const userDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-    
-    // 檢查是否需要更新時區參數
-    const existingUserDateTime = urlParams.get('userDateTime');
-    const existingTimestamp = urlParams.get('timestamp');
-    const existingTimezoneOffset = urlParams.get('timezoneOffset');
-    
-    let needsUpdate = false;
-    
-    // 優先使用 userDateTime 參數
-    if (!existingUserDateTime && !existingTimestamp) {
-        needsUpdate = true;
-        console.log('缺少時間參數，需要添加');
-    } else if (existingTimezoneOffset && parseInt(existingTimezoneOffset) !== timezoneOffset) {
-        needsUpdate = true;
-        console.log('時區偏移已改變，需要更新');
-    } else if (existingUserDateTime) {
-        // 檢查時間是否過期（超過5分鐘）
-        const existingTime = new Date(existingUserDateTime);
-        const timeDiff = Math.abs(now.getTime() - existingTime.getTime());
-        if (timeDiff > 5 * 60 * 1000) { // 5分鐘
-            needsUpdate = true;
-            console.log('時間過期，需要更新');
-        }
-    } else if (existingTimestamp) {
-        // 檢查時間戳是否過期（超過5分鐘）
-        const timestampAge = timestamp - parseInt(existingTimestamp);
-        if (timestampAge > 5 * 60 * 1000) { // 5分鐘
-            needsUpdate = true;
-            console.log('時間戳過期，需要更新');
-        }
-    }
-    
-    if (needsUpdate) {
-        // 添加/更新時間參數到URL
-        urlParams.set('userDateTime', userDateTime);
-        urlParams.set('timestamp', timestamp.toString());
-        urlParams.set('timezoneOffset', timezoneOffset.toString());
-        
-        // 保持其他參數不變，重新載入頁面
-        const newUrl = window.location.pathname + '?' + urlParams.toString();
-        
-        console.log('調整時區，使用本地時間重新載入頁面...');
-        console.log('本地時間:', now.toString());
-        console.log('本地時間字串:', userDateTime);
-        console.log('時區偏移:', timezoneOffset, '分鐘');
-        window.location.href = newUrl;
-    } else {
-        console.log('時區參數正確，無需調整');
-    }
-}
-
 // 顯示時區調試信息
 function displayTimezoneDebugInfo() {
     const localTimeElement = document.getElementById('localTime');
@@ -1210,31 +1142,6 @@ function ensureTimezoneParams() {
     }
     
     return false; // 表示不需要重新載入
-}
-
-// 檢查時區設定狀態
-function checkTimezoneStatus() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const hasTimestamp = urlParams.has('timestamp');
-    const hasTimezoneOffset = urlParams.has('timezoneOffset');
-    
-    if (hasTimestamp && hasTimezoneOffset) {
-        // 驗證時區參數是否有效
-        const timestamp = parseInt(urlParams.get('timestamp'));
-        const timezoneOffset = parseInt(urlParams.get('timezoneOffset'));
-        const currentOffset = new Date().getTimezoneOffset();
-        
-        if (timezoneOffset === currentOffset) {
-            console.log('✅ 時區設定正確');
-            return 'correct';
-        } else {
-            console.log('⚠️ 時區偏移不匹配');
-            return 'offset_mismatch';
-        }
-    } else {
-        console.log('❌ 缺少時區參數');
-        return 'missing';
-    }
 }
 
 // ============================================================================

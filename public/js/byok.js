@@ -15,7 +15,7 @@
         'xai': 'xAI 官方端點',
         'anthropic': 'Anthropic 官方端點',
         'qwen': '阿里通義千問端點',
-        'custom': '自訂相容端點 (如地端 Ollama 或 API 轉發網關)'
+        'custom': '自訂公開相容端點 (需填寫公開可達之 Base URL，如雲端 Tunnel / API 轉發網關)'
     };
 
     /**
@@ -102,7 +102,18 @@
                 path === '/api/qimen-question' ||
                 path === '/api/meihua-question' ||
                 path === '/api/name-analysis' ||
+                path === '/api/name-analysis-question' ||
+                path === '/api/ziwei-question' ||
+                path === '/api/ziwei/domain' ||
+                path === '/api/tarot-question' ||
+                path === '/api/fengshui-question' ||
+                path === '/api/bazi2-question' ||
+                path === '/api/saju-question' ||
+                path === '/api/wellness-question' ||
+                path === '/api/wellness/question' ||
                 path === '/api/answerbook-question' ||
+                path === '/api/liuyao' ||
+                path === '/api/liuyao/reading' ||
                 path === '/api/liuyao-question' ||
                 path === '/api/yinyuan-question' ||
                 /^\/api\/[a-z0-9_-]+\/llm-analysis$/.test(path);

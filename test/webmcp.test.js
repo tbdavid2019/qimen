@@ -29,6 +29,7 @@ test("WebMCP 模組載入並提供完整的工具定義", () => {
 		"meihua_divination",
 		"ziwei_chart",
 		"tarot_reading",
+		"tarot_numerology",
 		"fengshui_report",
 		"bazi2_chart",
 		"yinyuan_reading",

@@ -81,6 +81,21 @@ test('所有獨立 CLI 腳本（bazi, qimen, ziwei, fengshui, yinyuan, tarot）�
     const qmRes = JSON.parse(qmStdout);
     assert.equal(qmRes.schema_version, 'mainline-cn-v1');
     assert.ok(qmRes.chart.palaces.length === 9);
+    assert.ok(qmRes.normalized_input.solar_time.startsWith('2026-08-28'), 'qimen_cli.js 必須實際套用 --time-input 日期');
+    assert.equal(qmRes.warnings.includes('使用執行當前時間自動起盤'), false);
+
+    assert.throws(
+        () => execSync('node skills/qimen-consultant/scripts/qimen_cli.js --datetime --mode advanced', { encoding: 'utf-8', stdio: 'pipe' }),
+        /缺少有效的值/
+    );
+    assert.throws(
+        () => execSync('node skills/qimen-consultant/scripts/qimen_cli.js --mode advance', { encoding: 'utf-8', stdio: 'pipe' }),
+        /不支援的時間精度模式/
+    );
+
+    const zwGenderStdout = execSync('node skills/ziwei-consultant/scripts/ziwei_cli.js --date 1990-05-15 --time 12:00 --gender 女', { encoding: 'utf-8' });
+    const zwGenderRes = JSON.parse(zwGenderStdout);
+    assert.equal(zwGenderRes.normalized_input.sex, '女');
 
     const trStdout = execSync('node skills/tarot-consultant/scripts/tarot_cli.js --spread three --seed 999', { encoding: 'utf-8' });
     const trRes = JSON.parse(trStdout);

@@ -1207,3 +1207,93 @@ body.meihua-page [tabindex]:focus-visible {
     opacity: 0;
     transform: translateY(6px);
 }
+
+/* Floating Bug Report Button (bottom-right, shifts above email launcher when active) */
+.suite-bug-report-btn {
+    position: fixed;
+    right: 18px;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    z-index: 1035;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #fff9e8;
+    color: #17324d;
+    border: 1.5px solid #a9471d;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(23, 50, 77, 0.14);
+    transition: transform 0.16s ease, background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, bottom 0.18s ease;
+}
+
+.suite-bug-report-btn:hover,
+.suite-bug-report-btn:focus {
+    background: #fffcf2;
+    color: #17324d;
+    border-color: #17324d;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(23, 50, 77, 0.2);
+}
+
+.suite-bug-report-icon {
+    flex-shrink: 0;
+    color: #a9471d;
+}
+
+body.has-suite-email-result .suite-bug-report-btn {
+    bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+}
+
+[data-theme="dark"] .suite-bug-report-btn {
+    background: rgba(20, 35, 54, 0.94);
+    color: #fff9e8;
+    border-color: rgba(255, 176, 16, 0.55);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.42);
+}
+
+[data-theme="dark"] .suite-bug-report-btn:hover,
+[data-theme="dark"] .suite-bug-report-btn:focus {
+    background: #1a2e47;
+    color: #fffcf2;
+    border-color: #ffb010;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.54);
+}
+
+[data-theme="dark"] .suite-bug-report-icon {
+    color: #ffb010;
+}
+
+@media (max-width: 767px) {
+    .suite-bug-report-btn {
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        padding: 7px 12px;
+        font-size: 13.5px;
+    }
+    body.has-suite-email-result .suite-bug-report-btn {
+        bottom: calc(66px + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .suite-bug-report-btn {
+        transition: none;
+    }
+    .suite-bug-report-btn:hover,
+    .suite-bug-report-btn:focus,
+    .suite-bug-report-btn:focus-visible {
+        transform: none;
+    }
+}
+
+@media print {
+    .suite-bug-report-btn {
+        display: none !important;
+    }
+}

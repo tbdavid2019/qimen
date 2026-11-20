@@ -11,13 +11,23 @@ const FacingSchema = z.enum(["南", "北", "東", "西", "東南", "西北", "�
 export const QimenInputSchema = z.object({
     question: z.string().describe("The user's question or situation requiring divination."),
     datetime: z.string().optional().describe("Optional ISO 8601 datetime string (e.g., 2026-03-19T10:00:00). If omitted, uses current time."),
-    purpose: z.string().optional().default("綜合").describe("The specific life area: '事業', '財運', '感情', '綜合'. Defaults to '綜合'.")
+    purpose: z.string().optional().default("綜合").describe("The specific life area: '事業', '財運', '感情', '綜合'. Defaults to '綜合'."),
+    mode: z.enum(["advanced", "traditional"]).optional().default("advanced").describe("Time precision mode: 'advanced' (13-minute segments) or 'traditional' (2-hour shichen)."),
+    lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
+    conversationHistory: ConversationHistorySchema
 }).strict();
 // 2. 梅花易數
 export const MeihuaInputSchema = z.object({
     question: z.string().describe("The user's question or situation requiring divination."),
-    method: z.enum(["time", "number"]).optional().default("time").describe("The method to generate hexagrams: 'time' or 'number'."),
-    purpose: z.string().optional().default("綜合").describe("The specific life area.")
+    method: z.enum(["time", "number", "text"]).optional().default("time").describe("The method to generate hexagrams: 'time', 'number', or 'text'."),
+    text: z.string().optional().describe("Chinese characters for text-based hexagram generation when method is 'text'."),
+    num1: z.number().int().min(1).max(100).optional().describe("First number (1-100) when method is 'number'."),
+    num2: z.number().int().min(1).max(100).optional().describe("Second number (1-100) when method is 'number'."),
+    num3: z.number().int().min(1).max(100).optional().describe("Optional third number (1-100) when method is 'number'."),
+    datetime: z.string().optional().describe("Optional ISO 8601 datetime string when method is 'time'."),
+    purpose: z.string().optional().default("綜合").describe("The specific life area."),
+    lang: z.enum(["zh-tw", "zh-cn"]).optional().default("zh-tw"),
+    conversationHistory: ConversationHistorySchema
 }).strict();
 // 3. 韋特塔羅
 export const TarotInputSchema = z.object({
@@ -144,10 +154,13 @@ export function registerDivinationTools(server) {
         inputSchema: QimenInputSchema,
         annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
     }, async (params) => {
-        const response = await makeApiRequest("ask", {
+        const response = await makeApiRequest("qimen-question", {
             question: params.question,
             datetime: params.datetime,
-            purpose: params.purpose
+            purpose: params.purpose,
+            mode: params.mode,
+            lang: params.lang,
+            conversationHistory: params.conversationHistory
         });
         return {
             content: [{ type: "text", text: response.answer || response.fallback || response.error || "No response received." }]
@@ -172,7 +185,14 @@ export function registerDivinationTools(server) {
         const response = await makeApiRequest("meihua-question", {
             question: params.question,
             method: params.method,
-            purpose: params.purpose
+            text: params.text,
+            num1: params.num1,
+            num2: params.num2,
+            num3: params.num3,
+            datetime: params.datetime,
+            purpose: params.purpose,
+            lang: params.lang,
+            conversationHistory: params.conversationHistory
         });
         return {
             content: [{ type: "text", text: response.answer || response.error || "No response received." }]

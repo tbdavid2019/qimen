@@ -2,6 +2,21 @@
 
 所有本專案的重要更新都將記錄在此文件中。
 
+## [2026-11-20]
+
+- **新增全站右下角「功能錯誤通報」浮動按鈕 ([views/partials/bug-report.html](views/partials/bug-report.html)、[views/partials/site-footer.html](views/partials/site-footer.html)、[public/css/theme-atelier.css](public/css/theme-atelier.css))**：
+  - 於全站 12 個頁面右下角新增高對比度 Saffron-Atelier 風格「功能錯誤通報」膠囊連結，點擊導向 `https://david888.com`（另開安全分頁 `rel="noopener noreferrer"`）。
+  - 支援雙模式自動主題配色、鍵盤 `:focus-visible` 外框、`prefers-reduced-motion` 及列印自動隱藏；當畫面出現「寄送本次結果」浮動按鈕 (`body.has-suite-email-result`) 時自動向上避讓，杜絕遮擋重疊。
+- **修復 MCP / Bridge / CLI / WebMCP 契約斷裂**：
+  - [mcp/src/tools/divination.ts](mcp/src/tools/divination.ts)：修復 `qimen_divination` 呼叫不存在的 `/api/ask`（改為 `/api/qimen-question`），補齊 `mode`/`lang`/`conversationHistory` 與梅花 `method: "text"`/`text`/`num1..3` 參數，並同步重新編譯 `mcp/dist/`。
+  - [mcp-bridge.js](mcp-bridge.js)：移除 `qimen_divination` 與 `meihua_divination` 寫死的 `mode`/`method`，完整轉發呼叫端參數並修正 `"numbers"` -> `"number"` 與 `yinyuan_reading` 模式列舉。
+  - [skills/qimen-consultant/scripts/qimen_cli.js](skills/qimen-consultant/scripts/qimen_cli.js) 與 [skills/ziwei-consultant/scripts/ziwei_cli.js](skills/ziwei-consultant/scripts/ziwei_cli.js)：修復 `--time-input`/`--datetime`/`--purpose`/`--mode` 旗標支援及 `--gender` 別名。
+  - [public/js/webmcp.js](public/js/webmcp.js)：修正 `tarot_numerology` 的 `parameters` 鍵名為標準 `inputSchema`。
+- **BYOK 安全補強與架構減肥（維持下游 API 100% 相容）**：
+  - 補強 [lib/byok.js](lib/byok.js)、[public/js/byok.js](public/js/byok.js)、[lib/llm-analysis.js](lib/llm-analysis.js)、[lib/service-question.js](lib/service-question.js)、[lib/answerbook.js](lib/answerbook.js) 與 [lib/discord-webhook.js](lib/discord-webhook.js)：新增連線層 DNS/IP 解析 SSRF 防護 (`createSafeHttpAgents` + `maxRedirects: 0`)、BYOK 獨立供應商預設端點隔離（絕不回落至伺服器 `LLM_BASE_URL`）、`custom`/`ollama` 推論與模型清單一致性校驗、補齊 `/api/liuyao` 等前端 `shouldInjectBYOK` 路由白名單、支援 `/api/name-analysis-question` BYOK 免 token 相容與不將 `byok` 敏感憑證傳入紀錄；同時補齊奇門/梅花問答 `conversationHistory` 轉發、`targetHour` 時辰參數與 `qimen_cli.js` 旗標嚴格驗證。
+  - 將 `i18n` 改為請求層級隔離（不再跨請求修改全域 `i18n.currentLang`），並移除 `callWithModelFallback` 對共享單例 `this.model` 的副作用覆寫。
+  - 抽離 [lib/api-docs.js](lib/api-docs.js)（消除 `ziweiChart`/`ziweiMatch` 重複鍵）、統一 [lib/email-formatter.js](lib/email-formatter.js) 單一 UMD 來源並修正 [public/js/result-email.js](public/js/result-email.js) fallback、刪除 [lib/qimen.js](lib/qimen.js)、`app.js` 與 [public/js/app.js](public/js/app.js) 死碼、完整延遲載入大型姓名語料（含 `lib/advanced-wisdom.js`），並補齊 `package.json` / `package-lock.json` (`form-data`、`engines`、`lint`)、[biome.json](biome.json) 與 [vercel.json](vercel.json) 靜態資源路由。
+
 ## [2026-11-18]
 
 - **新增 `888qi-fortune` npm CLI 安裝套件與 Skill 自動更新機制 (`v1.0.1`, [packages/888qi-fortune](packages/888qi-fortune/README.md)、[skills/_shared/runtime.js](skills/_shared/runtime.js)、`skills/*/SKILL.md`)**：

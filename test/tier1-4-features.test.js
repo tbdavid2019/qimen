@@ -505,3 +505,25 @@ test('Dual-Review Fix - POST /api/fengshui/zeri-search 別名路由與八卦卦�
     assert.equal(mzz.stoveDir, '西北');
     assert.ok(mzz.warnings.some(w => w.includes('火燒天門')));
 });
+
+test('Code Review Fix - /api/bazi2/yunqi-wellness 與 /api/wellness-question 支援 targetHour=0/13 參數', async () => {
+    const resZero = await postJson('/api/bazi2/yunqi-wellness', {
+        targetYear: 2026,
+        targetHour: 0,
+        birthDate: '1990-05-15'
+    });
+    assert.equal(resZero.status, 200);
+    const bodyZero = await resZero.json();
+    assert.equal(bodyZero.success, true);
+    assert.equal(bodyZero.meridianClock.currentHour, 0);
+
+    const resQuestion = await postJson('/api/wellness-question', {
+        question: '今日子時或未時適合如何調養？',
+        targetYear: 2026,
+        targetHour: 13,
+        birthDate: '1990-05-15'
+    });
+    assert.equal(resQuestion.status, 200);
+    const bodyQuestion = await resQuestion.json();
+    assert.equal(bodyQuestion.result.meridianClock.currentHour, 13);
+});

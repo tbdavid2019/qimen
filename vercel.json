@@ -20,8 +20,16 @@
       "dest": "/public/js/$1"
     },
     {
-      "src": "/favicon.ico",
-      "dest": "/public/favicon.ico"
+      "src": "/images/(.*)",
+      "dest": "/public/images/$1"
+    },
+    {
+      "src": "/fonts/(.*)",
+      "dest": "/public/fonts/$1"
+    },
+    {
+      "src": "/(favicon\\.ico|favicon\\.svg|favicon-.*\\.png|apple-touch-icon\\.png|android-chrome-.*\\.png|og-image\\.png|site\\.webmanifest)",
+      "dest": "/public/$1"
     },
     {
       "src": "/sw\\.js",

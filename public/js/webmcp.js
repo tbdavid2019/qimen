@@ -1511,7 +1511,7 @@
 		tarot_numerology: {
 			name: "tarot_numerology",
 			description: "計算生命數、生日數、生日數字九宮格、缺數反思提示、已形成的數字連線與大阿爾克那原型；只作文化反思，不作診斷或命運定論。",
-			parameters: {
+			inputSchema: {
 				type: "object",
 				properties: {
 					birthDate: { type: "string", description: "西元出生年月日（YYYY-MM-DD 或 YYYY/MM/DD）" },
